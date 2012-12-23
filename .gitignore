@@ -460,7 +460,6 @@
 /src/minecraft/net/minecraft/network/packet/Packet42RemoveEntityEffect.java
 /src/minecraft/net/minecraft/network/packet/Packet43Experience.java
 /src/minecraft/net/minecraft/network/packet/Packet4UpdateTime.java
-/src/minecraft/net/minecraft/network/packet/Packet51MapChunk.java
 /src/minecraft/net/minecraft/network/packet/Packet51MapChunkData.java
 /src/minecraft/net/minecraft/network/packet/Packet52MultiBlockChange.java
 /src/minecraft/net/minecraft/network/packet/Packet53BlockChange.java

@@ -254,7 +254,8 @@ public class ExtendedBlockStorage
         }
         else
         {
-            byte[] ext = this.blockMSBArray.data;
+            this.blockMSBArray.forceToNonTrivialArray(); // Spigot
+            byte[] ext = this.blockMSBArray.getValueArray();
 
             for (int off = 0, off2 = 0; off < blkIds.length;)
             {
@@ -302,6 +303,14 @@ public class ExtendedBlockStorage
 
                 off++;
                 off2++;
+                // Spigot start
+                this.blockMSBArray.detectAndProcessTrivialArray();
+
+                if (this.blockMSBArray.isTrivialArray() && (this.blockMSBArray.getTrivialArrayValue() == 0))
+                {
+                    this.blockMSBArray = null;
+                }
+                // Spigot end
             }
         }
 
@@ -405,14 +414,12 @@ public class ExtendedBlockStorage
         // CraftBukkit start - don't hang on to an empty nibble array
         boolean empty = true;
 
-        for (int i = 0; i < par1NibbleArray.data.length; i++)
+        // Spigot start
+        if ((!par1NibbleArray.isTrivialArray()) || (par1NibbleArray.getTrivialArrayValue() != 0))
         {
-            if (par1NibbleArray.data[i] != 0)
-            {
-                empty = false;
-                break;
-            }
+            empty = false;
         }
+        // Spigot end
 
         if (empty)
         {
@@ -462,11 +469,9 @@ public class ExtendedBlockStorage
     // Spigot start - validate/correct nibble array
     private static final NibbleArray validateNibbleArray(NibbleArray na)
     {
-        if ((na != null) && (na.data.length < 2048))
+        if ((na != null) && (na.getByteLength() < 2048))
         {
-            NibbleArray newna = new NibbleArray(4096, 4);
-            System.arraycopy(na.data, 0, newna.data, 0, na.data.length);
-            na = newna;
+            na.resizeArray(2048);
         }
 
         return na;

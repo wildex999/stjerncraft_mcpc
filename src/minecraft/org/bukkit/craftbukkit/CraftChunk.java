@@ -168,33 +168,65 @@ public class CraftChunk implements Chunk {
                 }
 
                 if (cs[i].getBlockMSBArray/*was:i*/() != null) { /* If we've got extended IDs */
-                    byte[] extids = cs[i].getBlockMSBArray/*was:i*/().data/*was:a*/;
-
-                    for (int j = 0; j < 2048; j++) {
-                        short b = (short) (extids[j] & 0xFF);
-
-                        if (b == 0) {
-                            continue;
+                    // Spigot start
+                    if (cs[i].getBlockMSBArray/*was:i*/().isTrivialArray()) {
+                        int tval = cs[i].getBlockMSBArray/*was:i*/().getTrivialArrayValue();
+                        if (tval != 0) {
+                            tval = tval << 8;
+                                for (int j = 0; j < 4096; j++) {
+                                    blockids[j << 1] |= tval;
+                                }
                         }
-
-                        blockids[j<<1] |= (b & 0x0F) << 8;
-                        blockids[(j<<1)+1] |= (b & 0xF0) << 4;
-                    }
+                    } else {
+                        byte[] extids = cs[i].getBlockMSBArray/*was:i*/().getValueArray()/*was:a*/;
+                        // Spigot end
+    
+                        for (int j = 0; j < 2048; j++) {
+                            short b = (short) (extids[j] & 0xFF);
+    
+                            if (b == 0) {
+                                continue;
+                            }
+    
+                            blockids[j<<1] |= (b & 0x0F) << 8;
+                            blockids[(j<<1)+1] |= (b & 0xF0) << 4;
+                        }
+                    } // Spigot
                 }
 
                 sectionBlockIDs[i] = blockids;
 
                 /* Get block data nibbles */
-                sectionBlockData[i] = new byte[2048];
-                System.arraycopy(cs[i].getMetadataArray/*was:j*/().data/*was:a*/, 0, sectionBlockData[i], 0, 2048); // Should be getData
+                // Spigot start
+                if (cs[i].getMetadataArray/*was:j*/().isTrivialArray() && (cs[i].getMetadataArray/*was:j*/().getTrivialArrayValue() == 0)) {
+                    sectionBlockData[i] = emptyData;
+                } else {
+                    sectionBlockData[i] = new byte[2048];
+                    cs[i].getMetadataArray/*was:j*/().copyToByteArray(sectionBlockData[i], 0);
+                }
                 if (cs[i].getSkylightArray/*was:l*/() == null) {
                     sectionSkyLights[i] = emptyData;
+                }
+                else if (cs[i].getSkylightArray/*was:l*/().isTrivialArray()) {
+                    if (cs[i].getSkylightArray/*was:l*/().getTrivialArrayValue() == 0) {
+                        sectionSkyLights[i] = emptyData;
+                    } else if (cs[i].getSkylightArray/*was:l*/().getTrivialArrayValue() == 15) {
+                        sectionSkyLights[i] = emptySkyLight;
+                    } else {
+                        sectionSkyLights[i] = new byte[2048];
+                        cs[i].getSkylightArray/*was:l*/().copyToByteArray(sectionSkyLights[i], 0);
+                    }
                 } else {
                     sectionSkyLights[i] = new byte[2048];
-                    System.arraycopy(cs[i].getSkylightArray/*was:l*/().data/*was:a*/, 0, sectionSkyLights[i], 0, 2048); // Should be getSkyLight
+                    cs[i].getSkylightArray/*was:l*/().copyToByteArray(sectionSkyLights[i], 0);
                 }
-                sectionEmitLights[i] = new byte[2048];
-                System.arraycopy(cs[i].getBlocklightArray/*was:k*/().data/*was:a*/, 0, sectionEmitLights[i], 0, 2048); // Should be getBlockLight
+                if (cs[i].getBlocklightArray/*was:k*/().isTrivialArray() && (cs[i].getBlocklightArray/*was:k*/().getTrivialArrayValue() == 0)) {
+                    sectionEmitLights[i] = emptyData;
+                } else {
+                    sectionEmitLights[i] = new byte[2048];
+                    cs[i].getBlocklightArray/*was:k*/().copyToByteArray(sectionEmitLights[i], 0);
+                }
+                // Spigot end
             }
         }
 

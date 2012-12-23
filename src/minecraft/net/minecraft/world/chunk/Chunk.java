@@ -1444,8 +1444,8 @@ public class Chunk
             if ((par2 & 1 << var7) != 0 && this.storageArrays[var7] != null)
             {
                 var9 = this.storageArrays[var7].getMetadataArray();
-                System.arraycopy(par1ArrayOfByte, var5, var9.data, 0, var9.data.length);
-                var5 += var9.data.length;
+                System.arraycopy(par1ArrayOfByte, var5, var9.getValueArray(), 0, var9.getValueArray().length); // Spigot
+                var5 += var9.getValueArray().length; // Spigot
             }
         }
 
@@ -1454,8 +1454,8 @@ public class Chunk
             if ((par2 & 1 << var7) != 0 && this.storageArrays[var7] != null)
             {
                 var9 = this.storageArrays[var7].getBlocklightArray();
-                System.arraycopy(par1ArrayOfByte, var5, var9.data, 0, var9.data.length);
-                var5 += var9.data.length;
+                System.arraycopy(par1ArrayOfByte, var5, var9.getValueArray(), 0, var9.getValueArray().length); // Spigot
+                var5 += var9.getValueArray().length; // Spigot
             }
         }
 
@@ -1466,8 +1466,8 @@ public class Chunk
                 if ((par2 & 1 << var7) != 0 && this.storageArrays[var7] != null)
                 {
                     var9 = this.storageArrays[var7].getSkylightArray();
-                    System.arraycopy(par1ArrayOfByte, var5, var9.data, 0, var9.data.length);
-                    var5 += var9.data.length;
+                    System.arraycopy(par1ArrayOfByte, var5, var9.getValueArray(), 0, var9.getValueArray().length); // Spigot
+                    var5 += var9.getValueArray().length; // Spigot
                 }
             }
         }
@@ -1489,8 +1489,8 @@ public class Chunk
                         var9 = this.storageArrays[var7].createBlockMSBArray();
                     }
 
-                    System.arraycopy(par1ArrayOfByte, var5, var9.data, 0, var9.data.length);
-                    var5 += var9.data.length;
+                    System.arraycopy(par1ArrayOfByte, var5, var9.getValueArray(), 0, var9.getValueArray().length); // Spigot
+                    var5 += var9.getValueArray().length; // Spigot
                 }
             }
             else if (par4 && this.storageArrays[var7] != null && this.storageArrays[var7].getBlockMSBArray() != null)

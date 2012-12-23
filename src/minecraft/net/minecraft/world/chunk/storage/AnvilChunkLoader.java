@@ -322,19 +322,19 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
 
                 if (var10.getBlockMSBArray() != null)
                 {
-                    var11.setByteArray("Add", var10.getBlockMSBArray().data);
+                    var11.setByteArray("Add", var10.getBlockMSBArray().getValueArray()); // Spigot
                 }
 
-                var11.setByteArray("Data", var10.getMetadataArray().data);
-                var11.setByteArray("BlockLight", var10.getBlocklightArray().data);
+                var11.setByteArray("Data", var10.getMetadataArray().getValueArray()); // Spigot
+                var11.setByteArray("BlockLight", var10.getBlocklightArray().getValueArray()); // Spigot
 
                 if (var6)
                 {
-                    var11.setByteArray("SkyLight", var10.getSkylightArray().data);
+                    var11.setByteArray("SkyLight", var10.getSkylightArray().getValueArray()); // Spigot
                 }
                 else
                 {
-                    var11.setByteArray("SkyLight", new byte[var10.getBlocklightArray().data.length]);
+                    var11.setByteArray("SkyLight", new byte[var10.getBlocklightArray().getValueArray().length]); // Spigot
                 }
 
                 var5.appendTag(var11);
