@@ -66,11 +66,13 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 // CraftBukkit start
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -1481,6 +1483,10 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
         if (this.openContainer != null)
         {
+            // CraftBukkit start
+            InventoryCloseEvent event = new InventoryCloseEvent(this.openContainer.getBukkitView());
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            // CraftBukkit end
             this.openContainer.onCraftGuiClosed(this);
         }
     }
