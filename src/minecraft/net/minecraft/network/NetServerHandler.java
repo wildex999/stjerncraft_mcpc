@@ -1062,6 +1062,13 @@ public class NetServerHandler extends NetHandler
         {
             PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getPlayerB(), this.playerEntity.inventory.currentItem, par1Packet16BlockItemSwitch.id);
             this.server.getPluginManager().callEvent(event);
+
+            if (event.isCancelled())
+            {
+                this.sendPacketToPlayer(new Packet16BlockItemSwitch(this.playerEntity.inventory.currentItem));
+                return;
+            }
+
             // CraftBukkit end
             this.playerEntity.inventory.currentItem = par1Packet16BlockItemSwitch.id;
         }
