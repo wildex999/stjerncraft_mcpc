@@ -22,7 +22,7 @@ public class EntityAISit extends EntityAIBase
     {
         if (!this.theEntity.isTamed())
         {
-            return false;
+            return this.isSitting && this.theEntity.getAttackTarget() == null; // CraftBukkit - Allow sitting for wild animals
         }
         else if (this.theEntity.isInWater())
         {
