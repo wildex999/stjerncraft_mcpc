@@ -48,7 +48,7 @@ public class BlockSapling extends BlockFlower
             {
                 int var6 = par1World.getBlockMetadata(par2, par3, par4);
 
-                if ((var6 & 8) == 0)
+                if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9 && (par5Random.nextInt(Math.max(2, (int)((par1World.growthOdds * 100 / par1World.getWorld().treeGrowthModifier * 7 / 100F) + 0.5F))) == 0))    // Spigot
                 {
                     par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 | 8);
                 }

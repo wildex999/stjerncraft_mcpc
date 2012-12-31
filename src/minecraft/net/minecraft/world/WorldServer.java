@@ -86,7 +86,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     private final MinecraftServer mcServer;
     public EntityTracker theEntityTracker; // CraftBukkit - private final -> public
     private final PlayerManager thePlayerManager;
-    private Set field_73064_N;
+    private LongObjectHashMap<Set<NextTickListEntry>> field_73064_N; // CraftBukkit - change to something chunk friendly
 
     /** All work to do in future ticks. */
     private TreeSet pendingTickListEntries;
@@ -137,7 +137,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
         if (this.field_73064_N == null)
         {
-            this.field_73064_N = new HashSet();
+            this.field_73064_N = new LongObjectHashMap<Set<NextTickListEntry>>(); // CraftBukkit
         }
 
         if (this.pendingTickListEntries == null)
@@ -470,18 +470,42 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
      */
     protected void tickBlocksAndAmbiance()
     {
+        // Spigot start
+        this.aggregateTicks--;
+
+        if (this.aggregateTicks != 0)
+        {
+            return;
+        }
+
+        aggregateTicks = this.getWorld().aggregateTicks;
+        // Spigot end
         super.tickBlocksAndAmbiance();
         int var1 = 0;
         int var2 = 0;
-        Iterator var3 = this.activeChunkSet.iterator();
+        //Iterator var3 = this.activeChunkSet.iterator();
 
-        while (var3.hasNext())
+        // Spigot start
+        for (TLongShortIterator iter = activeChunkSet.iterator(); iter.hasNext();)
         {
-            ChunkCoordIntPair var4 = (ChunkCoordIntPair)var3.next();
-            int var5 = var4.chunkXPos * 16;
-            int var6 = var4.chunkZPos * 16;
+            iter.advance();
+            long chunkCoord = iter.key();
+            int chunkX = World.keyToX(chunkCoord);
+            int chunkZ = World.keyToZ(chunkCoord);
+
+            // If unloaded, or in procedd of being unloaded, drop it
+            if ((!this.chunkExists(chunkX,  chunkZ)) || (this.theChunkProviderServer.chunksToUnload.contains(chunkX, chunkZ)))
+            {
+                iter.remove();
+                continue;
+            }
+
+            int players = iter.value();
+            // Spigot end
+            int var5 = chunkX * 16;
+            int var6 = chunkZ * 16;
             this.theProfiler.startSection("getChunk");
-            Chunk var7 = this.getChunkFromChunkCoords(var4.chunkXPos, var4.chunkZPos);
+            Chunk var7 = this.getChunkFromChunkCoords(chunkX, chunkZ);
             this.moodSoundAndLightCheck(var5, var6, var7);
             this.theProfiler.endStartSection("tickChunk");
             var7.updateSkylight();
@@ -566,6 +590,16 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                         if (var18 != null && var18.getTickRandomly())
                         {
                             ++var1;
+                            if (players < 1)
+                            {
+                                //grow fast if no players are in this chunk
+                                this.growthOdds = modifiedOdds;
+                            }
+                            else
+                            {
+                                this.growthOdds = 100;
+                            }
+                            // Spigot end
                             var18.updateTick(this, var14 + var5, var16 + var21.getYLocation(), var15 + var6, this.rand);
                         }
                     }
@@ -618,11 +652,12 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                 var7.func_82753_a(par6);
             }
 
-            if (!this.field_73064_N.contains(var7))
+            /*if (!this.field_73064_N.contains(var7))
             {
                 this.field_73064_N.add(var7);
                 this.pendingTickListEntries.add(var7);
-            }
+            }*/
+            addNextTickIfNeeded(var7); // CraftBukkit
         }
     }
 
@@ -638,11 +673,12 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
             var6.setScheduledTime((long)par5 + this.worldInfo.getWorldTotalTime());
         }
 
-        if (!this.field_73064_N.contains(var6))
+        /*if (!this.field_73064_N.contains(var6))
         {
             this.field_73064_N.add(var6);
             this.pendingTickListEntries.add(var6);
-        }
+        }*/
+        addNextTickIfNeeded(var6); // CraftBukkit
     }
 
     /**
@@ -707,38 +743,41 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                 break;
             }
 
-                this.pendingTickListEntries.remove(var4);
-                this.field_73064_N.remove(var4);
-                boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(var4.xCoord >> 4, var4.zCoord >> 4));
-                byte var5 = isForced ? (byte)0 : 8;
+            // Spigot start
+            //this.pendingTickListEntries.remove(var4);
+            //this.field_73064_N.remove(var4);
+            this.removeNextTickIfNeeded(var4);
+            // Spigot end
+            boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(var4.xCoord >> 4, var4.zCoord >> 4));
+            byte var5 = isForced ? (byte)0 : 8;
 
-                if (this.checkChunksExist(var4.xCoord - var5, var4.yCoord - var5, var4.zCoord - var5, var4.xCoord + var5, var4.yCoord + var5, var4.zCoord + var5))
+            if (this.checkChunksExist(var4.xCoord - var5, var4.yCoord - var5, var4.zCoord - var5, var4.xCoord + var5, var4.yCoord + var5, var4.zCoord + var5))
             {
-                    int var6 = this.getBlockId(var4.xCoord, var4.yCoord, var4.zCoord);
+                int var6 = this.getBlockId(var4.xCoord, var4.yCoord, var4.zCoord);
 
-                    if (var6 == var4.blockID && var6 > 0)
+                if (var6 == var4.blockID && var6 > 0)
                 {
                     try
                     {
                             Block.blocksList[var6].updateTick(this, var4.xCoord, var4.yCoord, var4.zCoord, this.rand);
                     }
-                        catch (Throwable var13)
+                    catch (Throwable var13)
                     {
-                            CrashReport var8 = CrashReport.makeCrashReport(var13, "Exception while ticking a block");
-                            CrashReportCategory var9 = var8.makeCategory("Block being ticked");
-                            int var10;
+                        CrashReport var8 = CrashReport.makeCrashReport(var13, "Exception while ticking a block");
+                        CrashReportCategory var9 = var8.makeCategory("Block being ticked");
+                        int var10;
 
                         try
                         {
-                                var10 = this.getBlockMetadata(var4.xCoord, var4.yCoord, var4.zCoord);
+                            var10 = this.getBlockMetadata(var4.xCoord, var4.yCoord, var4.zCoord);
                         }
-                            catch (Throwable var12)
+                        catch (Throwable var12)
                         {
-                                var10 = -1;
+                            var10 = -1;
                         }
 
-                            CrashReportCategory.func_85068_a(var9, var4.xCoord, var4.yCoord, var4.zCoord, var6, var10);
-                            throw new ReportedException(var8);
+                        CrashReportCategory.func_85068_a(var9, var4.xCoord, var4.yCoord, var4.zCoord, var6, var10);
+                        throw new ReportedException(var8);
                     }
                 }
             }
@@ -749,6 +788,8 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
     public List getPendingBlockUpdates(Chunk par1Chunk, boolean par2)
     {
+        return this.getNextTickEntriesForChunk(par1Chunk, par2); // Spigot
+        /* Spigot start
         ArrayList var3 = null;
         ChunkCoordIntPair var4 = par1Chunk.getChunkCoordIntPair();
         int var5 = var4.chunkXPos << 4;
@@ -779,6 +820,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
 
         return var3;
+        // Spigot end */
     }
 
     /**
@@ -905,7 +947,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
         if (this.field_73064_N == null)
         {
-            this.field_73064_N = new HashSet();
+            this.field_73064_N = new LongObjectHashMap<Set<NextTickListEntry>>();
         }
 
         if (this.pendingTickListEntries == null)
@@ -1304,6 +1346,70 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     {
         return this.field_85177_Q;
     }
+
+    // Spigot start
+    private void addNextTickIfNeeded(NextTickListEntry ent)
+    {
+        long coord = LongHash.toLong(ent.xCoord >> 4, ent.zCoord >> 4);
+        Set<NextTickListEntry> chunkset = field_73064_N.get(coord);
+
+        if (chunkset == null)
+        {
+            chunkset = new HashSet<NextTickListEntry>();
+            field_73064_N.put(coord, chunkset);
+        }
+        else if (chunkset.contains(ent))
+        {
+            return;
+        }
+
+        chunkset.add(ent);
+        pendingTickListEntries.add(ent);
+    }
+
+    private void removeNextTickIfNeeded(NextTickListEntry ent)
+    {
+        long coord = LongHash.toLong(ent.xCoord >> 4, ent.zCoord >> 4);
+        Set<NextTickListEntry> chunkset = field_73064_N.get(coord);
+
+        if (chunkset == null)
+        {
+            return;
+        }
+
+        if (chunkset.remove(ent))
+        {
+            pendingTickListEntries.remove(ent);
+
+            if (chunkset.isEmpty())
+            {
+                field_73064_N.remove(coord);
+            }
+        }
+    }
+
+    private List<NextTickListEntry> getNextTickEntriesForChunk(Chunk chunk, boolean remove)
+    {
+        long coord = LongHash.toLong(chunk.xPosition, chunk.zPosition);
+        Set<NextTickListEntry> chunkset = field_73064_N.get(coord);
+
+        if (chunkset == null)
+        {
+            return null;
+        }
+
+        List<NextTickListEntry> list = new ArrayList<NextTickListEntry>(chunkset);
+
+        if (remove)
+        {
+            field_73064_N.remove(coord);
+            pendingTickListEntries.removeAll(list);
+           chunkset.clear();
+        }
+
+        return list;
+    }
+    // Spigot end
 
     public File getChunkSaveLocation()
     {

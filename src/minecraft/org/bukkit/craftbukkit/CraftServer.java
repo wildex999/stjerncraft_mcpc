@@ -140,12 +140,14 @@ public final class CraftServer implements Server {
     public int chunkGCLoadThresh = 0;
     private File container;
     private WarningState warningState = WarningState.DEFAULT;
-    public String whitelistMessage = "You are not white-listed on this server!"; // Spigot
-    public String stopMessage = "Server restarting. Brb"; // Spigot
-    public boolean logCommands = true; // Spigot
-    public boolean ipFilter = false; // Spigot
-    public boolean commandComplete = true; // Spigot
-    public List<String> spamGuardExclusions; // Spigot
+    // Spigot start
+    public String whitelistMessage = "You are not white-listed on this server!";
+    public String stopMessage = "Server restarting. Brb";
+    public boolean logCommands = true;
+    public boolean ipFilter = false;
+    public boolean commandComplete = true;
+    public List<String> spamGuardExclusions;
+    // Spigot end
 
     private final BooleanWrapper online = new BooleanWrapper();
 

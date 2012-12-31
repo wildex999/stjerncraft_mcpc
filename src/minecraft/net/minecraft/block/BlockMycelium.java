@@ -78,7 +78,7 @@ public class BlockMycelium extends Block
             }
             else if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9)
             {
-                for (int var6 = 0; var6 < 4; ++var6)
+                for (int var6 = 0; var6 < Math.max(4, Math.max(20, (int)(4 * 100F / par1World.growthOdds))); ++var6)    // Spigot
                 {
                     int var7 = par2 + par5Random.nextInt(3) - 1;
                     int var8 = par3 + par5Random.nextInt(5) - 3;

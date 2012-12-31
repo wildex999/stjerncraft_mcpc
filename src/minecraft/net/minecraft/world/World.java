@@ -190,7 +190,8 @@ public abstract class World implements IBlockAccess
     public boolean spawnPeacefulMobs = true;
 
     /** Positions to update */
-    public Set activeChunkSet = new HashSet();
+    //public Set activeChunkSet = new HashSet();
+    protected gnu.trove.map.hash.TLongShortHashMap activeChunkSet; // Spigot
     public long ticksPerAnimalSpawns;
     public long ticksPerMonsterSpawns;
     // CraftBukkit end
@@ -324,14 +325,15 @@ public abstract class World implements IBlockAccess
     public World(ISaveHandler idatamanager, String s, WorldSettings worldsettings, WorldProvider worldprovider, Profiler methodprofiler, ChunkGenerator gen, org.bukkit.World.Environment env)
     {
         this.generator = gen;
+        this.worldInfo = idatamanager.loadWorldInfo(); // Spigot
         this.world = new CraftWorld((WorldServer) this, gen, env);
         this.ticksPerAnimalSpawns = this.getServer().getTicksPerAnimalSpawns(); // CraftBukkit
         this.ticksPerMonsterSpawns = this.getServer().getTicksPerMonsterSpawns(); // CraftBukkit
         this.chunkTickRadius = (byte)((this.getServer().getViewDistance() < 7) ? this.getServer().getViewDistance() : 7); // CraftBukkit - don't tick chunks we don't load for player
         // CraftBukkit end
         // Spigot start
-        //this.activeChunkSet = new gnu.trove.map.hash.TLongShortHashMap(getWorld().growthPerTick * 5, 0.7f, Long.MIN_VALUE, Short.MIN_VALUE);
-        //activeChunkSet.setAutoCompactionFactor(0.0F);
+        this.activeChunkSet = new gnu.trove.map.hash.TLongShortHashMap(getWorld().growthPerTick * 5, 0.7f, Long.MIN_VALUE, Short.MIN_VALUE);
+        activeChunkSet.setAutoCompactionFactor(0.0F);
         // Spigot end
         this.ambientTickCountdown = this.rand.nextInt(12000);
         this.lightUpdateBlockList = new int['\u8000'];
@@ -340,7 +342,6 @@ public abstract class World implements IBlockAccess
         this.saveHandler = idatamanager;
         this.theProfiler = methodprofiler;
         this.mapStorage = this.getMapStorage(idatamanager);
-        this.worldInfo = idatamanager.loadWorldInfo();
 
         if (worldprovider != null)
         {
@@ -2636,12 +2637,56 @@ public abstract class World implements IBlockAccess
         this.updateEntityWithOptionalForce(par1Entity, true);
     }
 
+    // Spigot start
+    public int tickEntityExceptions = 0;
     /**
      * Will update the entity in the world if the chunk the entity is in is currently loaded or its forced to update.
      * Args: entity, forceUpdate
      */
-    public void updateEntityWithOptionalForce(Entity par1Entity, boolean par2)
+    public void updateEntityWithOptionalForce(final Entity par1Entity, final boolean par2)
     {
+        if (par1Entity == null)
+        {
+            return;
+        }
+
+        try
+        {
+            tickEntity(par1Entity, par2);
+        }
+        catch (Exception var3)
+        {
+            try
+            {
+                tickEntityExceptions++;
+                List<String> var4 = new ArrayList<String>();
+                var4.add("Spigot has detected an unexpected exception while handling");
+
+                if (!(par1Entity instanceof EntityPlayerMP))
+                {
+                    var4.add("entity " + par1Entity.toString() + " (id: " + par1Entity.entityId + ")");
+                    var4.add("Spigot will kill the entity from the game instead of crashing your server.");
+                    par1Entity.setDead();
+                }
+                else
+                {
+                    var4.add("player '" + ((EntityPlayerMP) par1Entity).username + "'. They will be kicked instead of crashing your server.");
+                    ((EntityPlayerMP) par1Entity).getBukkitEntity().kickPlayer("The server experienced and error and was forced to kick you. Please re-login.");
+                }
+
+                org.bukkit.craftbukkit.util.ExceptionReporter.handle(var3, var4.toArray(new String[0]));
+            }
+            catch (Throwable var5)
+            {
+                org.bukkit.craftbukkit.util.ExceptionReporter.handle(var5, "Spigot has detected an unexpected exception while attempting to handle an exception (yes you read that correctly).");
+                Bukkit.shutdown();
+            }
+        }
+    }
+
+    public void tickEntity(Entity par1Entity, boolean par2)
+    {
+        // Spigot end
         int var3 = MathHelper.floor_double(par1Entity.posX);
         int var4 = MathHelper.floor_double(par1Entity.posZ);
 
@@ -3484,6 +3529,11 @@ public abstract class World implements IBlockAccess
         this.worldInfo.setRainTime(1);
     }
 
+    // Spigot start
+    public int aggregateTicks = 1;
+    protected float modifiedOdds = 100F;
+    public float growthOdds = 100F;
+
     protected void setActivePlayerChunksAndCheckLight()
     {
         // this.chunkTickList.clear(); // CraftBukkit - removed
@@ -3492,29 +3542,56 @@ public abstract class World implements IBlockAccess
         EntityPlayer var2;
         int var3;
         int var4;
+        final int var5 = this.getWorld().growthPerTick;
+
+        if (var5 <= 0)
+        {
+            return;
+        }
+
+        if (playerEntities.size() == 0)
+        {
+            return;
+        }
+
+        //Keep chunks with growth inside of the optimal chunk range
+        int var6 = Math.min(200, Math.max(1, (int)(((var5 - playerEntities.size()) / (double)playerEntities.size()) + 0.5)));
+        int var7 = 3 + var6 / 30;
+
+        if (var7 > chunkTickRadius)  // Limit to normal tick radius - including view distance
+        {
+            var7 = chunkTickRadius;
+        }
+
+        //odds of growth happening vs growth happening in vanilla
+        final float var8 = Math.max(35, Math.min(100, ((var6 + 1) * 100F) / 15F));
+        this.modifiedOdds = var8;
+        this.growthOdds = var8;
 
         for (var1 = 0; var1 < this.playerEntities.size(); ++var1)
         {
             var2 = (EntityPlayer)this.playerEntities.get(var1);
-            var3 = MathHelper.floor_double(var2.posX / 16.0D);
-            var4 = MathHelper.floor_double(var2.posZ / 16.0D);
-            byte var5 = 7;
+            int chunkX = MathHelper.floor_double(var2.posX / 16.0D);
+            int chunkZ = MathHelper.floor_double(var2.posZ / 16.0D);
+            //Always update the chunk the player is on
+            long key = chunkToKey(chunkX, chunkZ);
+            int existingPlayers = Math.max(0, activeChunkSet.get(key)); //filter out -1's
+            activeChunkSet.put(key, (short)(existingPlayers + 1));
 
-            for (int var6 = -var5; var6 <= var5; ++var6)
+            //Check and see if we update the chunks surrounding the player this tick
+            for (int chunk = 0; chunk < var6; chunk++)
             {
-                for (int var7 = -var5; var7 <= var5; ++var7)
+                int dx = (rand.nextBoolean() ? 1 : -1) * rand.nextInt(var7);
+                int dz = (rand.nextBoolean() ? 1 : -1) * rand.nextInt(var7);
+                long hash = chunkToKey(dx + chunkX, dz + chunkZ);
+
+                if (!activeChunkSet.contains(hash) && this.chunkExists(dx + chunkX, dz + chunkZ))
                 {
-                    // CraftBukkit start - don't tick chunks queued for unload
-                    ChunkProviderServer chunkProviderServer = ((WorldServer) var2.worldObj).theChunkProviderServer;
-                    if (chunkProviderServer.chunksToUnload.contains(var6 + var3, var7 + var4)) {
-                        continue;
-                    }
-                    // CraftBukkit end
-                    this.activeChunkSet.add(new ChunkCoordIntPair(var6 + var3, var7 + var4));
+                    activeChunkSet.put(hash, (short) - 1); //no players
                 }
             }
         }
-
+        // Spigot End
         this.theProfiler.endSection();
 
         if (this.ambientTickCountdown > 0)
@@ -4036,7 +4113,9 @@ public abstract class World implements IBlockAccess
      */
     public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
     {
-        this.entitiesWithinAABBExcludingEntity.clear();
+        // Spigot start;
+        ArrayList<?> entities = new ArrayList();
+        // Spigot end
         int var3 = MathHelper.floor_double((par2AxisAlignedBB.minX - MAX_ENTITY_RADIUS) / 16.0D);
         int var4 = MathHelper.floor_double((par2AxisAlignedBB.maxX + MAX_ENTITY_RADIUS) / 16.0D);
         int var5 = MathHelper.floor_double((par2AxisAlignedBB.minZ - MAX_ENTITY_RADIUS) / 16.0D);
@@ -4048,12 +4127,12 @@ public abstract class World implements IBlockAccess
             {
                 if (this.chunkExists(var7, var8))
                 {
-                    this.getChunkFromChunkCoords(var7, var8).getEntitiesWithinAABBForEntity(par1Entity, par2AxisAlignedBB, this.entitiesWithinAABBExcludingEntity);
+                    this.getChunkFromChunkCoords(var7, var8).getEntitiesWithinAABBForEntity(par1Entity, par2AxisAlignedBB, entities); // Spigot
                 }
             }
         }
 
-        return this.entitiesWithinAABBExcludingEntity;
+        return entities; // Spigot
     }
 
     /**
