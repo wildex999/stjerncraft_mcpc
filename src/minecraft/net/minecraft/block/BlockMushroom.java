@@ -61,6 +61,11 @@ public class BlockMushroom extends BlockFlower
             var8 = par2 + par5Random.nextInt(3) - 1;
             var9 = par3 + par5Random.nextInt(2) - par5Random.nextInt(2);
             var10 = par4 + par5Random.nextInt(3) - 1;
+            // CraftBukkit start - preserve source block coordinates
+            int sourceX = par2;
+            int sourceY = par3;
+            int sourceZ = par4;
+            // CraftBukkit end
 
             for (int var11 = 0; var11 < 4; ++var11)
             {
@@ -82,7 +87,7 @@ public class BlockMushroom extends BlockFlower
                 org.bukkit.World bworld = par1World.getWorld();
                 BlockState blockState = bworld.getBlockAt(var8, var9, var10).getState();
                 blockState.setTypeId(this.blockID);
-                BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(par2, par3, par4), blockState);
+                BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(sourceX, sourceY, sourceZ), blockState);
                 par1World.getServer().getPluginManager().callEvent(event);
 
                 if (!event.isCancelled())
