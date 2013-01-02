@@ -506,6 +506,7 @@ public class EntityFishHook extends Entity
                 EntityItem var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, new ItemStack(Item.fishRaw));
                 // CraftBukkit start
                 PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.angler.getBukkitEntity(), var13.getBukkitEntity(), PlayerFishEvent.State.CAUGHT_FISH);
+                playerFishEvent.setExpToDrop(this.rand.nextInt(6) + 1);
                 this.worldObj.getServer().getPluginManager().callEvent(playerFishEvent);
 
                 if (playerFishEvent.isCancelled())
@@ -526,7 +527,8 @@ public class EntityFishHook extends Entity
                 var13.motionZ = var7 * var11;
                 this.worldObj.spawnEntityInWorld(var13);
                 this.angler.addStat(StatList.fishCaughtStat, 1);
-                this.angler.worldObj.spawnEntityInWorld(new EntityXPOrb(this.angler.worldObj, this.angler.posX, this.angler.posY + 0.5D, this.angler.posZ + 0.5D, this.rand.nextInt(6) + 1));
+                // CraftBukkit - this.random.nextInt(6) + 1 -> playerFishEvent.getExpToDrop()
+                this.angler.worldObj.spawnEntityInWorld(new EntityXPOrb(this.angler.worldObj, this.angler.posX, this.angler.posY + 0.5D, this.angler.posZ + 0.5D, playerFishEvent.getExpToDrop()));
                 var1 = 1;
             }
 
