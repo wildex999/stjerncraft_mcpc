@@ -37,7 +37,7 @@ public class BlockCocoa extends BlockDirectional
             if (var7 < 2)
             {
                 ++var7;
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 << 2 | getDirection(var6));
+                org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, var7 << 2 | getDirection(var6)); // CraftBukkit
             }
         }
     }
