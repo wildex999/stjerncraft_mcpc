@@ -111,7 +111,7 @@ public class EntityPotion extends EntityThrowable
                 AxisAlignedBB var3 = this.boundingBox.expand(4.0D, 2.0D, 4.0D);
                 List var4 = this.worldObj.getEntitiesWithinAABB(EntityLiving.class, var3);
 
-                if (var4 != null && !var4.isEmpty())
+                if (var4 != null)   // CraftBukkit - Run code even if there are no entities around
                 {
                     Iterator var5 = var4.iterator();
                     // CraftBukkit
