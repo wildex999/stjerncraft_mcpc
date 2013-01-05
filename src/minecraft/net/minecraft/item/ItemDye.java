@@ -288,7 +288,7 @@ public class ItemDye extends Item
                     return false;
                 }
 
-                var4 = (byte) event.getColor().getData();
+                var4 = (byte) event.getColor().getWoolData();
                 // CraftBukkit end
                 var3.setFleeceColor(var4);
                 --par1ItemStack.stackSize;
