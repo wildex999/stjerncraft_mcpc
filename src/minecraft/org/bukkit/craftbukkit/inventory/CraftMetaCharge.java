@@ -29,7 +29,7 @@ class CraftMetaCharge extends CraftMetaItem implements FireworkEffectMeta {
     CraftMetaCharge(Map<String, Object> map) {
         super(map);
 
-        effect = SerializableMeta.getObject(FireworkEffect.class, map, EXPLOSION.BUKKIT, true);
+        setEffect(SerializableMeta.getObject(FireworkEffect.class, map, EXPLOSION.BUKKIT, true));
     }
 
     CraftMetaCharge(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
