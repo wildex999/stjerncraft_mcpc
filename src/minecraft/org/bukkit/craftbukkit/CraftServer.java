@@ -206,7 +206,14 @@ public final class CraftServer implements Server {
         commandMap.register("bukkit", new org.bukkit.craftbukkit.command.RestartCommand("restart"));
         commandMap.register("bukkit", new org.bukkit.craftbukkit.command.TicksPerSecondCommand("tps"));
 
-        org.bukkit.craftbukkit.util.WatchdogThread.startThread(configuration.getInt("settings.timeout-time", 180), configuration.getBoolean("settings.restart-on-crash", false));
+        int timeout = configuration.getInt("settings.timeout-time", 300);
+        if (timeout == 180) {
+            timeout = 300;
+            getLogger().info("Migrating to new timeout time of 300");
+            configuration.set("settings.timeout-time", timeout);
+            saveConfig();
+        }
+        org.bukkit.craftbukkit.util.WatchdogThread.startThread(timeout, configuration.getBoolean("settings.restart-on-crash", false));
 
         whitelistMessage = configuration.getString("settings.whitelist-message", whitelistMessage);
         stopMessage = configuration.getString("settings.stop-message", stopMessage);

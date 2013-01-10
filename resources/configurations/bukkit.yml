@@ -26,7 +26,7 @@ settings:
     deprecated-verbose: default
     shutdown-message: Server closed
     restart-script-location: start.bat
-    timeout-time: 180
+    timeout-time: 300
     restart-on-crash: false
     filter-unsafe-ips: false
     whitelist-message: You are not white-listed on this server!
