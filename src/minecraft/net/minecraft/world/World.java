@@ -90,6 +90,11 @@ import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.gen.ChunkProviderServer;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.util.LongHashSet;
+import org.bukkit.craftbukkit.Spigot; // Spigot
+import org.bukkit.craftbukkit.SpigotTimings; // Spigot
+import org.bukkit.craftbukkit.util.UnsafeList;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
@@ -287,6 +292,8 @@ public abstract class World implements IBlockAccess
     int lastZAccessed = Integer.MIN_VALUE;
     final Object chunkLock = new Object();
     private byte chunkTickRadius; // Spigot
+    
+    public final SpigotTimings.WorldTimingsHandler timings; // Spigot
 
     public CraftWorld getWorld()
     {
@@ -408,6 +415,7 @@ public abstract class World implements IBlockAccess
         this.calculateInitialSkylight();
         this.calculateInitialWeather();
         this.getServer().addWorld(this.world); // CraftBukkit
+        timings = new SpigotTimings.WorldTimingsHandler(this); // Spigot
     }
     
     public World(ISaveHandler par1ISaveHandler, String par2Str, WorldSettings par3WorldSettings, WorldProvider par4WorldProvider, Profiler par5Profiler, ILogAgent par6ILogAgent)
@@ -506,6 +514,7 @@ public abstract class World implements IBlockAccess
 
         this.calculateInitialSkylight();
         this.calculateInitialWeather();
+        timings = new SpigotTimings.WorldTimingsHandler(this); // Spigot
     }
     // MCPC+ end    
 
@@ -2147,6 +2156,8 @@ public abstract class World implements IBlockAccess
         this.unloadedEntityList.clear();
         this.theProfiler.endStartSection("regular");
 
+        timings.entityTick.startTiming(); // Spigot
+
         for (i = 0; i < this.loadedEntityList.size(); ++i)
         {
             entity = (Entity)this.loadedEntityList.get(i);
@@ -2177,7 +2188,9 @@ public abstract class World implements IBlockAccess
             {
                 try
                 {
+                    SpigotTimings.tickEntityTimer.startTiming(); // Spigot
                     this.updateEntity(entity);
+                    SpigotTimings.tickEntityTimer.stopTiming(); // Spigot
                 }
                 catch (Throwable throwable1)
                 {
@@ -2217,7 +2230,9 @@ public abstract class World implements IBlockAccess
             this.theProfiler.endSection();
         }
 
+        timings.entityTick.stopTiming(); // Spigot
         this.theProfiler.endStartSection("tileEntities");
+        timings.tileEntityTick.startTiming(); // Spigot
         this.scanningTileEntities = true;
         Iterator iterator = this.loadedTileEntityList.iterator();
 
@@ -2238,10 +2253,13 @@ public abstract class World implements IBlockAccess
             {
                 try
                 {
+                    tileentity.tickTimer.startTiming(); // Spigot
                     tileentity.updateEntity();
+                    tileentity.tickTimer.stopTiming(); // Spigot
                 }
                 catch (Throwable throwable2)
                 {
+                    tileentity.tickTimer.stopTiming(); // Spigot
                     crashreport = CrashReport.makeCrashReport(throwable2, "Ticking tile entity");
                     crashreportcategory = crashreport.makeCategory("Tile entity being ticked");
                     tileentity.func_85027_a(crashreportcategory);
@@ -2274,7 +2292,9 @@ public abstract class World implements IBlockAccess
             }
         }
 
-
+        timings.tileEntityTick.stopTiming(); // Spigot
+        timings.tileEntityPending.startTiming(); // Spigot
+        
         if (!this.entityRemoval.isEmpty())
         {
             for (Object tile : entityRemoval)
@@ -2325,6 +2345,7 @@ public abstract class World implements IBlockAccess
             this.addedTileEntityList.clear();
         }
 
+        timings.tileEntityPending.stopTiming(); // Spigot
         this.theProfiler.endSection();
         this.theProfiler.endSection();
     }

@@ -74,6 +74,7 @@ import jline.console.ConsoleReader;
 import joptsimple.OptionSet;
 
 import org.bukkit.World.Environment;
+import org.bukkit.craftbukkit.SpigotTimings; // Spigot
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.world.WorldSaveEvent;
@@ -713,7 +714,10 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                     currentTPS = (currentTPS * 0.95) + (1E9 / (curTime - lastTick) * 0.05);
                     lastTick = curTime;
                     MinecraftServer.currentTick++;
+                    SpigotTimings.serverTickTimer.startTiming(); // Spigot
                     this.tick();
+                    SpigotTimings.serverTickTimer.stopTiming(); // Spigot
+                    org.bukkit.CustomTimingsHandler.tick(); // Spigot
                 }
 
                 // Spigot end
@@ -868,6 +872,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     public void updateTimeLightAndEntities()
     {
         this.theProfiler.startSection("levels");
+        SpigotTimings.schedulerTimer.startTiming(); // Spigot
         // CraftBukkit start
         this.server.getScheduler().mainThreadHeartbeat(this.tickCounter);
 
@@ -877,7 +882,10 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             processQueue.remove().run();
         }
 
+        SpigotTimings.schedulerTimer.stopTiming(); // Spigot
+        SpigotTimings.chunkIOTickTimer.startTiming(); // Spigot
         org.bukkit.craftbukkit.chunkio.ChunkIOExecutor.tick();
+        SpigotTimings.chunkIOTickTimer.stopTiming(); // Spigot
 
         // Send time updates to everyone, it will get the right time from the world the player is in.
         if (this.tickCounter % 20 == 0)
@@ -939,7 +947,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             FMLCommonHandler.instance().onPostWorldTick(worldserver);
             this.theProfiler.endSection();
             this.theProfiler.startSection("tracker");
+            worldserver.timings.tracker.startTiming(); // Spigot
             worldserver.getEntityTracker().updateTrackedEntities();
+            worldserver.timings.tracker.stopTiming(); // Spigot
             this.theProfiler.endSection();
             this.theProfiler.endSection();
             // } // CraftBukkit
@@ -952,16 +962,22 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         //DimensionManager.unloadWorlds(this.worldTickTimes);
         // Forge end
         this.theProfiler.endStartSection("connection");
+        SpigotTimings.connectionTimer.startTiming(); // Spigot
         this.getNetworkThread().networkTick();
+        SpigotTimings.connectionTimer.stopTiming(); // Spigot
         this.theProfiler.endStartSection("players");
+        SpigotTimings.playerListTimer.startTiming(); // Spigot
         this.serverConfigManager.sendPlayerInfoToAllPlayers();
+        SpigotTimings.playerListTimer.stopTiming(); // Spigot
         this.theProfiler.endStartSection("tickables");
+        SpigotTimings.tickablesTimer.startTiming(); // Spigot
 
         for (i = 0; i < this.tickables.size(); ++i)
         {
             ((IUpdatePlayerListBox) this.tickables.get(i)).update();
         }
 
+        SpigotTimings.tickablesTimer.stopTiming(); // Spigot
         this.theProfiler.endSection();
         org.bukkit.craftbukkit.util.WatchdogThread.tick(); // Spigot
     }

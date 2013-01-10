@@ -349,10 +349,13 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
         if (this.getGameRules().getGameRuleBooleanValue("doMobSpawning") && (this.spawnHostileMobs || this.spawnPeacefulMobs) && (this instanceof WorldServer && this.playerEntities.size() > 0))
         {
+            timings.mobSpawn.startTiming(); // Spigot
             SpawnerAnimals.findChunksForSpawning(this, this.spawnHostileMobs && (this.ticksPerMonsterSpawns != 0 && time % this.ticksPerMonsterSpawns == 0L), this.spawnPeacefulMobs && (this.ticksPerAnimalSpawns != 0 && time % this.ticksPerAnimalSpawns == 0L), this.worldInfo.getWorldTotalTime() % 400L == 0L);
+            timings.mobSpawn.stopTiming(); // Spigot
         }
 
         // CraftBukkit end
+        timings.doTickRest.startTiming(); // Spigot
         this.theProfiler.endStartSection("chunkSource");
         this.chunkProvider.unloadQueuedChunks();
         int j = this.calculateSkylightSubtracted(1.0F);
@@ -383,6 +386,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         this.sendAndApplyBlockEvents();
         if (this.getWorld() != null) // MCPC+
             this.getWorld().processChunkGC(); // CraftBukkit
+        timings.doTickRest.stopTiming(); // Spigot
     }
 
     /**

@@ -1368,6 +1368,7 @@ public class NetServerHandler extends NetHandler
      */
     private void handleSlashCommand(String par1Str)
     {
+        org.bukkit.craftbukkit.SpigotTimings.playerCommandTimer.startTiming(); // Spigot
         // CraftBukkit start
         CraftPlayer player = this.getPlayerB();
         PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, par1Str, new LazyPlayerSet());
@@ -1375,6 +1376,7 @@ public class NetServerHandler extends NetHandler
 
         if (event.isCancelled())
         {
+            org.bukkit.craftbukkit.SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
             return;
         }
 
@@ -1390,11 +1392,13 @@ public class NetServerHandler extends NetHandler
             if (this.server.getCommandMap().getCommand(event.getMessage().substring(1, space != -1 ? space : event.getMessage().length())) != null)
             {
                 this.server.dispatchCommand(event.getPlayer(), event.getMessage().substring(1));
+                org.bukkit.craftbukkit.SpigotTimings.playerCommandTimer.stopTiming(); // Spigot            
                 return;
             }
             else // process vanilla command
             {
                 this.server.dispatchVanillaCommand(event.getPlayer(), event.getMessage().substring(1));
+                org.bukkit.craftbukkit.SpigotTimings.playerCommandTimer.stopTiming(); // Spigot                
                 return;
             }
         }
@@ -1402,6 +1406,7 @@ public class NetServerHandler extends NetHandler
         {
             player.sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
             java.util.logging.Logger.getLogger(NetServerHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            org.bukkit.craftbukkit.SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
             return;
         }
 

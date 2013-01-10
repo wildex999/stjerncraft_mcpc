@@ -53,6 +53,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.CustomTimingsHandler; // Spigot
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
@@ -260,6 +261,9 @@ public abstract class Entity
     public UUID entityUniqueID; // CraftBukkit - private -> public
     public EnumEntitySize myEntitySize;
     public boolean valid = false; // CraftBukkit
+    
+    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getEntityTimings(this); // Spigot
+        
     /** Forge: Used to store custom data for each entity. */
     private NBTTagCompound customEntityData;
     public boolean captureDrops = false;
@@ -716,6 +720,8 @@ public abstract class Entity
             return;    // Spigot
         }
 
+        org.bukkit.craftbukkit.SpigotTimings.entityMoveTimer.startTiming(); // Spigot
+
         if (this.noClip)
         {
             this.boundingBox.offset(par1, par3, par5);
@@ -1097,6 +1103,8 @@ public abstract class Entity
 
             this.worldObj.theProfiler.endSection();
         }
+
+        org.bukkit.craftbukkit.SpigotTimings.entityMoveTimer.stopTiming(); // Spigot
     }
 
     /**

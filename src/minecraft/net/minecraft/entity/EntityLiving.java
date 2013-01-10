@@ -849,6 +849,7 @@ public abstract class EntityLiving extends Entity
      */
     public void onUpdate()
     {
+        org.bukkit.craftbukkit.SpigotTimings.timerEntityBaseTick.startTiming(); // Spigot    
         if (ForgeHooks.onLivingUpdate(this))
         {
             return;
@@ -889,7 +890,9 @@ public abstract class EntityLiving extends Entity
             }
         }
 
+        org.bukkit.craftbukkit.SpigotTimings.timerEntityBaseTick.stopTiming(); // Spigot
         this.onLivingUpdate();
+        org.bukkit.craftbukkit.SpigotTimings.timerEntityTickRest.startTiming(); // Spigot
         double d0 = this.posX - this.prevPosX;
         double d1 = this.posZ - this.prevPosZ;
         float f = (float)(d0 * d0 + d1 * d1);
@@ -998,6 +1001,7 @@ public abstract class EntityLiving extends Entity
 
         this.worldObj.theProfiler.endSection();
         this.field_70764_aw += f2;
+        org.bukkit.craftbukkit.SpigotTimings.timerEntityTickRest.stopTiming(); // Spigot
     }
 
     // CraftBukkit start - Delegate so we can handle providing a reason for health being regained
@@ -1906,6 +1910,8 @@ public abstract class EntityLiving extends Entity
      */
     public void onLivingUpdate()
     {
+        org.bukkit.craftbukkit.SpigotTimings.timerEntityAI.startTiming(); // Spigot
+
         if (this.jumpTicks > 0)
         {
             --this.jumpTicks;
@@ -1971,6 +1977,7 @@ public abstract class EntityLiving extends Entity
             }
         }
 
+        org.bukkit.craftbukkit.SpigotTimings.timerEntityAI.stopTiming(); // Spigot
         this.worldObj.theProfiler.endSection();
         this.worldObj.theProfiler.startSection("jump");
 
@@ -1996,6 +2003,7 @@ public abstract class EntityLiving extends Entity
 
         this.worldObj.theProfiler.endSection();
         this.worldObj.theProfiler.startSection("travel");
+        org.bukkit.craftbukkit.SpigotTimings.timerEntityAIMove.startTiming(); // Spigot
         this.moveStrafing *= 0.98F;
         this.moveForward *= 0.98F;
         this.randomYawVelocity *= 0.9F;
@@ -2003,14 +2011,17 @@ public abstract class EntityLiving extends Entity
         this.landMovementFactor *= this.getSpeedModifier();
         this.moveEntityWithHeading(this.moveStrafing, this.moveForward);
         this.landMovementFactor = f;
+        org.bukkit.craftbukkit.SpigotTimings.timerEntityAIMove.stopTiming(); // Spigot
         this.worldObj.theProfiler.endSection();
         this.worldObj.theProfiler.startSection("push");
+        org.bukkit.craftbukkit.SpigotTimings.timerEntityAICollision.startTiming(); // Spigot
 
         if (!this.worldObj.isRemote)
         {
             this.func_85033_bc();
         }
 
+        org.bukkit.craftbukkit.SpigotTimings.timerEntityAICollision.stopTiming(); // Spigot
         this.worldObj.theProfiler.endSection();
         this.worldObj.theProfiler.startSection("looting");
 

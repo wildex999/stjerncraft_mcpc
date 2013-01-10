@@ -161,6 +161,7 @@ public class ChunkProviderServer implements IChunkProvider
 
         if (chunk == null)
         {
+            org.bukkit.craftbukkit.SpigotTimings.syncChunkLoadTimer.startTiming(); // Spigot
             chunk = this.safeLoadChunk(i, j);
             
             if (chunk == null)
@@ -212,6 +213,7 @@ public class ChunkProviderServer implements IChunkProvider
 
             // CraftBukkit end
             chunk.populateChunk(this, this, i, j);
+            org.bukkit.craftbukkit.SpigotTimings.syncChunkLoadTimer.stopTiming(); // Spigot
         }
 
         // CraftBukkit start - If we didn't need to load the chunk run the callback now
