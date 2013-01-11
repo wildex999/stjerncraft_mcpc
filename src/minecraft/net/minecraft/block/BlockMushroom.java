@@ -31,7 +31,7 @@ public class BlockMushroom extends BlockFlower
      */
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
-        if (par5Random.nextInt((int)(par1World.growthOdds * 100 / par1World.getWorld().mushroomGrowthModifier * 25)) == 0)    // Spigot
+        if (par5Random.nextInt(Math.max(1, (int) par1World.growthOdds / par1World.getWorld().mushroomGrowthModifier * 25)) == 0)   // Spigot
         {
             byte var6 = 4;
             int var7 = 5;

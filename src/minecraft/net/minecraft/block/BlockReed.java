@@ -41,7 +41,7 @@ public class BlockReed extends Block implements IPlantable
             {
                 int var7 = par1World.getBlockMetadata(par2, par3, par4);
 
-                if (var7 >= (byte) range(3, (par1World.growthOdds * 100 / par1World.getWorld().sugarGrowthModifier * 15 / 100F) + 0.5F, 15))   // Spigot
+                if (var7 >= (byte) range(3, (par1World.growthOdds / par1World.getWorld().sugarGrowthModifier * 15) + 0.5F, 15))   // Spigot
                 {
                     org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3 + 1, par4, this.blockID, 0); // CraftBukkit
                     par1World.setBlockMetadataWithNotify(par2, par3, par4, 0);

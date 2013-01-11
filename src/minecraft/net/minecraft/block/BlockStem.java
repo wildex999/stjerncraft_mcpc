@@ -49,7 +49,7 @@ public class BlockStem extends BlockFlower
         {
             float var6 = this.getGrowthModifier(par1World, par2, par3, par4);
 
-            if (par5Random.nextInt((int)((par1World.growthOdds * 100 / ((this.blockID == Block.pumpkinStem.blockID) ? par1World.getWorld().pumpkinGrowthModifier : par1World.getWorld().melonGrowthModifier) / 25.0F) / var6) + 1) == 0)    // Spigot
+            if (par5Random.nextInt((int)(par1World.growthOdds / (this.blockID == Block.pumpkinStem.blockID ? par1World.getWorld().pumpkinGrowthModifier : par1World.getWorld().melonGrowthModifier) * (25.0F / var6)) + 1) == 0)    // Spigot
             {
                 int var7 = par1World.getBlockMetadata(par2, par3, par4);
 

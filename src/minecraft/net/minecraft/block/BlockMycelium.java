@@ -78,18 +78,20 @@ public class BlockMycelium extends Block
             }
             else if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9)
             {
-                for (int var6 = 0; var6 < Math.max(4, Math.max(20, (int)(4 * 100F / par1World.growthOdds))); ++var6)    // Spigot
-                {
-                    int var7 = par2 + par5Random.nextInt(3) - 1;
-                    int var8 = par3 + par5Random.nextInt(5) - 3;
-                    int var9 = par4 + par5Random.nextInt(3) - 1;
-                    int var10 = par1World.getBlockId(var7, var8 + 1, var9);
+                int var6 = Math.min(4, Math.max(20, (int)(4 * 100F / par1World.growthOdds)));  // Spigot
 
-                    if (par1World.getBlockId(var7, var8, var9) == Block.dirt.blockID && par1World.getBlockLightValue(var7, var8 + 1, var9) >= 4 && par1World.getBlockLightOpacity(var7, var8 + 1, var9) <= 2)   // Forge
+                for (int var7 = 0; var7 < var6; ++var7)   // Spigot
+                {
+                    int var8 = par2 + par5Random.nextInt(3) - 1;
+                    int var9 = par3 + par5Random.nextInt(5) - 3;
+                    int var10 = par4 + par5Random.nextInt(3) - 1;
+                    int l1 = par1World.getBlockId(var8, var9 + 1, var10);
+
+                    if (par1World.getBlockId(var8, var9, var10) == Block.dirt.blockID && par1World.getBlockLightValue(var8, var9 + 1, var10) >= 4 && par1World.getBlockLightOpacity(var8, var9 + 1, var10) <= 2)   // Forge
                     {
                         // CraftBukkit start
                         org.bukkit.World bworld = par1World.getWorld();
-                        BlockState blockState = bworld.getBlockAt(var7, var8, var9).getState();
+                        BlockState blockState = bworld.getBlockAt(var8, var9, var10).getState();
                         blockState.setTypeId(this.blockID);
                         BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(par2, par3, par4), blockState);
                         par1World.getServer().getPluginManager().callEvent(event);
