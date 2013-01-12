@@ -114,6 +114,9 @@ public class CraftWorld implements World {
         sugarGrowthModifier = configuration.getInt("world-settings." + name + ".sugar-growth-modifier", sugarGrowthModifier);
         treeGrowthModifier = configuration.getInt("world-settings." + name + ".tree-growth-modifier", treeGrowthModifier);
         mushroomGrowthModifier = configuration.getInt("world-settings." + name + ".mushroom-growth-modifier", mushroomGrowthModifier);
+
+        viewDistance = Bukkit.getServer().getViewDistance();
+        viewDistance = configuration.getInt("world-settings." + name + ".view-distance", viewDistance);
     }
     // Spigot Start
     public int growthPerTick = 650;
@@ -122,6 +125,7 @@ public class CraftWorld implements World {
     public boolean randomLightingUpdates = false;
     public int mobSpawnRange = 4;
     public int aggregateTicks = 4;
+    public int viewDistance;
     //Crop growth rates:
     public int wheatGrowthModifier = 100;
     public int cactusGrowthModifier = 100;
