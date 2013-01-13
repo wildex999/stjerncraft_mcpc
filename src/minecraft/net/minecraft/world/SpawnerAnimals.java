@@ -141,7 +141,7 @@ public final class SpawnerAnimals
 
                 if (limit == 0)
                 {
-                    return 0;
+                    continue;
                 }
 
                 int mobcnt = 0;
