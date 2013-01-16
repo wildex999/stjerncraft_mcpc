@@ -1693,8 +1693,16 @@ public class NetServerHandler extends NetHandler
 
                 if (par1Packet102WindowClick.inventorySlot == 0 && top instanceof CraftingInventory)
                 {
-                    org.bukkit.inventory.Recipe recipe = ((CraftingInventory) top).getRecipe();
-
+                 // MCPC+ start - check if recipe conforms to the IRecipe interface otherwise leave recipe as null
+                    org.bukkit.inventory.Recipe recipe = null;
+                    try {
+                        recipe = ((CraftingInventory) top).getRecipe();
+                    }
+                    catch (AbstractMethodError e)
+                    {
+                        // do nothing
+                    }
+                    // MCPC+ end
                     if (recipe != null)
                     {
                         event = new CraftItemEvent(recipe, inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1);
