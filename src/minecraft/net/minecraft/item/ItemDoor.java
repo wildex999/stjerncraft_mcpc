@@ -1,10 +1,11 @@
 package net.minecraft.item;
 
-import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.packet.Packet53BlockChange;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
@@ -119,20 +120,28 @@ public class ItemDoor extends Item
             flag2 = true;
         }
 
-        CraftBlockState blockState = CraftBlockState.getBlockState(world, i, j, k); // CraftBukkit
         world.editingBlocks = true;
-        world.setBlockAndMetadataWithNotify(i, j, k, block.blockID, l);
 
         // CraftBukkit start
         if (entityhuman != null)
         {
-            org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockState, i, j, k);
-
-            if (event.isCancelled() || !event.canBuild())
+            if (!ItemBlock.processBlockPlace(world, entityhuman, null, i, j, k, block.blockID, l))
             {
-                event.getBlockPlaced().setTypeIdAndData(blockState.getTypeId(), blockState.getRawData(), false);
+                ((EntityPlayerMP) entityhuman).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j + 1, k, world));
                 return false;
             }
+
+            if (world.getBlockId(i, j, k) != block.blockID)
+            {
+                ((EntityPlayerMP) entityhuman).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j + 1, k, world));
+                return true;
+            }
+
+            world.editingBlocks = true;
+        }
+        else
+        {
+            world.setBlockAndMetadataWithNotify(i, j, k, block.blockID, l);
         }
 
         // CraftBukkit end
