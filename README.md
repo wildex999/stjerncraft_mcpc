@@ -9,14 +9,15 @@ Compilation
 We use maven to handle our dependencies.
 
 * Install [Maven 3](http://maven.apache.org/download.html)
-* Install Apache Ant
-* Install mcpc's guava 10 package located in mcp/lib:
-mvn install:install-file -Dfile=mcpc-guava-10.0.jar -DgroupId=mcpc.libs -DartifactId=guava -Dversion=10.0 -Dpackaging=jar
-* Copy vanilla 1.4.7 minecraft_server.jar to ./mcp/jars
-* Copy vanilla 1.4.7 minecraft client bin folder from .minecraft into ./mcp/jars (Required since MCPC-Plus contains client code)
+* Install [Apache Ant](http://ant.apache.org/bindownload.cgi)
+* Install [MCPC Guava 10](http://www.mediafire.com/download.php?1bcr7suu6sqo9cp)
+* Run the following command : mvn install:install-file -Dfile=mcpc-guava-10.0.jar -DgroupId=mcpc.libs -DartifactId=guava -Dversion=10.0 -Dpackaging=jar
+* Install [MCP 726](http://mcp.ocean-labs.de/index.php/MCP_Releases) into folder named "mcp"
+* Install [Forge 497](http://adf.ly/673885/http://files.minecraftforge.net/minecraftforge/minecraftforge-src-1.4.7-6.6.0.497.zip) into mcp folder
+* Run forge's install command to setup project.
 * If you get any compile errors with MCP, make sure the required libs are located in mcp/lib.
 * Check out this repo and: `mvn clean package`
-* After jar is created, delete com/google folder and replace with guava 12's com/google folder. You can find the guava 12 lib in ./mcp/lib
+* After jar is created, delete com/google folder and replace with guava 12's com/google folder. Note: You can find the guava 12 lib in ./lib folder of your client.
 
 Coding and Pull Request Conventions
 -----------
@@ -38,10 +39,10 @@ If you make changes or add net.minecraft.server classes it is mandatory to:
 * Make a separate commit adding the new net.minecraft.server classes (commit message: "Added x for diff visibility" or so).
 * Then make further commits with your changes.
 * Mark your changes with:
-    * 1 line; add a trailing: `// MCPC [- Optional reason]`
+    * 1 line; add a trailing: `// MCPC+ [- Optional reason]`
     * 2+ lines; add
-        * Before: `// MCPC start [- Optional comment]`
-        * After: `// MCPC end`
+        * Before: `// MCPC+ start [- Optional comment]`
+        * After: `// MCPC+ end`
 * Keep the diffs to a minimum (*really* important)
 
 Tips to get your pull request accepted

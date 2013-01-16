@@ -672,7 +672,14 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         super.updateFallState(par1, par3);
     }
 
-    public int incrementWindowID()   // CraftBukkit - private void -> public int
+    // MCPC+ add vanilla method back with correct signature. Fixes issue #3
+    public void incrementWindowID()
+    {
+        this.currentWindowId = this.currentWindowId % 100 + 1;
+    }
+
+    // MCPC+ CB-only method, used in CraftHumanEntity
+    public int nextContainerCounter()   // CraftBukkit - private void -> public int
     {
         this.currentWindowId = this.currentWindowId % 100 + 1;
         return this.currentWindowId; // CraftBukkit

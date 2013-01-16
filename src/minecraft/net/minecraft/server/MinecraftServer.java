@@ -1659,7 +1659,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     @SideOnly(Side.SERVER)
     public static void fmlReentry(ArgsWrapper var1)   // CraftBukkit - replaces main(String[] astring)
     {
-        System.out.println("ENTERED FMLREENTRY!!!!!!!!");
+
         logger.severe(var1.args.getClass().getName());
         OptionSet options = org.bukkit.craftbukkit.Main.loadOptions(var1.args);
 

@@ -222,7 +222,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     private void openCustomInventory(Inventory inventory, net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/ player, int windowType) {
         if (player.playerNetServerHandler/*was:playerConnection*/ == null) return;
-        net.minecraft.inventory.Container/*was:Container*/ container = new CraftContainer(inventory, this, player.incrementWindowID());
+        net.minecraft.inventory.Container/*was:Container*/ container = new CraftContainer(inventory, this, player.nextContainerCounter());
 
         container = CraftEventFactory.callInventoryOpenEvent(player, container);
         if(container == null) return;
@@ -281,7 +281,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         if (inventory instanceof CraftInventoryView) {
             container = ((CraftInventoryView) inventory).getHandle();
         } else {
-            container = new CraftContainer(inventory, player.incrementWindowID());
+            container = new CraftContainer(inventory, player.nextContainerCounter());
         }
 
         // Trigger an INVENTORY_OPEN event
