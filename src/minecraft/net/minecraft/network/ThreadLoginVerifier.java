@@ -22,6 +22,13 @@ class ThreadLoginVerifier extends Thread
     // CraftBukkit start
     CraftServer server;
 
+    // MCPC+ start - vanilla compatibility
+    ThreadLoginVerifier(NetLoginHandler pendingconnection)
+    {
+        this(pendingconnection, (CraftServer) org.bukkit.Bukkit.getServer());
+    }
+    // MCPC+ end
+
     ThreadLoginVerifier(NetLoginHandler pendingconnection, CraftServer server)
     {
         this.server = server;
