@@ -1,10 +1,9 @@
 How to remap plugins to support MCPC-Plus
 =========================================
 
-REQUIRES: agaricus's srgtool-2.0 located in ./tools
 This tool remaps all import NMS calls to import obfs. It also remaps com.google -> guava10.com.google to fix compatiblity issue between forge/bukkit.
 
-* Using the srgtool-2.0.jar located in ./plugins
+* Download the latest srgtool from https://bitbucket.org/agaricusb/srgtools/downloads
 * Download the required srg @ https://github.com/agaricusb/MinecraftRemapping/blob/master/1.4.7/vcb2obf.srg
 * java -jar srgtool-2.0.jar apply --srg vcb2obf.srg --in plugin.jar --inheritance plugin.jar --out plugin-MCPC.jar
 
