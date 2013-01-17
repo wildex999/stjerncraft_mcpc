@@ -238,9 +238,10 @@ public final class SpawnerAnimals
                                                             if (var29.getCanSpawnHere())
                                                             {
                                                                 ++var14;
-                                                                // CraftBukkit - added a reason for spawning this creature
-                                                                par0WorldServer.addEntity(var29, SpawnReason.NATURAL);
+                                                                // CraftBukkit start - added a reason for spawning this creature, moved creatureSpecificInit(entityliving, world...) up
                                                                 creatureSpecificInit(var29, par0WorldServer, var22, var23, var24);
+                                                                par0WorldServer.addEntity(var29, SpawnReason.NATURAL);
+                                                                
                                                                 // Spigot start
                                                                 var37--;
 
@@ -308,11 +309,6 @@ public final class SpawnerAnimals
      */
     private static void creatureSpecificInit(EntityLiving par0EntityLiving, World par1World, float par2, float par3, float par4)
     {
-        if (par0EntityLiving.isDead)
-        {
-            return; // CraftBukkit
-        }
-
         if (ForgeEventFactory.doSpecialSpawn(par0EntityLiving, par1World, par2, par3, par4))
         {
             return;
@@ -365,9 +361,10 @@ public final class SpawnerAnimals
                             }
 
                             var21.setLocationAndAngles((double)var18, (double)var19, (double)var20, par6Random.nextFloat() * 360.0F, 0.0F);
-                            // CraftBukkit - added a reason for spawning this creature
-                            par0World.addEntity(var21, SpawnReason.CHUNK_GEN);
+                            // CraftBukkit start - added a reason for spawning this creature, moved creatureSpecificInit(entity, world...) up
                             creatureSpecificInit(var21, par0World, var18, var19, var20);
+                            par0World.addEntity(var21, SpawnReason.CHUNK_GEN);
+                            // CraftBukkit end
                             var15 = true;
                         }
 
