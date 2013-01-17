@@ -68,7 +68,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         System.setOut(new PrintStream(new LoggerOutputStream(logger, Level.INFO), true));
         System.setErr(new PrintStream(new LoggerOutputStream(logger, Level.SEVERE), true));
         // CraftBukkit end
-        logger.info("Starting minecraft server version 1.4.6");
+        logger.info("Starting minecraft server version 1.4.7");
 
         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
         {

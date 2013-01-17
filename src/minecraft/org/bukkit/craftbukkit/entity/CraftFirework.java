@@ -23,7 +23,7 @@ public class CraftFirework extends CraftEntity implements Firework {
 
         if (item == null) {
             item = new net.minecraft.item.ItemStack/*was:ItemStack*/(net.minecraft.item.Item/*was:Item*/.field_92052_bU/*was:FIREWORKS*/);
-            getHandle().getDataWatcher/*was:getDataWatcher*/().addObject/*was:watch*/(FIREWORK_ITEM_INDEX, item);
+            getHandle().getDataWatcher/*was:getDataWatcher*/().updateObject/*was:watch*/(FIREWORK_ITEM_INDEX, item);
         }
 
         this.item = CraftItemStack.asCraftMirror(item);
