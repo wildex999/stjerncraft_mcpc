@@ -9,7 +9,6 @@ Compilation
 We use maven to handle our dependencies.
 
 * Install [Maven 3](http://maven.apache.org/download.html)
-* Install [Apache Ant](http://ant.apache.org/bindownload.cgi)
 * Install [MCPC Guava 10](http://www.mediafire.com/download.php?1bcr7suu6sqo9cp)
 * Run the following command : mvn install:install-file -Dfile=mcpc-guava-10.0.jar -DgroupId=mcpc.libs -DartifactId=guava -Dversion=10.0 -Dpackaging=jar
 * Install [MCP 726](http://mcp.ocean-labs.de/index.php/MCP_Releases) into folder named "mcp"

@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 <modelVersion>4.0.0</modelVersion>
 <groupId>mcpc</groupId>
-<artifactId>mcpc</artifactId>
+<artifactId>mcpc-plus</artifactId>
 <packaging>jar</packaging>
 <version>1.4.7-R0.4-SNAPSHOT</version>
 <name>mcpc-plus</name>
@@ -103,7 +103,7 @@
         <version>1.47</version>
         <type>jar</type>
     </dependency>
-    <!-- client -->
+    <!-- Client dependencies -->
     <dependency>
         <groupId>org.lwjgl.lwjgl</groupId>
         <artifactId>lwjgl</artifactId>
@@ -119,8 +119,7 @@
         <artifactId>sound</artifactId>
         <version>1.1</version>
     </dependency>
-    <!--  CUSTOM LIBS, IMPORTANT: Install mcpc's guava 10 jar into your m2 repo 
-         mvn install:install-file -Dfile=mcpc-guava-10.0.jar -DgroupId=mcpc.libs -DartifactId=guava -Dversion=10.0 -Dpackaging=jar -->
+    <!--  CUSTOM LIBS, IMPORTANT: Install mcpc's guava 10 jar into your m2 repo: mvn install:install-file -Dfile=mcpc-guava-10.0.jar -DgroupId=mcpc.libs -DartifactId=guava -Dversion=10.0 -Dpackaging=jar -->
     <dependency>
         <groupId>mcpc.libs</groupId>
         <artifactId>guava</artifactId>
@@ -129,7 +128,6 @@
     </dependency>
 </dependencies>
 <!-- builds a jar for extracting into minecraft_server.jar -->
-<!-- TODO: reobfuscate -->
 <build>
     <!-- Replaces standard src/main/resources directory - for including *_at.cfg -->
     <resources>
@@ -146,35 +144,80 @@
     <sourceDirectory>${basedir}/src/minecraft/</sourceDirectory>
     <plugins>
         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
+            <groupId>com.github.goldin</groupId>
+            <artifactId>copy-maven-plugin</artifactId>
+            <version>0.2.5</version>
             <executions>
+                <!-- Copy source to mcp -->
                 <execution>
-                    <id>ant-magic</id>
+                    <id>copy-source</id>
                     <phase>prepare-package</phase>
                     <goals>
-                        <goal>run</goal>
+                        <goal>copy</goal>
                     </goals>
                     <configuration>
-                        <tasks>
-                            <property name="mcp.dir" value="${basedir}/mcp"/>
-                            <property name="build.dir" value="${mcp.dir}/build"/>
-                            <property name="dist.dir" value="${basedir}/dist"/>
-                            <ant antfile="${basedir}/build.xml" target="init"/>
-                            <ant antfile="${basedir}/build.xml" target="recompile"/>
-                            <ant antfile="${basedir}/build.xml" target="reobfuscate"/>
-                        </tasks>
+                        <resource>
+                            <directory>${basedir}/src/minecraft</directory>
+                            <targetPath>${basedir}/mcp/src/minecraft</targetPath>
+                            <preservePath>true</preservePath>
+                        </resource>
+                    </configuration>
+                </execution>
+                <!-- Copy reobfuscated classes -->
+                <execution>
+                    <id>copy-reobfuscated</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>copy</goal>
+                    </goals>
+                    <configuration>
+                        <resource>
+                            <directory>${basedir}/mcp/reobf/minecraft</directory>
+                            <targetPath>${basedir}/target/classes</targetPath>
+                            <preservePath>true</preservePath>
+                        </resource>
                     </configuration>
                 </execution>
             </executions>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.ant</groupId>
-                    <artifactId>ant</artifactId>
-                    <version>1.7.1</version>
-                </dependency>
-            </dependencies>
         </plugin>
+        <!-- Reobfuscate MCPC+ -->
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+                <execution>
+                    <id>recompile-mcp</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <workingDirectory>${basedir}/mcp/</workingDirectory>
+                        <executable>${mcpc.python}</executable>
+                        <arguments>
+                            <argument>runtime/recompile.py</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>reobfuscate-mcp</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <workingDirectory>${basedir}/mcp/</workingDirectory>
+                        <executable>${mcpc.python}</executable>
+                        <arguments>
+                            <argument>runtime/reobfuscate.py</argument>
+                            <argument>-a</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <!-- Packaging MCPC+ -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
@@ -194,6 +237,7 @@
                 </archive>
             </configuration>
         </plugin>
+        <!-- Shading MCPC+ -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
@@ -207,24 +251,35 @@
                 </execution>
             </executions>
             <configuration>
+                <artifactSet>
+                    <!-- Downloaded by FML -->
+                    <excludes>
+                        <exclude>org.ow2.asm:asm-all</exclude>
+                        <exclude>com.google.guava:guava</exclude>
+                        <exclude>net.sourceforge.argo:argo</exclude>
+                    </excludes>
+                </artifactSet>
                 <filters>
-                    <filter>
-                        <artifact>org.bouncycastle:bcprov-jdk15on</artifact>
-                        <excludes>
-                            <exclude>META-INF/*.SF</exclude>
-                            <exclude>META-INF/*.DSA</exclude>
-                        </excludes>
-                    </filter>
+                    <!-- Exclude Guava 10 from Bukkit due to Guava 12 conflict -->
                     <filter>
                         <artifact>org.bukkit:bukkit</artifact>
                         <excludes>
-                            <exclude>com/*</exclude>
+                            <exclude>com/google/*</exclude>
                         </excludes>
                     </filter>
                     <filter>
                         <artifact>net.java.jutils:jutils</artifact>
                         <excludes>
                             <exclude>net/java/*</exclude>
+                        </excludes>
+                    </filter>
+                    <!-- Exclude signed manifests -->
+                    <filter>
+                        <artifact>*:*</artifact>
+                        <excludes>
+                            <exclude>META-INF/*.SF</exclude>
+                            <exclude>META-INF/*.DSA</exclude>
+                            <exclude>META-INF/*.RSA</exclude>
                         </excludes>
                     </filter>
                 </filters>
@@ -245,6 +300,7 @@
                 <finalName>mcpc-plus-${project.version}</finalName>
             </configuration>
         </plugin>
+        <!-- Disable Compiler as compiling is handled by MCP -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
@@ -258,16 +314,55 @@
                     <id>default-compile</id>
                     <phase>compile</phase>
                     <configuration>
-                        <!--  <excludes>
-                        <exclude>*</exclude>
-                    </excludes> -->
-                </configuration>
-                <goals>
-                    <goal>compile</goal>
-                </goals>
-            </execution>
-        </executions>
-    </plugin>
-</plugins>
+                        <excludes>
+                            <exclude>*/**</exclude>
+                        </excludes>
+                    </configuration>
+                    <goals>
+                        <goal>compile</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
 </build>
+<!-- Use the right python for every operating system -->
+<profiles>
+    <!-- Windows profile -->
+    <profile>
+        <id>mcpc-windows-profile</id>
+        <activation>
+            <os>
+                <family>windows</family>
+            </os>
+        </activation>
+        <properties>
+            <mcpc.python>${basedir}/mcp/runtime/bin/python/python_mcp.exe</mcpc.python>
+        </properties>
+    </profile>
+    <!-- Unix profile -->
+    <profile>
+        <id>mcpc-unix-profile</id>
+        <activation>
+            <os>
+                <family>unix</family>
+            </os>
+        </activation>
+        <properties>
+            <mcpc.python>python</mcpc.python>
+        </properties>
+    </profile>
+    <!-- Mac profile -->
+    <profile>
+        <id>mcpc-mac-profile</id>
+        <activation>
+            <os>
+                <family>mac</family>
+            </os>
+        </activation>
+        <properties>
+            <mcpc.python>python</mcpc.python>
+        </properties>
+    </profile>
+</profiles>
 </project>
