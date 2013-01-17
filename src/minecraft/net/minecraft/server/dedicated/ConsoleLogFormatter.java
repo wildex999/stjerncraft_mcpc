@@ -21,6 +21,13 @@ final class ConsoleLogFormatter extends Formatter
     {
         this.strip = strip;
     }
+
+    // MCPC+ start - vanilla compatibility
+    ConsoleLogFormatter()
+    {
+        this(false);
+    }
+    // MCPC+ end
     // CraftBukkit end
 
     public String format(LogRecord par1LogRecord)
