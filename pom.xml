@@ -4,7 +4,7 @@
 <groupId>mcpc</groupId>
 <artifactId>mcpc-plus</artifactId>
 <packaging>jar</packaging>
-<version>1.4.7-R0.1-SNAPSHOT</version>
+<version>1.4.7-R0.1</version>
 <name>mcpc-plus</name>
 <url>http://www.mcportcentral.co.za/</url>
 <properties>
