@@ -64,7 +64,7 @@ public class ItemBed extends Item
                 {
                     // CraftBukkit start
                     //world.setTypeIdAndData(par4, par5, par6, var14.id, i1);
-                    if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, var14.blockID, par7))
+                    if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, var14.blockID, i1))
                     {
                         return false;
                     }
