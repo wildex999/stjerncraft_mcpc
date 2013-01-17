@@ -115,13 +115,14 @@ public class ItemBlock extends Item
     // CraftBukkit start - add method to process block placement
     static boolean processBlockPlace(final World world, final EntityPlayer entityhuman, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data)
     {
+        org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
         world.editingBlocks = true;
         world.setBlockAndMetadataWithNotify(x, y, z, id, data);
-        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, entityhuman, org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z), x, y, z);
+        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockstate, x, y, z);
 
         if (event.isCancelled() || !event.canBuild())
         {
-            event.getBlockReplacedState().update(true);
+            blockstate.update(true);
             world.editingBlocks = false;
             return false;
         }
