@@ -1,7 +1,15 @@
 package org.bukkit.plugin.java;
 
+import com.google.common.io.ByteStreams;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.commons.RemappingClassAdapter;
+
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSigner;
+import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +50,38 @@ public class PluginClassLoader extends URLClassLoader {
             }
 
             if (result == null) {
-                result = super.findClass(name);
+                // MCPC+ start - custom loader
+                //result = super.findClass(name);
+
+                try {
+                    // Load the resource to the name
+                    String path = name.replace('.', '/').concat(".class");
+                    URL url = this.findResource(path);
+                    if (url != null) {
+                        InputStream stream = url.openStream();
+                        if (stream != null) {
+                            byte[] bytecode = ByteStreams.toByteArray(stream);
+
+                            // Remap the classes
+                            ClassReader classReader = new ClassReader(bytecode);
+                            ClassWriter classWriter = new ClassWriter(classReader, 0);
+                            classReader.accept(new RemappingClassAdapter(classWriter, new PluginClassRemapper()), ClassReader.EXPAND_FRAMES);
+                            byte[] remappedBytecode = classWriter.toByteArray();
+
+                            // Define (create) the class using the modified byte code
+                            // The top-child class loader is used for this to prevent access violations
+                            CodeSource codeSource = new CodeSource(url, new CodeSigner[0]);
+                            result = this.defineClass(name, remappedBytecode, 0, remappedBytecode.length, codeSource);
+                            if (result != null) {
+                                // Resolve it - sets the class loader of the class
+                                this.resolveClass(result);
+                            }
+                        }
+                    }
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+                // MCPC+ end
 
                 if (result != null) {
                     loader.setClass(name, result);
