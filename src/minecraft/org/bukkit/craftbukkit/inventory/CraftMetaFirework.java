@@ -15,7 +15,6 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.ItemMetaKey.Specific;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.ItemMetaKey.Specific.To;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
-import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta.Deserializers;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 import guava10.com.google.common.collect.ImmutableList;
@@ -310,11 +309,6 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
         }
 
         return builder;
-    }
-
-    @Override
-    Deserializers deserializer() {
-        return Deserializers.FIREWORK;
     }
 
     @Override

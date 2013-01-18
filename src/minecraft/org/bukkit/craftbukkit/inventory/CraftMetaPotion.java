@@ -250,9 +250,4 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
 
         return builder;
     }
-
-    @Override
-    SerializableMeta.Deserializers deserializer() {
-        return SerializableMeta.Deserializers.POTION;
-    }
 }

@@ -125,9 +125,4 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
         }
         return builder;
     }
-
-    @Override
-    SerializableMeta.Deserializers deserializer() {
-        return SerializableMeta.Deserializers.SKULL;
-    }
 }

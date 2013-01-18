@@ -256,9 +256,4 @@ class CraftMetaBook extends CraftMetaItem implements BookMeta {
 
         return builder;
     }
-
-    @Override
-    SerializableMeta.Deserializers deserializer() {
-        return SerializableMeta.Deserializers.BOOK;
-    }
 }
