@@ -9,6 +9,9 @@
 <url>http://www.mcportcentral.co.za/</url>
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <api.version>unknown</api.version>
+    <minecraft.version>1.4.6</minecraft.version>
+    <minecraft_version>1_4_6</minecraft_version>
 </properties>
 <pluginRepositories>
     <pluginRepository>
@@ -251,6 +254,36 @@
                 </execution>
             </executions>
             <configuration>
+                <relocations>
+                    <!-- MCPC+ - CB relocations, except for: org.bouncycastle, net.minecraft.server - completely restructured in MCP; expect at unrelocated location for reobfuscation -->
+                    <relocation>
+                        <pattern>joptsimple</pattern>
+                        <shadedPattern>org.bukkit.craftbukkit.libs.joptsimple</shadedPattern>
+                    </relocation>
+                    <relocation>
+                        <pattern>jline</pattern>
+                        <shadedPattern>org.bukkit.craftbukkit.libs.jline</shadedPattern>
+                    </relocation>
+                    <relocation>
+                        <pattern>org.ibex</pattern>
+                        <shadedPattern>org.bukkit.craftbukkit.libs.org.ibex</shadedPattern>
+                    </relocation>
+                    <relocation>
+                        <pattern>org.gjt</pattern>
+                        <shadedPattern>org.bukkit.craftbukkit.libs.org.gjt</shadedPattern>
+                    </relocation>
+                    <relocation>
+                        <pattern>com.google.gson</pattern>
+                        <shadedPattern>org.bukkit.craftbukkit.libs.com.google.gson</shadedPattern>
+                    </relocation>
+                    <relocation>
+                        <pattern>org.bukkit.craftbukkit</pattern>
+                        <shadedPattern>org.bukkit.craftbukkit.v${minecraft_version}</shadedPattern>
+                        <excludes>
+                            <exclude>org.bukkit.craftbukkit.Main*</exclude>
+                        </excludes>
+                    </relocation>
+                </relocations>
                 <artifactSet>
                     <!-- Downloaded by FML -->
                     <excludes>
