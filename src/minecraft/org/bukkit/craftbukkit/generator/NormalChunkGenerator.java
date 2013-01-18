@@ -6,6 +6,7 @@ import java.util.Random;
 
 
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.world.chunk.IChunkProvider; // MCPC+
 
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.generator.BlockPopulator;
@@ -83,4 +84,11 @@ public class NormalChunkGenerator extends InternalChunkGenerator {
         // TODO Auto-generated method stub
         return null;
     }
+
+    // MCPC+ start - return vanilla compatible IChunkProvider for forge
+    public IChunkProvider getForgeChunkProvider()
+    {
+        return this.provider;
+    }
+    // MCPC+ end
 }

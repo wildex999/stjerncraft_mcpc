@@ -23,6 +23,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
+// MCPC+ start
+import net.minecraft.world.gen.ChunkProviderEnd;
+import net.minecraft.world.gen.ChunkProviderFlat;
+import net.minecraft.world.gen.ChunkProviderHell;
+
+import org.bukkit.craftbukkit.generator.NormalChunkGenerator;
+// MCPC+ end
 
 import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
@@ -87,7 +94,14 @@ public class GameRegistry
 
         for (IWorldGenerator generator : worldGenerators)
         {
-            generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
+            // MCPC+ start - check if chunk generator is an instance of bukkit's NormalChunkGenerator and if so, grab the forge compatible instance
+            if (chunkGenerator instanceof NormalChunkGenerator)
+            {
+                NormalChunkGenerator bukkitGenerator = (NormalChunkGenerator)chunkGenerator;
+                generator.generate(fmlRandom, chunkX, chunkZ, world, bukkitGenerator.getForgeChunkProvider(), chunkProvider);
+            }
+            else generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
+            // MCPC+ end
         }
     }
 
