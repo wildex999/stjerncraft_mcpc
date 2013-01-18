@@ -47,6 +47,7 @@ public class Packet51MapChunk extends Packet
 
     /** A temporary storage for the compressed chunk data byte array. */
     private static byte[] temp = new byte[196864];
+    private static final byte[] unloadSequence = new byte[] {0x78, (byte) 0x9C, 0x63, 0x64, 0x1C, (byte) 0xD9, 0x00, 0x00, (byte) 0x81, (byte) 0x80, 0x01, 0x01}; // Spigot
 
     private Semaphore deflateGate;
 
@@ -54,6 +55,19 @@ public class Packet51MapChunk extends Packet
     {
         this.isChunkDataPacket = true;
     }
+
+    // Spigot start - add constructor for chunk removals for the client
+    public Packet51MapChunk(int x, int z)
+    {
+        this.xCh = x;
+        this.zCh = z;
+        this.includeInitialize = true;
+        this.yChMin = 0;
+        this.yChMax = 0;
+        this.tempLength = unloadSequence.length;
+        this.chunkData = unloadSequence;
+    }
+    // Spigot end
 
     public Packet51MapChunk(Chunk par1Chunk, boolean par2, int par3)
     {
