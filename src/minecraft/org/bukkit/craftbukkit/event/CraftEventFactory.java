@@ -45,6 +45,7 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.meta.BookMeta;
 // MCPC+ start
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -679,5 +680,27 @@ public class CraftEventFactory {
         InventoryCloseEvent event = new InventoryCloseEvent(human.openContainer.getBukkitView());
         if (human.openContainer.getBukkitView() != null) human.worldObj.getServer().getPluginManager().callEvent(event); // MCPC+ - allow vanilla mods to bypass
         human.openContainer.transferTo(human.inventoryContainer, human.getBukkitEntity());
+    }
+
+    public static void handleEditBookEvent(net.minecraft.entity.player.EntityPlayerMP player, net.minecraft.item.ItemStack newBookItem) {
+        int itemInHandIndex = player.inventory.currentItem;
+
+        PlayerEditBookEvent editBookEvent = new PlayerEditBookEvent(player.getBukkitEntity(), player.inventory.currentItem, (BookMeta) CraftItemStack.getItemMeta(player.inventory.getCurrentItem()), (BookMeta) CraftItemStack.getItemMeta(newBookItem), newBookItem.itemID == net.minecraft.item.Item.writtenBook.itemID);
+        player.worldObj.getServer().getPluginManager().callEvent(editBookEvent);
+        net.minecraft.item.ItemStack itemInHand = player.inventory.getStackInSlot(itemInHandIndex);
+
+        // If they've got the same item in their hand, it'll need to be updated.
+        if (itemInHand.itemID == net.minecraft.item.Item.writableBook.itemID) {
+            if (!editBookEvent.isCancelled()) {
+                CraftItemStack.setItemMeta(itemInHand, editBookEvent.getNewBookMeta());
+                if (editBookEvent.isSigning()) {
+                    itemInHand.itemID = net.minecraft.item.Item.writtenBook.itemID;
+                }
+            }
+
+            // Client will have updated its idea of the book item; we need to overwrite that
+            net.minecraft.inventory.Slot slot = player.openContainer.getSlotFromInventory((net.minecraft.inventory.IInventory) player.inventory, itemInHandIndex);
+            player.playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet103SetSlot(player.openContainer.windowId, slot.slotNumber, itemInHand));
+        }
     }
 }

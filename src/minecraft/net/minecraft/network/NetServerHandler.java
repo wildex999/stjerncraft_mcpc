@@ -2426,12 +2426,13 @@ public class NetServerHandler extends NetHandler
 
                 if (itemstack != null && itemstack.itemID == Item.writableBook.itemID && itemstack.itemID == itemstack1.itemID)
                 {
-                    itemstack1.setTagInfo("pages", (NBTBase) itemstack.getTagCompound().getTagList("pages"));
+                    CraftEventFactory.handleEditBookEvent(playerEntity, itemstack); // CraftBukkit
                 }
-            }
-            catch (Exception exception)
-            {
+
                 // CraftBukkit start
+            }
+            catch (Throwable exception)
+            {
                 this.mcServer.getLogAgent().logWarningException(this.playerEntity.username + " sent invalid MC|BEdit data", exception);
                 this.kickPlayerFromServer("Invalid book data!");
                 // CraftBukkit end
@@ -2453,15 +2454,13 @@ public class NetServerHandler extends NetHandler
 
                 if (itemstack != null && itemstack.itemID == Item.writtenBook.itemID && itemstack1.itemID == Item.writableBook.itemID)
                 {
-                    itemstack1.setTagInfo("author", (NBTBase)(new NBTTagString("author", this.playerEntity.username)));
-                    itemstack1.setTagInfo("title", (NBTBase)(new NBTTagString("title", itemstack.getTagCompound().getString("title"))));
-                    itemstack1.setTagInfo("pages", (NBTBase) itemstack.getTagCompound().getTagList("pages"));
-                    itemstack1.itemID = Item.writtenBook.itemID;
+                    CraftEventFactory.handleEditBookEvent(playerEntity, itemstack); // CraftBukkit
                 }
-            }
-            catch (Exception exception1)
-            {
+
                 // CraftBukkit start
+            }
+            catch (Throwable exception1)
+            {
                 this.mcServer.getLogAgent().logWarningException(this.playerEntity.username + " sent invalid MC|BSign data", exception1);
                 this.kickPlayerFromServer("Invalid book data!");
                 // CraftBukkit end
