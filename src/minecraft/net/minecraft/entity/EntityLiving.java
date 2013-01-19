@@ -2096,6 +2096,15 @@ public abstract class EntityLiving extends Entity
 
     protected void func_85033_bc()
     {
+        // Spigot start
+        boolean skip = false;
+
+        if (!(this instanceof EntityPlayerMP) && this.ticksExisted % 2 != 0)
+        {
+            skip = true;
+        }
+
+        // Spigot end
         List var1 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
 
         if (var1 != null && !var1.isEmpty())
@@ -2103,6 +2112,11 @@ public abstract class EntityLiving extends Entity
             for (int var2 = 0; var2 < var1.size(); ++var2)
             {
                 Entity var3 = (Entity)var1.get(var2);
+
+                if (!(var3 instanceof EntityLiving) && skip)
+                {
+                    continue;    // Spigot
+                }
 
                 if (var3.canBePushed())
                 {
