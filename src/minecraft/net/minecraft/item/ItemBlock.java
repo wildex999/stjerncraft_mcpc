@@ -37,13 +37,13 @@ public class ItemBlock extends Item
      */
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
-        int var14 = par3World.getBlockId(par4, par5, par6);
+        int var11 = par3World.getBlockId(par4, par5, par6);
 
-        if (var14 == Block.snow.blockID)
+        if (var11 == Block.snow.blockID)
         {
             par7 = 1;
         }
-        else if (var14 != Block.vine.blockID && var14 != Block.tallGrass.blockID && var14 != Block.deadBush.blockID && (Block.blocksList[var14] == null || !Block.blocksList[var14].isBlockReplaceable(par3World, par4, par5, par6)))     // Forge
+        else if (var11 != Block.vine.blockID && var11 != Block.tallGrass.blockID && var11 != Block.deadBush.blockID && (Block.blocksList[var11] == null || !Block.blocksList[var11].isBlockReplaceable(par3World, par4, par5, par6)))     // Forge
         {
             if (par7 == 0)
             {
@@ -90,9 +90,9 @@ public class ItemBlock extends Item
         }
         else if (par3World.canPlaceEntityOnSide(this.blockID, par4, par5, par6, false, par7, par2EntityPlayer))
         {
-            Block block = Block.blocksList[id];
-            int j1 = this.getMetadata(par1ItemStack.getItemDamage());
-            int k1 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, j1);
+            Block var12 = Block.blocksList[this.blockID];
+            int var13 = this.getMetadata(par1ItemStack.getItemDamage());
+            int var14 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
             // CraftBukkit start - redirect to common function handler
             /*
             if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, data))  // Forge
@@ -103,7 +103,7 @@ public class ItemBlock extends Item
 
             return true;
             */
-            return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, k1);
+            return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, var14);
             // CraftBukkit end
         }
         else
