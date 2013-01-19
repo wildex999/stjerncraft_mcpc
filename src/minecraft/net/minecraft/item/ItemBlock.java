@@ -236,6 +236,10 @@ public class ItemBlock extends Item
      */
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
     {
+        // MCPC+ start - delegate Forge's placeBlockAt to CB's processBlockPlace for sending Bukkit events
+        return processBlockPlace(world, player, stack, x, y, z, localId, metadata);
+
+        /*
         if (world.setBlockAndMetadataWithNotify(x, y, z, localId, metadata))
         {
             if (world.getBlockId(x, y, z) == localId)
@@ -248,5 +252,6 @@ public class ItemBlock extends Item
         }
 
         return false;
+        // MCPC+ end */
     }
 }
