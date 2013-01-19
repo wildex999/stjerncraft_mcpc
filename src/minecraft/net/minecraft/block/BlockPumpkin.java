@@ -67,11 +67,6 @@ public class BlockPumpkin extends BlockDirectional
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
         super.onBlockAdded(par1World, par2, par3, par4);
-
-        if (par1World.editingBlocks)
-        {
-            return;    // CraftBukkit
-        }
         if (par1World.getBlockId(par2, par3 - 1, par4) == Block.blockSnow.blockID && par1World.getBlockId(par2, par3 - 2, par4) == Block.blockSnow.blockID)
         {
             if (!par1World.isRemote)
