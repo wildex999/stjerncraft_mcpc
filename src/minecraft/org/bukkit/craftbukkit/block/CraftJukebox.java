@@ -19,14 +19,20 @@ public class CraftJukebox extends CraftBlockState implements Jukebox {
     }
 
     public Material getPlaying() {
-        return Material.getMaterial(jukebox.record/*was:record*/.itemID/*was:id*/);
+        net.minecraft.item.ItemStack/*was:ItemStack*/ record = jukebox.record/*was:record*/;
+        if (record == null) {
+            return Material.AIR;
+        }
+        return Material.getMaterial(record.itemID/*was:id*/);
     }
 
     public void setPlaying(Material record) {
-        if (record == null) {
+        if (record == null || net.minecraft.item.Item/*was:Item*/.itemsList/*was:byId*/[record.getId()] == null) {
             record = Material.AIR;
+            jukebox.record/*was:record*/ = null;
+        } else {
+            jukebox.record/*was:record*/ = new net.minecraft.item.ItemStack/*was:ItemStack*/(net.minecraft.item.Item/*was:Item*/.itemsList/*was:byId*/[record.getId()], 1);
         }
-        jukebox.record/*was:record*/ = new net.minecraft.item.ItemStack/*was:ItemStack*/(net.minecraft.item.Item/*was:Item*/.itemsList/*was:byId*/[record.getId()], 1);
         jukebox.onInventoryChanged/*was:update*/();
         if (record == Material.AIR) {
             world.getHandle().setBlockMetadataWithNotify/*was:setData*/(getX(), getY(), getZ(), 0);
