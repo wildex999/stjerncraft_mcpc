@@ -19,11 +19,11 @@ public class CraftFirework extends CraftEntity implements Firework {
     public CraftFirework(CraftServer server, net.minecraft.entity.item.EntityFireworkRocket/*was:EntityFireworks*/ entity) {
         super(server, entity);
 
-        net.minecraft.item.ItemStack/*was:ItemStack*/ item = getHandle().getDataWatcher/*was:getDataWatcher*/().getWatchableObjectItemStack/*was:f*/(FIREWORK_ITEM_INDEX);
+        net.minecraft.item.ItemStack/*was:ItemStack*/ item = getHandle().getDataWatcher/*was:getDataWatcher*/().getWatchableObjectItemStack/*was:getItemStack*/(FIREWORK_ITEM_INDEX);
 
         if (item == null) {
             item = new net.minecraft.item.ItemStack/*was:ItemStack*/(net.minecraft.item.Item/*was:Item*/.field_92052_bU/*was:FIREWORKS*/);
-            getHandle().getDataWatcher/*was:getDataWatcher*/().addObject/*was:a*/(FIREWORK_ITEM_INDEX, item); // register
+            getHandle().getDataWatcher/*was:getDataWatcher*/().addObject/*was:watch*/(FIREWORK_ITEM_INDEX, item);
         }
 
         this.item = CraftItemStack.asCraftMirror(item);
@@ -56,7 +56,7 @@ public class CraftFirework extends CraftEntity implements Firework {
         item.setItemMeta(meta);
 
         // Copied from EntityFireworks constructor, update firework lifetime/power
-        getHandle().field_92010_b/*was:b*/ = 10 * (1 + meta.getPower()) + random.nextInt(6) + random.nextInt(7);
+        getHandle().field_92010_b/*was:expectedLifespan*/ = 10 * (1 + meta.getPower()) + random.nextInt(6) + random.nextInt(7);
 
         getHandle().getDataWatcher/*was:getDataWatcher*/().func_82708_h/*was:h*/(FIREWORK_ITEM_INDEX); // Update
     }
