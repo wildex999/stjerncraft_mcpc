@@ -12,6 +12,8 @@
     <api.version>unknown</api.version>
     <minecraft.version>1.4.6</minecraft.version>
     <minecraft_version>1_4_6</minecraft_version>
+    <mcp.version>726a</mcp.version>
+    <forge.version>1.4.7-6.6.0.497</forge.version>
 </properties>
 <pluginRepositories>
     <pluginRepository>
@@ -122,7 +124,7 @@
         <artifactId>sound</artifactId>
         <version>1.1</version>
     </dependency>
-    <!--  CUSTOM LIBS, IMPORTANT: Install mcpc's guava 10 jar into your m2 repo: mvn install:install-file -Dfile=mcpc-guava-10.0.jar -DgroupId=mcpc.libs -DartifactId=guava -Dversion=10.0 -Dpackaging=jar -->
+    <!-- CUSTOM LIBS, IMPORTANT: Install mcpc's guava 10 jar into your m2 repo: mvn install:install-file -Dfile=mcpc-guava-10.0.jar -DgroupId=mcpc.libs -DartifactId=guava -Dversion=10.0 -Dpackaging=jar -->
     <dependency>
         <groupId>mcpc.libs</groupId>
         <artifactId>guava</artifactId>
@@ -146,42 +148,35 @@
     <!-- Replaces standard src/main/java directory -->
     <sourceDirectory>${basedir}/src/minecraft/</sourceDirectory>
     <plugins>
+        <!-- Get git description -->
         <plugin>
-            <groupId>com.github.goldin</groupId>
-            <artifactId>copy-maven-plugin</artifactId>
-            <version>0.2.5</version>
+            <groupId>com.lukegb.mojo</groupId>
+            <artifactId>gitdescribe-maven-plugin</artifactId>
+            <version>1.3</version>
+            <configuration>
+                <outputPrefix>git-MCPC-Plus-</outputPrefix>
+                <outputPostfix/>
+            </configuration>
             <executions>
-                <!-- Copy source to mcp -->
                 <execution>
-                    <id>copy-source</id>
-                    <phase>prepare-package</phase>
+                    <phase>compile</phase>
                     <goals>
-                        <goal>copy</goal>
+                        <goal>gitdescribe</goal>
                     </goals>
-                    <configuration>
-                        <resource>
-                            <directory>${basedir}/src/minecraft</directory>
-                            <targetPath>${basedir}/mcp/src/minecraft</targetPath>
-                            <preservePath>true</preservePath>
-                        </resource>
-                    </configuration>
-                </execution>
-                <!-- Copy reobfuscated classes -->
-                <execution>
-                    <id>copy-reobfuscated</id>
-                    <phase>prepare-package</phase>
-                    <goals>
-                        <goal>copy</goal>
-                    </goals>
-                    <configuration>
-                        <resource>
-                            <directory>${basedir}/mcp/reobf/minecraft</directory>
-                            <targetPath>${basedir}/target/classes</targetPath>
-                            <preservePath>true</preservePath>
-                        </resource>
-                    </configuration>
                 </execution>
             </executions>
+        </plugin>
+        <!-- Compile MCPC+ -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.0</version>
+            <configuration>
+                <source>1.6</source>
+                <target>1.6</target>
+                <showDeprecation>true</showDeprecation>
+                <compilerArgument>-Xlint:-options</compilerArgument>
+            </configuration>
         </plugin>
         <!-- Reobfuscate MCPC+ -->
         <plugin>
@@ -189,20 +184,6 @@
             <artifactId>exec-maven-plugin</artifactId>
             <version>1.2</version>
             <executions>
-                <execution>
-                    <id>recompile-mcp</id>
-                    <phase>prepare-package</phase>
-                    <goals>
-                        <goal>exec</goal>
-                    </goals>
-                    <configuration>
-                        <workingDirectory>${basedir}/mcp/</workingDirectory>
-                        <executable>${mcpc.python}</executable>
-                        <arguments>
-                            <argument>runtime/recompile.py</argument>
-                        </arguments>
-                    </configuration>
-                </execution>
                 <execution>
                     <id>reobfuscate-mcp</id>
                     <phase>prepare-package</phase>
@@ -220,12 +201,73 @@
                 </execution>
             </executions>
         </plugin>
+        <plugin>
+            <groupId>com.github.goldin</groupId>
+            <artifactId>copy-maven-plugin</artifactId>
+            <version>0.2.5</version>
+            <executions>
+                <execution>
+                    <id>move-classes</id>
+                    <phase>process-classes</phase>
+                    <goals>
+                        <goal>copy</goal>
+                    </goals>
+                    <configuration>
+                        <verbose>false</verbose>
+                        <resources>
+                            <!-- Clean MCP bin folder -->
+                            <resource>
+                                <directory>${basedir}/mcp/bin/minecraft</directory>
+                                <clean>true</clean>
+                                <cleanEmptyDirectories>true</cleanEmptyDirectories>
+                            </resource>
+                            <!-- Move compiled classes to MCP -->
+                            <resource>
+                                <directory>${basedir}/target/classes</directory>
+                                <targetPath>${basedir}/mcp/bin/minecraft</targetPath>
+                                <includes>
+                                    <include>**/*.class</include>
+                                </includes>
+                                <preservePath>true</preservePath>
+                            </resource>
+                            <!-- Copy resources to target/classes-reobf -->
+                            <resource>
+                                <directory>${basedir}/target/classes</directory>
+                                <targetPath>${basedir}/target/classes-reobf</targetPath>
+                                <excludes>
+                                    <exclude>**/*.class</exclude>
+                                </excludes>
+                                <preservePath>true</preservePath>
+                            </resource>
+                        </resources>
+                    </configuration>
+                </execution>
+                <!-- Move obfuscated classes to target folder -->
+                <execution>
+                    <id>move-reobf-classes</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>copy</goal>
+                    </goals>
+                    <configuration>
+                        <resource>
+                            <directory>${basedir}/mcp/reobf/minecraft</directory>
+                            <targetPath>${basedir}/target/classes-reobf</targetPath>
+                            <preservePath>true</preservePath>
+                            <move>true</move>
+                            <verbose>false</verbose>
+                        </resource>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
         <!-- Packaging MCPC+ -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
             <version>2.1</version>
             <configuration>
+                <classesDirectory>${basedir}/target/classes-reobf</classesDirectory>
                 <archive>
                     <manifestEntries>
                         <Main-Class>org.bukkit.craftbukkit.Main</Main-Class>
@@ -297,13 +339,13 @@
                     <filter>
                         <artifact>org.bukkit:bukkit</artifact>
                         <excludes>
-                            <exclude>com/google/*</exclude>
+                            <exclude>com/google/**</exclude>
                         </excludes>
                     </filter>
                     <filter>
                         <artifact>net.java.jutils:jutils</artifact>
                         <excludes>
-                            <exclude>net/java/*</exclude>
+                            <exclude>net/java/**</exclude>
                         </excludes>
                     </filter>
                     <!-- Exclude signed manifests -->
@@ -333,31 +375,49 @@
                 <finalName>mcpc-plus-${project.version}</finalName>
             </configuration>
         </plugin>
-        <!-- Disable Compiler as compiling is handled by MCP -->
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>2.0.2</version>
-            <configuration>
-                <source>1.6</source>
-                <target>1.6</target>
-            </configuration>
-            <executions>
-                <execution>
-                    <id>default-compile</id>
-                    <phase>compile</phase>
-                    <configuration>
-                        <excludes>
-                            <exclude>*/**</exclude>
-                        </excludes>
-                    </configuration>
-                    <goals>
-                        <goal>compile</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
     </plugins>
+    <pluginManagement>
+        <plugins>
+            <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+            <plugin>
+                <groupId>org.eclipse.m2e</groupId>
+                <artifactId>lifecycle-mapping</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <lifecycleMappingMetadata>
+                        <pluginExecutions>
+                            <pluginExecution>
+                                <pluginExecutionFilter>
+                                    <groupId>com.github.goldin</groupId>
+                                    <artifactId>copy-maven-plugin</artifactId>
+                                    <versionRange>[0.2.5,)</versionRange>
+                                    <goals>
+                                        <goal>copy</goal>
+                                    </goals>
+                                </pluginExecutionFilter>
+                                <action>
+                                    <ignore/>
+                                </action>
+                            </pluginExecution>
+                            <pluginExecution>
+                                <pluginExecutionFilter>
+                                    <groupId>com.lukegb.mojo</groupId>
+                                    <artifactId>gitdescribe-maven-plugin</artifactId>
+                                    <versionRange>[1.3,)</versionRange>
+                                    <goals>
+                                        <goal>gitdescribe</goal>
+                                    </goals>
+                                </pluginExecutionFilter>
+                                <action>
+                                    <ignore/>
+                                </action>
+                            </pluginExecution>
+                        </pluginExecutions>
+                    </lifecycleMappingMetadata>
+                </configuration>
+            </plugin>
+        </plugins>
+    </pluginManagement>
 </build>
 <!-- Use the right python for every operating system -->
 <profiles>
@@ -396,6 +456,126 @@
         <properties>
             <mcpc.python>python</mcpc.python>
         </properties>
+    </profile>
+    <!-- Preparation profile -->
+    <profile>
+        <id>mcpc-prepare-profile</id>
+        <activation>
+            <file>
+                <missing>${basedir}/mcp/LICENSE.txt</missing>
+            </file>
+        </activation>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.goldin</groupId>
+                    <artifactId>copy-maven-plugin</artifactId>
+                    <version>0.2.5</version>
+                    <executions>
+                        <!-- Download dependencies -->
+                        <execution>
+                            <id>download-dependencies</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>copy</goal>
+                            </goals>
+                            <configuration>
+                                <resources>
+                                    <!-- Download MCP -->
+                                    <resource>
+                                        <targetPath>${basedir}/mcp</targetPath>
+                                        <directory>http://mcp.ocean-labs.de/files/archive/mcp${mcp.version}.zip</directory>
+                                        <unpack>true</unpack>
+                                    </resource>
+                                    <!-- Download Forge -->
+                                    <resource>
+                                        <targetPath>${basedir}/mcp</targetPath>
+                                        <directory>http://files.minecraftforge.net/minecraftforge/minecraftforge-src-${forge.version}.zip</directory>
+                                        <unpack>true</unpack>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                        <!-- Copy missing source files to src folder -->
+                        <execution>
+                            <id>move-mcp-source</id>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>copy</goal>
+                            </goals>
+                            <configuration>
+                                <verbose>false</verbose>
+                                <resources>
+                                    <!-- Copy MCPC+ Source to temp -->
+                                    <resource>
+                                        <directory>${basedir}/src/minecraft</directory>
+                                        <targetPath>${basedir}/temp</targetPath>
+                                        <preservePath>true</preservePath>
+                                    </resource>
+                                    <!-- Copy MCP Source to MCPC+ source folder -->
+                                    <resource>
+                                        <directory>${basedir}/mcp/src/minecraft</directory>
+                                        <targetPath>${basedir}/src/minecraft</targetPath>
+                                        <preservePath>true</preservePath>
+                                    </resource>
+                                    <!-- Copy temp contents to MCPC+ source folder -->
+                                    <resource>
+                                        <directory>${basedir}/temp</directory>
+                                        <targetPath>${basedir}/src/minecraft</targetPath>
+                                        <preservePath>true</preservePath>
+                                    </resource>
+                                    <!-- Clean temp folder -->
+                                    <resource>
+                                        <directory>${basedir}/temp</directory>
+                                        <clean>true</clean>
+                                        <cleanEmptyDirectories>true</cleanEmptyDirectories>
+                                    </resource>
+                                    <!-- Copy missing resources to MCPC+ resource folder -->
+                                    <resource>
+                                        <directory>${basedir}/mcp/temp/bin/minecraft</directory>
+                                        <targetPath>${basedir}/resources/</targetPath>
+                                        <includes>
+                                            <include>achievement/map.txt</include>
+                                            <include>lang/**</include>
+                                        </includes>
+                                        <preservePath>true</preservePath>
+                                    </resource>
+                                    <!-- Copy dependencies to MCP libs folder -->
+                                    <resource>
+                                        <targetPath>${basedir}/mcp/lib</targetPath>
+                                        <dependency>
+                                            <excludeTransitive>true</excludeTransitive>
+                                        </dependency>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!-- Install Forge -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.2</version>
+                    <executions>
+                        <execution>
+                            <id>install-forge</id>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <workingDirectory>${basedir}/mcp/forge/</workingDirectory>
+                                <executable>${mcpc.python}</executable>
+                                <arguments>
+                                    <argument>install.py</argument>
+                                </arguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
     </profile>
 </profiles>
 </project>
