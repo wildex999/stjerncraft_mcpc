@@ -77,7 +77,22 @@ public class ItemSlab extends ItemBlock
 
             if ((par7 == 1 && !var14 || par7 == 0 && var14) && var11 == this.theHalfSlab.blockID && var13 == par1ItemStack.getItemDamage())
             {
-                return super.onItemUse(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, -1, par8, par9, par10); // CraftBukkit - handle this in super
+                // CraftBukkit start - handle in processBlockPlace()
+                /*
+                if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.theHalfSlab2.blockID, var13))
+                {
+                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.theHalfSlab2.stepSound.getPlaceSound(), (this.theHalfSlab2.stepSound.getVolume() + 1.0F) / 2.0F, this.theHalfSlab2.stepSound.getPitch() * 0.8F);
+                    --par1ItemStack.stackSize;
+                }
+                */
+                
+                if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)))
+                {
+                    processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.theHalfSlab2.blockID, var13);
+                }
+
+                // CraftBukkit end
+                return true;                
             }
             else
             {
@@ -183,12 +198,20 @@ public class ItemSlab extends ItemBlock
 
         if (var8 == this.theHalfSlab.blockID && var10 == par1ItemStack.getItemDamage())
         {
+            // CraftBukkit start - handle in processBlockPlace()
+            /*
             if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.theHalfSlab2.blockID, var10))
             {
                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.theHalfSlab2.stepSound.getPlaceSound(), (this.theHalfSlab2.stepSound.getVolume() + 1.0F) / 2.0F, this.theHalfSlab2.stepSound.getPitch() * 0.8F);
                 --par1ItemStack.stackSize;
             }
+            */
+            if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)))
+            {
+                processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.theHalfSlab2.blockID, var10);
+            }
 
+            // CraftBukkit end
             return true;
         }
         else
