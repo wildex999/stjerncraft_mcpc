@@ -306,6 +306,7 @@ public class ApplySrg {
 		String strOutputFilename=file.getParentFile().getAbsolutePath() + "/ported_" + file.getName();
 		List<String> listInputSrg=new LinkedList<String>();
 		List<String> listInputInheritance=new LinkedList<String>();
+		listInputInheritance.add(strInputFilename);
 		List<ParseEntry> listTranslate=new LinkedList<ParseEntry>();
 		/*for (int i=0; i<args.length; i++) {
 			if (args[i].equals("--srg"))
@@ -337,8 +338,6 @@ public class ApplySrg {
 			return;
 		}
 		  */
-		 if (strInputFilename!=null) 
-			 listInputInheritance.add(strInputFilename);
 		 Map<String,MappedClass> mapClasses=new TreeMap<String,MappedClass>();
 		 Map<String, String> mapPackages=new TreeMap<String,String>();
 		 //for (String srg : listInputSrg) {
