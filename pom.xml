@@ -15,11 +15,6 @@
     <mcp.version>726a</mcp.version>
     <forge.version>1.4.7-6.6.0.497</forge.version>
 </properties>
-<scm>
-    <connection>scm:git:git://github.com/MinecraftPortCentral/MCPC-Plus.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/MinecraftPortCentral/MCPC-Plus.git</developerConnection>
-    <url>https://github.com/MinecraftPortCentral/MCPC-Plus</url>
-</scm>
 <pluginRepositories>
     <pluginRepository>
         <id>bukkit-plugins</id>
@@ -163,28 +158,6 @@
                     </goals>
                 </execution>
             </executions>
-        </plugin>
-        <!-- Add build number -->
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>buildnumber-maven-plugin</artifactId>
-            <version>1.2</version>
-            <executions>
-                <execution>
-                    <phase>validate</phase>
-                    <goals>
-                        <goal>create</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <doCheck>true</doCheck>
-                <doUpdate>true</doUpdate>
-                <format>{0,number,#000}</format>
-                <items>
-                    <item>buildNumber</item>
-                </items>
-            </configuration>
         </plugin>
         <!-- Compile MCPC+ -->
         <plugin>
@@ -378,7 +351,6 @@
                             <Implementation-Title>MCPC Plus</Implementation-Title>
                             <Implementation-Version>${describe}</Implementation-Version>
                             <Implementation-Vendor>MCPC</Implementation-Vendor>
-                            <Implementation-Build>${buildNumber}</Implementation-Build>
                             <Forge-Version>6.6.0.497</Forge-Version>
                             <Specification-Title>Bukkit</Specification-Title>
                             <Specification-Version>${project.version}</Specification-Version>
@@ -386,7 +358,7 @@
                         </manifestEntries>
                     </transformer>
                 </transformers>
-                <finalName>mcpc-plus-${project.version}-${buildNumber}</finalName>
+                <finalName>mcpc-plus-${project.version}</finalName>
             </configuration>
         </plugin>
     </plugins>
