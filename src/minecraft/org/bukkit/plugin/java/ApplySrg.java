@@ -145,7 +145,7 @@ class MyRemapper extends Remapper {
 		if (mappedClass!=null) {
 			String strMapped=mappedClass.mapMethods.get(m);
 			if (strMapped!=null) {
-				//System.out.println("Mapping method "+owner+"/"+m.name+" to new name "+strMapped);
+				ApplySrg.debugLog("Mapping method "+owner+"/"+m.name+" to new name "+strMapped);
 				return strMapped;
 			}
 		}
@@ -157,7 +157,7 @@ class MyRemapper extends Remapper {
 		if (mappedClass!=null) {
 			String strMapped=mappedClass.mapFields.get(f);
 			if (strMapped!=null) {
-				//System.out.println("Mapping field "+owner+"/"+f+" to new name "+strMapped);
+				ApplySrg.debugLog("Mapping field "+owner+"/"+f+" to new name "+strMapped);
 				return strMapped;
 			}
 		}
@@ -166,17 +166,22 @@ class MyRemapper extends Remapper {
 
 	//Method can point to a method up the chain, but also further up the chain, so returns the first owner with a mapping associated.
 	public String locateMethod(String owner, Method m) {
+		ApplySrg.debugLog("locating method in class "+owner+" method "+m.name+" "+m.desc);
 		Queue<String> q=new LinkedList<String>();
 		q.add(owner);
 		while (!q.isEmpty()) {
 			String strOwner=q.remove();
+			ApplySrg.debugLog(" - checking owner "+strOwner);
 			ClassInfo info=mapClassInfo.get(strOwner);
+			ApplySrg.debugLog(" -- info="+info);
 			if (info==null)
 				continue;
 			for (String inherit : info.setInheritance)
 				q.add(inherit);
-			if (mapClasses.containsKey(strOwner) && info.setMethods.contains(m))
+			if (mapClasses.containsKey(strOwner) && info.setMethods.contains(m)) {
+				ApplySrg.debugLog(" found at "+strOwner);
 				return strOwner;
+			}
 		}
 		return null;
 	}
@@ -185,8 +190,8 @@ class MyRemapper extends Remapper {
 	public String mapMethodName(String owner, String name, String desc) {
 		Method m=new Method(name,desc);
 		String strActualOwner=locateMethod(owner,m);
-		//if (strActualOwner!=null)
-		//	System.out.println("Tracked method "+owner+"/"+name+" "+desc+" to "+strActualOwner);
+		if (strActualOwner!=null)
+			ApplySrg.debugLog("Tracked method "+owner+"/"+name+" "+desc+" to "+strActualOwner);
 		String strMapped=mapMethodNameDirect((strActualOwner!=null)?strActualOwner:owner,m);
 		return (strMapped==null)?name:strMapped;
 	}
@@ -211,8 +216,8 @@ class MyRemapper extends Remapper {
 	@Override
 	public String mapFieldName(String owner, String name, String desc) {
 		String strActualOwner=locateField(owner,name);
-		//if (strActualOwner!=null)
-		//	System.out.println("Tracked field "+owner+"/"+name+" "+desc+" to "+strActualOwner);
+		if (strActualOwner!=null)
+			ApplySrg.debugLog("Tracked field "+owner+"/"+name+" "+desc+" to "+strActualOwner);
 		String strMapped=mapFieldNameDirect((strActualOwner!=null)?strActualOwner:owner,name);
 		return (strMapped==null)?name:strMapped;
 	}
@@ -232,8 +237,10 @@ class InheritanceMapClassVisitor extends ClassVisitor {
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 		this.strName=name;
 		this.info.setInheritance.add(superName);
-		for (int i=0; i<interfaces.length; i++)
+		for (int i=0; i<interfaces.length; i++) {
+			ApplySrg.debugLog("inheritance for "+name+" super "+superName+" interface "+interfaces[i]);
 			this.info.setInheritance.add(interfaces[i]);
+		}
 	}
 
 	@Override
@@ -296,6 +303,20 @@ class ParseEntry {
 };
 
 public class ApplySrg {
+	private static final boolean DEBUG_PLUGINREMAP = Boolean.parseBoolean(System.getProperty("mcpc.debugPluginRemap", "false"));
+	private static final boolean INFO_PLUGINREMAP = Boolean.parseBoolean(System.getProperty("mcpc.infoPluginRemap", "true"));
+
+	public static void debugLog(String message) {
+		if (DEBUG_PLUGINREMAP) {
+			System.out.println("ApplySrg: "+message);
+		}
+	}
+
+	public static void infoLog(String message) {
+		if (INFO_PLUGINREMAP) {
+			System.out.println("ApplySrg: "+message);
+		}
+	}
 
 	/**
 	 * @param args
@@ -341,13 +362,12 @@ public class ApplySrg {
 		 Map<String,MappedClass> mapClasses=new TreeMap<String,MappedClass>();
 		 Map<String, String> mapPackages=new TreeMap<String,String>();
 		 //for (String srg : listInputSrg) {
-		 System.out.println("Reading SRG!");
+		 ApplySrg.infoLog("Reading SRG!");
 		 
 		 
 		 BufferedReader brSrg = new BufferedReader(new InputStreamReader(srgStream));
 		 String strLine;
 		 while ((strLine=brSrg.readLine())!=null) {
-			 //System.out.println("Line: " + strLine);
 			 String arrLine[]=strLine.split(" ");
 			 if (arrLine[0].equals("PK:")) {
 				 mapPackages.put(arrLine[1], arrLine[2]);
@@ -417,11 +437,21 @@ public class ApplySrg {
 			 }
 		 }
 		 //}
-		 System.out.println("Class map loaded of "+mapClasses.size()+" classes");
+		ApplySrg.infoLog("Class map loaded of "+mapClasses.size()+" classes");
+		if (DEBUG_PLUGINREMAP) {
+			for (Map.Entry<String, MappedClass> entry : mapClasses.entrySet()) {
+				ApplySrg.debugLog(" class "+entry.getKey() + " -> "+entry.getValue().strNewName);
+				for (Map.Entry<String, String> fieldEntry : entry.getValue().mapFields.entrySet()) {
+					ApplySrg.debugLog("  field "+fieldEntry.getKey()+" -> "+fieldEntry.getValue());
+				}
+				for (Map.Entry<Method, String> methodEntry : entry.getValue().mapMethods.entrySet()) {
+					ApplySrg.debugLog("  method "+methodEntry.getKey().name+" "+methodEntry.getKey().desc+" -> "+methodEntry.getValue());
+				}
+			}
+		}
 		 Map<String,ClassInfo> mapClassInheritance=new HashMap<String,ClassInfo>();
 		 for (String inherit : listInputInheritance) {
-			 System.out.println("Parsing inheritance in "+inherit);
-			 //System.out.println("Parsing inheritance in "+inherit);
+			 ApplySrg.infoLog("Parsing inheritance in "+inherit);
 			 ZipFile zipInherit=new ZipFile(inherit);
 			 Enumeration<? extends ZipEntry> entries=zipInherit.entries();
 			 while (entries.hasMoreElements()) {
@@ -437,10 +467,19 @@ public class ApplySrg {
 			 }
 			 zipInherit.close();
 		 }
-		 System.out.println("Inheritance map loaded of "+mapClassInheritance.size()+" classes");
+		 ApplySrg.infoLog("Inheritance map loaded of "+mapClassInheritance.size()+" classes");
+		 if (DEBUG_PLUGINREMAP) {
+			 for (String className : mapClassInheritance.keySet()) {
+				 ApplySrg.debugLog(" inheritance map class "+className);
+				 ClassInfo info = mapClassInheritance.get(className);
+				 for (String inherit : info.setInheritance) {
+					 ApplySrg.debugLog("  inherit "+inherit);
+				 }
+			 }
+		 }
 
 		 for (ParseEntry e : listTranslate) {
-			 System.out.println("Translating "+e.strInputFilename+" -> "+e.strOutputFilename);
+			 ApplySrg.infoLog("Translating "+e.strInputFilename+" -> "+e.strOutputFilename);
 
 			 ZipFile zipInput=new ZipFile(e.strInputFilename);
 
@@ -482,7 +521,7 @@ public class ApplySrg {
 			 zipInput.close();
 			 zipOutput.close();
 		 }
-		 System.out.println("Done!");
+		 ApplySrg.infoLog("Done!");
 	}
 
 }
