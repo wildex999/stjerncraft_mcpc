@@ -313,7 +313,8 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
 
         // CraftBukkit end
-        this.getWorld().processChunkGC(); // Spigot
+        if (this.getWorld() != null) // MCPC+
+            this.getWorld().processChunkGC(); // Spigot
         this.theProfiler.endStartSection("chunkSource");
         this.chunkProvider.unload100OldestChunks();
         int var4 = this.calculateSkylightSubtracted(1.0F);

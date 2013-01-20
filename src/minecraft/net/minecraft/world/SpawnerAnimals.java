@@ -70,7 +70,10 @@ public final class SpawnerAnimals
             // Spigot start - limit radius to spawn distance (chunks aren't loaded)
             if (spawnRadius == 0)
             {
-                spawnRadius = (byte) par0WorldServer.getServer().getViewDistance();
+                spawnRadius = (byte) par0WorldServer.getWorld().mobSpawnRange;
+                if (spawnRadius > (byte) par0WorldServer.getServer().getViewDistance()) {
+                    spawnRadius = (byte) par0WorldServer.getServer().getViewDistance();
+                }
 
                 if (spawnRadius > 8)
                 {
@@ -146,15 +149,14 @@ public final class SpawnerAnimals
 
                 int mobcnt = 0;
                 // CraftBukkit end
-                mobcnt = par0WorldServer.countEntities(var34.getCreatureClass());
 
-                if ((!var34.getPeacefulCreature() || par2) && (var34.getPeacefulCreature() || par1) && (!var34.getAnimal() || par3) && mobcnt <= (limit * eligibleChunksForSpawning.size() / 256))   // CraftBukkit - use per-world limits
+                if ((!var34.getPeacefulCreature() || par2) && (var34.getPeacefulCreature() || par1) && (!var34.getAnimal() || par3) && (mobcnt = par0WorldServer.countEntities(var34.getCreatureClass())) <= limit * eligibleChunksForSpawning.size() / 256) // CraftBukkit - use per-world limits
                 {
                     Iterator var35 = eligibleChunksForSpawning.keySet().iterator();
                     // Forge start
-                    ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
-                    Collections.shuffle(tmp);
-                    var35 = tmp.iterator();
+                    //ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
+                    //Collections.shuffle(tmp);
+                    //var35 = tmp.iterator();
                     // Forge end
                     int var37 = (limit * eligibleChunksForSpawning.size() / 256) - mobcnt + 1; // CraftBukkit - up to 1 more than limit
                     label110:

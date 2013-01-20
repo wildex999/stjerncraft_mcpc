@@ -13,7 +13,6 @@ public class ItemBlock extends Item
 {
     /** The block ID of the Block associated with this ItemBlock */
     private int blockID;
-    private int localId; // Forge
 
     public ItemBlock(int par1)
     {
@@ -238,7 +237,7 @@ public class ItemBlock extends Item
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
     {
         // MCPC+ start - delegate Forge's placeBlockAt to CB's processBlockPlace for sending Bukkit events
-        return processBlockPlace(world, player, stack, x, y, z, localId, metadata);
+        return processBlockPlace(world, player, stack, x, y, z, this.blockID, metadata);
 
         /*
         if (world.setBlockAndMetadataWithNotify(x, y, z, localId, metadata))

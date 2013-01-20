@@ -81,8 +81,7 @@ public class NormalChunkGenerator extends InternalChunkGenerator {
 
     @Override
     public List getPossibleCreatures(EnumCreatureType var1, int var2, int var3, int var4) {
-        // TODO Auto-generated method stub
-        return null;
+        return provider.getPossibleCreatures(var1, var2, var3, var4);
     }
 
     // MCPC+ start - return vanilla compatible IChunkProvider for forge
