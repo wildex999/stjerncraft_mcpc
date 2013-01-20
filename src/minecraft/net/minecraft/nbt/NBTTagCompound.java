@@ -41,17 +41,7 @@ public class NBTTagCompound extends NBTBase
             NBTBase.writeNamedTag(var3, par1DataOutput);
         }
 
-        // CraftBukkit start
-        try
-        {
-            par1DataOutput.writeByte(0);
-        }
-        catch (java.io.IOException ex)
-        {
-            ex.printStackTrace();
-        }
-
-        // CraftBukkit end
+        par1DataOutput.writeByte(0);
     }
 
     /**

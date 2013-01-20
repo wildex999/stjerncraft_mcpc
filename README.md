@@ -10,13 +10,8 @@ We use maven to handle our dependencies.
 
 * Install [Maven 3](http://maven.apache.org/download.html)
 * Install [MCPC Guava 10](http://www.mediafire.com/download.php?1bcr7suu6sqo9cp)
-* Run the following command : mvn install:install-file -Dfile=mcpc-guava-10.0.jar -DgroupId=mcpc.libs -DartifactId=guava -Dversion=10.0 -Dpackaging=jar
-* Install [MCP 726](http://mcp.ocean-labs.de/index.php/MCP_Releases) into folder named "mcp"
-* Install [Forge 497](http://adf.ly/673885/http://files.minecraftforge.net/minecraftforge/minecraftforge-src-1.4.7-6.6.0.497.zip) into mcp folder
-* Run forge's install command to setup project.
-* If you get any compile errors with MCP, make sure the required libs are located in mcp/lib.
+* Run the following command : `mvn install:install-file -Dfile=mcpc-guava-10.0.jar -DgroupId=mcpc.libs -DartifactId=guava -Dversion=10.0 -Dpackaging=jar`
 * Check out this repo and: `mvn clean package`
-* After jar is created, delete com/google folder and replace with guava 12's com/google folder. Note: You can find the guava 12 lib in ./lib folder of your client.
 
 Coding and Pull Request Conventions
 -----------

@@ -194,11 +194,7 @@ public abstract class EntityAITarget extends EntityAIBase
 
                 if (event.isCancelled() || event.getTarget() == null)
                 {
-                    if (this.taskOwner instanceof EntityCreature)
-                    {
-                        ((EntityCreature) this.taskOwner).entityToAttack = null;
-                    }
-
+                    this.taskOwner.setAttackTarget(null);
                     return false;
                 }
                 else if (par1EntityLiving.getBukkitEntity() != event.getTarget())

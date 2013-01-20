@@ -4,14 +4,14 @@
 <groupId>mcpc</groupId>
 <artifactId>mcpc-plus</artifactId>
 <packaging>jar</packaging>
-<version>1.4.7-R0.4-SNAPSHOT</version>
+<version>1.4.7-R0.2-SNAPSHOT</version>
 <name>mcpc-plus</name>
 <url>http://www.mcportcentral.co.za/</url>
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <api.version>unknown</api.version>
-    <minecraft.version>1.4.6</minecraft.version>
-    <minecraft_version>1_4_6</minecraft_version>
+    <minecraft.version>1.4.7</minecraft.version>
+    <minecraft_version>1_4_R1</minecraft_version>
     <mcp.version>726a</mcp.version>
     <forge.version>1.4.7-6.6.0.497</forge.version>
 </properties>
@@ -53,9 +53,9 @@
         <version>4.1</version>
     </dependency>
     <dependency>
-        <groupId>org.bukkit</groupId>
-        <artifactId>bukkit</artifactId>
-        <version>1.4.6-R0.4-SNAPSHOT</version>
+        <groupId>za.co.mcportcentral</groupId>
+        <artifactId>mcpc-api</artifactId>
+        <version>${project.version}</version>
         <type>jar</type>
         <scope>compile</scope>
     </dependency>
@@ -123,13 +123,6 @@
         <groupId>paulscode</groupId>
         <artifactId>sound</artifactId>
         <version>1.1</version>
-    </dependency>
-    <!-- CUSTOM LIBS, IMPORTANT: Install mcpc's guava 10 jar into your m2 repo: mvn install:install-file -Dfile=mcpc-guava-10.0.jar -DgroupId=mcpc.libs -DartifactId=guava -Dversion=10.0 -Dpackaging=jar -->
-    <dependency>
-        <groupId>mcpc.libs</groupId>
-        <artifactId>guava</artifactId>
-        <version>10.0</version>
-        <type>jar</type>
     </dependency>
 </dependencies>
 <!-- builds a jar for extracting into minecraft_server.jar -->
@@ -335,13 +328,6 @@
                     </excludes>
                 </artifactSet>
                 <filters>
-                    <!-- Exclude Guava 10 from Bukkit due to Guava 12 conflict -->
-                    <filter>
-                        <artifact>org.bukkit:bukkit</artifact>
-                        <excludes>
-                            <exclude>com/google/**</exclude>
-                        </excludes>
-                    </filter>
                     <filter>
                         <artifact>net.java.jutils:jutils</artifact>
                         <excludes>
