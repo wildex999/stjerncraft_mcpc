@@ -3,6 +3,7 @@ package net.minecraft.item;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
+import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -13,6 +14,7 @@ public class ItemBlock extends Item
 {
     /** The block ID of the Block associated with this ItemBlock */
     private int blockID;
+    private int localId; // Forge
 
     public ItemBlock(int par1)
     {
@@ -36,13 +38,14 @@ public class ItemBlock extends Item
      */
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
-        int var11 = par3World.getBlockId(par4, par5, par6);
+        int var11 = par4, var12 = par5, var13 = par6; // CraftBukkit
+        int var14 = par3World.getBlockId(par4, par5, par6);
 
-        if (var11 == Block.snow.blockID)
+        if (var14 == Block.snow.blockID)
         {
             par7 = 1;
         }
-        else if (var11 != Block.vine.blockID && var11 != Block.tallGrass.blockID && var11 != Block.deadBush.blockID && (Block.blocksList[var11] == null || !Block.blocksList[var11].isBlockReplaceable(par3World, par4, par5, par6)))     // Forge
+        else if (var14 != Block.vine.blockID && var14 != Block.tallGrass.blockID && var14 != Block.deadBush.blockID && (Block.blocksList[var14] == null || !Block.blocksList[var14].isBlockReplaceable(par3World, par4, par5, par6)))     // Forge
         {
             if (par7 == 0)
             {
@@ -86,14 +89,44 @@ public class ItemBlock extends Item
         else if (par5 == 255 && Block.blocksList[this.blockID].blockMaterial.isSolid())
         {
             return false;
+            // CraftBukkit start
         }
-        else if (par3World.canPlaceEntityOnSide(this.blockID, par4, par5, par6, false, par7, par2EntityPlayer))
+
+        int id = this.blockID;
+
+        if (par7 == -1 && par1ItemStack.getItem() instanceof ItemSlab)
         {
-            Block var12 = Block.blocksList[this.blockID];
-            int var13 = this.getMetadata(par1ItemStack.getItemDamage());
-            int var14 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
-            // CraftBukkit start - redirect to common function handler
-            /*
+            if (this.blockID == Block.stoneSingleSlab.blockID)
+            {
+                id = Block.stoneDoubleSlab.blockID;
+            }
+            else if (this.blockID == Block.woodSingleSlab.blockID)
+            {
+                id = Block.woodDoubleSlab.blockID;
+            }
+        }
+
+        if (id != this.blockID || par3World.canPlaceEntityOnSide(this.blockID, par4, par5, par6, false, par7, par2EntityPlayer))
+        {
+            Block block = Block.blocksList[id];
+            int j1 = this.getMetadata(par1ItemStack.getItemDamage());
+            int k1 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, j1);
+            CraftBlockState replacedBlockState = CraftBlockState.getBlockState(par3World, par4, par5, par6);
+            par3World.editingBlocks = true;
+            par3World.setBlockAndMetadataWithNotify(par4, par5, par6, id, k1);
+            org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, replacedBlockState, var11, var12, var13);
+            localId = par3World.getBlockId(par4, par5, par6); // Forge
+            int data = par3World.getBlockMetadata(par4, par5, par6);
+            replacedBlockState.update(true);
+            par3World.editingBlocks = false;
+
+            if (event.isCancelled() || !event.canBuild())
+            {
+                return true;
+            }
+
+            // CraftBukkit end
+
             if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, data))  // Forge
             {
                 par3World.playSoundEffect((double)((float) par4 + 0.5F), (double)((float) par5 + 0.5F), (double)((float) par6 + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
@@ -101,50 +134,12 @@ public class ItemBlock extends Item
             }
 
             return true;
-            */
-            return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, var14);
-            // CraftBukkit end
         }
         else
         {
             return false;
         }
     }
-
-    // CraftBukkit start - add method to process block placement
-    static boolean processBlockPlace(final World world, final EntityPlayer entityhuman, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data)
-    {
-        org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
-        world.editingBlocks = true;
-        world.setBlockAndMetadataWithNotify(x, y, z, id, data);
-        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockstate, x, y, z);
-
-        if (event.isCancelled() || !event.canBuild())
-        {
-            blockstate.update(true);
-            world.editingBlocks = false;
-            return false;
-        }
-
-        world.editingBlocks = false;
-        world.notifyBlocksOfNeighborChange(x, y, z, world.getBlockId(x, y, z));
-        Block block = Block.blocksList[world.getBlockId(x, y, z)];
-
-        if (block != null)
-        {
-            block.onBlockPlacedBy(world, x, y, z, entityhuman);
-            block.onPostBlockPlaced(world, x, y, z, world.getBlockMetadata(x, y, z));
-            world.playSoundEffect((double)((float) x + 0.5F), (double)((float) y + 0.5F), (double)((float) z + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
-        }
-
-        if (itemstack != null)
-        {
-            --itemstack.stackSize;
-        }
-
-        return true;
-    }
-    // CraftBukkit end
 
     @SideOnly(Side.CLIENT)
 
@@ -236,10 +231,6 @@ public class ItemBlock extends Item
      */
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
     {
-        // MCPC+ start - delegate Forge's placeBlockAt to CB's processBlockPlace for sending Bukkit events
-        return processBlockPlace(world, player, stack, x, y, z, this.blockID, metadata);
-
-        /*
         if (world.setBlockAndMetadataWithNotify(x, y, z, localId, metadata))
         {
             if (world.getBlockId(x, y, z) == localId)
@@ -252,6 +243,5 @@ public class ItemBlock extends Item
         }
 
         return false;
-        // MCPC+ end */
     }
 }

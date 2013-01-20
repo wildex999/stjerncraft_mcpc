@@ -32,6 +32,7 @@ public class ItemBed extends Item
         }
         else
         {
+            int var11 = par4, var12 = par5, var13 = par6; // CraftBukkit
             ++par5;
             BlockBed var14 = (BlockBed) Block.bed;
             int i1 = MathHelper.floor_double((double)(par2EntityPlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
@@ -62,10 +63,14 @@ public class ItemBed extends Item
             {
                 if (par3World.isAirBlock(par4, par5, par6) && par3World.isAirBlock(par4 + b0, par5, par6 + b1) && par3World.doesBlockHaveSolidTopSurface(par4, par5 - 1, par6) && par3World.doesBlockHaveSolidTopSurface(par4 + b0, par5 - 1, par6 + b1))
                 {
-                    // CraftBukkit start
-                    //world.setTypeIdAndData(par4, par5, par6, var14.id, i1);
-                    if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, var14.blockID, i1))
+                    CraftBlockState blockState = CraftBlockState.getBlockState(par3World, par4, par5, par6); // CraftBukkit
+                    par3World.setBlockAndMetadataWithNotify(par4, par5, par6, var14.blockID, i1);
+                    // CraftBukkit start - bed
+                    org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockState, var11, var12, var13);
+
+                    if (event.isCancelled() || !event.canBuild())
                     {
+                        event.getBlockPlaced().setTypeIdAndData(blockState.getTypeId(), blockState.getRawData(), false);
                         return false;
                     }
 
