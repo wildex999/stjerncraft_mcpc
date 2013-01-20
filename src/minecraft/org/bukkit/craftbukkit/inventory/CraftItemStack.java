@@ -235,8 +235,8 @@ public final class CraftItemStack extends ItemStack {
             return 0;
         }
         if (size == 1) {
-            handle.stackTagCompound/*was:tag*/.removeTag/*was:o*/(ENCHANTMENTS.NBT);
-            if (handle.stackTagCompound/*was:tag*/.hasNoTags/*was:d*/()) {
+            handle.stackTagCompound/*was:tag*/.removeTag/*was:remove*/(ENCHANTMENTS.NBT);
+            if (handle.stackTagCompound/*was:tag*/.hasNoTags/*was:isEmpty*/()) {
                 handle.stackTagCompound/*was:tag*/ = null;
             }
             return level;
@@ -385,6 +385,6 @@ public final class CraftItemStack extends ItemStack {
     }
 
     static boolean hasItemMeta(/*was:net.minecraft.server.*/net.minecraft.item.ItemStack/*was:ItemStack*/ item) {
-        return !(item == null || item.stackTagCompound/*was:tag*/ == null || item.stackTagCompound/*was:tag*/.hasNoTags/*was:d*/());
+        return !(item == null || item.stackTagCompound/*was:tag*/ == null || item.stackTagCompound/*was:tag*/.hasNoTags/*was:isEmpty*/());
     }
 }

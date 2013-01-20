@@ -4,14 +4,14 @@
 <groupId>mcpc</groupId>
 <artifactId>mcpc-plus</artifactId>
 <packaging>jar</packaging>
-<version>1.4.7-R0.4-SNAPSHOT</version>
+<version>1.4.7-R0.2-SNAPSHOT</version>
 <name>mcpc-plus</name>
 <url>http://www.mcportcentral.co.za/</url>
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <api.version>unknown</api.version>
-    <minecraft.version>1.4.6</minecraft.version>
-    <minecraft_version>1_4_6</minecraft_version>
+    <minecraft.version>1.4.7</minecraft.version>
+    <minecraft_version>1_4_R1</minecraft_version>
     <mcp.version>726a</mcp.version>
     <forge.version>1.4.7-6.6.0.497</forge.version>
 </properties>
