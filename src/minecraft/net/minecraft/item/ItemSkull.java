@@ -12,7 +12,6 @@ import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 
 public class ItemSkull extends Item
 {
@@ -45,8 +44,6 @@ public class ItemSkull extends Item
         }
         else
         {
-            int var11 = par4, var12 = par5, var13 = par6; // CraftBukkit
-
             if (par7 == 1)
             {
                 ++par5;
