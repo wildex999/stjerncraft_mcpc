@@ -126,7 +126,7 @@ public class NetServerHandler extends NetHandler
     /** The underlying network manager for this server handler. */
     public INetworkManager netManager;
 
-    /** This is set to true whenever a player playerLoggedOuts from the server. */
+    /** This is set to true whenever a player disconnects from the server. */
     public boolean connectionClosed = false;
 
     /** Reference to the MinecraftServer object. */

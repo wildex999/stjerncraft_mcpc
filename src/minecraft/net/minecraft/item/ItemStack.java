@@ -332,7 +332,7 @@ public final class ItemStack
      */
     public void hitEntity(EntityLiving par1EntityLiving, EntityPlayer par2EntityPlayer)
     {
-        boolean var3 = Item.itemsList[this.itemID].hitEntity(this, par1EntityLiving, (EntityLiving) par2EntityPlayer);
+        boolean var3 = Item.itemsList[this.itemID].hitEntity(this, par1EntityLiving, par2EntityPlayer);
 
         if (var3)
         {

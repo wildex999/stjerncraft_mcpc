@@ -151,7 +151,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     public WorldServer(MinecraftServer par1MinecraftServer, ISaveHandler par2ISaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler)
     {
         super(par2ISaveHandler, par3Str, par5WorldSettings, WorldProvider.getProviderForDimension(par4), par6Profiler);
-        dimension = 0;
+        this.dimension = par4;
         this.mcServer = par1MinecraftServer;
         this.theEntityTracker = new EntityTracker(this);
         this.thePlayerManager = new PlayerManager(this, par1MinecraftServer.getConfigurationManager().getViewDistance());
@@ -529,16 +529,16 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                 var11 = this.getPrecipitationHeight(var9, var10);
 
                 if (this.canLightningStrikeAt(var9, var11, var10))
-                    {
+                {
                     this.addWeatherEffect(new EntityLightningBolt(this, (double)var9, (double)var11, (double)var10));
-                    }
                 }
+            }
 
             this.theProfiler.endStartSection("iceandsnow");
             int var13;
 
             if (provider.canDoRainSnowIce(var7) && this.rand.nextInt(16) == 0)
-                {
+            {
                 this.updateLCG = this.updateLCG * 3 + 1013904223;
                 var8 = this.updateLCG >> 2;
                 var9 = var8 & 15;
@@ -546,9 +546,9 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                 var11 = this.getPrecipitationHeight(var9 + var5, var10 + var6);
 
                 if (this.isBlockFreezableNaturally(var9 + var5, var11 - 1, var10 + var6))
-                    {
+                {
                     this.setBlockWithNotify(var9 + var5, var11 - 1, var10 + var6, Block.ice.blockID);
-                    }
+                }
 
                 if (this.isRaining() && this.canSnowAt(var9 + var5, var11, var10 + var6))
                 {
@@ -1135,15 +1135,19 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
      */
     public boolean addWeatherEffect(Entity par1Entity)
     {
-        // CraftBukkit start
-        LightningStrikeEvent lightning = new LightningStrikeEvent(this.getWorld(), (org.bukkit.entity.LightningStrike) par1Entity.getBukkitEntity());
-        this.getServer().getPluginManager().callEvent(lightning);
-
-        if (lightning.isCancelled())
+        // MCPC+ start - vanilla compatibility
+        if (par1Entity.getBukkitEntity() != null)
         {
-            return false;
+            // CraftBukkit start
+            LightningStrikeEvent lightning = new LightningStrikeEvent(this.getWorld(), (org.bukkit.entity.LightningStrike) par1Entity.getBukkitEntity());
+            this.getServer().getPluginManager().callEvent(lightning);
+    
+            if (lightning.isCancelled())
+            {
+                return false;
+            }
         }
-
+        // MCPC+ end
         if (super.addWeatherEffect(par1Entity))
         {
             this.mcServer.getConfigurationManager().sendToAllNear(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 512.0D, this.dimension, new Packet71Weather(par1Entity));

@@ -508,7 +508,7 @@ public abstract class World implements IBlockAccess
     //Provides a solution for different worlds getting different copies of the same data, potentially rewriting the data or causing race conditions/stale data
     //Buildcraft has suffered from the issue this fixes.  If you load the same data from two different worlds they can get two different copies of the same object, thus the last saved gets final say.
     private MapStorage getMapStorage(ISaveHandler savehandler)
-        {
+    {
         if (s_savehandler != savehandler || s_mapStorage == null) {
             s_mapStorage = new MapStorage(savehandler);
             s_savehandler = savehandler;
@@ -693,8 +693,6 @@ public abstract class World implements IBlockAccess
     public Chunk getChunkFromChunkCoords(int par1, int par2)
     {
         Chunk result = null;
-
-        // Spigot start - remove sync
         if (this.lastChunkAccessed == null || this.lastXAccessed != par1 || this.lastZAccessed != par2)
         {
             this.lastChunkAccessed = this.chunkProvider.provideChunk(par1, par2);
@@ -703,7 +701,6 @@ public abstract class World implements IBlockAccess
         }
 
         result = this.lastChunkAccessed;
-        // Spigot end
         return result;
     }
     // CraftBukkit end
@@ -2917,11 +2914,11 @@ public abstract class World implements IBlockAccess
                         }
                         else
                         {
-                        Block block = Block.blocksList[var11];
+                            Block block = Block.blocksList[var11];
                             if (block != null && block.isBlockBurning(this, var8, var9, var10))
-                        {
-                            return true;
-                        }
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -4204,14 +4201,11 @@ public abstract class World implements IBlockAccess
             }
 
             // CraftBukkit end
-            // Forge start
             if (!MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, this)))
             {
-                this.loadedEntityList.add(entity);
+                loadedEntityList.add(entity);
                 this.obtainEntitySkin(entity);
             }
-
-            // Forge end
         }
     }
 
@@ -4476,7 +4470,7 @@ public abstract class World implements IBlockAccess
     /**
      * Checks whether the session lock file was modified by another process
      */
-    public void checkSessionLock() throws MinecraftException   // CraftBukkit - added throws
+    public void checkSessionLock() throws MinecraftException
     {
         this.saveHandler.checkSessionLock();
     }

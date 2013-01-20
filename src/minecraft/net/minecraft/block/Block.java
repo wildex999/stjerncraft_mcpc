@@ -1426,11 +1426,11 @@ public class Block
     {
         Block block = blocksList[world.getBlockId(x, y, z)];
         if (block != null && block != this)
-    {
+        {
             return block.getLightValue(world, x, y, z);
         }
         return lightValue[blockID];
-        }
+    }
 
     /**
      * Checks if a player or entity can use this block to 'climb' like a ladder.
@@ -1782,12 +1782,12 @@ public class Block
         int meta = world.getBlockMetadata(x, y, z);
         if (this instanceof BlockStep)
         {
-                return (((meta & 8) == 8) || isOpaqueCube());
-            }
+            return (((meta & 8) == 8) || isOpaqueCube());
+        }
         else if (this instanceof BlockStairs)
         {
-                return ((meta & 4) != 0);
-            }
+            return ((meta & 4) != 0);
+        }
         return isBlockSolidOnSide(world, x, y, z, UP);
     }
 
@@ -2166,10 +2166,10 @@ public class Block
             case Water:  return world.getBlockMaterial(x, y, z) == Material.water && world.getBlockMetadata(x, y, z) == 0;
             case Beach:
                 boolean isBeach = (blockID == Block.grass.blockID || blockID == Block.dirt.blockID || blockID == Block.sand.blockID);
-                boolean hasWater = (world.getBlockMaterial(x - 1, y, z) == Material.water ||
-                        world.getBlockMaterial(x + 1, y, z) == Material.water ||
-                        world.getBlockMaterial(x,     y, z - 1) == Material.water ||
-                        world.getBlockMaterial(x,     y, z + 1) == Material.water);
+                boolean hasWater = (world.getBlockMaterial(x - 1, y, z    ) == Material.water ||
+                                    world.getBlockMaterial(x + 1, y, z    ) == Material.water ||
+                                    world.getBlockMaterial(x,     y, z - 1) == Material.water ||
+                                    world.getBlockMaterial(x,     y, z + 1) == Material.water);
                 return isBeach && hasWater;
         }
 

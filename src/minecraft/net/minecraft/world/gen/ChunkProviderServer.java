@@ -50,6 +50,7 @@ public class ChunkProviderServer implements IChunkProvider
     public IChunkLoader currentChunkLoader; // Spigot
     public boolean loadChunkOnProvideRequest = false; // true -> false
     public LongObjectHashMap<Chunk> loadedChunkHashMap = new LongObjectHashMap<Chunk>();
+    public List loadedChunks = new ArrayList(); // MCPC+  vanilla compatibility
     public WorldServer worldObj;
     // CraftBukkit end
 
@@ -194,6 +195,7 @@ public class ChunkProviderServer implements IChunkProvider
             }
 
             this.loadedChunkHashMap.put(LongHash.toLong(i, j), chunk); // CraftBukkit
+            loadedChunks.add(chunk); // MCPC+ - vanilla compatibility
 
             if (chunk != null)
             {
@@ -222,7 +224,6 @@ public class ChunkProviderServer implements IChunkProvider
         {
             runnable.run();
         }
-
         // CraftBukkit end
         return chunk;
     }
@@ -418,11 +419,12 @@ public class ChunkProviderServer implements IChunkProvider
     {
         if (!this.worldObj.canNotSave)
         {
-            for (ChunkCoordIntPair forced : this.worldObj.getPersistentChunks().keySet())
+            // MCPC+ start - remove any chunk that has a ticket associated with it
+            for (ChunkCoordIntPair forcedChunk : this.worldObj.getPersistentChunks().keys())
             {
-                this.chunksToUnload.remove(ChunkCoordIntPair.chunkXZ2Int(forced.chunkXPos, forced.chunkZPos));
+                this.chunksToUnload.remove(forcedChunk.chunkXPos, forcedChunk.chunkZPos);
             }
-
+            // MCPC+ end
             // CraftBukkit start
             Server server = this.worldObj.getServer();
 
@@ -435,7 +437,6 @@ public class ChunkProviderServer implements IChunkProvider
                 {
                     continue;
                 }
-
                 ChunkUnloadEvent event = new ChunkUnloadEvent(chunk.bukkitChunk);
                 server.getPluginManager().callEvent(event);
 
@@ -444,9 +445,9 @@ public class ChunkProviderServer implements IChunkProvider
                     chunk.onChunkUnload();
                     this.safeSaveChunk(chunk);
                     this.safeSaveExtraChunkData(chunk);
-                    // this.unloadQueue.remove(integer);
                     this.loadedChunkHashMap.remove(chunkcoordinates); // CraftBukkit
-                    ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition), chunk);
+                    loadedChunks.remove(chunk); // MCPC+ - vanilla compatibility
+                    ForgeChunkManager.putDormantChunk(chunkcoordinates, chunk);
 
                     if (this.loadedChunkHashMap.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId))
                     {

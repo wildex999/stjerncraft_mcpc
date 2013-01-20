@@ -859,11 +859,13 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         int i;
 
-        for (i = 0; i < this.worlds.size(); ++i)
+        Integer[] ids = DimensionManager.getIDs();
+        for (int x = 0; x < ids.length; x++)
         {
+            int id = ids[x];
             long j = System.nanoTime();
             // if (i == 0 || this.getAllowNether()) {
-            WorldServer worldserver = this.worlds.get(i);
+            WorldServer worldserver = DimensionManager.getWorld(id);
             this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
             this.theProfiler.startSection("pools");
             worldserver.getWorldVec3Pool().clear();
@@ -910,7 +912,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             // } // CraftBukkit
             // this.k[i][this.ticks % 100] = System.nanoTime() - j; // CraftBukkit
             // Forge start
-            ((long[]) this.worldTickTimes.get(worldserver.dimension))[this.tickCounter % 100] = System.nanoTime() - j;
+            ((long[]) this.worldTickTimes.get(id))[this.tickCounter % 100] = System.nanoTime() - j;
         }
 
         this.theProfiler.endStartSection("dim_unloading");

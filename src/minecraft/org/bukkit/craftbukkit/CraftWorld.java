@@ -257,6 +257,7 @@ public class CraftWorld implements World {
 
         world.theChunkProviderServer/*was:chunkProviderServer*/.chunksToUnload/*was:unloadQueue*/.remove(x, z);
         world.theChunkProviderServer/*was:chunkProviderServer*/.loadedChunkHashMap/*was:chunks*/.remove(LongHash.toLong(x, z));
+        world.theChunkProviderServer.loadedChunks.remove(chunk); // MCPC+  vanilla compatibility
 
         return true;
     }
@@ -327,6 +328,7 @@ public class CraftWorld implements World {
     private void chunkLoadPostProcess(/*was:net.minecraft.server.*/net.minecraft.world.chunk.Chunk/*was:Chunk*/ chunk, int x, int z) {
         if (chunk != null) {
             world.theChunkProviderServer/*was:chunkProviderServer*/.loadedChunkHashMap/*was:chunks*/.put(LongHash.toLong(x, z), chunk);
+            world.theChunkProviderServer.loadedChunks.add(chunk);
 
             chunk.onChunkLoad/*was:addEntities*/();
 

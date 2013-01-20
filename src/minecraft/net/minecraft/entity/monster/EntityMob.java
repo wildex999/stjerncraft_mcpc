@@ -133,7 +133,7 @@ public abstract class EntityMob extends EntityCreature implements IMob
 
         if (par1Entity instanceof EntityLiving)
         {
-            var2 += EnchantmentHelper.getEnchantmentModifierLiving((EntityLiving) this, (EntityLiving) par1Entity);
+            var2 += EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLiving)par1Entity);
             var3 += EnchantmentHelper.getKnockbackModifier(this, (EntityLiving)par1Entity);
         }
 
@@ -143,7 +143,7 @@ public abstract class EntityMob extends EntityCreature implements IMob
         {
             if (var3 > 0)
             {
-                par1Entity.addVelocity((double)(-MathHelper.sin(this.rotationYaw * 3.1415927F / 180.0F) * (float) var3 * 0.5F), 0.1D, (double)(MathHelper.cos(this.rotationYaw * 3.1415927F / 180.0F) * (float) var3 * 0.5F));
+                par1Entity.addVelocity((double)(-MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F) * (float)var3 * 0.5F), 0.1D, (double)(MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F) * (float)var3 * 0.5F));
                 this.motionX *= 0.6D;
                 this.motionZ *= 0.6D;
             }

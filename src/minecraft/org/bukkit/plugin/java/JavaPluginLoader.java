@@ -68,42 +68,42 @@ public class JavaPluginLoader implements PluginLoader {
         
         if (!file.getName().startsWith("ported_")) {
 
-			InputStream srg;
-			if (getClass().getClassLoader().getResourceAsStream("net/minecraft/src") == null) {
-				srg = getClass().getClassLoader().getResourceAsStream("vcb2obf.srg");
-			}
-			else {
-				srg = getClass().getClassLoader().getResourceAsStream("cb2pkgmcp.srg");
-			}
-			if (srg == null) {
-				throw new RuntimeException("BukkitForge was packaged incorrectly - sorry.");
-			}
-			try {
-				ApplySrg.main(file, srg);
-			} catch (IOException e) {
-				server.getLogger().log(Level.SEVERE, "Failed to load plugin " + file.getAbsolutePath() + " - SRG application failed.", e);
-			}
-			
-			
-			if (!file.delete()) {
-				server.getLogger().warning("Failed to delete unported plugin " + file.getAbsolutePath() + ". DELETE IT before your next reload/restart or things may explode!");
-			}
-			File newFile = new File(file.getParentFile().getAbsolutePath() + "/ported_" + file.getName());
-			/*if (!newFile.exists()) {
-				server.getLogger().warning("FAILED to port plugin " + file.getAbsolutePath() + " to " + newFile.getAbsolutePath() + ", not attempting to load the new one.");
-			}
-			else {
-				newFile.renameTo(file);
-			}*/
-			file = newFile;
-		}
-		else {
-			File newFile = new File(file.getParentFile().getAbsolutePath() + "/ported_" + file.getName());
-			if (newFile.exists()) {
-				// herp, derp
-				file = newFile;
-			}
-		}
+            InputStream srg;
+            if (getClass().getClassLoader().getResourceAsStream("net/minecraft/src") == null) {
+                srg = getClass().getClassLoader().getResourceAsStream("vcb2obf.srg");
+            }
+            else {
+                srg = getClass().getClassLoader().getResourceAsStream("cb2pkgmcp.srg");
+            }
+            if (srg == null) {
+                throw new RuntimeException("MCPC+ was packaged incorrectly - sorry.");
+            }
+            try {
+                ApplySrg.main(file, srg);
+            } catch (IOException e) {
+                server.getLogger().log(Level.SEVERE, "Failed to load plugin " + file.getAbsolutePath() + " - SRG application failed.", e);
+            }
+            
+            
+            if (!file.delete()) {
+                server.getLogger().warning("Failed to delete unported plugin " + file.getAbsolutePath() + ". DELETE IT before your next reload/restart or things may explode!");
+            }
+            File newFile = new File(file.getParentFile().getAbsolutePath() + "/ported_" + file.getName());
+            /*if (!newFile.exists()) {
+                server.getLogger().warning("FAILED to port plugin " + file.getAbsolutePath() + " to " + newFile.getAbsolutePath() + ", not attempting to load the new one.");
+            }
+            else {
+                newFile.renameTo(file);
+            }*/
+            file = newFile;
+        }
+        else {
+            File newFile = new File(file.getParentFile().getAbsolutePath() + "/ported_" + file.getName());
+            if (newFile.exists()) {
+                // herp, derp
+                file = newFile;
+            }
+        }
 
         PluginDescriptionFile description;
         try {

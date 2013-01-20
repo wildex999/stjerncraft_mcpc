@@ -44,6 +44,7 @@ class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChu
         queuedChunk.loader.loadEntities(chunk, queuedChunk.compound.getCompoundTag/*was:getCompound*/("Level"), queuedChunk.world);
         chunk.lastSaveTime/*was:n*/ = queuedChunk.provider.worldObj/*was:world*/.getTotalWorldTime/*was:getTime*/();
         queuedChunk.provider.loadedChunkHashMap/*was:chunks*/.put(queuedChunk.coords, chunk);
+        queuedChunk.provider.loadedChunks.add(chunk); // MCPC+  vanilla compatibility
         chunk.onChunkLoad/*was:addEntities*/();
 
         if (queuedChunk.provider.currentChunkProvider/*was:chunkProvider*/ != null) {

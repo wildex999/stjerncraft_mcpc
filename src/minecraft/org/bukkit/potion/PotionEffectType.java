@@ -211,14 +211,14 @@ public abstract class PotionEffectType {
      * @param type PotionType to register
      */
     public static void registerPotionEffectType(PotionEffectType type) {
-        // MCPC+ allow vanilla to replace potions, Fixes issue #1
+        // MCPC+ start - allow vanilla to replace potions, Fixes issue #1
         /*if (byId[type.id] != null || byName.containsKey(type.getName().toLowerCase())) {
             throw new IllegalArgumentException("Cannot set already-set type");
         } else if (!acceptingNew) {
             throw new IllegalStateException(
                     "No longer accepting new potion effect types (can only be done by the server implementation)");
         }*/
-
+        // MCPC+ end
         byId[type.id] = type;
         byName.put(type.getName().toLowerCase(), type);
     }
