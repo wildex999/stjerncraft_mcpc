@@ -23,7 +23,6 @@ public class PluginClassRemapper extends Remapper {
         for (String inPackage : packageRemap.keySet()) {
             if (typeName.startsWith(inPackage)) {
                 String newName = packageRemap.get(inPackage) + typeName.substring(inPackage.length());
-                System.out.println("plugin remap class "+typeName+" -> "+newName);
 
                 return newName;
             }
