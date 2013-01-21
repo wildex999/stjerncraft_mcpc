@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
-import org.bukkit.command.CommandModCustom;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
@@ -40,7 +39,7 @@ public class CraftSimpleCommandMap extends SimpleCommandMap {
         }
         try {
             // MCPC+ start - if command is a mod command, check permissions and route through vanilla
-            if (target instanceof CommandModCustom)
+            if (target instanceof ModCustomCommand)
             {
                 if (!target.testPermission(sender)) return true;
                 FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().executeCommand(((CraftPlayer)sender).getHandle(), commandLine);

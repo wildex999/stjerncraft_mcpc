@@ -14,10 +14,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandModCustom;
 // MCPC+ start
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.craftbukkit.command.ModCustomCommand;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 // MCPC+ end
 
@@ -49,51 +49,53 @@ public class CommandHandler implements ICommandManager
                 throw new CommandNotFoundException();
             }
 
-            if (var5.canCommandSenderUseCommand(par1ICommandSender))
+            // MCPC+ start - disable check for permissions since we handle it on Bukkit side
+            //if (var5.canCommandSenderUseCommand(par1ICommandSender))
+            //{
+            CommandEvent event = new CommandEvent(var5, par1ICommandSender, var3);
+            if (MinecraftForge.EVENT_BUS.post(event))
             {
-                CommandEvent event = new CommandEvent(var5, par1ICommandSender, var3);
-                if (MinecraftForge.EVENT_BUS.post(event))
+                if (event.exception != null)
                 {
-                    if (event.exception != null)
+                    throw event.exception;
+                }
+                return;
+            }
+
+            if (var6 > -1)
+            {
+                EntityPlayerMP[] var7 = PlayerSelector.matchPlayers(par1ICommandSender, var3[var6]);
+                String var8 = var3[var6];
+                EntityPlayerMP[] var9 = var7;
+                int var10 = var7.length;
+
+                for (int var11 = 0; var11 < var10; ++var11)
+                {
+                    EntityPlayerMP var12 = var9[var11];
+                    var3[var6] = var12.getEntityName();
+
+                    try
                     {
-                        throw event.exception;
+                        var5.processCommand(par1ICommandSender, var3);
                     }
-                    return;
-                }
-
-                if (var6 > -1)
-                {
-                    EntityPlayerMP[] var7 = PlayerSelector.matchPlayers(par1ICommandSender, var3[var6]);
-                    String var8 = var3[var6];
-                    EntityPlayerMP[] var9 = var7;
-                    int var10 = var7.length;
-
-                    for (int var11 = 0; var11 < var10; ++var11)
+                    catch (PlayerNotFoundException var14)
                     {
-                        EntityPlayerMP var12 = var9[var11];
-                        var3[var6] = var12.getEntityName();
-
-                        try
-                        {
-                            var5.processCommand(par1ICommandSender, var3);
-                        }
-                        catch (PlayerNotFoundException var14)
-                        {
-                            par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString(var14.getMessage(), var14.getErrorOjbects()));
-                        }
+                        par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString(var14.getMessage(), var14.getErrorOjbects()));
                     }
+                }
 
-                    var3[var6] = var8;
-                }
-                else
-                {
-                    var5.processCommand(par1ICommandSender, var3);
-                }
+                var3[var6] = var8;
             }
             else
             {
-                par1ICommandSender.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
+                var5.processCommand(par1ICommandSender, var3);
             }
+            /*}
+            else
+            {
+                par1ICommandSender.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
+            }*/
+            // MCPC+ end
         }
         catch (WrongUsageException var15)
         {
@@ -120,8 +122,8 @@ public class CommandHandler implements ICommandManager
         this.commandMap.put(par1ICommand.getCommandName(), par1ICommand);
         this.commandSet.add(par1ICommand);
         // MCPC+ start - register vanilla commands with Bukkit to support permissions.
-        org.bukkit.command.SimpleCommandMap commandMap = FMLCommonHandler.instance().getMinecraftServerInstance().server.getCommandMap();
-        CommandModCustom customCommand = new CommandModCustom(par1ICommand.getCommandName());
+        SimpleCommandMap commandMap = FMLCommonHandler.instance().getMinecraftServerInstance().server.getCommandMap();
+        ModCustomCommand customCommand = new ModCustomCommand(par1ICommand.getCommandName());
         FMLCommonHandler.instance().getMinecraftServerInstance().server.getLogger().info("Registering command " + par1ICommand.getCommandName() + " with permission node " + par1ICommand.getClass().getName());
         customCommand.setPermission(par1ICommand.getClass().getName());
         commandMap.register(par1ICommand.getCommandName(), customCommand);
