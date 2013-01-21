@@ -130,6 +130,13 @@ public class BlockMushroom extends BlockFlower
         }
     }
 
+    // MCPC+ start - wrapper for vanilla compatibility
+    public boolean fertilizeMushroom(World world, int i, int j, int k, Random random)
+    {
+        return this.fertilizeMushroom(world, i, j, k, random, false, null, null);
+    }
+    // MCPC+ end
+
     /**
      * Fertilize the mushroom.
      */
@@ -144,32 +151,57 @@ public class BlockMushroom extends BlockFlower
         Location location = new Location(world.getWorld(), i, j, k);
         WorldGenBigMushroom worldgenhugemushroom = null;
 
-        if (this.blockID == Block.mushroomBrown.blockID)
+        // MCPC+ start - add support for Twilight Forest
+        if (player != null)
         {
-            event = new StructureGrowEvent(location, TreeType.BROWN_MUSHROOM, bonemeal, player, new ArrayList<BlockState>());
-            worldgenhugemushroom = new WorldGenBigMushroom(0);
-        }
-        else if (this.blockID == Block.mushroomRed.blockID)
-        {
-            event = new StructureGrowEvent(location, TreeType.RED_MUSHROOM, bonemeal, player, new ArrayList<BlockState>());
-            worldgenhugemushroom = new WorldGenBigMushroom(1);
-        }
-
-        if (worldgenhugemushroom != null && event != null)
-        {
-            grown = worldgenhugemushroom.grow((org.bukkit.BlockChangeDelegate)world, random, i, j, k, event, itemstack, world.getWorld());
-
-            if (event.isFromBonemeal() && itemstack != null)
+            if (this.blockID == Block.mushroomBrown.blockID)
             {
-                --itemstack.stackSize;
+                event = new StructureGrowEvent(location, TreeType.BROWN_MUSHROOM, bonemeal, player, new ArrayList<BlockState>());
+                worldgenhugemushroom = new WorldGenBigMushroom(0);
+            }
+            else if (this.blockID == Block.mushroomRed.blockID)
+            {
+                event = new StructureGrowEvent(location, TreeType.RED_MUSHROOM, bonemeal, player, new ArrayList<BlockState>());
+                worldgenhugemushroom = new WorldGenBigMushroom(1);
+            }
+    
+            if (worldgenhugemushroom != null && event != null)
+            {
+                grown = worldgenhugemushroom.grow((org.bukkit.BlockChangeDelegate)world, random, i, j, k, event, itemstack, world.getWorld());
+    
+                if (event.isFromBonemeal() && itemstack != null)
+                {
+                    --itemstack.stackSize;
+                }
+            }
+    
+            if (!grown || event.isCancelled())
+            {
+                world.setBlockAndMetadata(i, j, k, this.blockID, l);
+                return false;
             }
         }
+        else { // do vanilla
+            if (this.blockID == Block.mushroomBrown.blockID)
+            {
+                worldgenhugemushroom = new WorldGenBigMushroom(0);
+            }
+            else if (this.blockID == Block.mushroomRed.blockID)
+            {
+                worldgenhugemushroom = new WorldGenBigMushroom(1);
+            }
 
-        if (!grown || event.isCancelled())
-        {
-            world.setBlockAndMetadata(i, j, k, this.blockID, l);
-            return false;
+            if (worldgenhugemushroom != null && worldgenhugemushroom.generate(world, random, i, j, k))
+            {
+                return true;
+            }
+            else
+            {
+                world.setBlockAndMetadata(i, j, k, this.blockID, l);
+                return false;
+            }
         }
+        // MCPC+ end
 
         return true;
         // CraftBukkit end

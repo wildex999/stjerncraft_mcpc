@@ -91,10 +91,12 @@ public class FMLSanityChecker implements IFMLCallHook
         {
             goodFML = true;
         }
-        if (!goodFML)
+        // MCPC+ start - disable warning message
+        /*if (!goodFML)
         {
             FMLLog.severe("FML appears to be missing any signature data. This is not a good thing");
-        }
+        }*/
+        // MCPC+ end
         byte[] mlClass = cl.getClassBytes("ModLoader");
         // Only care in obfuscated env
         if (mlClass == null)
