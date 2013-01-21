@@ -15,6 +15,10 @@ public class PluginClassRemapper extends Remapper {
         // To resolve this conflict, remap plugin usages to Guava 10 in a separate package
         packageRemap.put("com/google", "guava10/com/google");
 
+        // Remap OBC v1_4_6  to v1_4_R1 (or current) for 1.4.6 plugin compatibility
+        // Note this should only be mapped statically - since plugins MAY use reflection to determine the OBC version
+        packageRemap.put("org/bukkit/craftbukkit/v1_4_6", "org/bukkit/craftbukkit/v1_4_R1");
+
         // TODO: remap to vcb2obf, too
     }
 
