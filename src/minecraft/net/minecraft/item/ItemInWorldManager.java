@@ -406,6 +406,13 @@ public class ItemInWorldManager
 
                 return false;
             }
+            // Spigot (Orebfuscator) start
+            else
+            {
+                org.bukkit.craftbukkit.OrebfuscatorManager.updateNearbyBlocks(theWorld, par1, par2, par3);
+            }
+
+            // Spigot (Orebfuscator) end
         }
 
         // Forge start

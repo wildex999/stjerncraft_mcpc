@@ -151,6 +151,11 @@ public final class CraftServer implements Server {
 
     private final BooleanWrapper online = new BooleanWrapper();
 
+    // Orebfuscator use
+    public boolean orebfuscatorEnabled = false;
+    public int orebfuscatorUpdateRadius = 2;
+    public List<String> orebfuscatorDisabledWorlds;
+
     private final class BooleanWrapper {
         private boolean value = true;
     }
@@ -216,37 +221,6 @@ public final class CraftServer implements Server {
         }
         // Spigot end
 
-
-        // Spigot start
-        commandMap.register("bukkit", new org.bukkit.craftbukkit.command.RestartCommand("restart"));
-        commandMap.register("bukkit", new org.bukkit.craftbukkit.command.TicksPerSecondCommand("tps"));
-
-        int timeout = configuration.getInt("settings.timeout-time", 300);
-        if (timeout == 180) {
-            timeout = 300;
-            getLogger().info("Migrating to new timeout time of 300");
-            configuration.set("settings.timeout-time", timeout);
-            saveConfig();
-        }
-        org.bukkit.craftbukkit.util.WatchdogThread.startThread(timeout, configuration.getBoolean("settings.restart-on-crash", false));
-
-        whitelistMessage = configuration.getString("settings.whitelist-message", whitelistMessage);
-        stopMessage = configuration.getString("settings.stop-message", stopMessage);
-        logCommands = configuration.getBoolean("settings.log-commands", true);
-        ipFilter = configuration.getBoolean("settings.filter-unsafe-ips", false);
-        commandComplete = configuration.getBoolean("settings.command-complete", true);
-        spamGuardExclusions = configuration.getStringList("settings.spam-exclusions");
-
-        try {
-            configuration.save(getConfigFile());
-        } catch (IOException e) {
-        }
-        try {
-            new org.bukkit.craftbukkit.util.Metrics().start();
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Could not start metrics", e);
-        }
-        // Spigot end
         loadPlugins();
         enablePlugins(PluginLoadOrder.STARTUP);
     }

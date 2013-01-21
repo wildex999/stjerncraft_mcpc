@@ -117,6 +117,28 @@ public class CraftWorld implements World {
 
         viewDistance = Bukkit.getServer().getViewDistance();
         viewDistance = configuration.getInt("world-settings." + name + ".view-distance", viewDistance);
+
+        obfuscated = !world.getServer().orebfuscatorDisabledWorlds.contains(name);
+
+        server.getLogger().info("-------------- Spigot ----------------");
+        server.getLogger().info("-------- World Settings For [" + name + "] --------");
+        server.getLogger().info("Growth Per Chunk: " + growthPerTick);
+        server.getLogger().info("Item Merge Radius: " + itemMergeRadius);
+        server.getLogger().info("Experience Merge Radius: " + expMergeRadius);
+        server.getLogger().info("Random Lighting Updates: " + randomLightingUpdates);
+        server.getLogger().info("Mob Spawn Range: " + mobSpawnRange);
+        server.getLogger().info("Aggregate Ticks: " + aggregateTicks);
+        server.getLogger().info("Wheat Growth Modifier: " + wheatGrowthModifier);
+        server.getLogger().info("Cactus Growth Modifier: " + cactusGrowthModifier);
+        server.getLogger().info("Melon Growth Modifier: " + melonGrowthModifier);
+        server.getLogger().info("Pumpkin Growth Modifier: " + pumpkinGrowthModifier);
+        server.getLogger().info("Sugar Growth Modifier: " + sugarGrowthModifier);
+        server.getLogger().info("Tree Growth Modifier: " + treeGrowthModifier);
+        server.getLogger().info("Mushroom Growth Modifier: " + mushroomGrowthModifier);
+        server.getLogger().info("View distance: " + viewDistance);
+        server.getLogger().info("Oreobfuscator: " + obfuscated);
+        server.getLogger().info("-------------------------------------------------");
+        // Spigot end
     }
     // Spigot Start
     public int growthPerTick = 650;
@@ -126,6 +148,7 @@ public class CraftWorld implements World {
     public int mobSpawnRange = 4;
     public int aggregateTicks = 4;
     public int viewDistance;
+    public boolean obfuscated = false;
     //Crop growth rates:
     public int wheatGrowthModifier = 100;
     public int cactusGrowthModifier = 100;

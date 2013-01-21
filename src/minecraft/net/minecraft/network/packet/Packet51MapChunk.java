@@ -78,6 +78,7 @@ public class Packet51MapChunk extends Packet
         Packet51MapChunkData var4 = getMapChunkData(par1Chunk, par2, par3);
         this.yChMax = var4.chunkHasAddSectionFlag;
         this.yChMin = var4.chunkExistFlag;
+        org.bukkit.craftbukkit.OrebfuscatorManager.obfuscate(par1Chunk.xPosition, par1Chunk.zPosition, par3, var4.compressedData, par1Chunk.worldObj); // Spigot (Orebfuscator)
         this.compressedChunkData = var4.compressedData;
         this.deflateGate = new Semaphore(1);
     }

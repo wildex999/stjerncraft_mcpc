@@ -290,6 +290,7 @@ public class Explosion
                 var5 = var3.y;
                 var6 = var3.z;
                 var7 = this.worldObj.getBlockId(var4, var5, var6);
+                org.bukkit.craftbukkit.OrebfuscatorManager.updateNearbyBlocks(worldObj, var4, var5, var6); // Spigot (Orebfuscator)
 
                 if (par1)
                 {

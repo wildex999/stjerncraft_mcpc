@@ -10,6 +10,7 @@ import java.util.concurrent.Semaphore;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public class Packet56MapChunks extends Packet
@@ -21,15 +22,17 @@ public class Packet56MapChunks extends Packet
 
     /** The compressed chunk data buffer */
     private byte[] chunkDataBuffer;
-    private byte[][] field_73584_f;
+    private byte[][] field_73584_f; // 'inflatedBuffers' in CB
 
     /** total size of the compressed data */
     private int dataLength;
     private boolean field_92076_h;
-    private static byte[] chunkDataNotCompressed = new byte[0];
+    private byte[] chunkDataNotCompressed = new byte[0]; // CraftBukkit - remove static
     private int maxLen = 0;
 
     private Semaphore deflateGate;
+
+    private World world; // Spigot (Orebfuscator) Keep track of world
 
     public Packet56MapChunks() {}
 
@@ -48,6 +51,18 @@ public class Packet56MapChunks extends Packet
         {
             Chunk var5 = (Chunk)par1List.get(var4);
             Packet51MapChunkData var6 = Packet51MapChunk.getMapChunkData(var5, true, 65535);
+
+            world = var5.worldObj; // Spigot (Orebfuscator)
+            /* Spigot (Orebfuscator) - Don't use the build buffer yet. Copy to it more efficiently once the chunk is obfuscated
+            // Moved to deflate()
+            if (chunkDataNotCompressed.length < var3 + var6.compressedData.length)
+            {
+                byte[] var7 = new byte[var3 + var6.compressedData.length];
+                System.arraycopy(chunkDataNotCompressed, 0, var7, 0, chunkDataNotCompressed.length);
+                chunkDataNotCompressed = var7;
+            }
+
+            System.arraycopy(var6.compressedData, 0, chunkDataNotCompressed, var3, var6.compressedData.length);*/
             var3 += var6.compressedData.length;
             this.chunkPostX[var4] = var5.xPosition;
             this.chunkPosZ[var4] = var5.zPosition;
@@ -61,19 +76,32 @@ public class Packet56MapChunks extends Packet
 
     private void deflate()
     {
-        byte[] data = new byte[maxLen];
-        int offset = 0;
-        for (int x = 0; x < field_73584_f.length; x++)
+        // Spigot (Orebfuscator) start - Obfuscate chunks
+        int finalBufferSize = 0;
+
+        for (int i = 0; i < field_73590_a.length; i++)
         {
-            System.arraycopy(field_73584_f[x], 0, data, offset, field_73584_f[x].length);
-            offset += field_73584_f[x].length;
+            org.bukkit.craftbukkit.OrebfuscatorManager.obfuscate(chunkPostX[i], chunkPosZ[i], field_73590_a[i], field_73584_f[i], world);
+            finalBufferSize += field_73584_f[i].length;
         }
+
+        // Now it's time to efficiently copy the chunk to the build buffer
+        chunkDataNotCompressed = new byte[finalBufferSize];
+        int bufferLocation = 0;
+
+        for (int i = 0; i < field_73590_a.length; i++)
+        {
+            System.arraycopy(field_73584_f[i], 0, chunkDataNotCompressed, bufferLocation, field_73584_f[i].length);
+            bufferLocation += field_73584_f[i].length;
+        }
+
+        // Spigot (Orebfuscator) end
 
         Deflater var11 = new Deflater(-1);
 
         try
         {
-            var11.setInput(data, 0, maxLen);
+            var11.setInput(chunkDataNotCompressed, 0, maxLen);
             var11.finish();
             byte[] deflated = new byte[maxLen];
             this.dataLength = var11.deflate(deflated);
