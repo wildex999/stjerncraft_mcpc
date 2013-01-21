@@ -244,10 +244,33 @@ class InheritanceMapClassVisitor extends ClassVisitor {
 	}
 
 	@Override
+	public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
+		return null;
+	}
+
+	@Override
+	public void visitAttribute(Attribute arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void visitEnd() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public FieldVisitor visitField(int access, String name, String desc,
 			String signature, Object value) {
 		this.info.setFields.add(name);
 		return null;
+	}
+
+	@Override
+	public void visitInnerClass(String arg0, String arg1, String arg2, int arg3) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -256,6 +279,17 @@ class InheritanceMapClassVisitor extends ClassVisitor {
 		this.info.setMethods.add(new Method(name,desc));
 		return null;
 	}
+
+	@Override
+	public void visitOuterClass(String arg0, String arg1, String arg2) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void visitSource(String arg0, String arg1) {
+		// TODO Auto-generated method stub
+	}
+
 }
 
 class ParseEntry {
