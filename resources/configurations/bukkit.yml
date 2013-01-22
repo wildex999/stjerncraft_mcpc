@@ -34,6 +34,10 @@ settings:
     command-complete: true
     spam-exclusions:
        - /skill
+mcpc:
+    plugin-settings:
+        default:
+            remap-plugin-file: true
 world-settings:
     default:
         growth-chunks-per-tick: 650

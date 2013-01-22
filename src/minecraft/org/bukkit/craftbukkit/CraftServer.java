@@ -124,7 +124,7 @@ public final class CraftServer implements Server {
     protected final net.minecraft.server.MinecraftServer/*was:MinecraftServer*/ console;
     protected final net.minecraft.server.dedicated.DedicatedPlayerList/*was:DedicatedPlayerList*/ playerList;
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
-    protected YamlConfiguration configuration; // Spigot private -> protected
+    public YamlConfiguration configuration; // Spigot private -> protected // MCPC+ - public for JavaPluginLoader
     private final Yaml yaml = new Yaml(new SafeConstructor());
     private final Map<String, OfflinePlayer> offlinePlayers = new MapMaker().softValues().makeMap();
     private final AutoUpdater updater;

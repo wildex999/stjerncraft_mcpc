@@ -21,11 +21,14 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.Warning;
 import org.bukkit.Warning.WarningState;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
@@ -65,8 +68,16 @@ public class JavaPluginLoader implements PluginLoader {
         if (!file.exists()) {
             throw new InvalidPluginException(new FileNotFoundException(file.getPath() + " does not exist"));
         }
-        
-        if (!file.getName().startsWith("ported_")) {
+
+        // MCPC+ start - file-based plugin remapper using SrgTools ApplySrg
+        YamlConfiguration configuration = ((CraftServer)Bukkit.getServer()).configuration;
+        boolean shouldRemap = configuration.getBoolean("mcpc.plugin-settings.default.remap-plugin-file", true);
+
+        // per-plugin settings
+        String pluginBaseName = file.getName().substring(0, file.getName().indexOf("."));
+        shouldRemap = configuration.getBoolean("mcpc.plugin-settings."+pluginBaseName+".remap-plugin-file", shouldRemap);
+
+        if (shouldRemap && !file.getName().startsWith("ported_")) {
 
             InputStream srg;
             if (getClass().getClassLoader().getResourceAsStream("net/minecraft/src") == null) {
@@ -96,14 +107,14 @@ public class JavaPluginLoader implements PluginLoader {
                 newFile.renameTo(file);
             }*/
             file = newFile;
-        }
-        else {
+        } else {
             File newFile = new File(file.getParentFile().getAbsolutePath() + "/ported_" + file.getName());
             if (newFile.exists()) {
                 // herp, derp
                 file = newFile;
             }
         }
+        // MCPC+ end
 
         PluginDescriptionFile description;
         try {
