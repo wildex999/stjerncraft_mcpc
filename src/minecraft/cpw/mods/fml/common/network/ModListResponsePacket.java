@@ -111,8 +111,10 @@ public class ModListResponsePacket extends FMLPacket
         if (missingClientMods.size()>0 || versionIncorrectMods.size() > 0)
         {
             pkt.data = FMLPacket.makePacket(MOD_MISSING, missingClientMods, versionIncorrectMods);
-            Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
-            FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
+            // MCPC+ start - disable unneeded console spam
+            //Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
+            //FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
+            // MCPC+ end
             // Mark this as bad
             FMLNetworkHandler.setHandlerState((NetLoginHandler) netHandler, FMLNetworkHandler.MISSING_MODS_OR_VERSIONS);
             pkt.length = pkt.data.length;
@@ -121,8 +123,10 @@ public class ModListResponsePacket extends FMLPacket
         else
         {
             pkt.data = FMLPacket.makePacket(MOD_IDENTIFIERS, netHandler);
-            Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
-            FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
+            // MCPC+ start - disable unneeded console spam
+            //Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
+            //FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
+            // MCPC+ end
             pkt.length = pkt.data.length;
             network.addToSendQueue(pkt);
             NBTTagList itemList = new NBTTagList();
