@@ -13,7 +13,7 @@ public class PluginClassRemapper extends Remapper {
     static {
         // Guava 10 is part of the Bukkit API, so plugins can use it, but FML includes Guava 12
         // To resolve this conflict, remap plugin usages to Guava 10 in a separate package
-        packageRemap.put("com/google", "guava10/com/google");
+        packageRemap.put("com/google/common", "guava10/com/google/common");
 
         // Remap OBC v1_4_6  to v1_4_R1 (or current) for 1.4.6 plugin compatibility
         // Note this should only be mapped statically - since plugins MAY use reflection to determine the OBC version
