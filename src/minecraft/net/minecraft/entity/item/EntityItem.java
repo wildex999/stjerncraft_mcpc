@@ -199,7 +199,9 @@ public class EntityItem extends Entity
 
     private void func_85054_d()
     {
-        Iterator var1 = this.worldObj.getEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(0.5D, 0.0D, 0.5D)).iterator();
+        double radius = worldObj.getWorld().itemMergeRadius;
+        Iterator var1 = this.worldObj.getEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(radius, radius, radius)).iterator();
+        
 
         while (var1.hasNext())
         {
@@ -249,11 +251,11 @@ public class EntityItem extends Entity
             }
             else
             {
-                var3.stackSize += var2.stackSize;
-                par1EntityItem.delayBeforeCanPickup = Math.max(par1EntityItem.delayBeforeCanPickup, this.delayBeforeCanPickup);
-                par1EntityItem.age = Math.min(par1EntityItem.age, this.age);
-                par1EntityItem.func_92013_a(var3);
-                this.setDead();
+                var2.stackSize += var3.stackSize;
+                this.delayBeforeCanPickup = Math.max(par1EntityItem.delayBeforeCanPickup, this.delayBeforeCanPickup);
+                this.age = Math.min(par1EntityItem.age, this.age);
+                this.func_92013_a(var2);
+                par1EntityItem.setDead();
                 return true;
             }
         }
