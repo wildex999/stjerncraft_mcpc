@@ -96,8 +96,6 @@ public class WorldChunkManager
         return par1ArrayOfFloat;
     }
 
-    @SideOnly(Side.CLIENT)
-
     /**
      * Return an adjusted version of a given temperature based on the y height
      */

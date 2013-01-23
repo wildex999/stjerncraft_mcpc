@@ -174,7 +174,7 @@ public abstract class World implements IBlockAccess
     /** The world-local pool of vectors */
     private final Vec3Pool vecPool = new Vec3Pool(300, 2000);
     private final Calendar theCalendar = Calendar.getInstance();
-    private UnsafeList collidingBoundingBoxes = new UnsafeList(); // CraftBukkit - ArrayList -> UnsafeList
+    private ArrayList collidingBoundingBoxes = new ArrayList();
     private boolean scanningTileEntities;
     // CraftBukkit start - public, longhashset
 
