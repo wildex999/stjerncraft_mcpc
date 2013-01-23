@@ -53,23 +53,24 @@
         <version>4.1</version>
     </dependency>
     <dependency>
-        <groupId>za.co.mcportcentral</groupId>
-        <artifactId>mcpc-api</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>5.1.14</version>
-        <type>jar</type>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
         <groupId>net.sourceforge.argo</groupId>
         <artifactId>argo</artifactId>
         <version>2.25</version>
+        <type>jar</type>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk15on</artifactId>
+        <version>1.47</version>
+        <type>jar</type>
+    </dependency>
+    <!-- CraftBukkit -->
+    <dependency>
+        <groupId>za.co.mcportcentral</groupId>
+        <artifactId>mcpc-api</artifactId>
+        <!-- Bukkit API -->
+        <version>${project.version}</version>
         <type>jar</type>
         <scope>compile</scope>
     </dependency>
@@ -103,10 +104,37 @@
         <scope>compile</scope>
     </dependency>
     <dependency>
-        <groupId>org.bouncycastle</groupId>
-        <artifactId>bcprov-jdk15on</artifactId>
-        <version>1.47</version>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.14</version>
         <type>jar</type>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.avaje</groupId>
+        <artifactId>ebean</artifactId>
+        <version>2.7.3</version>
+        <type>jar</type>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>1.9</version>
+        <type>jar</type>
+        <scope>provided</scope>
+    </dependency>
+    <!-- moved com.google.guava 10.0 to API jar -->
+    <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.3</version>
+        <scope>provided</scope>
     </dependency>
     <!-- Client dependencies -->
     <dependency>
