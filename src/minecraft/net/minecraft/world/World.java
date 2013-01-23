@@ -1,5 +1,6 @@
 package net.minecraft.world;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.gen.ChunkProviderServer;
 import org.bukkit.Bukkit;
+import org.bukkit.World.Environment;
 import org.bukkit.craftbukkit.util.LongHashSet;
 import org.bukkit.craftbukkit.util.UnsafeList;
 import org.bukkit.generator.ChunkGenerator;
@@ -72,6 +74,7 @@ import org.bukkit.event.weather.ThunderChangeEvent;
 // CraftBukkit end
 import com.google.common.collect.ImmutableSetMultimap;
 
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeHooks;
@@ -316,98 +319,14 @@ public abstract class World implements IBlockAccess
         return (CraftServer) Bukkit.getServer();
     }
 
-    public World(ISaveHandler par1ISaveHandler, String par2Str, WorldSettings par3WorldSettings, WorldProvider par4WorldProvider, Profiler par5Profiler)
-    {
-        world = null;
-        this.ambientTickCountdown = this.rand.nextInt(12000);
-        this.lightUpdateBlockList = new int[32768];
-        this.entitiesWithinAABBExcludingEntity = new ArrayList();
-        this.isRemote = false;
-        this.saveHandler = par1ISaveHandler;
-        this.theProfiler = par5Profiler;
-        this.mapStorage = getMapStorage(par1ISaveHandler);
-        this.worldInfo = par1ISaveHandler.loadWorldInfo();
-
-        if (par4WorldProvider != null)
-        {
-            this.provider = par4WorldProvider;
-        }
-        else if (this.worldInfo != null && this.worldInfo.getDimension() != 0)
-        {
-            this.provider = WorldProvider.getProviderForDimension(this.worldInfo.getDimension());
-        }
-        else
-        {
-            this.provider = WorldProvider.getProviderForDimension(0);
-        }
-
-        if (this.worldInfo == null)
-        {
-            this.worldInfo = new WorldInfo(par3WorldSettings, par2Str);
-        }
-        else
-        {
-            this.worldInfo.setWorldName(par2Str);
-        }
-
-        this.provider.registerWorld(this);
-        this.chunkProvider = this.createChunkProvider();
-
-        if (!this.worldInfo.isInitialized())
-        {
-            try
-            {
-                this.initialize(par3WorldSettings);
-            }
-            catch (Throwable var10)
-            {
-                CrashReport var7 = CrashReport.makeCrashReport(var10, "Exception initializing level");
-
-                try
-                {
-                    this.addWorldInfoToCrashReport(var7);
-                }
-                catch (Throwable var9)
-                {
-                    ;
-                }
-
-                throw new ReportedException(var7);
-            }
-
-            this.worldInfo.setServerInitialized(true);
-        }
-
-        if (this instanceof WorldServer)
-        {
-            this.perWorldStorage = new MapStorage(new WorldSpecificSaveHandler((WorldServer)this, par1ISaveHandler));
-        }
-        else
-        {
-            this.perWorldStorage = new MapStorage((ISaveHandler)null);
-        }
-        VillageCollection var6 = (VillageCollection)perWorldStorage.loadData(VillageCollection.class, "villages");
-
-        if (var6 == null)
-        {
-            this.villageCollectionObj = new VillageCollection(this);
-            this.perWorldStorage.setData("villages", this.villageCollectionObj);
-        }
-        else
-        {
-            this.villageCollectionObj = var6;
-            this.villageCollectionObj.func_82566_a(this);
-        }
-
-        this.calculateInitialSkylight();
-        this.calculateInitialWeather();
-    }
-
     // Changed signature
     public World(ISaveHandler idatamanager, String s, WorldSettings worldsettings, WorldProvider worldprovider, Profiler methodprofiler, ChunkGenerator gen, org.bukkit.World.Environment env)
     {
+        if (env == null)
+        {
+            env = Environment.getEnvironment(0); // MCPC+ set to 0 for CB support
+        }
         this.generator = gen;
-        //this.worldInfo = idatamanager.loadWorldInfo(); // Spigot
         this.world = new CraftWorld((WorldServer) this, gen, env);
         this.ticksPerAnimalSpawns = this.getServer().getTicksPerAnimalSpawns(); // CraftBukkit
         this.ticksPerMonsterSpawns = this.getServer().getTicksPerMonsterSpawns(); // CraftBukkit
@@ -419,7 +338,7 @@ public abstract class World implements IBlockAccess
         // Spigot end
         this.ambientTickCountdown = this.rand.nextInt(12000);
         this.lightUpdateBlockList = new int['\u8000'];
-        this.entitiesWithinAABBExcludingEntity = new UnsafeList(); // CraftBukkit - ArrayList -> UnsafeList
+        this.entitiesWithinAABBExcludingEntity = new ArrayList();
         this.isRemote = false;
         this.saveHandler = idatamanager;
         this.theProfiler = methodprofiler;

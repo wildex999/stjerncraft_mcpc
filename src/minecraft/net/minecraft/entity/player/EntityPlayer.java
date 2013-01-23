@@ -66,6 +66,7 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 // CraftBukkit start
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -122,9 +123,10 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
     public boolean fauxSleeping;
     public String spawnWorld = "";
 
-    public HumanEntity getBukkitEntity()
+    @Override
+    public CraftHumanEntity getBukkitEntity()
     {
-        return (HumanEntity) super.getBukkitEntity();
+        return (CraftHumanEntity) super.getBukkitEntity();
     }
     // CraftBukkit end
 

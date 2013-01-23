@@ -117,17 +117,15 @@ public class CommandHandler implements ICommandManager
      */
     public ICommand registerCommand(ICommand par1ICommand)
     {
-        FMLCommonHandler.instance().getMinecraftServerInstance().server.getLogger().info("Processing mod command " + par1ICommand.getCommandName() + "...");
         List var2 = par1ICommand.getCommandAliases();
         this.commandMap.put(par1ICommand.getCommandName(), par1ICommand);
         this.commandSet.add(par1ICommand);
         // MCPC+ start - register vanilla commands with Bukkit to support permissions.
         SimpleCommandMap commandMap = FMLCommonHandler.instance().getMinecraftServerInstance().server.getCommandMap();
         ModCustomCommand customCommand = new ModCustomCommand(par1ICommand.getCommandName());
-        FMLCommonHandler.instance().getMinecraftServerInstance().server.getLogger().info("Registering command " + par1ICommand.getCommandName() + " with permission node " + par1ICommand.getClass().getName());
         customCommand.setPermission(par1ICommand.getClass().getName());
         commandMap.register(par1ICommand.getCommandName(), customCommand);
-        FMLCommonHandler.instance().getMinecraftServerInstance().server.getLogger().info("Mod Command " + par1ICommand.getCommandName() + " has successfully been processed.");
+        FMLCommonHandler.instance().getMinecraftServerInstance().server.getLogger().info("Registered command " + par1ICommand.getCommandName() + " with permission node " + par1ICommand.getClass().getName());
         // MCPC+ end
         if (var2 != null)
         {

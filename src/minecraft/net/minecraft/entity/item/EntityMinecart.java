@@ -436,7 +436,7 @@ public class EntityMinecart extends Entity implements IInventory
 
             if (this.inPortal)
             {
-                if (var1.getAllowNether())
+                if (true || var1.getAllowNether()) // CraftBukkit - multi-world should still allow teleport even if default vanilla nether disabled
                 {
                     if (this.ridingEntity == null && this.field_82153_h++ >= var2)
                     {

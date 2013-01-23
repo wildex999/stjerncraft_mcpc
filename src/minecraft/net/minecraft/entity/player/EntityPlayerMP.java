@@ -83,6 +83,7 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 // CraftBukkit end
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
@@ -553,20 +554,15 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         }
         else
         {
-            this.triggerAchievement(AchievementList.theEnd);
-            /* CraftBukkit start - removed to fix our handling of The End portals
-            ChunkCoordinates chunkcoordinates = this.server.getWorldServer(i).getDimensionSpawn();
-
-                if (chunkcoordinates != null) {
-                    this.playerConnection.a((double) chunkcoordinates.x, (double) chunkcoordinates.y, (double) chunkcoordinates.z, 0.0F, 0.0F);
-                }
-
-                i = 1;
+            if (this.dimension == 1 && par1 == 0) {
+                this.triggerAchievement(AchievementList.theEnd);
             } else {
-                this.a((Statistic) AchievementList.x);
+                this.triggerAchievement(AchievementList.portal);
             }
-            // CraftBukkit end */
-            this.mcServer.getConfigurationManager().transferPlayerToDimension(this, par1);
+            // CraftBukkit start
+            TeleportCause cause = (this.dimension == 1 || par1 == 1) ? TeleportCause.END_PORTAL : TeleportCause.NETHER_PORTAL;
+            this.mcServer.getConfigurationManager().transferPlayerToDimension(this, par1, cause);
+            // CraftBukkit end
             this.lastExperience = -1;
             this.lastHealth = -1;
             this.lastFoodLevel = -1;

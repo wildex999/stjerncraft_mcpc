@@ -51,9 +51,11 @@ import net.minecraftforge.common.DimensionManager;
 // CraftBukkit start
 import net.minecraft.network.NetLoginHandler;
 import org.bukkit.Location;
+import org.bukkit.TravelAgent;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
@@ -62,6 +64,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.util.Vector;
 import org.bukkit.Bukkit;
 // CraftBukkit end
 
@@ -396,12 +399,10 @@ public abstract class ServerConfigurationManager
         // Instead of kicking then returning, we need to store the kick reason
         // in the event, check with plugins to see if it's ok, and THEN kick
         // depending on the outcome.
-        System.out.println("ServerConfigurationManager attemptLogin pendingconnection = " + pendingconnection + ", s = " + s + ", host = " + hostname);
         EntityPlayerMP entity = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), s, this.mcServer.isDemo() ? new DemoWorldManager(this.mcServer.worldServerForDimension(0)) : new ItemInWorldManager(this.mcServer.worldServerForDimension(0)));
         Player player = entity.getBukkitEntity();
         PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, pendingconnection.getSocket().getInetAddress());
         SocketAddress socketaddress = pendingconnection.myTCPConnection.getSocketAddress();
-        System.out.println("entity = " + entity + ", player = " + player + ", socketaddress = " + socketaddress);
         if (this.bannedPlayers.isBanned(s))
         {
             BanEntry banentry = (BanEntry) this.bannedPlayers.getBannedList().get(s);
@@ -416,12 +417,10 @@ public abstract class ServerConfigurationManager
         }
         else if (!this.isAllowedToLogin(s))
         {
-            System.out.println("!isAllowedToLogin");
             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, cserver.whitelistMessage); // Spigot
         }
         else
         {
-            System.out.println("1 attemptLogin");
             String s2 = socketaddress.toString();
             s2 = s2.substring(s2.indexOf("/") + 1);
             s2 = s2.substring(0, s2.indexOf(":"));
@@ -447,16 +446,13 @@ public abstract class ServerConfigurationManager
                 event.disallow(PlayerLoginEvent.Result.ALLOWED, s2);
             }
         }
-        System.out.println("2 attemptLogin");
         this.cserver.getPluginManager().callEvent(event);
 
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)
         {
-            System.out.println("3 attemptLogin");
             pendingconnection.raiseErrorAndDisconnect(event.getKickMessage());
             return null;
         }
-        System.out.println("4 attemptLogin returning entity " + entity);
         return entity;
         // CraftBukkit end
     }
@@ -554,7 +550,6 @@ public abstract class ServerConfigurationManager
 
     public EntityPlayerMP respawnPlayer(EntityPlayerMP entityplayer, int i, boolean flag, Location location)
     {
-        System.out.println("respawnPlayer " + entityplayer);
         // CraftBukkit end
         entityplayer.getServerForPlayer().getEntityTracker().removeAllTrackingPlayers(entityplayer);
         // entityplayer.p().getTracker().untrackEntity(entityplayer); // CraftBukkit
@@ -662,111 +657,212 @@ public abstract class ServerConfigurationManager
         return entityplayer1;
     }
 
-    public void transferPlayerToDimension(EntityPlayerMP var1, int var2, Teleporter var3)
-    {
-        transferPlayerToDimension(var1, var2); // Forge
-    }
-
-    // TODO: didn't implement forge version
     public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
     {
-        // CraftBukkit start -- Replaced the standard handling of portals with a more customised method.
-        int dimension = par2;
-        WorldServer fromWorld = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
-        WorldServer toWorld = null;
+        this.transferPlayerToDimension(par1EntityPlayerMP, par2, (TeleportCause)null);
+    }
 
-        if (par1EntityPlayerMP.dimension < 10)
+    public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2, Teleporter teleporter)
+    {
+        int var3 = par1EntityPlayerMP.dimension;
+        WorldServer var4 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+        par1EntityPlayerMP.dimension = par2;
+        WorldServer var5 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+
+        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, var5.getWorldInfo().getTerrainType(), var5.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
+        var4.removeEntity(par1EntityPlayerMP);
+        par1EntityPlayerMP.isDead = false;
+        this.transferEntityToWorld(par1EntityPlayerMP, var3, var4, var5, teleporter);
+        this.func_72375_a(par1EntityPlayerMP, var4);
+        par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
+        par1EntityPlayerMP.theItemInWorldManager.setWorld(var5);
+        this.updateTimeAndWeatherForPlayer(par1EntityPlayerMP, var5);
+        this.syncPlayerInventory(par1EntityPlayerMP);
+        Iterator var6 = par1EntityPlayerMP.getActivePotionEffects().iterator();
+
+        while (var6.hasNext())
         {
-            for (WorldServer world : this.mcServer.worlds)
-            {
-                if (world.dimension == dimension)
-                {
-                    toWorld = world;
-                }
-            }
+            PotionEffect var7 = (PotionEffect)var6.next();
+            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet41EntityEffect(par1EntityPlayerMP.entityId, var7));
         }
 
-        Location fromLocation = new Location(fromWorld.getWorld(), par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
-        Location toLocation = null;
+        GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
+    }
+    
+    public void transferPlayerToDimension(EntityPlayerMP entityplayer, int i, TeleportCause cause)
+    {
+        // CraftBukkit start -- Replaced the standard handling of portals with a more customised method.
+        WorldServer exitWorld = this.mcServer.worldServerForDimension(i);
 
-        if (toWorld != null)
+        Location enter = entityplayer.getBukkitEntity().getLocation();
+        Location exit = null;
+        if ((cause == TeleportCause.END_PORTAL) && (i == 0)) {
+            // THE_END -> NORMAL; use bed if available
+            exit = ((CraftPlayer) entityplayer.getBukkitEntity()).getBedSpawnLocation();
+        }
+        if (exit == null) {
+            exit = this.calculateTarget(enter, exitWorld);
+        }
+
+        TravelAgent agent = (TravelAgent) ((CraftWorld) exit.getWorld()).getHandle().func_85176_s();
+        PlayerPortalEvent event = new PlayerPortalEvent(entityplayer.getBukkitEntity(), enter, exit, agent, cause);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled() || event.getTo() == null) {
+            return;
+        }
+        exit = event.useTravelAgent() ? event.getPortalTravelAgent().findOrCreate(exit) : event.getTo();
+        exitWorld = ((CraftWorld) exit.getWorld()).getHandle();
+
+        Vector velocity = entityplayer.getBukkitEntity().getVelocity();
+        boolean before = exitWorld.theChunkProviderServer.loadChunkOnProvideRequest;
+        exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = true;
+        exitWorld.func_85176_s().adjustExit(entityplayer, exit, velocity);
+        exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = before;
+
+        this.respawnPlayer(entityplayer, exitWorld.dimension, true, exit);
+        if (entityplayer.motionX != velocity.getX() || entityplayer.motionY != velocity.getY() || entityplayer.motionZ != velocity.getZ()) {
+            entityplayer.getBukkitEntity().setVelocity(velocity);
+        }
+        // CraftBukkit end
+        GameRegistry.onPlayerChangedDimension(entityplayer); // Forge
+    }
+
+    // copy of original a(Entity, int, WorldServer, WorldServer) method with only location calculation logic
+    public Location calculateTarget(Location enter, World target) {
+        WorldServer worldserver = ((CraftWorld) enter.getWorld()).getHandle();
+        WorldServer worldserver1 = ((CraftWorld) target.getWorld()).getHandle();
+        int i = worldserver.dimension;
+
+        double y = enter.getY();
+        float yaw = enter.getYaw();
+        float pitch = enter.getPitch();
+        double d0 = enter.getX();
+        double d1 = enter.getZ();
+        double d2 = 8.0D;
+
+        if (worldserver1.dimension == -1) {
+            d0 /= d2;
+            d1 /= d2;
+        } else if (worldserver1.dimension == 0) {
+            d0 *= d2;
+            d1 *= d2;
+        } else {
+            ChunkCoordinates chunkcoordinates;
+
+            if (i == 1) {
+                chunkcoordinates = worldserver1.getSpawnPoint();
+            } else {
+                chunkcoordinates = worldserver1.getEntrancePortalLocation();
+            }
+            if (chunkcoordinates == null)
+                chunkcoordinates = worldserver1.getSpawnPoint();
+            d0 = (double) chunkcoordinates.posX;
+            y = (double) chunkcoordinates.posY;
+            d1 = (double) chunkcoordinates.posZ;
+            yaw = 90.0F;
+            pitch = 0.0F;
+        }
+
+        if (i != 1) {
+            d0 = (double) MathHelper.clamp_int((int) d0, -29999872, 29999872);
+            d1 = (double) MathHelper.clamp_int((int) d1, -29999872, 29999872);
+        }
+
+        return new Location(target.getWorld(), d0, y, d1, yaw, pitch);
+    }
+
+    // copy of original a(Entity, int, WorldServer, WorldServer) method with only entity repositioning logic
+    public void repositionEntity(Entity entity, Location exit, boolean portal) {
+        int i = entity.dimension;
+        WorldServer worldserver = (WorldServer) entity.worldObj;
+        WorldServer worldserver1 = ((CraftWorld) exit.getWorld()).getHandle();
+
+        worldserver.theProfiler.startSection("moving");
+        entity.setLocationAndAngles(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch());
+        if (entity.isEntityAlive()) {
+            worldserver.updateEntityWithOptionalForce(entity, false);
+        }
+
+        worldserver.theProfiler.endSection();
+        if (i != 1) {
+            worldserver.theProfiler.startSection("placing");
+            if (entity.isEntityAlive()) {
+                worldserver1.spawnEntityInWorld(entity);
+                worldserver1.updateEntityWithOptionalForce(entity, false);
+                if (portal) {
+                    Vector velocity = entity.getBukkitEntity().getVelocity();
+                    worldserver1.func_85176_s().adjustExit(entity, exit, velocity);
+                    entity.setLocationAndAngles(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch());
+                    if (entity.motionX != velocity.getX() || entity.motionY != velocity.getY() || entity.motionZ != velocity.getZ()) {
+                        entity.getBukkitEntity().setVelocity(velocity);
+                    }
+                }
+            }
+
+            worldserver.theProfiler.endSection();
+        }
+
+        entity.setWorld(worldserver1);
+        // CraftBukkit end
+    }
+    public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer, Teleporter teleporter)
+    {
+        WorldProvider pOld = par3WorldServer.provider;
+        WorldProvider pNew = par4WorldServer.provider;
+        double moveFactor = pOld.getMovementFactor() / pNew.getMovementFactor();
+        double var5 = par1Entity.posX * moveFactor;
+        double var7 = par1Entity.posZ * moveFactor;
+        double var11 = par1Entity.posX;
+        double var13 = par1Entity.posY;
+        double var15 = par1Entity.posZ;
+        float var17 = par1Entity.rotationYaw;
+        par3WorldServer.theProfiler.startSection("moving");
+
+        if (par1Entity.dimension == 1)
         {
-            if (((dimension == -1) || (dimension == 0)) && ((par1EntityPlayerMP.dimension == -1) || (par1EntityPlayerMP.dimension == 0)))
+            ChunkCoordinates var18;
+
+            if (par2 == 1)
             {
-                double blockRatio = dimension == 0 ? 8 : 0.125;
-                toLocation = toWorld == null ? null : new Location(toWorld.getWorld(), (par1EntityPlayerMP.posX * blockRatio), par1EntityPlayerMP.posY, (par1EntityPlayerMP.posZ * blockRatio), par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
+                var18 = par4WorldServer.getSpawnPoint();
             }
             else
             {
-                ChunkCoordinates coords = toWorld.getEntrancePortalLocation();
+                var18 = par4WorldServer.getEntrancePortalLocation();
+            }
 
-                if (coords != null)
-                {
-                    toLocation = new Location(toWorld.getWorld(), coords.posX, coords.posY, coords.posZ, 90, 0);
-                }
+            var5 = (double)var18.posX;
+            par1Entity.posY = (double)var18.posY;
+            var7 = (double)var18.posZ;
+            par1Entity.setLocationAndAngles(var5, par1Entity.posY, var7, 90.0F, 0.0F);
+
+            if (par1Entity.isEntityAlive())
+            {
+                par3WorldServer.updateEntityWithOptionalForce(par1Entity, false);
             }
         }
 
-        TeleportCause cause = TeleportCause.UNKNOWN;
-        int playerEnvironmentId = par1EntityPlayerMP.getBukkitEntity().getWorld().getEnvironment().getId();
+        par3WorldServer.theProfiler.endSection();
 
-        switch (dimension)
+        if (par2 != 1)
         {
-            case -1:
-                cause = TeleportCause.NETHER_PORTAL;
-                break;
+            par3WorldServer.theProfiler.startSection("placing");
+            var5 = (double)MathHelper.clamp_int((int)var5, -29999872, 29999872);
+            var7 = (double)MathHelper.clamp_int((int)var7, -29999872, 29999872);
 
-            case 0:
-                if (playerEnvironmentId == -1)
-                {
-                    cause = TeleportCause.NETHER_PORTAL;
-                }
-                else if (playerEnvironmentId == 1)
-                {
-                    cause = TeleportCause.END_PORTAL;
-                }
+            if (par1Entity.isEntityAlive())
+            {
+                par4WorldServer.spawnEntityInWorld(par1Entity);
+                par1Entity.setLocationAndAngles(var5, par1Entity.posY, var7, par1Entity.rotationYaw, par1Entity.rotationPitch);
+                par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
+                teleporter.placeInPortal(par1Entity, var11, var13, var15, var17);
+            }
 
-                break;
-
-            case 1:
-                cause = TeleportCause.END_PORTAL;
-                break;
+            par3WorldServer.theProfiler.endSection();
         }
 
-        org.bukkit.craftbukkit.PortalTravelAgent pta = new org.bukkit.craftbukkit.PortalTravelAgent();
-        PlayerPortalEvent event = new PlayerPortalEvent((Player) par1EntityPlayerMP.getBukkitEntity(), fromLocation, toLocation, pta, cause);
-
-        if (par1EntityPlayerMP.dimension == 1)
-        {
-            event.useTravelAgent(false);
-        }
-
-        Bukkit.getServer().getPluginManager().callEvent(event);
-
-        if (event.isCancelled() || event.getTo() == null)
-        {
-            return;
-        }
-
-        Location finalLocation = event.getTo();
-
-        if (event.useTravelAgent())
-        {
-            finalLocation = event.getPortalTravelAgent().findOrCreate(finalLocation);
-        }
-
-        toWorld = ((CraftWorld) finalLocation.getWorld()).getHandle();
-        this.respawnPlayer(par1EntityPlayerMP, toWorld.dimension, true, finalLocation);
-        // CraftBukkit end
-        GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP); // Forge
+        par1Entity.setWorld(par4WorldServer);
     }
-
-    /*public void transferEntityToWorld(Entity var1, int var2, WorldServer var3, WorldServer var4, Teleporter var5)
-    {
-        transferEntityToWorld(var1, var2, var3, var4); // Forge
-    }*/
-
-    // TODO: didn't implement forge version
 
     /**
      * Transfers an entity from a world to another world.

@@ -108,6 +108,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.event.inventory.*;
@@ -1588,28 +1589,7 @@ public class NetServerHandler extends NetHandler
         {
             if (this.playerEntity.playerConqueredTheEnd)
             {
-                // CraftBukkit start
-                org.bukkit.craftbukkit.PortalTravelAgent pta = new org.bukkit.craftbukkit.PortalTravelAgent();
-                Location toLocation;
-
-                if (this.playerEntity.getBukkitEntity().getBedSpawnLocation() == null)
-                {
-                    CraftWorld cworld = (CraftWorld) this.server.getWorlds().get(0);
-                    ChunkCoordinates chunkcoordinates = cworld.getHandle().getSpawnPoint();
-                    toLocation = new Location(cworld, chunkcoordinates.posX + 0.5, chunkcoordinates.posY, chunkcoordinates.posZ + 0.5);
-                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet70GameEvent(0, 0));
-                }
-                else
-                {
-                    toLocation = this.playerEntity.getBukkitEntity().getBedSpawnLocation();
-                    toLocation = new Location(toLocation.getWorld(), toLocation.getX() + 0.5, toLocation.getY(), toLocation.getZ() + 0.5);
-                }
-
-                PlayerPortalEvent event = new PlayerPortalEvent(this.playerEntity.getBukkitEntity(), this.playerEntity.getBukkitEntity().getLocation(), toLocation, pta, PlayerPortalEvent.TeleportCause.END_PORTAL);
-                event.useTravelAgent(false);
-                Bukkit.getServer().getPluginManager().callEvent(event);
-                this.playerEntity = this.mcServer.getConfigurationManager().respawnPlayer(this.playerEntity, 0, true, event.getTo());
-                // CraftBukkit end
+                this.mcServer.getConfigurationManager().transferPlayerToDimension(this.playerEntity, 0, TeleportCause.END_PORTAL); // CraftBukkit - reroute logic through custom portal management
             }
             else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
             {
@@ -2248,38 +2228,6 @@ public class NetServerHandler extends NetHandler
                     }
                 }
                 // CraftBukkit start
-                else if (packet250custompayload.channel.equals("REGISTER"))
-                {
-                    try
-                    {
-                        String channels = new String(packet250custompayload.data, "UTF8");
-
-                        for (String channel : channels.split("\0"))
-                        {
-                            getPlayerB().addChannel(channel);
-                        }
-                    }
-                    catch (UnsupportedEncodingException ex)
-                    {
-                        Logger.getLogger(NetServerHandler.class.getName()).log(Level.SEVERE, "Could not parse REGISTER payload in plugin message packet", ex);
-                    }
-                }
-                else if (packet250custompayload.channel.equals("UNREGISTER"))
-                {
-                    try
-                    {
-                        String channels = new String(packet250custompayload.data, "UTF8");
-
-                        for (String channel : channels.split("\0"))
-                        {
-                            getPlayerB().removeChannel(channel);
-                        }
-                    }
-                    catch (UnsupportedEncodingException ex)
-                    {
-                        Logger.getLogger(NetServerHandler.class.getName()).log(Level.SEVERE, "Could not parse UNREGISTER payload in plugin message packet", ex);
-                    }
-                }
                 else
                 {
                     server.getMessenger().dispatchIncomingMessage(playerEntity.getBukkitEntity(), packet250custompayload.channel, packet250custompayload.data);

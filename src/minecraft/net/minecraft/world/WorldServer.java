@@ -70,7 +70,10 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.tileentity.TileEntityNote;
 import net.minecraft.tileentity.TileEntitySign;
+
+import org.bukkit.World.Environment;
 import org.bukkit.block.BlockState;
+import org.bukkit.craftbukkit.entity.CraftLightningStrike;
 import org.bukkit.craftbukkit.util.LongHash;
 import org.bukkit.craftbukkit.util.LongObjectHashMap;
 import org.bukkit.event.block.BlockFormEvent;
@@ -121,7 +124,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
     public WorldServer(MinecraftServer minecraftserver, ISaveHandler idatamanager, String s, int i, WorldSettings worldsettings, Profiler methodprofiler, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen)
     {
-        super(idatamanager, s, worldsettings, WorldProvider.getProviderForDimension(env.getId()), methodprofiler, gen, env);
+        super(idatamanager, s, worldsettings, env == null ? WorldProvider.getProviderForDimension(i) : WorldProvider.getProviderForDimension(env.getId()), methodprofiler, gen, env);
         this.dimension = i;
         this.pvpMode = minecraftserver.isPVPEnabled();
         // CraftBukkit end
@@ -144,35 +147,13 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
             this.pendingTickListEntries = new TreeSet();
         }
 
-        this.field_85177_Q = new Teleporter(this);
+        this.field_85177_Q = new org.bukkit.craftbukkit.CraftTravelAgent(this); // CraftBukkit
         DimensionManager.setWorld(i, this);
     }
 
     public WorldServer(MinecraftServer par1MinecraftServer, ISaveHandler par2ISaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler)
     {
-        super(par2ISaveHandler, par3Str, par5WorldSettings, WorldProvider.getProviderForDimension(par4), par6Profiler);
-        this.dimension = par4;
-        this.mcServer = par1MinecraftServer;
-        this.theEntityTracker = new EntityTracker(this);
-        this.thePlayerManager = new PlayerManager(this, par1MinecraftServer.getConfigurationManager().getViewDistance());
-
-        if (this.entityIdMap == null)
-        {
-            this.entityIdMap = new IntHashMap();
-        }
-
-        if (this.field_73064_N == null)
-        {
-            this.field_73064_N = new HashSet();
-        }
-
-        if (this.pendingTickListEntries == null)
-        {
-            this.pendingTickListEntries = new TreeSet();
-        }
-
-        this.field_85177_Q = new Teleporter(this);
-        DimensionManager.setWorld(par4, this);
+        this(par1MinecraftServer, par2ISaveHandler, par3Str, par4, par5WorldSettings, par6Profiler, null, null); // MCPC+ wrapper to get CB support
     }
 
     // CraftBukkit start
@@ -344,7 +325,8 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
         this.theProfiler.endSection();
         this.sendAndApplyBlockEvents();
-        this.getWorld().processChunkGC(); // CraftBukkit
+        if (this.getWorld() != null) // MCPC+
+            this.getWorld().processChunkGC(); // CraftBukkit
     }
 
     /**
@@ -1137,8 +1119,8 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     public boolean addWeatherEffect(Entity par1Entity)
     {
         // MCPC+ start - vanilla compatibility
-        if (par1Entity.getBukkitEntity() != null)
-        {
+        if (par1Entity instanceof net.minecraft.entity.effect.EntityLightningBolt) 
+        { 
             // CraftBukkit start
             LightningStrikeEvent lightning = new LightningStrikeEvent(this.getWorld(), (org.bukkit.entity.LightningStrike) par1Entity.getBukkitEntity());
             this.getServer().getPluginManager().callEvent(lightning);
@@ -1339,7 +1321,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     {
         return ((AnvilChunkLoader)theChunkProviderServer.currentChunkLoader).chunkSaveLocation;
     }
-    // MCPC start - used for CB calls
+    // MCPC start
     @Override
     public boolean setRawTypeId(int x, int y, int z, int typeId) {
         // TODO Auto-generated method stub

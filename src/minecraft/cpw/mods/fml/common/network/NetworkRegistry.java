@@ -1,5 +1,6 @@
 package cpw.mods.fml.common.network;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,11 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.FMLPacket.Type;
 import cpw.mods.fml.relauncher.Side;
+// MCPC+ start
+import java.util.logging.Logger;
 
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+// MCPC+ end
 /**
  * @author cpw
  *
@@ -223,14 +228,17 @@ public class NetworkRegistry
         if ("REGISTER".equals(packet.channel))
         {
             handleRegistrationPacket(packet, (Player)handler.getPlayer());
+            handleBukkitRegistrationPacket(packet, (CraftPlayer)((NetServerHandler)(handler)).getPlayerB()); // MCPC+
         }
         else if ("UNREGISTER".equals(packet.channel))
         {
             handleUnregistrationPacket(packet, (Player)handler.getPlayer());
+            handleBukkitUnregistrationPacket(packet, (CraftPlayer)((NetServerHandler)(handler)).getPlayerB()); // MCPC+
         }
         else
         {
             handlePacket(packet, network, (Player)handler.getPlayer());
+            handler.handleVanilla250Packet(packet);  // MCPC+ send it back for CB dispatch
         }
     }
 
@@ -252,6 +260,7 @@ public class NetworkRegistry
             activateChannel(player, channel);
         }
     }
+
     private void handleUnregistrationPacket(Packet250CustomPayload packet, Player player)
     {
         List<String> channels = extractChannelList(packet);
@@ -260,6 +269,43 @@ public class NetworkRegistry
             deactivateChannel(player, channel);
         }
     }
+
+    // MCPC+ start - handle CB plugin registration
+    private void handleBukkitRegistrationPacket(Packet250CustomPayload packet, CraftPlayer player)
+    {
+        try
+        {
+            String channels = new String(packet.data, "UTF8");
+
+            for (String channel : channels.split("\0"))
+            {
+                System.out.println("adding plugin channel " + channel);
+                player.addChannel(channel);
+            }
+        }
+        catch (UnsupportedEncodingException ex)
+        {
+            Logger.getLogger(NetServerHandler.class.getName()).log(Level.SEVERE, "Could not parse REGISTER payload in plugin message packet", ex);
+        }
+    }
+
+    private void handleBukkitUnregistrationPacket(Packet250CustomPayload packet, CraftPlayer player)
+    {
+        try
+        {
+            String channels = new String(packet.data, "UTF8");
+
+            for (String channel : channels.split("\0"))
+            {
+                player.removeChannel(channel);
+            }
+        }
+        catch (UnsupportedEncodingException ex)
+        {
+            Logger.getLogger(NetServerHandler.class.getName()).log(Level.SEVERE, "Could not parse UNREGISTER payload in plugin message packet", ex);
+        }
+    }
+    // MCPC+ end
 
     private List<String> extractChannelList(Packet250CustomPayload packet)
     {

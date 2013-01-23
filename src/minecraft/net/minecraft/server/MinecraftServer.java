@@ -329,56 +329,34 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         ISaveHandler var7 = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
         WorldInfo var9 = var7.loadWorldInfo();
         // CraftBukkit start - removed worldsettings
-        int worldCount = 3;
-        int worldServerCount = 0;
-
-        for (int j = 0; j < worldCount; ++j)
+        
+        WorldSettings worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
+        worldsettings.func_82750_a(par6Str);
+        boolean isForgeWorld = false;
+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, theProfiler) : new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, worldsettings, theProfiler,  Environment.getEnvironment(0), null));
+        for (int dimension : DimensionManager.getStaticDimensionIDs())
         {
-            WorldServer world;
-            int dimension = 0;
-
-            if (j == 1)
+            String worldType = "";
+            String name = "";
+            if (dimension >= -1 && dimension <= 1)
             {
-                if (this.getAllowNether())
-                {
-                    dimension = -1;
-                }
-                else
-                {
-                    continue;
-                }
+                if (dimension == -1 && !this.getAllowNether()) continue;
+                if (dimension == 1 && !this.server.getAllowEnd()) continue;
+                worldType = Environment.getEnvironment(dimension).toString().toLowerCase();
+                name = (dimension == 0) ? par1Str : par1Str + "_" + worldType;
             }
-
-            if (j == 2)
+            else
             {
-                if (this.server.getAllowEnd())
-                {
-                    dimension = 1;
-                }
-                else
-                {
-                    continue;
-                }
+                isForgeWorld = true;
+                worldType = "forge";
+                name = par1Str + "_" + worldType + "/world_DIM" + dimension;
             }
-            FMLLog.info("1 loadAllWorlds");
-            String worldType = Environment.getEnvironment(dimension).toString().toLowerCase();
-            String name = (dimension == 0) ? par1Str : par1Str + "_" + worldType;
             org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
-            WorldSettings worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
-            worldsettings.func_82750_a(par6Str);
 
-            if (j == 0)
+            WorldServer world;
+            if (dimension == 0 && !isForgeWorld)
             {
-                if (this.isDemo())   // Strip out DEMO?
-                {
-                    // CraftBukkit
-                    world = new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, dimension, this.theProfiler);
-                }
-                else
-                {
-                    // CraftBukkit
-                    world = new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, dimension, worldsettings, this.theProfiler, Environment.getEnvironment(dimension), gen);
-                }
+                 world = overWorld;
             }
             else
             {
@@ -448,8 +426,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             }
 
             this.worlds.add(world);
-            worldServers[worldServerCount] = world;
-            worldServerCount++;
 
             this.serverConfigManager.setPlayerManager(this.worlds.toArray(new WorldServer[this.worlds.size()]));
             // CraftBukkit end
@@ -1674,52 +1650,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         try
         {
-            /* CraftBukkit start - replace everything
-            boolean flag = false;
-            String s = null;
-            String s1 = ".";
-            String s2 = null;
-            boolean flag1 = false;
-            boolean flag2 = false;
-            int i = -1;
-
-            for (int j = 0; j < astring.length; ++j) {
-                String s3 = astring[j];
-                String s4 = j == astring.length - 1 ? null : astring[j + 1];
-                boolean flag3 = false;
-
-                if (!s3.equals("nogui") && !s3.equals("--nogui")) {
-                    if (s3.equals("--port") && s4 != null) {
-                        flag3 = true;
-
-                        try {
-                            i = Integer.parseInt(s4);
-                        } catch (NumberFormatException numberformatexception) {
-                            ;
-                        }
-                    } else if (s3.equals("--singleplayer") && s4 != null) {
-                        flag3 = true;
-                        s = s4;
-                    } else if (s3.equals("--universe") && s4 != null) {
-                        flag3 = true;
-                        s1 = s4;
-                    } else if (s3.equals("--world") && s4 != null) {
-                        flag3 = true;
-                        s2 = s4;
-                    } else if (s3.equals("--demo")) {
-                        flag1 = true;
-                    } else if (s3.equals("--bonusChest")) {
-                        flag2 = true;
-                    }
-                } else {
-                    flag = false;
-                }
-
-                if (flag3) {
-                    ++j;
-                }
-            }
-            // */
             DedicatedServer dedicatedserver = new DedicatedServer(options);
 
             if (options.has("port"))
@@ -1742,34 +1672,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 dedicatedserver.setFolderName((String) options.valueOf("world"));
             }
 
-            /*
-            if (s != null) {
-                dedicatedserver.k(s);
-            }
-
-            if (s2 != null) {
-                dedicatedserver.l(s2);
-            }
-
-            if (i >= 0) {
-                dedicatedserver.setPort(i);
-            }
-
-            if (flag1) {
-                dedicatedserver.b(true);
-            }
-
-            if (flag2) {
-                dedicatedserver.c(true);
-            }
-
-            if (flag) {
-                dedicatedserver.an();
-            }
-            */
             dedicatedserver.primaryThread.setUncaughtExceptionHandler(new org.bukkit.craftbukkit.util.ExceptionHandler()); // Spigot
             dedicatedserver.primaryThread.start();
-            // Runtime.getRuntime().addShutdownHook(new ThreadShutdown(dedicatedserver));
             // CraftBukkit end
         }
         catch (Exception exception)

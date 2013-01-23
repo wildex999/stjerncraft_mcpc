@@ -175,7 +175,8 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
         }
         catch (MinecraftException ex)
         {
-            ex.printStackTrace();
+            // MCPC+ disable this for now.
+            //ex.printStackTrace();
         }
 
         // CraftBukkit end

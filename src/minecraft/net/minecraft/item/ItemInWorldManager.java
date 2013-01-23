@@ -19,6 +19,7 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 
@@ -543,7 +544,11 @@ public class ItemInWorldManager
         {
             net.minecraftforge.event.entity.player.PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7); // Forge
             PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7, par3ItemStack);
-
+            if (forgeEvent.isCanceled())
+            {
+                thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
+                return false;
+            }
             if (event.useInteractedBlock() == Event.Result.DENY)
             {
                 // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.

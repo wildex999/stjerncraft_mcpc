@@ -150,7 +150,7 @@ public class DimensionManager
             tmp.add(entry.getValue());
         }
 
-        MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
+        MinecraftServer.getServer().worlds = tmp; // MCPC+  assign the new world list to CB's new var
     }
 
     public static void initDimension(int dim) {

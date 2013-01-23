@@ -131,7 +131,7 @@ public class Chunk
 
         for (int var4 = 0; var4 < this.entityLists.length; ++var4)
         {
-            this.entityLists[var4] = new org.bukkit.craftbukkit.util.UnsafeList(); // CraftBukkit - ArrayList -> UnsafeList
+            this.entityLists[var4] = new ArrayList();
         }
 
         Arrays.fill(this.precipitationHeightMap, -999);
