@@ -720,7 +720,7 @@ public final class CraftServer implements Server {
             converter.convertMapFormat/*was:convert*/(name, new net.minecraft.server.ConvertingProgressUpdate/*was:ConvertProgressUpdater*/(console));
         }
 
-        int dimension = 10 + console.worlds.size();
+        int dimension = CraftWorld.CUSTOM_DIMENSION_OFFSET + console.worlds.size();
         boolean used = false;
         do {
             for (net.minecraft.world.WorldServer/*was:WorldServer*/ server : console.worlds) {

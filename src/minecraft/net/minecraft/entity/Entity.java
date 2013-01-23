@@ -2754,9 +2754,19 @@ public abstract class Entity
             this.worldObj.theProfiler.startSection("transferPlayerToDimension");
             MinecraftServer minecraftserver = MinecraftServer.getServer();
             // CraftBukkit start - move logic into new function "teleportToLocation"
+            WorldServer exitWorld = null;
+            if (this.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET) { // plugins must specify exit from custom Bukkit worlds
+                // only target existing worlds (compensate for allow-nether/allow-end as false)
+                for (WorldServer world : minecraftserver.worlds) {
+                    if (world.dimension == i) {
+                        exitWorld = world;
+                    }
+                }
+            }
+
             Location enter = this.getBukkitEntity().getLocation(); 
-            Location exit = minecraftserver.getConfigurationManager().calculateTarget(enter, minecraftserver.worldServerForDimension(i));
-            TravelAgent agent = (TravelAgent) ((CraftWorld) exit.getWorld()).getHandle().func_85176_s();  
+            Location exit = exitWorld != null ? minecraftserver.getConfigurationManager().calculateTarget(enter, minecraftserver.worldServerForDimension(i)) : null;
+            TravelAgent agent = exit != null ? (TravelAgent) ((CraftWorld) exit.getWorld()).getHandle().func_85176_s() : null;
             EntityPortalEvent event = new EntityPortalEvent(this.getBukkitEntity(), enter, exit, agent);  
             event.getEntity().getServer().getPluginManager().callEvent(event); 
             if (event.isCancelled() || event.getTo() == null || !this.isEntityAlive()) { 

@@ -703,26 +703,35 @@ public abstract class ServerConfigurationManager
     public void transferPlayerToDimension(EntityPlayerMP entityplayer, int i, TeleportCause cause)
     {
         // CraftBukkit start -- Replaced the standard handling of portals with a more customised method.
-        WorldServer exitWorld = this.mcServer.worldServerForDimension(i);
+        WorldServer exitWorld = null;
+        if (entityplayer.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET) { // plugins must specify exit from custom Bukkit worlds
+            // only target existing worlds (compensate for allow-nether/allow-end as false)
+            for (WorldServer world : this.mcServer.worlds) {
+                if (world.dimension == i) {
+                    exitWorld = world;
+                }
+            }
+        }
 
         Location enter = entityplayer.getBukkitEntity().getLocation();
         Location exit = null;
-        if ((cause == TeleportCause.END_PORTAL) && (i == 0)) {
-            // THE_END -> NORMAL; use bed if available
-            if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().dimension != 0) {  
-                exit = exitWorld.getWorld().getSpawnLocation();
+        if (exitWorld != null) {
+            if ((cause == TeleportCause.END_PORTAL) && (i == 0)) {
+                // THE_END -> NORMAL; use bed if available
+                exit = ((CraftPlayer) entityplayer.getBukkitEntity()).getBedSpawnLocation();
+            }
+            if (exit == null) {
+                exit = this.calculateTarget(enter, exitWorld);
             }
         }
-        if (exit == null) {
-            exit = this.calculateTarget(enter, exitWorld);
-        }
 
-        TravelAgent agent = (TravelAgent) ((CraftWorld) exit.getWorld()).getHandle().func_85176_s();
+        TravelAgent agent = exit != null ? (TravelAgent) ((CraftWorld) exit.getWorld()).getHandle().func_85176_s() : null;
         PlayerPortalEvent event = new PlayerPortalEvent(entityplayer.getBukkitEntity(), enter, exit, agent, cause);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled() || event.getTo() == null) {
             return;
         }
+
         exit = event.useTravelAgent() ? event.getPortalTravelAgent().findOrCreate(exit) : event.getTo();
         exitWorld = ((CraftWorld) exit.getWorld()).getHandle();
 
