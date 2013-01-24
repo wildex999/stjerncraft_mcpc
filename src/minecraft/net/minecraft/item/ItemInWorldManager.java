@@ -522,34 +522,28 @@ public class ItemInWorldManager
      */
     public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
-        // Forge start
-        Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
+        net.minecraftforge.event.entity.player.PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
+        PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7, par3ItemStack);
+        if (forgeEvent.isCanceled() || event.isCancelled())
+        {
+            thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
+            return false;
+        }
 
+        Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
         if (item != null && item.onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
         {
-            if (par3ItemStack.stackSize <= 0)
-            {
-                ForgeEventFactory.onPlayerDestroyItem(this.thisPlayerMP, par3ItemStack);
-            }
-
+            if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
             return true;
         }
 
-        // Forge end
         int var11 = par2World.getBlockId(par4, par5, par6);
         // CraftBukkit start - Interact
         boolean result = false;
 
         if (var11 > 0)
         {
-            net.minecraftforge.event.entity.player.PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7); // Forge
-            PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7, par3ItemStack);
-            if (forgeEvent.isCanceled())
-            {
-                thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
-                return false;
-            }
-            if (event.useInteractedBlock() == Event.Result.DENY)
+            if (event.useInteractedBlock() == Event.Result.DENY || forgeEvent.useBlock == net.minecraftforge.event.Event.Result.DENY)
             {
                 // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
                 if (var11 == Block.doorWood.blockID)
