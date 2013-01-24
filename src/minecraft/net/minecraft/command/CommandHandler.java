@@ -15,7 +15,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 
 // MCPC+ start
-import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.craftbukkit.command.CraftSimpleCommandMap;
 import org.bukkit.craftbukkit.command.ModCustomCommand;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -121,7 +121,7 @@ public class CommandHandler implements ICommandManager
         this.commandMap.put(par1ICommand.getCommandName(), par1ICommand);
         this.commandSet.add(par1ICommand);
         // MCPC+ start - register vanilla commands with Bukkit to support permissions.
-        SimpleCommandMap commandMap = FMLCommonHandler.instance().getMinecraftServerInstance().server.getCommandMap();
+        CraftSimpleCommandMap commandMap = FMLCommonHandler.instance().getMinecraftServerInstance().server.getCraftCommandMap();
         ModCustomCommand customCommand = new ModCustomCommand(par1ICommand.getCommandName());
         customCommand.setPermission(par1ICommand.getClass().getName());
         commandMap.register(par1ICommand.getCommandName(), customCommand);

@@ -117,7 +117,8 @@ public final class CraftServer implements Server {
     private final String bukkitVersion = Versioning.getBukkitVersion();
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final CraftScheduler scheduler = new CraftScheduler();
-    private final CraftSimpleCommandMap commandMap = new CraftSimpleCommandMap(this); // MCPC+
+    private final CraftSimpleCommandMap craftCommandMap = new CraftSimpleCommandMap(this); // MCPC+
+    private final SimpleCommandMap commandMap = new SimpleCommandMap(this);
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
     private final PluginManager pluginManager = new SimplePluginManager(this, commandMap);
@@ -530,6 +531,18 @@ public final class CraftServer implements Server {
         return false;
     }
 
+    // MCPC+ start - used to process vanilla commands
+    public boolean dispatchVanillaCommand(CommandSender sender, String commandLine) {
+        if (craftCommandMap.dispatch(sender, commandLine)) {
+            return true;
+        }
+
+        sender.sendMessage("Unknown command. Type \"help\" for help.");
+
+        return false;
+    }
+    // MCPC+ end
+
     public void reload() {
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         net.minecraft.server.dedicated.PropertyManager/*was:PropertyManager*/ config = new net.minecraft.server.dedicated.PropertyManager/*was:PropertyManager*/(console.options);
@@ -833,10 +846,11 @@ public final class CraftServer implements Server {
 
     public void addWorld(World world) {
         // Check if a World already exists with the UID.
-        if (getWorld(world.getUID()) != null) {
+        // MCPC+ disable warning for now
+        /*if (getWorld(world.getUID()) != null) {
             System.out.println("World " + world.getName() + " is a duplicate of another world and has been prevented from loading. Please delete the uid.dat file from " + world.getName() + "'s world directory if you want to be able to load the duplicate world.");
             return;
-        }
+        }*/
         worlds.put(world.getName().toLowerCase(), world);
     }
 
@@ -1258,7 +1272,11 @@ public final class CraftServer implements Server {
     public SimpleCommandMap getCommandMap() {
         return commandMap;
     }
-
+    // MCPC+ start
+    public CraftSimpleCommandMap getCraftCommandMap() {
+        return craftCommandMap;
+    }
+    // MCPC+ end
     public int getMonsterSpawnLimit() {
         return monsterSpawn;
     }

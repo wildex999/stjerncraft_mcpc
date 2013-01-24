@@ -114,7 +114,23 @@ public class CraftEventFactory {
     }
 
     private static PlayerEvent getPlayerBucketEvent(boolean isFilling, net.minecraft.entity.player.EntityPlayer/*was:EntityHuman*/ who, int clickedX, int clickedY, int clickedZ, int clickedFace, net.minecraft.item.ItemStack/*was:ItemStack*/ itemstack, /*was:net.minecraft.server.*/net.minecraft.item.Item/*was:Item*/ item) {
-        Player player = (who == null) ? null : (Player) who.getBukkitEntity();
+        // MCPC+ start - handle bucket event with no player        
+        Player player = null;
+        
+        if(who.getBukkitEntity() instanceof Player)
+            player = (Player) who.getBukkitEntity();
+        else {
+            if (fakePlayer != null)
+            {
+                player = (Player)fakePlayer;
+            }
+            else {
+                CraftFakePlayer.setMethod("fakeplayer");
+                player = (Player)CraftFakePlayer.get(who.worldObj);
+                fakePlayer = (CraftFakePlayer)player;
+            }
+        }
+        // MCPC+ end
         CraftItemStack itemInHand = CraftItemStack.asNewCraftStack(item);
         Material bucket = Material.getMaterial(itemstack.itemID/*was:id*/);
 
