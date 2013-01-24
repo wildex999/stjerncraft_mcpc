@@ -1381,7 +1381,8 @@ public class NetServerHandler extends NetHandler
                 logger.info(event.getPlayer().getName() + " issued server command: " + event.getMessage());    // Spigot
             }
             // MCPC+ start - process vanilla command
-            if (this.server.getCraftCommandMap().getCommand(event.getMessage().substring(1)) != null)
+            int space = event.getMessage().indexOf(" ");
+            if (this.server.getCraftCommandMap().getCommand(event.getMessage().substring(1, space != -1 ? space : event.getMessage().length())) != null)
             {
                 this.server.dispatchVanillaCommand(event.getPlayer(), event.getMessage().substring(1));
                 return;
