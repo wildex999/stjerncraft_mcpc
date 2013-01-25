@@ -435,6 +435,96 @@ public abstract class World implements IBlockAccess
         this.getServer().addWorld(this.world); // CraftBukkit
     }
 
+    // MCPC+ start - vanilla compatibility. Used for mods that bypass WorldServer when creating new a new World
+    public World(ISaveHandler par1ISaveHandler, String par2Str, WorldSettings par3WorldSettings, WorldProvider par4WorldProvider, Profiler par5Profiler)
+    {
+        this.world = null; // CraftWorld not used
+        this.ambientTickCountdown = this.rand.nextInt(12000);
+        this.lightUpdateBlockList = new int[32768];
+        this.entitiesWithinAABBExcludingEntity = new ArrayList();
+        this.isRemote = false;
+        this.saveHandler = par1ISaveHandler;
+        this.theProfiler = par5Profiler;
+        this.mapStorage = getMapStorage(par1ISaveHandler);
+        this.worldInfo = par1ISaveHandler.loadWorldInfo();
+
+        if (par4WorldProvider != null)
+        {
+            this.provider = par4WorldProvider;
+        }
+        else if (this.worldInfo != null && this.worldInfo.getDimension() != 0)
+        {
+            this.provider = WorldProvider.getProviderForDimension(this.worldInfo.getDimension());
+        }
+        else
+        {
+            this.provider = WorldProvider.getProviderForDimension(0);
+        }
+
+        if (this.worldInfo == null)
+        {
+            this.worldInfo = new WorldInfo(par3WorldSettings, par2Str);
+        }
+        else
+        {
+            this.worldInfo.setWorldName(par2Str);
+        }
+
+        this.provider.registerWorld(this);
+        this.chunkProvider = this.createChunkProvider();
+
+        if (!this.worldInfo.isInitialized())
+        {
+            try
+            {
+                this.initialize(par3WorldSettings);
+            }
+            catch (Throwable var10)
+            {
+                CrashReport var7 = CrashReport.makeCrashReport(var10, "Exception initializing level");
+
+                try
+                {
+                    this.addWorldInfoToCrashReport(var7);
+                }
+                catch (Throwable var9)
+                {
+                    ;
+                }
+
+                throw new ReportedException(var7);
+            }
+
+            this.worldInfo.setServerInitialized(true);
+        }
+
+        if (this instanceof WorldServer)
+        {
+            this.perWorldStorage = new MapStorage(new WorldSpecificSaveHandler((WorldServer)this, par1ISaveHandler));
+        }
+        else
+        {
+            this.perWorldStorage = new MapStorage((ISaveHandler)null);
+        }
+        VillageCollection var6 = (VillageCollection)perWorldStorage.loadData(VillageCollection.class, "villages");
+
+        if (var6 == null)
+        {
+            this.villageCollectionObj = new VillageCollection(this);
+            this.perWorldStorage.setData("villages", this.villageCollectionObj);
+        }
+        else
+        {
+            this.villageCollectionObj = var6;
+            this.villageCollectionObj.func_82566_a(this);
+        }
+
+        this.calculateInitialSkylight();
+        this.calculateInitialWeather();
+    }
+
+    // MCPC+ end
+
     private static MapStorage s_mapStorage;
     private static ISaveHandler s_savehandler;
     //Provides a solution for different worlds getting different copies of the same data, potentially rewriting the data or causing race conditions/stale data
