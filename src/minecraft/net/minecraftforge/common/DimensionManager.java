@@ -124,11 +124,11 @@ public class DimensionManager
     {
         if (world != null) {
             worlds.put(id, world);
-            MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
+            //MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
             FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         } else {
             worlds.remove(id);
-            MinecraftServer.getServer().worldTickTimes.remove(id);
+            //MinecraftServer.getServer().worldTickTimes.remove(id);
             FMLLog.info("Unloading dimension %d", id);
         }
 
@@ -150,7 +150,7 @@ public class DimensionManager
             tmp.add(entry.getValue());
         }
 
-        MinecraftServer.getServer().worlds = tmp; // MCPC+  assign the new world list to CB's new var
+        MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
     public static void initDimension(int dim) {

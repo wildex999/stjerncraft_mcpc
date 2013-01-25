@@ -8,10 +8,8 @@ import org.bukkit.craftbukkit.util.UnsafeList; // CraftBukkit
 
 public class EntityAITasks
 {
-    // CraftBukkit start - ArrayList -> UnsafeList
-    private List taskEntries = new UnsafeList();
-    private List executingTaskEntries = new UnsafeList();
-    // CraftBukkit end
+    public List taskEntries = new ArrayList(); // MCPC+  private->public
+    private List executingTaskEntries = new ArrayList();
 
     /** Instance of Profiler. */
     private final Profiler theProfiler;
@@ -147,20 +145,15 @@ public class EntityAITasks
             {
                 if (par1EntityAITaskEntry.priority >= var3.priority)
                 {
-                    // CraftBukkit - switch order
-                    if (!this.areTasksCompatible(par1EntityAITaskEntry, var3) && this.executingTaskEntries.contains(var3))
+                    if (this.executingTaskEntries.contains(var3) && !this.areTasksCompatible(par1EntityAITaskEntry, var3))
                     {
                         this.theProfiler.endSection();
-                        ((UnsafeList.Itr) var2).valid = false; // CraftBukkit - mark iterator for reuse
                         return false;
                     }
-
-                    // CraftBukkit - switch order
                 }
-                else if (!var3.action.isContinuous() && this.executingTaskEntries.contains(var3))
+                else if (this.executingTaskEntries.contains(var3) && !var3.action.isContinuous())
                 {
                     this.theProfiler.endSection();
-                    ((UnsafeList.Itr) var2).valid = false; // CraftBukkit - mark iterator for reuse
                     return false;
                 }
             }

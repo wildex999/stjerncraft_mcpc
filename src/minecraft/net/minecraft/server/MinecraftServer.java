@@ -115,7 +115,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
     /** The server's port. */
     private int serverPort = -1;
-    // public WorldServer[] worldServer; // CraftBukkit - removed!
+    public WorldServer[] worldServers; // MCPC+ - vanilla compatibility
 
     /** The ServerConfigurationManager instance. */
     private ServerConfigurationManager serverConfigManager;
@@ -196,7 +196,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
     // CraftBukkit start
     public List<WorldServer> worlds = new ArrayList<WorldServer>();
-    public WorldServer[] worldServers;
     public org.bukkit.craftbukkit.CraftServer server;
     public OptionSet options;
     public org.bukkit.command.ConsoleCommandSender console;
@@ -332,85 +331,76 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         
         WorldSettings worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
         worldsettings.func_82750_a(par6Str);
-        boolean isForgeWorld = false;
-        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, theProfiler) : new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, worldsettings, theProfiler,  Environment.getEnvironment(0), null));
+        WorldServer world;
+        WorldServer overWorld = initOverWorld(par1Str, par2Str, worldsettings);
+        int worldServerCount = 1; // MCPC+ - vanilla compatibility, start at 1 since we added overWorld
         for (int dimension : DimensionManager.getStaticDimensionIDs())
         {
             String worldType = "";
             String name = "";
             if (dimension >= -1 && dimension <= 1)
             {
-                if (dimension == -1 && !this.getAllowNether()) continue;
-                if (dimension == 1 && !this.server.getAllowEnd()) continue;
+                if (dimension == 0 || (dimension == -1 && !this.getAllowNether()) || (dimension == 1 && !this.server.getAllowEnd()))
+                    continue;
                 worldType = Environment.getEnvironment(dimension).toString().toLowerCase();
-                name = (dimension == 0) ? par1Str : par1Str + "_" + worldType;
+                name = par1Str + "_" + worldType;
             }
             else
             {
-                isForgeWorld = true;
-                worldType = "forge";
-                name = par1Str + "_" + worldType + "/world_DIM" + dimension;
+                name = "world_forge" + "/world" + dimension; // MCPC+ - put dimensions in seperate folders to support MultiVerse teleport.
             }
             org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
 
-            WorldServer world;
-            if (dimension == 0 && !isForgeWorld)
-            {
-                 world = overWorld;
-            }
-            else
-            {
-                String dim = "DIM" + dimension;
-                File newWorld = new File(new File(name), dim);
-                File oldWorld = new File(new File(par1Str), dim);
+            String dim = "DIM" + dimension;
+            File newWorld = new File(new File(name), dim);
+            File oldWorld = new File(new File(par1Str), dim);
 
-                if ((!newWorld.isDirectory()) && (oldWorld.isDirectory()))
+            if ((!newWorld.isDirectory()) && (oldWorld.isDirectory()))
+            {
+                logger.info("---- Migration of old " + worldType + " folder required ----");
+                logger.info("Unfortunately due to the way that Minecraft implemented multiworld support in 1.6, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
+                logger.info("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
+                logger.info("Attempting to move " + oldWorld + " to " + newWorld + "...");
+
+                if (newWorld.exists())
                 {
-                    logger.info("---- Migration of old " + worldType + " folder required ----");
-                    logger.info("Unfortunately due to the way that Minecraft implemented multiworld support in 1.6, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
-                    logger.info("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
-                    logger.info("Attempting to move " + oldWorld + " to " + newWorld + "...");
-
-                    if (newWorld.exists())
+                    logger.severe("A file or folder already exists at " + newWorld + "!");
+                    logger.info("---- Migration of old " + worldType + " folder failed ----");
+                }
+                else if (newWorld.getParentFile().mkdirs())
+                {
+                    if (oldWorld.renameTo(newWorld))
                     {
-                        logger.severe("A file or folder already exists at " + newWorld + "!");
-                        logger.info("---- Migration of old " + worldType + " folder failed ----");
-                    }
-                    else if (newWorld.getParentFile().mkdirs())
-                    {
-                        if (oldWorld.renameTo(newWorld))
-                        {
-                            logger.info("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
+                        logger.info("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
 
-                            // Migrate world data too.
-                            try
-                            {
-                                Files.copy(new File(new File(par1Str), "level.dat"), new File(new File(name), "level.dat"));
-                            }
-                            catch (IOException exception)
-                            {
-                                logger.severe("Unable to migrate world data.");
-                            }
-
-                            logger.info("---- Migration of old " + worldType + " folder complete ----");
-                        }
-                        else
+                        // Migrate world data too.
+                        try
                         {
-                            logger.severe("Could not move folder " + oldWorld + " to " + newWorld + "!");
-                            logger.info("---- Migration of old " + worldType + " folder failed ----");
+                            Files.copy(new File(new File(par1Str), "level.dat"), new File(new File(name), "level.dat"));
                         }
+                        catch (IOException exception)
+                        {
+                            logger.severe("Unable to migrate world data.");
+                        }
+
+                        logger.info("---- Migration of old " + worldType + " folder complete ----");
                     }
                     else
                     {
-                        logger.severe("Could not create path for " + newWorld + "!");
+                        logger.severe("Could not move folder " + oldWorld + " to " + newWorld + "!");
                         logger.info("---- Migration of old " + worldType + " folder failed ----");
                     }
                 }
-
-                this.setUserMessage(name);
-                // CraftBukkit
-                world = new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, this.worlds.get(0), this.theProfiler, Environment.getEnvironment(dimension), gen);
+                else
+                {
+                    logger.severe("Could not create path for " + newWorld + "!");
+                    logger.info("---- Migration of old " + worldType + " folder failed ----");
+                }
             }
+
+            this.setUserMessage(name);
+            // CraftBukkit
+            world = new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, overWorld, this.theProfiler, Environment.getEnvironment(dimension), gen);
 
             if (gen != null)
             {
@@ -435,6 +425,32 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         this.setDifficultyForAllWorlds(this.getDifficulty());
         this.initialWorldChunkLoad();
     }
+
+    // MCPC+ start - move overWorld initialization to it's own method for easier use above.
+    protected WorldServer initOverWorld(String par1Str, String par2Str, WorldSettings worldsettings)
+    {
+        org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(par1Str);
+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, theProfiler) : new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, worldsettings, theProfiler,  Environment.getEnvironment(0), gen));
+        if (gen != null)
+        {
+            overWorld.getWorld().getPopulators().addAll(gen.getDefaultPopulators(overWorld.getWorld()));
+        }
+
+        this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(overWorld.getWorld()));
+        overWorld.addWorldAccess(new WorldManager(this, overWorld));
+
+        if (!this.isSinglePlayer())
+        {
+            overWorld.getWorldInfo().setGameType(this.getGameType());
+        }
+        
+        this.worlds.add(overWorld);
+        this.serverConfigManager.setPlayerManager(this.worlds.toArray(new WorldServer[this.worlds.size()]));
+        // CraftBukkit end
+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((World)overWorld)); // Forge
+        return overWorld;
+    }
+    // MCPC+ end
 
     protected void initialWorldChunkLoad()
     {
@@ -887,11 +903,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             // } // CraftBukkit
             // this.k[i][this.ticks % 100] = System.nanoTime() - j; // CraftBukkit
             // Forge start
-            ((long[]) this.worldTickTimes.get(id))[this.tickCounter % 100] = System.nanoTime() - j;
+            //((long[]) this.worldTickTimes.get(id))[this.tickCounter % 100] = System.nanoTime() - j;
         }
 
         this.theProfiler.endStartSection("dim_unloading");
-        DimensionManager.unloadWorlds(this.worldTickTimes);
+        //DimensionManager.unloadWorlds(this.worldTickTimes);
         // Forge end
         this.theProfiler.endStartSection("connection");
         this.getNetworkThread().networkTick();
@@ -950,13 +966,13 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     public WorldServer worldServerForDimension(int par1)
     {
         // CraftBukkit start
-        WorldServer ret = DimensionManager.getWorld(par1);
-        if (ret == null)
-        {
-            DimensionManager.initDimension(par1);
-            ret = DimensionManager.getWorld(par1);
+        for (WorldServer world : this.worlds) {
+            if (world.dimension == par1) {
+                return world;
+            }
         }
-        return ret;
+
+        return this.worlds.get(0);
         // CraftBukkit end
     }
 
