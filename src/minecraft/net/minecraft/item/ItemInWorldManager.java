@@ -554,7 +554,7 @@ public class ItemInWorldManager
 
                 result = (event.useItemInHand() != Event.Result.ALLOW);
             }
-            else if (!par1EntityPlayer.isSneaking() || par3ItemStack == null)
+            else if (!par1EntityPlayer.isSneaking() || par3ItemStack == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6)) // MCPC+ - shouldPassSneakingClickToBlock() check added
             {
                 result = Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
             }
