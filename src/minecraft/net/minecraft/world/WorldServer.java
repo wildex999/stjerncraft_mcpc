@@ -115,8 +115,6 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     /** An IntHashMap of entity IDs (integers) to their Entity objects. */
     private IntHashMap entityIdMap;
 
-    /** Stores the recently processed (lighting) chunks */
-    protected Set<ChunkCoordIntPair> doneChunks = new HashSet<ChunkCoordIntPair>();
     public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
 
     // CraftBukkit start
@@ -477,14 +475,6 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         int var2 = 0;
         Iterator var3 = this.activeChunkSet.iterator();
 
-        doneChunks.retainAll(activeChunkSet);
-        if (doneChunks.size() == activeChunkSet.size())
-        {
-            doneChunks.clear();
-        }
-
-        final long time = -System.currentTimeMillis();
-
         while (var3.hasNext())
         {
             ChunkCoordIntPair var4 = (ChunkCoordIntPair)var3.next();
@@ -494,9 +484,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
             Chunk var7 = this.getChunkFromChunkCoords(var4.chunkXPos, var4.chunkZPos);
             this.moodSoundAndLightCheck(var5, var6, var7);
             this.theProfiler.endStartSection("tickChunk");
-            if (System.currentTimeMillis() + time <= 4 && doneChunks.add(var4)) { //Limits and evenly distributes the lighting update time
-                var7.updateSkylight();
-            }
+            var7.updateSkylight();
             this.theProfiler.endStartSection("thunder");
             int var8;
             int var9;
