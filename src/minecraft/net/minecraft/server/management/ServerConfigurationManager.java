@@ -715,18 +715,24 @@ public abstract class ServerConfigurationManager
 
         Location enter = entityplayer.getBukkitEntity().getLocation();
         Location exit = null;
+        boolean useTravelAgent = false; // don't use agent for custom worlds or return from THE_END
         if (exitWorld != null) {
             if ((cause == TeleportCause.END_PORTAL) && (i == 0)) {
-                // THE_END -> NORMAL; use bed if available
+                // THE_END -> NORMAL; use bed if available, otherwise default spawn
                 exit = ((CraftPlayer) entityplayer.getBukkitEntity()).getBedSpawnLocation();
-            }
-            if (exit == null) {
+                if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().dimension != 0) {
+                    exit = exitWorld.getWorld().getSpawnLocation();
+                }
+            } else {
+                // NORMAL <-> NETHER or NORMAL -> THE_END
                 exit = this.calculateTarget(enter, exitWorld);
+                useTravelAgent = true;
             }
         }
 
         TravelAgent agent = exit != null ? (TravelAgent) ((CraftWorld) exit.getWorld()).getHandle().func_85176_s() : null;
         PlayerPortalEvent event = new PlayerPortalEvent(entityplayer.getBukkitEntity(), enter, exit, agent, cause);
+        event.useTravelAgent(useTravelAgent);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled() || event.getTo() == null) {
             return;
@@ -772,6 +778,8 @@ public abstract class ServerConfigurationManager
             ChunkCoordinates chunkcoordinates;
 
             if (i == 1) {
+                // use default NORMAL world spawn instead of target
+                worldserver1 = this.mcServer.worlds.get(0);
                 chunkcoordinates = worldserver1.getSpawnPoint();
             } else {
                 chunkcoordinates = worldserver1.getEntrancePortalLocation();
@@ -790,7 +798,7 @@ public abstract class ServerConfigurationManager
             d1 = (double) MathHelper.clamp_int((int) d1, -29999872, 29999872);
         }
 
-        return new Location(target.getWorld(), d0, y, d1, yaw, pitch);
+        return new Location(worldserver1.getWorld(), d0, y, d1, yaw, pitch);
     }
 
     // copy of original a(Entity, int, WorldServer, WorldServer) method with only entity repositioning logic
