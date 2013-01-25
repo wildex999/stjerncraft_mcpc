@@ -71,11 +71,12 @@ public class PluginClassLoader extends URLClassLoader {
                 // mc-dev jar to CB, apply version shading (aka plugin safeguard) over cb2obf
                 relocations147.put("net.minecraft.server", "net.minecraft.server.v1_4_R1");
                 relocations147.put("org.bouncycastle", "net.minecraft.v1_4_R1.org.bouncycastle");
-                ShadeRelocationSimulator shader = new ShadeRelocationSimulator(relocations147);
 
                 jarMapping.loadMappings(
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("147cb2obf.csrg"))),
                         new ShadeRelocationSimulator(relocations147));
+
+                jarMapping.classes.put("net/minecraft/server/v1_4_R1/MinecraftServer", "net/minecraft/server/MinecraftServer");
             }
 
             if (remapNMS146) {
@@ -86,6 +87,8 @@ public class PluginClassLoader extends URLClassLoader {
                 jarMapping.loadMappings(
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("146cb2obf.csrg"))),
                         new ShadeRelocationSimulator(relocations146));
+
+                jarMapping.classes.put("net/minecraft/server/v1_4_6/MinecraftServer", "net/minecraft/server/MinecraftServer");
             }
 
             if (remapOBC146) {
