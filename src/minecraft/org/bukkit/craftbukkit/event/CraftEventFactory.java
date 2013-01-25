@@ -397,11 +397,16 @@ public class CraftEventFactory {
 
         if (source instanceof net.minecraft.util.EntityDamageSourceIndirect/*was:EntityDamageSourceIndirect*/) {
             damager = ((net.minecraft.util.EntityDamageSourceIndirect/*was:EntityDamageSourceIndirect*/) source).getProximateDamageSource();
-            if (damager.getBukkitEntity() instanceof ThrownPotion) {
-                cause = DamageCause.MAGIC;
-            } else if (damager.getBukkitEntity() instanceof Projectile) {
-                cause = DamageCause.PROJECTILE;
+            // MCPC+ start - vanilla compatibility
+            if (damager != null)
+            {
+                if (damager.getBukkitEntity() instanceof ThrownPotion) {
+                    cause = DamageCause.MAGIC;
+                } else if (damager.getBukkitEntity() instanceof Projectile) {
+                    cause = DamageCause.PROJECTILE;
+                }
             }
+            // MCPC+ end
         }
 
         return callEntityDamageEvent(damager, entity, cause, damage);
