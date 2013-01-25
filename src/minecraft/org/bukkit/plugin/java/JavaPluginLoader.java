@@ -20,6 +20,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
+import net.md_5.specialsource.JarMapping;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -70,8 +71,9 @@ public class JavaPluginLoader implements PluginLoader {
         }
 
         // MCPC+ start - file-based plugin remapper using SrgTools ApplySrg
+
         YamlConfiguration configuration = ((CraftServer)Bukkit.getServer()).configuration;
-        boolean shouldRemap = configuration.getBoolean("mcpc.plugin-settings.default.remap-plugin-file", true);
+        boolean shouldRemap = configuration.getBoolean("mcpc.plugin-settings.default.remap-plugin-file", false);
 
         // per-plugin settings
         String pluginBaseName = file.getName().substring(0, file.getName().indexOf("."));
@@ -187,7 +189,7 @@ public class JavaPluginLoader implements PluginLoader {
                 loader = loaders.get(description.getClassLoaderOf());
                 loader.addURL(urls[0]);
             } else {
-                loader = new PluginClassLoader(this, urls, getClass().getClassLoader());
+                loader = new PluginClassLoader(this, urls, getClass().getClassLoader(), description); // MCPC+ - pass description
             }
 
             Class<?> jarClass = Class.forName(description.getMain(), true, loader);

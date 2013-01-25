@@ -37,7 +37,12 @@ settings:
 mcpc:
     plugin-settings:
         default:
-            remap-plugin-file: true
+            remap-plugin-file: false
+            custom-class-loader: true
+            use-guava10: true
+            remap-nms-v1_4_R1: true
+            remap-nms-v1_4_6: true
+            remap-obc-v1_4_6: true
 world-settings:
     default:
         growth-chunks-per-tick: 650
