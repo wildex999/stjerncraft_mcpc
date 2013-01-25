@@ -101,7 +101,7 @@ public class OreDictionary
             {
                 ShapedRecipes recipe = (ShapedRecipes)obj;
                 ItemStack output = recipe.getRecipeOutput();
-                if (output != null && containsMatch(false, exclusions, output))
+                if ((output != null && containsMatch(false, exclusions, output)) || output == null) // MCPC+ - fixes NPE's with null recipes being added to forge
                 {
                     continue;
                 }
@@ -116,7 +116,7 @@ public class OreDictionary
             {
                 ShapelessRecipes recipe = (ShapelessRecipes)obj;
                 ItemStack output = recipe.getRecipeOutput();
-                if (output != null && containsMatch(false, exclusions, output))
+                if ((output != null && containsMatch(false, exclusions, output)) || output == null) // MCPC+ - fixes NPE's with null recipes being added to forge
                 {
                     continue;
                 }
