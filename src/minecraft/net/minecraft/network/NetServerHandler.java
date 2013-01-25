@@ -1647,16 +1647,23 @@ public class NetServerHandler extends NetHandler
             return;    // CraftBukkit
         }
 
-        // MCPC - temp fix to allow IC2 to bypass this
-        if (this.playerEntity.openContainer.getBukkitView() != null)
+        // MCPC+ start - vanilla compatibility
+        try 
         {
-            // CraftBukkit start - INVENTORY_CLOSE hook
-            InventoryCloseEvent event = new InventoryCloseEvent(this.playerEntity.openContainer.getBukkitView());
-            server.getPluginManager().callEvent(event);
-            this.playerEntity.openContainer.transferTo(this.playerEntity.inventoryContainer, getPlayerB());
-            // CraftBukkit end
+            if (this.playerEntity.openContainer.getBukkitView() != null)
+            {
+                // CraftBukkit start - INVENTORY_CLOSE hook
+                InventoryCloseEvent event = new InventoryCloseEvent(this.playerEntity.openContainer.getBukkitView());
+                server.getPluginManager().callEvent(event);
+                this.playerEntity.openContainer.transferTo(this.playerEntity.inventoryContainer, getPlayerB());
+                // CraftBukkit end
+            }
         }
-
+        catch (AbstractMethodError e)
+        {
+            // do nothing
+        }
+        // MCPC+ end
         this.playerEntity.closeInventory();
     }
 
@@ -1680,7 +1687,7 @@ public class NetServerHandler extends NetHandler
 
                 if (par1Packet102WindowClick.inventorySlot == 0 && top instanceof CraftingInventory)
                 {
-                 // MCPC+ start - check if recipe conforms to the IRecipe interface otherwise leave recipe as null
+                    // MCPC+ start - vanilla compatibility
                     org.bukkit.inventory.Recipe recipe = null;
                     try {
                         recipe = ((CraftingInventory) top).getRecipe();

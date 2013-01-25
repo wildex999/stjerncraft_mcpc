@@ -511,8 +511,14 @@ public class CraftEventFactory {
 
         CraftServer server = ((net.minecraft.world.WorldServer/*was:WorldServer*/) player.worldObj/*was:world*/).getServer();
         CraftPlayer craftPlayer = (CraftPlayer) player.getBukkitEntity();
-        player.openContainer/*was:activeContainer*/.transferTo(container, craftPlayer);
-
+        // MCPC+ start - vanilla compatibility
+        try {
+            player.openContainer/*was:activeContainer*/.transferTo(container, craftPlayer);
+        }
+        catch (AbstractMethodError e) {
+            // do nothing
+        }
+        // MCPC+ end
         InventoryOpenEvent event = new InventoryOpenEvent(container.getBukkitView());
         server.getPluginManager().callEvent(event);
 
