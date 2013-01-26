@@ -85,6 +85,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                 else if (entity instanceof net.minecraft.entity.monster.EntityGolem/*was:EntityGolem*/) {
                     if (entity instanceof net.minecraft.entity.monster.EntitySnowman/*was:EntitySnowman*/) { return new CraftSnowman(server, (net.minecraft.entity.monster.EntitySnowman/*was:EntitySnowman*/) entity); }
                     else if (entity instanceof net.minecraft.entity.monster.EntityIronGolem/*was:EntityIronGolem*/) { return new CraftIronGolem(server, (net.minecraft.entity.monster.EntityIronGolem/*was:EntityIronGolem*/) entity); }
+                    else { return new CraftGolem(server, (net.minecraft.entity.monster.EntityGolem)entity); } // MCPC+ - added for Thaumcraft
                 }
                 else if (entity instanceof net.minecraft.entity.passive.EntityVillager/*was:EntityVillager*/) { return new CraftVillager(server, (net.minecraft.entity.passive.EntityVillager/*was:EntityVillager*/) entity); }
                 else { return new CraftCreature(server, (net.minecraft.entity.EntityCreature/*was:EntityCreature*/) entity); }
