@@ -102,9 +102,13 @@ public class PluginClassLoader extends URLClassLoader {
             // Inheritance chain lookup
             List<IInheritanceProvider> inheritanceProviderList = new ArrayList<IInheritanceProvider>();
 
+            /* disabled - TODO: fix inheritance, but efficiently.
+            // see https://github.com/MinecraftPortCentral/MCPC-Plus/issues/87
+            // and https://github.com/MinecraftPortCentral/MCPC-Plus/issues/97
             inheritanceProviderList.add(new URLClassLoaderInheritanceProvider(this)); // plugin jar
             inheritanceProviderList.add(new RemappedRuntimeInheritanceProvider(jarMapping)); // obfuscated NMS
             inheritanceProviderList.add(new RuntimeInheritanceProvider()); // everything else
+            */
 
             remapper = new JarRemapper(jarMapping, inheritanceProviderList);
         } catch (IOException ex) {
