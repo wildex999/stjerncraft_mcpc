@@ -228,7 +228,10 @@ public class CraftBlock implements Block {
 
     public BlockState getState() {
         Material material = getType();
-
+        // MCPC+ start - if null, just pass the default state
+        if (material == null)
+            return new CraftBlockState(this);
+        // MCPC+ end
         switch (material) {
         case SIGN:
         case SIGN_POST:
