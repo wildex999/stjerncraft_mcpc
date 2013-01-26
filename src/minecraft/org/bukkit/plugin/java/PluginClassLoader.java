@@ -25,7 +25,13 @@ public class PluginClassLoader extends URLClassLoader {
     private final JavaPluginLoader loader;
     private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
     // MCPC+ start
-    JarRemapper remapper;   // class remapper for this plugin
+    private JarRemapper remapper;     // class remapper for this plugin
+
+    private static HashMap<Integer,JarMapping> jarMappings = new HashMap<Integer, JarMapping>();
+    private static final int F_USE_GUAVA10  = 1 << 1;
+    private static final int F_REMAP_NMS147 = 1 << 2;
+    private static final int F_REMAP_NMS146 = 1 << 3;
+    private static final int F_REMAP_OBC146 = 1 << 4;
     // MCPC+ end
 
     public PluginClassLoader(final JavaPluginLoader loader, final URL[] urls, final ClassLoader parent, PluginDescriptionFile pluginDescriptionFile) { // MCPC+ - add PluginDescriptionFile
@@ -57,17 +63,51 @@ public class PluginClassLoader extends URLClassLoader {
             return;
         }
 
-        try {
-            JarMapping jarMapping = new JarMapping();
+        int flags = 0;
+        if (useGuava10) flags |= F_USE_GUAVA10;
+        if (remapNMS147) flags |= F_REMAP_NMS147;
+        if (remapNMS146) flags |= F_REMAP_NMS146;
+        if (remapOBC146) flags |= F_REMAP_OBC146;
 
-            if (useGuava10) {
+        JarMapping jarMapping = getJarMapping(flags);
+
+        // Inheritance chain lookup
+        List<IInheritanceProvider> inheritanceProviderList = new ArrayList<IInheritanceProvider>();
+
+        /* disabled - TODO: fix inheritance, but efficiently.
+        // see https://github.com/MinecraftPortCentral/MCPC-Plus/issues/87
+        inheritanceProviderList.add(new URLClassLoaderInheritanceProvider(this)); // plugin jar
+        inheritanceProviderList.add(new RemappedRuntimeInheritanceProvider(jarMapping)); // obfuscated NMS
+        inheritanceProviderList.add(new RuntimeInheritanceProvider()); // everything else
+        */
+
+        remapper = null;
+        try {
+            remapper = new JarRemapper(jarMapping, inheritanceProviderList);
+        } catch (IOException ex) {
+            // this exception is never thrown in 1.2.1 - fixed in later versions of SpecialSource but have to catch it
+        }
+    }
+
+    private JarMapping getJarMapping(int flags) {
+        JarMapping jarMapping;
+
+        if (jarMappings.containsKey(flags)) {
+            System.out.println("Mapping reused for "+flags);
+            return jarMappings.get(flags);
+        }
+
+        jarMapping = new JarMapping();
+        try {
+
+            if ((flags & F_USE_GUAVA10) != 0) {
                 // Guava 10 is part of the Bukkit API, so plugins can use it, but FML includes Guava 12
                 // To resolve this conflict, remap plugin usages to Guava 10 in a separate package
                 // Most plugins should keep this enabled, unless they want a newer Guava
                 jarMapping.packages.put("com/google/common", "guava10/com/google/common");
             }
 
-            if (remapNMS147) {
+            if ((flags & F_REMAP_NMS147) != 0) {
                 Map<String, String> relocations147 = new HashMap<String, String>();
                 // mc-dev jar to CB, apply version shading (aka plugin safeguard) over cb2obf
                 relocations147.put("net.minecraft.server", "net.minecraft.server.v1_4_R1");
@@ -80,7 +120,7 @@ public class PluginClassLoader extends URLClassLoader {
                 jarMapping.classes.put("net/minecraft/server/v1_4_R1/MinecraftServer", "net/minecraft/server/MinecraftServer");
             }
 
-            if (remapNMS146) {
+            if ((flags & F_REMAP_NMS146) != 0) {
                 Map<String, String> relocations146 = new HashMap<String, String>();
                 relocations146.put("net.minecraft.server", "net.minecraft.server.v1_4_6");
                 relocations146.put("org.bouncycastle", "net.minecraft.v1_4_6.org.bouncycastle");
@@ -92,16 +132,13 @@ public class PluginClassLoader extends URLClassLoader {
                 jarMapping.classes.put("net/minecraft/server/v1_4_6/MinecraftServer", "net/minecraft/server/MinecraftServer");
             }
 
-            if (remapOBC146) {
+            if ((flags & F_REMAP_OBC146) != 0) {
                 // Remap OBC v1_4_6  to v1_4_R1 (or current) for 1.4.6 plugin compatibility
                 // Note this should only be mapped statically - since plugins MAY use reflection to determine the OBC version
                 jarMapping.packages.put("org/bukkit/craftbukkit/v1_4_6", "org/bukkit/craftbukkit/v1_4_R1");
             }
 
-            //System.out.println("Loaded "+ jarMapping.classes.size()+" classes, "+ jarMapping.fields.size()+" fields, "+ jarMapping.methods.size()+" methods");
-
-            // Inheritance chain lookup
-            List<IInheritanceProvider> inheritanceProviderList = new ArrayList<IInheritanceProvider>();
+            System.out.println("Mapping loaded "+ jarMapping.classes.size()+" classes, "+ jarMapping.fields.size()+" fields, "+ jarMapping.methods.size()+" methods, flags "+flags);
 
             /* disabled - TODO: fix inheritance, but efficiently.
             // see https://github.com/MinecraftPortCentral/MCPC-Plus/issues/87
@@ -110,14 +147,14 @@ public class PluginClassLoader extends URLClassLoader {
             inheritanceProviderList.add(new RemappedRuntimeInheritanceProvider(jarMapping)); // obfuscated NMS
             inheritanceProviderList.add(new RuntimeInheritanceProvider()); // everything else
             */
-
-            remapper = new JarRemapper(jarMapping, inheritanceProviderList);
+            jarMappings.put(flags, jarMapping);
+            return jarMapping;
         } catch (IOException ex) {
             ex.printStackTrace();
             throw new RuntimeException(ex);
         }
-        // MCPC+ end
     }
+    // MCPC+ end
 
     @Override
     public void addURL(URL url) { // Override for access level!
