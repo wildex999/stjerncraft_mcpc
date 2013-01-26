@@ -35,6 +35,7 @@ settings:
     spam-exclusions:
        - /skill
 mcpc:
+    connection-logging: false
     plugin-settings:
         default:
             remap-plugin-file: false

@@ -25,6 +25,8 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
 
 public class ModListResponsePacket extends FMLPacket
 {
@@ -112,8 +114,10 @@ public class ModListResponsePacket extends FMLPacket
         {
             pkt.data = FMLPacket.makePacket(MOD_MISSING, missingClientMods, versionIncorrectMods);
             // MCPC+ start - disable unneeded console spam
-            //Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
-            //FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
+            if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
+                Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
+                FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
+            }
             // MCPC+ end
             // Mark this as bad
             FMLNetworkHandler.setHandlerState((NetLoginHandler) netHandler, FMLNetworkHandler.MISSING_MODS_OR_VERSIONS);
@@ -124,8 +128,10 @@ public class ModListResponsePacket extends FMLPacket
         {
             pkt.data = FMLPacket.makePacket(MOD_IDENTIFIERS, netHandler);
             // MCPC+ start - disable unneeded console spam
-            //Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
-            //FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
+            if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
+                Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
+                FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
+            }
             // MCPC+ end
             pkt.length = pkt.data.length;
             network.addToSendQueue(pkt);

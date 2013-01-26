@@ -531,7 +531,8 @@ public final class CraftServer implements Server {
         return false;
     }
 
-    // MCPC+ start - used to process vanilla commands
+    // MCPC+ start
+    // used to process vanilla commands
     public boolean dispatchVanillaCommand(CommandSender sender, String commandLine) {
         if (craftCommandMap.dispatch(sender, commandLine)) {
             return true;
@@ -540,6 +541,10 @@ public final class CraftServer implements Server {
         sender.sendMessage("Unknown command. Type \"help\" for help.");
 
         return false;
+    }
+
+    public boolean getConnectionLoggingEnabled() {
+        return this.configuration.getBoolean("mcpc.connection-logging", false);
     }
     // MCPC+ end
 

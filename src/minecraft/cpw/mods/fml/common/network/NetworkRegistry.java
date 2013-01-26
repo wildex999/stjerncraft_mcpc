@@ -35,6 +35,8 @@ import cpw.mods.fml.relauncher.Side;
 // MCPC+ start
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 // MCPC+ end
 /**
@@ -279,7 +281,9 @@ public class NetworkRegistry
 
             for (String channel : channels.split("\0"))
             {
-                System.out.println("adding plugin channel " + channel);
+                if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
+                    System.out.println("adding plugin channel " + channel);
+                }
                 player.addChannel(channel);
             }
         }
