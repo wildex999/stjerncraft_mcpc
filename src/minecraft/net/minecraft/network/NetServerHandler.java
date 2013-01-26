@@ -1380,18 +1380,21 @@ public class NetServerHandler extends NetHandler
             {
                 logger.info(event.getPlayer().getName() + " issued server command: " + event.getMessage());    // Spigot
             }
-            // MCPC+ start - process vanilla command
+            // MCPC+ start - process commands
             int space = event.getMessage().indexOf(" ");
-            if (this.server.getCraftCommandMap().getCommand(event.getMessage().substring(1, space != -1 ? space : event.getMessage().length())) != null)
+            // process Bukkit command (can override vanilla)
+            if (this.server.dispatchCommand(event.getPlayer(), event.getMessage().substring(1)))
+            {
+                return;
+            }
+            // process vanilla command
+            else if (this.server.getCraftCommandMap().getCommand(event.getMessage().substring(1, space != -1 ? space : event.getMessage().length())) != null)
             {
                 this.server.dispatchVanillaCommand(event.getPlayer(), event.getMessage().substring(1));
                 return;
             }
             // MCPC+ end
-            else if (this.server.dispatchCommand(event.getPlayer(), event.getMessage().substring(1)))
-            {
-                return;
-            }
+
         }
         catch (org.bukkit.command.CommandException ex)
         {
