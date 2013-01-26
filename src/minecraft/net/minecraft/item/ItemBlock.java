@@ -93,7 +93,12 @@ public class ItemBlock extends Item
             Block var12 = Block.blocksList[this.blockID];
             int var13 = this.getMetadata(par1ItemStack.getItemDamage());
             int var14 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
-            return placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14);
+            if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14))
+            {
+                par3World.playSoundEffect((double) ((float) par4 + 0.5F), (double) ((float) par5 + 0.5F), (double) ((float) par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
+                --par1ItemStack.stackSize;
+            }
+            return true;
         }
         else
         {
@@ -218,13 +223,8 @@ public class ItemBlock extends Item
         if (block != null) {
             block.onBlockPlacedBy(world, x, y, z, player);
             block.onPostBlockPlaced(world, x, y, z, newData);
-
-            world.playSoundEffect((double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
         }
 
-        if (stack != null) {
-            --stack.stackSize;
-        }
         return true;
     }
 }
