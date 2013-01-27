@@ -9,7 +9,6 @@ Compilation
 We use maven to handle our dependencies.
 
 * Install [Maven 3](http://maven.apache.org/download.html)
-DgroupId=mcpc.libs -DartifactId=guava -Dversion=10.0 -Dpackaging=jar`
 * Install [MCPC API](https://github.com/MinecraftPortCentral/Bukkit/tree/mcpc-api)
 * Check out this repo and: `mvn clean package`
 
