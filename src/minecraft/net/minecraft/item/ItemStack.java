@@ -255,28 +255,8 @@ public final class ItemStack
      */
     public void setItemDamage(int par1)
     {
-        // MCPC+ start - fix overzealous item damage block metadata filtering
-        //this.itemDamage = (this.itemID > 0) && (this.itemID < 256) && (this.itemID != Block.anvil.blockID) && ? Item.itemsList[this.itemID].getMetadata(par1) : par1; // CraftBukkit
-        if (// if item is a _vanilla_ block - change from <256 to exclude modded blocks TODO: update with new MC
-            this.itemID > 0 && this.itemID <= 145
-            // CB specifically excludes filtering anvils
-            && this.itemID != Block.anvil.blockID
-            // avoid filtering these blocks to compensate for Item removal in Block{}
-            && this.itemID != Block.mobSpawner.blockID
-            && this.itemID != Block.mushroomCapBrown.blockID
-            && this.itemID != Block.mushroomCapRed.blockID
-            // don't call filterData if block is null. Fixes IC2 NPE. [now redundant?]
-            && Item.itemsList[this.itemID] != null) {
-
-            // Set the item damage, but filter it through valid block metadata
-            this.itemDamage = Item.itemsList[this.itemID].getMetadata(par1);
-        }
-        else
-        {
-            // Do not filter
-            this.itemDamage = par1;
-        }
-        // MCPC+ end
+        // MCPC+ - removed filter
+        this.itemDamage = par1;
     }
 
     /**
