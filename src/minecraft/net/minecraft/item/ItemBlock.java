@@ -220,7 +220,9 @@ public class ItemBlock extends Item
 
         world.notifyBlockChange(x, y, z, newId);
 
-        if (block != null) {
+        // Skulls don't get block data applied to them
+        if (block != null && block != Block.skull)
+        {
             block.onBlockPlacedBy(world, x, y, z, player);
             block.onPostBlockPlaced(world, x, y, z, newData);
         }
