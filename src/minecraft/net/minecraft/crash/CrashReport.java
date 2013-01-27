@@ -255,7 +255,7 @@ public class CrashReport
             StackTraceElement var6 = null;
             StackTraceElement var7 = null;
 
-            if (var5 != null && var5.length - var4 < var5.length)
+            if (var5 != null && var5.length - var4 < var5.length && var5.length - var4 >= 0) // MCPC+ - negative check
             {
                 var6 = var5[var5.length - var4];
 
