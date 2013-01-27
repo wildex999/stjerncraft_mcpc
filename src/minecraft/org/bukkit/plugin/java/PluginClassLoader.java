@@ -25,7 +25,8 @@ public class PluginClassLoader extends URLClassLoader {
     private final JavaPluginLoader loader;
     private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
     // MCPC+ start
-    private JarRemapper remapper;     // class remapper for this plugin
+    private JarRemapper remapper;     // class remapper for this plugin, or null
+    private boolean debug;
 
     private static HashMap<Integer,JarMapping> jarMappings = new HashMap<Integer, JarMapping>();
     private static final int F_USE_GUAVA10  = 1 << 1;
@@ -46,6 +47,7 @@ public class PluginClassLoader extends URLClassLoader {
         // configure default remapper settings
         YamlConfiguration config = ((CraftServer)Bukkit.getServer()).configuration;
         boolean useCustomClassLoader = config.getBoolean("mcpc.plugin-settings.default.custom-class-loader", true);
+        debug = config.getBoolean("mcpc.plugin-settings.default.debug", false);
         boolean useGuava10 = config.getBoolean("mcpc.plugin-settings.default.use-guava10", true);
         boolean remapNMS147 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_R1", true);
         boolean remapNMS146 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_6", true);
@@ -53,10 +55,15 @@ public class PluginClassLoader extends URLClassLoader {
 
         // plugin-specific overrides
         useCustomClassLoader = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader);
+        debug = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", debug);
         useGuava10 = config.getBoolean("mcpc.plugin-settings."+pluginName+".use-guava10", useGuava10);
         remapNMS147 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_R1", remapNMS147);
         remapNMS146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_6", remapNMS146);
         remapOBC146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_4_6", remapOBC146);
+
+        if (debug) {
+            System.out.println("PluginClassLoader debugging enabled for "+pluginName);
+        }
 
         if (!useCustomClassLoader) {
             remapper = null;
@@ -93,7 +100,9 @@ public class PluginClassLoader extends URLClassLoader {
         JarMapping jarMapping;
 
         if (jarMappings.containsKey(flags)) {
-            System.out.println("Mapping reused for "+flags);
+            if (debug) {
+                System.out.println("Mapping reused for "+flags);
+            }
             return jarMappings.get(flags);
         }
 
