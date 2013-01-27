@@ -75,7 +75,8 @@ public class EntityLargeFireball extends EntityFireball
 
         if (par1NBTTagCompound.hasKey("ExplosionPower"))
         {
-            this.field_92012_e = par1NBTTagCompound.getInteger("ExplosionPower");
+            // CraftBukkit - set yield when setting explosionpower
+            this.yield = this.field_92012_e = par1NBTTagCompound.getInteger("ExplosionPower");
         }
     }
 }

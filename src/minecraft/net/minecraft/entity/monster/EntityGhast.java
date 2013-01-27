@@ -196,7 +196,8 @@ public class EntityGhast extends EntityFlying implements IMob
                 {
                     this.worldObj.playAuxSFXAtEntity((EntityPlayer)null, 1008, (int)this.posX, (int)this.posY, (int)this.posZ, 0);
                     EntityLargeFireball var17 = new EntityLargeFireball(this.worldObj, this, var11, var13, var15);
-                    var17.field_92012_e = this.field_92009_j;
+                    // CraftBukkit - set yield when setting explosionpower
+                    var17.yield = var17.field_92012_e = this.field_92009_j;
                     double var18 = 4.0D;
                     Vec3 var20 = this.getLook(1.0F);
                     var17.posX = this.posX + var20.xCoord * var18;
