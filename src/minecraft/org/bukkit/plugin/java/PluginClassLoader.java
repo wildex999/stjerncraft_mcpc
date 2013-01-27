@@ -55,7 +55,7 @@ public class PluginClassLoader extends URLClassLoader {
 
         // plugin-specific overrides
         useCustomClassLoader = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader);
-        debug = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", debug);
+        debug = config.getBoolean("mcpc.plugin-settings."+pluginName+".debug", debug);
         useGuava10 = config.getBoolean("mcpc.plugin-settings."+pluginName+".use-guava10", useGuava10);
         remapNMS147 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_R1", remapNMS147);
         remapNMS146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_6", remapNMS146);
