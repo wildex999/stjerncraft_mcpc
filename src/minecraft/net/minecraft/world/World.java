@@ -435,7 +435,7 @@ public abstract class World implements IBlockAccess
         this.getServer().addWorld(this.world); // CraftBukkit
     }
 
-    // MCPC+ start - vanilla compatibility. Used for mods that bypass WorldServer when creating new a new World
+    // MCPC+ start - vanilla compatibility
     public World(ISaveHandler par1ISaveHandler, String par2Str, WorldSettings par3WorldSettings, WorldProvider par4WorldProvider, Profiler par5Profiler)
     {
         this.world = null; // CraftWorld not used
@@ -522,7 +522,6 @@ public abstract class World implements IBlockAccess
         this.calculateInitialSkylight();
         this.calculateInitialWeather();
     }
-
     // MCPC+ end
 
     private static MapStorage s_mapStorage;

@@ -379,18 +379,6 @@ public class EntityItem extends Entity
     {
         if (!this.worldObj.isRemote)
         {
-            if (this.delayBeforeCanPickup > 0)
-            {
-                return;
-            }
-
-            EntityItemPickupEvent event = new EntityItemPickupEvent(par1EntityPlayer, this);
-
-            if (MinecraftForge.EVENT_BUS.post(event))
-            {
-                return;
-            }
-
             ItemStack var2 = this.func_92014_d();
             int var3 = var2.stackSize;
             // CraftBukkit start
@@ -400,23 +388,22 @@ public class EntityItem extends Entity
             if (this.delayBeforeCanPickup <= 0 && canHold > 0)
             {
                 var2.stackSize = canHold;
+                EntityItemPickupEvent event = new EntityItemPickupEvent(par1EntityPlayer, this);
                 PlayerPickupItemEvent cbEvent = new PlayerPickupItemEvent((org.bukkit.entity.Player) par1EntityPlayer.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
                 cbEvent.setCancelled(!par1EntityPlayer.canPickUpLoot);
                 this.worldObj.getServer().getPluginManager().callEvent(cbEvent);
                 var2.stackSize = canHold + remaining;
 
-                if (cbEvent.isCancelled())
+                if (cbEvent.isCancelled() || event.isCanceled())
                 {
                     return;
                 }
-
                 // Possibly < 0; fix here so we do not have to modify code below
                 this.delayBeforeCanPickup = 0;
             }
-
             // CraftBukkit end
 
-            if (this.delayBeforeCanPickup <= 0 && (event.getResult() == Result.ALLOW || var3 <= 0 || par1EntityPlayer.inventory.addItemStackToInventory(var2)))
+            if (this.delayBeforeCanPickup ==0 && par1EntityPlayer.inventory.addItemStackToInventory(var2))
             {
                 if (var2.itemID == Block.wood.blockID)
                 {

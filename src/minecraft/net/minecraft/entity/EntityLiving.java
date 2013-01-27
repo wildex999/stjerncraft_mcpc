@@ -273,7 +273,9 @@ public abstract class EntityLiving extends Entity
     public int maxAirTicks = 300;
     public int maxHealth = this.getMaxHealth();
     // CraftBukkit end
-    private DamageSource dropLootSource; // MCPC
+    // MCPC+ start
+    private int randomDropResult = 0;
+    // MCPC+ end
 
     public EntityLiving(World par1World)
     {
@@ -1401,9 +1403,12 @@ public abstract class EntityLiving extends Entity
                 var3 = EnchantmentHelper.getLootingModifier((EntityLiving)var2);
             }
 
+            captureDrops = true;
+            capturedDrops.clear();
+            randomDropResult = 0;
+
             if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
             {
-                this.dropLootSource = par1DamageSource; // MCPC
                 this.dropFewItems(this.recentlyHit > 0, var3);
                 this.dropEquipment(this.recentlyHit > 0, var3);
 
@@ -1420,6 +1425,16 @@ public abstract class EntityLiving extends Entity
             else     // CraftBukkit
             {
                 CraftEventFactory.callEntityDeathEvent(this); // CraftBukkit
+            }
+
+            captureDrops = false;
+
+            if (!ForgeHooks.onLivingDrops(this, par1DamageSource, capturedDrops, var3, this.recentlyHit > 0, randomDropResult))
+            {
+                for (EntityItem item : capturedDrops)
+                {
+                    worldObj.spawnEntityInWorld(item);
+                }
             }
         }
 
@@ -1458,16 +1473,10 @@ public abstract class EntityLiving extends Entity
             }
         }
 
-        // Forge start
-        captureDrops = true;
-        capturedDrops.clear();
-        int k = 0;
-
-        // Forge end
         // Determine rare item drops and add them to the loot
         if (this.recentlyHit > 0)
         {
-            k = this.rand.nextInt(200) - par2;
+            int k = this.rand.nextInt(200) - par2;
 
             if (k < 5)
             {
@@ -1478,20 +1487,9 @@ public abstract class EntityLiving extends Entity
                     loot.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(var3));
                 }
             }
+            randomDropResult = k; // MCPC+
         }
 
-        // Forge start
-        captureDrops = false;
-
-        if (!ForgeHooks.onLivingDrops(this, dropLootSource, capturedDrops, par2, this.recentlyHit > 0, k))
-        {
-            for (EntityItem item : capturedDrops)
-            {
-                worldObj.spawnEntityInWorld(item);
-            }
-        }
-
-        // Forge end
         CraftEventFactory.callEntityDeathEvent(this, loot); // raise event even for those times when the entity does not drop loot
         // CraftBukkit end
     }

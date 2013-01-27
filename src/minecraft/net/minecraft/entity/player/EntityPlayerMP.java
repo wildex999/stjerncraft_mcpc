@@ -406,12 +406,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
     public void onDeath(DamageSource par1DamageSource)
     {
         // CraftBukkit start
-        if (this.isDead)
-        {
-            return;
-        }
-
-        if (ForgeHooks.onLivingDeath(this, par1DamageSource))
+        if (this.isDead || ForgeHooks.onLivingDeath(this, par1DamageSource))
         {
             return;
         }
@@ -449,6 +444,9 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         // CraftBukkit - we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
         if (!keepInventory)
         {
+            captureDrops = true;
+            capturedDrops.clear();
+
             for (int i = 0; i < this.inventory.mainInventory.length; ++i)
             {
                 this.inventory.mainInventory[i] = null;
@@ -458,31 +456,21 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
             {
                 this.inventory.armorInventory[i] = null;
             }
-        }
 
-        this.closeScreen();
-
-        // Forge start
-        if (!keepInventory)
-        {
-            this.captureDrops = false;
-            PlayerDropsEvent var2 = new PlayerDropsEvent(this, par1DamageSource, this.capturedDrops, this.recentlyHit > 0);
-
-            if (!MinecraftForge.EVENT_BUS.post(var2))
+            captureDrops = false;
+            PlayerDropsEvent forgeEvent = new PlayerDropsEvent(this, par1DamageSource, capturedDrops, recentlyHit > 0);
+            if (!MinecraftForge.EVENT_BUS.post(forgeEvent))
             {
-                Iterator var3 = this.capturedDrops.iterator();
-
-                while (var3.hasNext())
+                for (EntityItem item : capturedDrops)
                 {
-                    EntityItem var4 = (EntityItem)var3.next();
-                    this.joinEntityItemWithWorld(var4);
+                    joinEntityItemWithWorld(item);
                 }
             }
         }
 
-        // Forge end
+        this.closeScreen();
         // Update effects on player death
-        this.potionsNeedUpdate = true;
+        //this.potionsNeedUpdate = true; // MCPC+ - temporarily disabled, causes playerInventoryBeingManipulated flag to be set to true
         // CraftBukkit end
     }
 
