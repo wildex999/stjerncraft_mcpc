@@ -38,6 +38,8 @@ public class ItemBlock extends Item
      */
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
+        final int clickedX = par4, clickedY = par5, clickedZ = par6;
+
         int var11 = par3World.getBlockId(par4, par5, par6);
         if (var11 == Block.snow.blockID)
         {
@@ -94,18 +96,69 @@ public class ItemBlock extends Item
             Block var12 = Block.blocksList[this.blockID];
             int var13 = this.getMetadata(par1ItemStack.getItemDamage());
             int var14 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
+            // CraftBukkit start - redirect to common function handler
+            /*
             if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14))
             {
-                par3World.playSoundEffect((double) ((float) par4 + 0.5F), (double) ((float) par5 + 0.5F), (double) ((float) par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
+                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
                 --par1ItemStack.stackSize;
             }
-            return true;
+            */
+            return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, var14, clickedX, clickedY, clickedZ);
+            // CraftBukkit end
         }
         else
         {
             return false;
         }
     }
+
+    // CraftBukkit start - add method to process block placement
+    static boolean processBlockPlace(final World world, final EntityPlayer entityhuman, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data, final int clickedX, final int clickedY, final int clickedZ)
+    {
+        org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
+        world.editingBlocks = true;
+        world.callingPlaceEvent = true;
+        world.setBlockAndMetadata(x, y, z, id, data);
+        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockstate, clickedX, clickedY, clickedZ);
+
+        if (event.isCancelled() || !event.canBuild())
+        {
+            blockstate.update(true);
+            world.editingBlocks = false;
+            world.callingPlaceEvent = false;
+            return false;
+        }
+
+        world.editingBlocks = false;
+        world.callingPlaceEvent = false;
+        int newId = world.getBlockId(x, y, z);
+        int newData = world.getBlockMetadata(x, y, z);
+        Block block = Block.blocksList[newId];
+
+        if (block != null && !(block instanceof BlockContainer))   // Containers get placed automatically
+        {
+            block.onBlockAdded(world, x, y, z);
+        }
+
+        world.notifyBlockChange(x, y, z, newId);
+
+        // Skulls don't get block data applied to them
+        if (block != null && block != Block.skull)
+        {
+            block.onBlockPlacedBy(world, x, y, z, entityhuman);
+            block.onPostBlockPlaced(world, x, y, z, newData);
+            world.playSoundEffect((double)((float) x + 0.5F), (double)((float) y + 0.5F), (double)((float) z + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
+        }
+
+        if (itemstack != null)
+        {
+            --itemstack.stackSize;
+        }
+
+        return true;
+    }
+    // CraftBukkit end
 
     @SideOnly(Side.CLIENT)
 

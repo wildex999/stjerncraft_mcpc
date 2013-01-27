@@ -9,7 +9,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
-import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 
 public class ItemHoe extends Item
 {
@@ -30,6 +29,8 @@ public class ItemHoe extends Item
      */
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
+        final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
+
         if (!par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack))
         {
             return false;
@@ -66,14 +67,10 @@ public class ItemHoe extends Item
                 }
                 else
                 {
-                    CraftBlockState blockState = CraftBlockState.getBlockState(par3World, par4, par5, par6); // CraftBukkit
-                    par3World.setBlockWithNotify(par4, par5, par6, var13.blockID);
                     // CraftBukkit start - Hoes - blockface -1 for 'SELF'
-                    org.bukkit.event.block.BlockPlaceEvent cbEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockState, par4, par5, par6);
-
-                    if (cbEvent.isCancelled() || !cbEvent.canBuild())
+                    // world.setTypeId(i, j, k, block.id);
+                    if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, var13.blockID, 0, clickedX, clickedY, clickedZ))
                     {
-                        cbEvent.getBlockPlaced().setTypeId(blockState.getTypeId());
                         return false;
                     }
 

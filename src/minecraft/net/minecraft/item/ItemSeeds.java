@@ -8,7 +8,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.IPlantable;
-import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 
 public class ItemSeeds extends Item implements IPlantable
 {
@@ -34,6 +33,8 @@ public class ItemSeeds extends Item implements IPlantable
      */
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
+        final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
+
         if (par7 != 1)
         {
             return false;
@@ -45,14 +46,10 @@ public class ItemSeeds extends Item implements IPlantable
 
             if (block != null && block.canSustainPlant(par3World, par4, par5, par6, ForgeDirection.UP, this) && par3World.isAirBlock(par4, par5 + 1, par6))   // Forge
             {
-                CraftBlockState blockState = CraftBlockState.getBlockState(par3World, par4, par5 + 1, par6); // CraftBukkit
-                par3World.setBlockWithNotify(par4, par5 + 1, par6, this.blockType);
                 // CraftBukkit start - seeds
-                org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockState, par4, par5, par6);
-
-                if (event.isCancelled() || !event.canBuild())
+                // world.setTypeId(i, j + 1, k, this.id);
+                if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5 + 1, par6, this.blockType, 0, clickedX, clickedY, clickedZ))
                 {
-                    event.getBlockPlaced().setTypeId(0);
                     return false;
                 }
 

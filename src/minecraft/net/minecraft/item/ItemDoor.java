@@ -1,5 +1,7 @@
 package net.minecraft.item;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.packet.Packet53BlockChange;
 import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -26,6 +28,8 @@ public class ItemDoor extends Item
      */
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
+        final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
+
         if (par7 != 1)
         {
             return false;
@@ -55,7 +59,7 @@ public class ItemDoor extends Item
                     int var12 = MathHelper.floor_double((double)((par2EntityPlayer.rotationYaw + 180.0F) * 4.0F / 360.0F) - 0.5D) & 3;
 
                     // CraftBukkit start
-                    if (!place(par3World, par4, par5, par6, var12, var11, par2EntityPlayer))
+                    if (!place(par3World, par4, par5, par6, var12, var11, par2EntityPlayer, clickedX, clickedY, clickedZ))
                     {
                         return false;
                     }
@@ -75,10 +79,10 @@ public class ItemDoor extends Item
     public static void placeDoorBlock(World par0World, int par1, int par2, int par3, int par4, Block par5Block)
     {
         // CraftBukkit start
-        place(par0World, par1, par2, par3, par4, par5Block, null);
+        place(par0World, par1, par2, par3, par4, par5Block, null, par1, par2, par3);
     }
 
-    public static boolean place(World world, int i, int j, int k, int l, Block block, EntityPlayer entityhuman)
+    public static boolean place(World world, int i, int j, int k, int l, Block block, EntityPlayer entityhuman, int clickedX, int clickedY, int clickedZ)
     {
         // CraftBukkit end
         byte b0 = 0;
@@ -119,20 +123,28 @@ public class ItemDoor extends Item
             flag2 = true;
         }
 
-        CraftBlockState blockState = CraftBlockState.getBlockState(world, i, j, k); // CraftBukkit
         world.editingBlocks = true;
-        world.setBlockAndMetadataWithNotify(i, j, k, block.blockID, l);
 
         // CraftBukkit start
         if (entityhuman != null)
         {
-            org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockState, i, j, k);
-
-            if (event.isCancelled() || !event.canBuild())
+            if (!ItemBlock.processBlockPlace(world, entityhuman, null, i, j, k, block.blockID, l, clickedX, clickedY, clickedZ))
             {
-                event.getBlockPlaced().setTypeIdAndData(blockState.getTypeId(), blockState.getRawData(), false);
+                ((EntityPlayerMP) entityhuman).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j + 1, k, world));
                 return false;
             }
+
+            if (world.getBlockId(i, j, k) != block.blockID)
+            {
+                ((EntityPlayerMP) entityhuman).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j + 1, k, world));
+                return true;
+            }
+
+            world.editingBlocks = true;
+        }
+        else
+        {
+            world.setBlockAndMetadataWithNotify(i, j, k, block.blockID, l);
         }
 
         // CraftBukkit end

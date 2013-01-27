@@ -7,7 +7,6 @@ import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.tileentity.TileEntity;
-import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 
 public class ItemSign extends Item
 {
@@ -24,6 +23,8 @@ public class ItemSign extends Item
      */
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
+        final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
+
         if (par7 == 0)
         {
             return false;
@@ -34,8 +35,6 @@ public class ItemSign extends Item
         }
         else
         {
-            int var11 = par4, var12 = par5, clickedZ = par6; // CraftBukkit
-
             if (par7 == 1)
             {
                 ++par5;
@@ -71,36 +70,25 @@ public class ItemSign extends Item
             }
             else
             {
-                CraftBlockState blockState = CraftBlockState.getBlockState(par3World, par4, par5, par6); // CraftBukkit
+                // CraftBukkit start
+                final Block block;
 
                 if (par7 == 1)
                 {
                     int i1 = MathHelper.floor_double((double)((par2EntityPlayer.rotationYaw + 180.0F) * 16.0F / 360.0F) + 0.5D) & 15;
-                    // CraftBukkit start - sign
-                    par3World.setBlockAndMetadata(par4, par5, par6, Block.signPost.blockID, i1);
+                    // par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.signPost.blockID, var11);
+                    block = Block.signPost;
+                    par7 = i1;
                 }
                 else
                 {
-                    par3World.setBlockAndMetadata(par4, par5, par6, Block.signWall.blockID, par7);
+                    // par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.signWall.blockID, par7);
+                    block = Block.signWall;
                 }
 
-                org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockState, var11, var12, clickedZ);
-
-                if (event.isCancelled() || !event.canBuild())
+                if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, block.blockID, par7, clickedX, clickedY, clickedZ))
                 {
-                    event.getBlockPlaced().setTypeIdAndData(blockState.getTypeId(), blockState.getRawData(), false);
                     return false;
-                }
-                else
-                {
-                    if (par7 == 1)
-                    {
-                        par3World.notifyBlockChange(par4, par5, par6, Block.signPost.blockID);
-                    }
-                    else
-                    {
-                        par3World.notifyBlockChange(par4, par5, par6, Block.signWall.blockID);
-                    }
                 }
 
                 // CraftBukkit end

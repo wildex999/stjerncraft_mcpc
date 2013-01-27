@@ -31,6 +31,8 @@ public class BlockMushroom extends BlockFlower
      */
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
+        final int sourceX = par2, sourceY = par3, sourceZ = par4; // CraftBukkit
+
         if (par5Random.nextInt(Math.max(1, (int) par1World.growthOdds / par1World.getWorld().mushroomGrowthModifier * 25)) == 0)   // Spigot
         {
             byte var6 = 4;
@@ -61,11 +63,6 @@ public class BlockMushroom extends BlockFlower
             var8 = par2 + par5Random.nextInt(3) - 1;
             var9 = par3 + par5Random.nextInt(2) - par5Random.nextInt(2);
             var10 = par4 + par5Random.nextInt(3) - 1;
-            // CraftBukkit start - preserve source block coordinates
-            int sourceX = par2;
-            int sourceY = par3;
-            int sourceZ = par4;
-            // CraftBukkit end
 
             for (int var11 = 0; var11 < 4; ++var11)
             {

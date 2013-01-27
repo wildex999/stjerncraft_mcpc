@@ -8,7 +8,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 
 public class ItemLilyPad extends ItemColored
 {
@@ -35,6 +34,7 @@ public class ItemLilyPad extends ItemColored
                 int var5 = var4.blockX;
                 int var6 = var4.blockY;
                 int var7 = var4.blockZ;
+                final int clickedX = var5, clickedY = var6, clickedZ = var7; // CraftBukkit
 
                 if (!par2World.canMineBlock(par3EntityPlayer, var5, var6, var7))
                 {
@@ -48,14 +48,10 @@ public class ItemLilyPad extends ItemColored
 
                 if (par2World.getBlockMaterial(var5, var6, var7) == Material.water && par2World.getBlockMetadata(var5, var6, var7) == 0 && par2World.isAirBlock(var5, var6 + 1, var7))
                 {
-                    CraftBlockState blockState = CraftBlockState.getBlockState(par2World, var5, var6 + 1, var7); // CraftBukkit
-                    par2World.setBlockWithNotify(var5, var6 + 1, var7, Block.waterlily.blockID);
                     // CraftBukkit start - waterlily
-                    org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par2World, par3EntityPlayer, blockState, var5, var6, var7);
-
-                    if (event.isCancelled() || !event.canBuild())
+                    // par2World.setBlockWithNotify(var5, var6 + 1, var7, Block.waterlily.blockID);
+                    if (!processBlockPlace(par2World, par3EntityPlayer, null, var5, var6 + 1, var7, Block.waterlily.blockID, 0, clickedX, clickedY, clickedZ))
                     {
-                        event.getBlockPlaced().setTypeId(0);
                         return par1ItemStack;
                     }
 

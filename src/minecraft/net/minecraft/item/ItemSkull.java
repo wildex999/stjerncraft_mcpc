@@ -33,6 +33,8 @@ public class ItemSkull extends Item
      */
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
+        final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
+
         if (par7 == 0)
         {
             return false;
@@ -80,8 +82,15 @@ public class ItemSkull extends Item
             }
             else
             {
-                CraftBlockState blockState = CraftBlockState.getBlockState(par3World, par4, par5, par6); // CraftBukkit
-                par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.skull.blockID, par7);
+                // CraftBukkit start - handle in ItemBlock
+                // world.setTypeIdAndData(i, j, k, Block.SKULL.id, l);
+                if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, Block.skull.blockID, par7, clickedX, clickedY, clickedZ))
+                {
+                    return false;
+                }
+
+                par7 = par3World.getBlockMetadata(par4, par5, par6);
+                // CraftBukkit end
                 int i1 = 0;
 
                 if (par7 == 1)
@@ -104,17 +113,6 @@ public class ItemSkull extends Item
                     ((TileEntitySkull) tileentity).setSkullRotation(i1);
                     ((BlockSkull) Block.skull).makeWither(par3World, par4, par5, par6, (TileEntitySkull) tileentity);
                 }
-
-                // CraftBukkit start
-                org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockState, var11, var12, var13);
-
-                if (event.isCancelled() || !event.canBuild())
-                {
-                    event.getBlockPlaced().setTypeIdAndData(blockState.getTypeId(), blockState.getRawData(), false);
-                    return false;
-                }
-
-                // CraftBukkit end
                 --par1ItemStack.stackSize;
                 return true;
             }
