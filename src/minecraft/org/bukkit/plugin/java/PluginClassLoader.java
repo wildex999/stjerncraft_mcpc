@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSigner;
@@ -185,7 +186,13 @@ public class PluginClassLoader extends URLClassLoader {
 
                     // Define (create) the class using the modified byte code
                     // The top-child class loader is used for this to prevent access violations
-                    CodeSource codeSource = new CodeSource(url, new CodeSigner[0]);
+                    // Set the codesource to the jar, not within the jar, for compatibility with
+                    // plugins that do new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()))
+                    // instead of using getResourceAsStream - see https://github.com/MinecraftPortCentral/MCPC-Plus/issues/75
+                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection(); // parses only
+                    URL jarURL = jarURLConnection.getJarFileURL();
+                    CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
+
                     result = this.defineClass(name, remappedBytecode, 0, remappedBytecode.length, codeSource);
                     if (result != null) {
                         // Resolve it - sets the class loader of the class
