@@ -405,7 +405,7 @@
                         </manifestEntries>
                     </transformer>
                 </transformers>
-                <finalName>mcpc-plus-${project.version}</finalName>
+                <finalName>mcpc-plus-${project.version}-${BUILD_NUMBER}</finalName>
             </configuration>
         </plugin>
     </plugins>
