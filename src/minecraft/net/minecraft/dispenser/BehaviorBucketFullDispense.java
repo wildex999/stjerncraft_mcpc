@@ -35,11 +35,11 @@ public class BehaviorBucketFullDispense extends BehaviorDefaultDispenseItem
         int var4 = par1IBlockSource.getXInt();
         int var5 = par1IBlockSource.getYInt();
         int var6 = par1IBlockSource.getZInt();
-        EnumFacing var7 = EnumFacing.func_82600_a(par1IBlockSource.func_82620_h());
+        EnumFacing var7 = EnumFacing.getFront(par1IBlockSource.func_82620_h());
         // CraftBukkit start
         World world = par1IBlockSource.getWorld();
-        int i2 = var4 + var7.func_82601_c();
-        int k2 = var6 + var7.func_82599_e();
+        int i2 = var4 + var7.getFrontOffsetX();
+        int k2 = var6 + var7.getFrontOffsetZ();
 
         if (world.isAirBlock(i2, var5, k2) || world.getBlockMaterial(i2, var5, k2).isSolid())
         {
@@ -75,7 +75,7 @@ public class BehaviorBucketFullDispense extends BehaviorDefaultDispenseItem
 
         // CraftBukkit end
 
-        if (var3.tryPlaceContainedLiquid(par1IBlockSource.getWorld(), (double)var4, (double)var5, (double)var6, var4 + var7.func_82601_c(), var5, var6 + var7.func_82599_e()))
+        if (var3.tryPlaceContainedLiquid(par1IBlockSource.getWorld(), (double)var4, (double)var5, (double)var6, var4 + var7.getFrontOffsetX(), var5, var6 + var7.getFrontOffsetZ()))
         {
             // CraftBukkit start - handle stacked buckets
             Item item = Item.bucketEmpty;

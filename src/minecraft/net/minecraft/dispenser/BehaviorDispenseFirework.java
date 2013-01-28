@@ -25,10 +25,10 @@ public class BehaviorDispenseFirework extends BehaviorDefaultDispenseItem
      */
     public ItemStack dispenseStack(IBlockSource par1IBlockSource, ItemStack par2ItemStack)
     {
-        EnumFacing var3 = EnumFacing.func_82600_a(par1IBlockSource.func_82620_h());
-        double var4 = par1IBlockSource.getX() + (double)var3.func_82601_c();
+        EnumFacing var3 = EnumFacing.getFront(par1IBlockSource.func_82620_h());
+        double var4 = par1IBlockSource.getX() + (double)var3.getFrontOffsetX();
         double var6 = (double)((float)par1IBlockSource.getYInt() + 0.2F);
-        double var8 = par1IBlockSource.getZ() + (double)var3.func_82599_e();
+        double var8 = par1IBlockSource.getZ() + (double)var3.getFrontOffsetZ();
         // CraftBukkit start
         World world = par1IBlockSource.getWorld();
         ItemStack itemstack1 = par2ItemStack.splitStack(1);

@@ -38,8 +38,8 @@ import org.bukkit.event.entity.EntityCombustEvent; // CraftBukkit
 
 public class EntitySkeleton extends EntityMob implements IRangedAttackMob
 {
-    private EntityAIArrowAttack field_85037_d = new EntityAIArrowAttack(this, 0.25F, 60, 10.0F);
-    private EntityAIAttackOnCollide field_85038_e = new EntityAIAttackOnCollide(this, EntityPlayer.class, 0.31F, false);
+    private EntityAIArrowAttack aiArrowAttack = new EntityAIArrowAttack(this, 0.25F, 60, 10.0F);
+    private EntityAIAttackOnCollide aiAttackOnCollide = new EntityAIAttackOnCollide(this, EntityPlayer.class, 0.31F, false);
 
     public EntitySkeleton(World par1World)
     {
@@ -327,13 +327,13 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
     {
         if (this.worldObj.provider instanceof WorldProviderHell && this.getRNG().nextInt(5) > 0)
         {
-            this.tasks.addTask(4, this.field_85038_e);
+            this.tasks.addTask(4, this.aiAttackOnCollide);
             this.setSkeletonType(1);
             this.setCurrentItemOrArmor(0, new ItemStack(Item.swordStone));
         }
         else
         {
-            this.tasks.addTask(4, this.field_85037_d);
+            this.tasks.addTask(4, this.aiArrowAttack);
             this.func_82164_bB();
             this.func_82162_bC();
         }
@@ -354,17 +354,17 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
 
     public void func_85036_m()
     {
-        this.tasks.func_85156_a(this.field_85038_e);
-        this.tasks.func_85156_a(this.field_85037_d);
+        this.tasks.func_85156_a(this.aiAttackOnCollide);
+        this.tasks.func_85156_a(this.aiArrowAttack);
         ItemStack var1 = this.getHeldItem();
 
         if (var1 != null && var1.itemID == Item.bow.itemID)
         {
-            this.tasks.addTask(4, this.field_85037_d);
+            this.tasks.addTask(4, this.aiArrowAttack);
         }
         else
         {
-            this.tasks.addTask(4, this.field_85038_e);
+            this.tasks.addTask(4, this.aiAttackOnCollide);
         }
     }
 

@@ -265,7 +265,7 @@ public abstract class Entity
 
     /** Whether the entity is inside a Portal */
     protected boolean inPortal;
-    protected int field_82153_h;
+    protected int timeInPortal;
 
     /** Which dimension the player is in (-1 = the Nether, 0 = normal world) */
     public int dimension;
@@ -537,9 +537,9 @@ public abstract class Entity
             {
                 if (true || var1.getAllowNether())   // CraftBukkit
                 {
-                    if (this.ridingEntity == null && this.field_82153_h++ >= var2)
+                    if (this.ridingEntity == null && this.timeInPortal++ >= var2)
                     {
-                        this.field_82153_h = var2;
+                        this.timeInPortal = var2;
                         this.timeUntilPortal = this.getPortalCooldown();
                         byte var3;
 
@@ -560,14 +560,14 @@ public abstract class Entity
             }
             else
             {
-                if (this.field_82153_h > 0)
+                if (this.timeInPortal > 0)
                 {
-                    this.field_82153_h -= 4;
+                    this.timeInPortal -= 4;
                 }
 
-                if (this.field_82153_h < 0)
+                if (this.timeInPortal < 0)
                 {
-                    this.field_82153_h = 0;
+                    this.timeInPortal = 0;
                 }
             }
 
@@ -720,7 +720,7 @@ public abstract class Entity
     public void setFire(int par1)
     {
         int var2 = par1 * 20;
-        var2 = EnchantmentProtection.func_92041_a(this, var2);
+        var2 = EnchantmentProtection.func_92093_a(this, var2);
 
         if (this.fire < var2)
         {
@@ -1073,7 +1073,7 @@ public abstract class Entity
 
                 if (var32 == 0)
                 {
-                    int var33 = this.worldObj.func_85175_e(var37, var36 - 1, var31);
+                    int var33 = this.worldObj.blockGetRenderType(var37, var36 - 1, var31);
 
                     if (var33 == 11 || var33 == 32 || var33 == 21)
                     {
@@ -2338,7 +2338,7 @@ public abstract class Entity
 
             if (!this.worldObj.isRemote && !this.inPortal)
             {
-                this.field_82152_aq = Direction.func_82372_a(var1, var3);
+                this.field_82152_aq = Direction.getMovementDirection(var1, var3);
             }
 
             this.inPortal = true;
@@ -2770,7 +2770,7 @@ public abstract class Entity
             // CraftBukkit end
 
             this.dimension = i;
-            this.worldObj.setEntityDead(this);
+            this.worldObj.removeEntity(this);
             this.isDead = false;
             this.worldObj.theProfiler.startSection("reposition");
             // CraftBukkit start - ensure chunks are loaded in case TravelAgent is not used which would initially cause chunks to load during find/create
@@ -2920,5 +2920,13 @@ public abstract class Entity
         {
             this.persistentID = UUID.randomUUID();
         }
+    }
+
+    /**
+     * Reset the entity ID to a new value. Not to be used from Mod code
+     */
+    public final void resetEntityId()
+    {
+        this.entityId = nextEntityID++;
     }
 }

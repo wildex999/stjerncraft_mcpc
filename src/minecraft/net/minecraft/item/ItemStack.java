@@ -281,7 +281,7 @@ public final class ItemStack
 
                 for (int var5 = 0; var3 > 0 && var5 < par1; ++var5)
                 {
-                    if (EnchantmentDurability.func_92045_a(this, var3, par2EntityLiving.worldObj.rand))
+                    if (EnchantmentDurability.func_92097_a(this, var3, par2EntityLiving.worldObj.rand))
                     {
                         ++var4;
                     }

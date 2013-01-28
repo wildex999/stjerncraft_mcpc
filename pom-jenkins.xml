@@ -13,8 +13,12 @@
     <minecraft.version>1.4.7</minecraft.version>
     <minecraft_version>1_4_R1</minecraft_version>
     <mcp.version>726a</mcp.version>
-    <forge.version>1.4.7-6.6.0.516</forge.version>
-    <buildNumber>0</buildNumber>
+    <forge.version>6.6.0.516</forge.version>
+    <forge.current.build>516</forge.current.build>
+    <forge.old.build>497</forge.old.build>
+    <mcpc.final_name>mcpc-plus-${minecraft.version}</mcpc.final_name>
+    <mcp.directory>${basedir}/mcp-f${forge.current.build}</mcp.directory>
+    <!-- When switching forge version be sure to change it at the bottom (Line 522) -->
 </properties>
 <pluginRepositories>
     <pluginRepository>
@@ -207,17 +211,29 @@
                 </execution>
             </executions>
         </plugin>
-        <!-- Compile MCPC+ -->
+        <!-- Disable Compiler as compiling is handled by MCP -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.0</version>
+            <version>2.0.2</version>
             <configuration>
                 <source>1.6</source>
                 <target>1.6</target>
-                <showDeprecation>true</showDeprecation>
-                <compilerArgument>-Xlint:-options</compilerArgument>
             </configuration>
+            <executions>
+                <execution>
+                    <id>default-compile</id>
+                    <phase>compile</phase>
+                    <configuration>
+                        <excludes>
+                            <exclude>*/**</exclude>
+                        </excludes>
+                    </configuration>
+                    <goals>
+                        <goal>compile</goal>
+                    </goals>
+                </execution>
+            </executions>
         </plugin>
         <!-- Reobfuscate MCPC+ -->
         <plugin>
@@ -226,13 +242,27 @@
             <version>1.2</version>
             <executions>
                 <execution>
+                    <id>recompile-mcp</id>
+                    <phase>process-classes</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <workingDirectory>${mcp.directory}/</workingDirectory>
+                        <executable>${mcpc.python}</executable>
+                        <arguments>
+                            <argument>runtime/recompile.py</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
+                <execution>
                     <id>reobfuscate-mcp</id>
                     <phase>prepare-package</phase>
                     <goals>
                         <goal>exec</goal>
                     </goals>
                     <configuration>
-                        <workingDirectory>${basedir}/mcp/</workingDirectory>
+                        <workingDirectory>${mcp.directory}/</workingDirectory>
                         <executable>${mcpc.python}</executable>
                         <arguments>
                             <argument>runtime/reobfuscate.py</argument>
@@ -248,30 +278,24 @@
             <version>0.2.5</version>
             <executions>
                 <execution>
-                    <id>move-classes</id>
-                    <phase>process-classes</phase>
+                    <id>copy-source</id>
+                    <phase>process-resources</phase>
                     <goals>
                         <goal>copy</goal>
                     </goals>
                     <configuration>
                         <verbose>false</verbose>
                         <resources>
-                            <!-- Clean MCP bin folder -->
+                            <!-- Copy source to MCP -->
                             <resource>
-                                <directory>${basedir}/mcp/bin/minecraft</directory>
-                                <clean>true</clean>
-                                <cleanEmptyDirectories>true</cleanEmptyDirectories>
-                            </resource>
-                            <!-- Move compiled classes to MCP -->
-                            <resource>
-                                <directory>${basedir}/target/classes</directory>
-                                <targetPath>${basedir}/mcp/bin/minecraft</targetPath>
+                                <directory>${basedir}/src/minecraft</directory>
+                                <targetPath>${mcp.directory}/src/minecraft</targetPath>
                                 <includes>
-                                    <include>**/*.class</include>
+                                    <include>**/*.java</include>
                                 </includes>
                                 <preservePath>true</preservePath>
                             </resource>
-                            <!-- Copy resources to target/classes-reobf -->
+                            <!-- Copy resources to target folder -->
                             <resource>
                                 <directory>${basedir}/target/classes</directory>
                                 <targetPath>${basedir}/target/classes-reobf</targetPath>
@@ -292,7 +316,7 @@
                     </goals>
                     <configuration>
                         <resource>
-                            <directory>${basedir}/mcp/reobf/minecraft</directory>
+                            <directory>${mcp.directory}/reobf/minecraft</directory>
                             <targetPath>${basedir}/target/classes-reobf</targetPath>
                             <preservePath>true</preservePath>
                             <move>true</move>
@@ -315,7 +339,7 @@
                         <Implementation-Title>MCPC Plus</Implementation-Title>
                         <Implementation-Version>${describe}</Implementation-Version>
                         <Implementation-Vendor>MCPC</Implementation-Vendor>
-                        <Forge-Version>6.6.0.516</Forge-Version>
+                        <Forge-Version>${forge.version}</Forge-Version>
                         <Specification-Title>Bukkit</Specification-Title>
                         <Specification-Version>${project.version}</Specification-Version>
                         <Specification-Vendor>Bukkit Team</Specification-Vendor>
@@ -399,14 +423,14 @@
                             <Implementation-Title>MCPC Plus</Implementation-Title>
                             <Implementation-Version>${describe}</Implementation-Version>
                             <Implementation-Vendor>MCPC</Implementation-Vendor>
-                            <Forge-Version>6.6.0.516</Forge-Version>
+                            <Forge-Version>6.6.0.497</Forge-Version>
                             <Specification-Title>Bukkit</Specification-Title>
                             <Specification-Version>${project.version}</Specification-Version>
                             <Specification-Vendor>Bukkit Team</Specification-Vendor>
                         </manifestEntries>
                     </transformer>
                 </transformers>
-                <finalName>mcpc-plus-${project.version}-${buildNumber}</finalName>
+                <finalName>${mcpc.final_name}</finalName>
             </configuration>
         </plugin>
     </plugins>
@@ -453,7 +477,6 @@
         </plugins>
     </pluginManagement>
 </build>
-<!-- Use the right python for every operating system -->
 <profiles>
     <!-- Windows profile -->
     <profile>
@@ -464,7 +487,7 @@
             </os>
         </activation>
         <properties>
-            <mcpc.python>${basedir}/mcp/runtime/bin/python/python_mcp.exe</mcpc.python>
+            <mcpc.python>${mcp.directory}/runtime/bin/python/python_mcp.exe</mcpc.python>
         </properties>
     </profile>
     <!-- Unix profile -->
@@ -491,35 +514,13 @@
             <mcpc.python>python</mcpc.python>
         </properties>
     </profile>
-    <!-- Build number profile -->
-    <profile>
-	    <id>static_build_number</id>
-	    <activation>
-	        <property>
-	            <name>!env.BUILD_NUMBER</name>
-	        </property>
-	    </activation>
-	    <properties>
-	        <buildNumber>0</buildNumber>
-	    </properties>
-	</profile>
-	<profile>
-	    <id>dynamic_build_number</id>
-	    <activation>
-	        <property>
-	            <name>env.BUILD_NUMBER</name>
-	        </property>
-	    </activation>
-	    <properties>
-	        <buildNumber>${env.BUILD_NUMBER}</buildNumber>
-	    </properties>
-	</profile>
     <!-- Preparation profile -->
     <profile>
         <id>mcpc-prepare-profile</id>
         <activation>
             <file>
-                <missing>${basedir}/mcp/LICENSE.txt</missing>
+                <missing>${basedir}/mcp-f516/LICENSE.txt</missing>
+                <!-- IMPORTANT: Has to be changed on switching Forge build -->
             </file>
         </activation>
         <build>
@@ -538,16 +539,22 @@
                             </goals>
                             <configuration>
                                 <resources>
+                                    <!-- Remove deprecated mcp -->
+                                    <resource>
+                                        <directory>${basedir}/mcp-f${forge.old.build}</directory>
+                                        <clean>true</clean>
+                                        <cleanEmptyDirectories>true</cleanEmptyDirectories>
+                                    </resource>
                                     <!-- Download MCP -->
                                     <resource>
-                                        <targetPath>${basedir}/mcp</targetPath>
+                                        <targetPath>${mcp.directory}</targetPath>
                                         <directory>http://mcp.ocean-labs.de/files/archive/mcp${mcp.version}.zip</directory>
                                         <unpack>true</unpack>
                                     </resource>
                                     <!-- Download Forge -->
                                     <resource>
-                                        <targetPath>${basedir}/mcp</targetPath>
-                                        <directory>http://files.minecraftforge.net/minecraftforge/minecraftforge-src-${forge.version}.zip</directory>
+                                        <targetPath>${mcp.directory}</targetPath>
+                                        <directory>http://files.minecraftforge.net/minecraftforge/minecraftforge-src-${minecraft.version}-${forge.version}.zip</directory>
                                         <unpack>true</unpack>
                                     </resource>
                                 </resources>
@@ -555,7 +562,7 @@
                         </execution>
                         <!-- Copy missing source files to src folder -->
                         <execution>
-                            <id>move-mcp-source</id>
+                            <id>setup-mcp</id>
                             <phase>initialize</phase>
                             <goals>
                                 <goal>copy</goal>
@@ -563,33 +570,9 @@
                             <configuration>
                                 <verbose>false</verbose>
                                 <resources>
-                                    <!-- Copy MCPC+ Source to temp -->
-                                    <resource>
-                                        <directory>${basedir}/src/minecraft</directory>
-                                        <targetPath>${basedir}/temp</targetPath>
-                                        <preservePath>true</preservePath>
-                                    </resource>
-                                    <!-- Copy MCP Source to MCPC+ source folder -->
-                                    <resource>
-                                        <directory>${basedir}/mcp/src/minecraft</directory>
-                                        <targetPath>${basedir}/src/minecraft</targetPath>
-                                        <preservePath>true</preservePath>
-                                    </resource>
-                                    <!-- Copy temp contents to MCPC+ source folder -->
-                                    <resource>
-                                        <directory>${basedir}/temp</directory>
-                                        <targetPath>${basedir}/src/minecraft</targetPath>
-                                        <preservePath>true</preservePath>
-                                    </resource>
-                                    <!-- Clean temp folder -->
-                                    <resource>
-                                        <directory>${basedir}/temp</directory>
-                                        <clean>true</clean>
-                                        <cleanEmptyDirectories>true</cleanEmptyDirectories>
-                                    </resource>
                                     <!-- Copy missing resources to MCPC+ resource folder -->
                                     <resource>
-                                        <directory>${basedir}/mcp/temp/bin/minecraft</directory>
+                                        <directory>${mcp.directory}/temp/bin/minecraft</directory>
                                         <targetPath>${basedir}/resources/</targetPath>
                                         <includes>
                                             <include>achievement/map.txt</include>
@@ -599,7 +582,7 @@
                                     </resource>
                                     <!-- Copy dependencies to MCP libs folder -->
                                     <resource>
-                                        <targetPath>${basedir}/mcp/lib</targetPath>
+                                        <targetPath>${mcp.directory}/lib</targetPath>
                                         <dependency>
                                             <excludeTransitive>true</excludeTransitive>
                                         </dependency>
@@ -622,7 +605,7 @@
                                 <goal>exec</goal>
                             </goals>
                             <configuration>
-                                <workingDirectory>${basedir}/mcp/forge/</workingDirectory>
+                                <workingDirectory>${mcp.directory}/forge/</workingDirectory>
                                 <executable>${mcpc.python}</executable>
                                 <arguments>
                                     <argument>install.py</argument>
@@ -633,6 +616,18 @@
                 </plugin>
             </plugins>
         </build>
+    </profile>
+    <!-- Get build number -->
+    <profile>
+        <id>mcpc-get-build-number-profile</id>
+        <activation>
+            <property>
+                <name>env.BUILD_NUMBER</name>
+            </property>
+        </activation>
+        <properties>
+            <mcpc.final_name>${mcpc.final.name}-${env.BUILD_NUMBER}</mcpc.final_name>
+        </properties>
     </profile>
 </profiles>
 </project>

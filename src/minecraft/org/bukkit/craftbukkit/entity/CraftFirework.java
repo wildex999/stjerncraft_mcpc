@@ -22,7 +22,7 @@ public class CraftFirework extends CraftEntity implements Firework {
         net.minecraft.item.ItemStack/*was:ItemStack*/ item = getHandle().getDataWatcher/*was:getDataWatcher*/().getWatchableObjectItemStack/*was:getItemStack*/(FIREWORK_ITEM_INDEX);
 
         if (item == null) {
-            item = new net.minecraft.item.ItemStack/*was:ItemStack*/(net.minecraft.item.Item/*was:Item*/.field_92052_bU/*was:FIREWORKS*/);
+            item = new net.minecraft.item.ItemStack/*was:ItemStack*/(net.minecraft.item.Item/*was:Item*/.firework/*was:FIREWORKS*/);
             getHandle().getDataWatcher/*was:getDataWatcher*/().updateObject/*was:watch*/(FIREWORK_ITEM_INDEX, item);
         }
 
@@ -56,7 +56,7 @@ public class CraftFirework extends CraftEntity implements Firework {
         item.setItemMeta(meta);
 
         // Copied from EntityFireworks constructor, update firework lifetime/power
-        getHandle().field_92010_b/*was:expectedLifespan*/ = 10 * (1 + meta.getPower()) + random.nextInt(6) + random.nextInt(7);
+        getHandle().lifetime/*was:expectedLifespan*/ = 10 * (1 + meta.getPower()) + random.nextInt(6) + random.nextInt(7);
 
         getHandle().getDataWatcher/*was:getDataWatcher*/().func_82708_h/*was:h*/(FIREWORK_ITEM_INDEX); // Update
     }

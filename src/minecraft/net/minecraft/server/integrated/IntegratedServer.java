@@ -99,10 +99,10 @@ public class IntegratedServer extends MinecraftServer
         this.setAllowFlight(true);
         logger.info("Generating keypair");
         this.setKeyPair(CryptManager.createNewKeyPair());
+        if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
         this.loadAllWorlds(this.getFolderName(), this.getWorldName(), this.theWorldSettings.getSeed(), this.theWorldSettings.getTerrainType(), this.theWorldSettings.func_82749_j());
         this.setMOTD(this.getServerOwner() + " - " + this.worldServers[0].getWorldInfo().getWorldName());
-        FMLCommonHandler.instance().handleServerStarting(this);
-        return true;
+        return FMLCommonHandler.instance().handleServerStarting(this);
     }
 
     /**

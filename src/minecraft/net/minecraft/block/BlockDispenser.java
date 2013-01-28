@@ -279,7 +279,7 @@ public class BlockDispenser extends BlockContainer
 
                         if (var9.hasTagCompound())
                         {
-                            var14.func_92014_d().setTagCompound((NBTTagCompound)var9.getTagCompound().copy());
+                            var14.getEntityItem().setTagCompound((NBTTagCompound)var9.getTagCompound().copy());
                         }
 
                         float var15 = 0.05F;
@@ -297,10 +297,10 @@ public class BlockDispenser extends BlockContainer
 
     public static IPosition func_82525_a(IBlockSource par0IBlockSource)
     {
-        EnumFacing var1 = EnumFacing.func_82600_a(par0IBlockSource.func_82620_h());
-        double var2 = par0IBlockSource.getX() + 0.7D * (double)var1.func_82601_c();
+        EnumFacing var1 = EnumFacing.getFront(par0IBlockSource.func_82620_h());
+        double var2 = par0IBlockSource.getX() + 0.7D * (double)var1.getFrontOffsetX();
         double var4 = par0IBlockSource.getY();
-        double var6 = par0IBlockSource.getZ() + 0.7D * (double)var1.func_82599_e();
+        double var6 = par0IBlockSource.getZ() + 0.7D * (double)var1.getFrontOffsetZ();
         return new PositionImpl(var2, var4, var6);
     }
 }

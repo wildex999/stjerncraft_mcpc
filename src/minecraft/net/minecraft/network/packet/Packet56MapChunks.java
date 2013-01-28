@@ -24,7 +24,7 @@ public class Packet56MapChunks extends Packet
 
     /** total size of the compressed data */
     private int dataLength;
-    private boolean field_92024_h;
+    private boolean field_92076_h;
     private byte[] chunkDataNotCompressed = new byte[0]; // CraftBukkit - remove static
     // CraftBukkit start
     static final ThreadLocal<Deflater> localDeflater = new ThreadLocal<Deflater>()
@@ -48,7 +48,7 @@ public class Packet56MapChunks extends Packet
         this.field_73590_a = new int[var2];
         this.field_73588_b = new int[var2];
         this.field_73584_f = new byte[var2][];
-        this.field_92024_h = !par1List.isEmpty() && !((Chunk)par1List.get(0)).worldObj.provider.hasNoSky;
+        this.field_92076_h = !par1List.isEmpty() && !((Chunk)par1List.get(0)).worldObj.provider.hasNoSky;
         int var3 = 0;
 
         for (int var4 = 0; var4 < var2; ++var4)
@@ -110,7 +110,7 @@ public class Packet56MapChunks extends Packet
     {
         short var2 = par1DataInputStream.readShort();
         this.dataLength = par1DataInputStream.readInt();
-        this.field_92024_h = par1DataInputStream.readBoolean();
+        this.field_92076_h = par1DataInputStream.readBoolean();
         this.chunkPostX = new int[var2];
         this.chunkPosZ = new int[var2];
         this.field_73590_a = new int[var2];
@@ -161,7 +161,7 @@ public class Packet56MapChunks extends Packet
             var9 = 2048 * 4 * var7 + 256;
             var9 += 2048 * var8;
 
-            if (this.field_92024_h)
+            if (this.field_92076_h)
             {
                 var9 += 2048 * var7;
             }
@@ -180,7 +180,7 @@ public class Packet56MapChunks extends Packet
         compress(); // CraftBukkit
         par1DataOutputStream.writeShort(this.chunkPostX.length);
         par1DataOutputStream.writeInt(this.dataLength);
-        par1DataOutputStream.writeBoolean(this.field_92024_h);
+        par1DataOutputStream.writeBoolean(this.field_92076_h);
         par1DataOutputStream.write(this.chunkDataBuffer, 0, this.dataLength);
 
         for (int var2 = 0; var2 < this.chunkPostX.length; ++var2)

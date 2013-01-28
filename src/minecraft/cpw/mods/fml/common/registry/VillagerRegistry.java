@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Collection;
+import java.util.Collections;
 
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.item.Item;
@@ -35,7 +37,7 @@ public class VillagerRegistry
     private List<Integer> newVillagerIds = Lists.newArrayList();
 
     /**
-     * Allow access to the {@link StructureVillagePieces} array controlling new village
+     * Allow access to the {@link net.minecraft.world.gen.structure.StructureVillagePieces} array controlling new village
      * creation so you can insert your own new village pieces
      *
      * @author cpw
@@ -44,7 +46,7 @@ public class VillagerRegistry
     public interface IVillageCreationHandler
     {
         /**
-         * Called when {@link MapGenVillage} is creating a new village
+         * Called when {@link net.minecraft.world.gen.structure.MapGenVillage} is creating a new village
          *
          * @param random
          * @param i
@@ -58,7 +60,7 @@ public class VillagerRegistry
 
 
         /**
-         * Build an instance of the village component {@link StructureVillagePieces}
+         * Build an instance of the village component {@link net.minecraft.world.gen.structure.StructureVillagePieces}
          * @param villagePiece
          * @param startPiece
          * @param pieces
@@ -149,6 +151,15 @@ public class VillagerRegistry
         return defaultSkin;
     }
 
+    /**
+     * Returns a list of all added villager types
+     *
+     * @return newVillagerIds
+     */
+    public static Collection<Integer> getRegisteredVillagers()
+    {
+        return Collections.unmodifiableCollection(instance().newVillagerIds);
+    }
     /**
      * Callback to handle trade setup for villagers
      *

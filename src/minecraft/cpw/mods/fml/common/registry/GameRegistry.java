@@ -52,6 +52,7 @@ import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.LoaderState;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.Mod.Block;
 import cpw.mods.fml.common.ModContainer;
 
@@ -159,7 +160,7 @@ public class GameRegistry
     /**
      * Private and not yet working properly
      *
-     * @return
+     * @return a block id
      */
     private static int findSpareBlockId()
     {
@@ -264,7 +265,12 @@ public class GameRegistry
 
     public static void addRecipe(ItemStack output, Object... params)
     {
-        CraftingManager.getInstance().func_92051_a(output, params);
+        addShapedRecipe(output, params);
+    }
+
+    public static IRecipe addShapedRecipe(ItemStack output, Object... params)
+    {
+        return CraftingManager.getInstance().addRecipe(output, params);
     }
 
     public static void addShapelessRecipe(ItemStack output, Object... params)
@@ -285,6 +291,27 @@ public class GameRegistry
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
     {
         TileEntity.addMapping(tileEntityClass, id);
+    }
+
+    /**
+     * Register a tile entity, with alternative TileEntity identifiers. Use with caution!
+     * This method allows for you to "rename" the 'id' of the tile entity.
+     *
+     * @param tileEntityClass The tileEntity class to register
+     * @param id The primary ID, this will be the ID that the tileentity saves as
+     * @param alternatives A list of alternative IDs that will also map to this class. These will never save, but they will load
+     */
+    public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
+    {
+        TileEntity.addMapping(tileEntityClass, id);
+        Map<String,Class> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "nameToClassMap", "a");
+        for (String s: alternatives)
+        {
+            if (!teMappings.containsKey(s))
+            {
+                teMappings.put(s, tileEntityClass);
+            }
+        }
     }
 
     public static void addBiome(BiomeGenBase biome)

@@ -448,7 +448,7 @@ public abstract class EntityLiving extends Entity
 
             if (var7 == 0)
             {
-                int var8 = this.worldObj.func_85175_e(var4, var5 - 1, var6);
+                int var8 = this.worldObj.blockGetRenderType(var4, var5 - 1, var6);
 
                 if (var8 == 11 || var8 == 32 || var8 == 21)
                 {
@@ -2012,9 +2012,9 @@ public abstract class EntityLiving extends Entity
             {
                 EntityItem var4 = (EntityItem)var12.next();
 
-                if (!var4.isDead && var4.func_92014_d() != null)
+                if (!var4.isDead && var4.getEntityItem() != null)
                 {
-                    ItemStack var13 = var4.func_92014_d();
+                    ItemStack var13 = var4.getEntityItem();
                     int var6 = func_82159_b(var13);
 
                     if (var6 > -1)

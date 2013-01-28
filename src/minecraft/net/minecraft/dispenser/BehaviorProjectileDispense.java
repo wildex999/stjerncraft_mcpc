@@ -21,13 +21,13 @@ public abstract class BehaviorProjectileDispense extends BehaviorDefaultDispense
     {
         World var3 = par1IBlockSource.getWorld();
         IPosition var4 = BlockDispenser.func_82525_a(par1IBlockSource);
-        EnumFacing var5 = EnumFacing.func_82600_a(par1IBlockSource.func_82620_h());
+        EnumFacing var5 = EnumFacing.getFront(par1IBlockSource.func_82620_h());
         IProjectile var6 = this.getProjectileEntity(var3, var4);
         // CraftBukkit start
         ItemStack itemstack1 = par2ItemStack.splitStack(1);
         org.bukkit.block.Block block = var3.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());
         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
-        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector((double) var5.func_82601_c(), 0.10000000149011612D, (double) var5.func_82599_e()));
+        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector((double) var5.getFrontOffsetX(), 0.10000000149011612D, (double) var5.getFrontOffsetZ()));
 
         if (!BlockDispenser.eventFired)
         {

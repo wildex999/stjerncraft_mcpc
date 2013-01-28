@@ -68,7 +68,7 @@ public class EntityItem extends Entity
         }
 
         // CraftBukkit end
-        this.func_92013_a(par8ItemStack);
+        this.func_92058_a(par8ItemStack);
         this.lifespan = (par8ItemStack.getItem() == null ? 6000 : par8ItemStack.getItem().getEntityLifespan(par8ItemStack, par1World));
     }
 
@@ -222,8 +222,8 @@ public class EntityItem extends Entity
         }
         else if (par1EntityItem.isEntityAlive() && this.isEntityAlive())
         {
-            ItemStack var2 = this.func_92014_d();
-            ItemStack var3 = par1EntityItem.func_92014_d();
+            ItemStack var2 = this.getEntityItem();
+            ItemStack var3 = par1EntityItem.getEntityItem();
 
             if (var3.getItem() != var2.getItem())
             {
@@ -254,7 +254,7 @@ public class EntityItem extends Entity
                 var2.stackSize += var3.stackSize;
                 this.delayBeforeCanPickup = Math.max(par1EntityItem.delayBeforeCanPickup, this.delayBeforeCanPickup);
                 this.age = Math.min(par1EntityItem.age, this.age);
-                this.func_92013_a(var2);
+                this.func_92058_a(var2);
                 par1EntityItem.setDead();
                 return true;
             }
@@ -296,7 +296,7 @@ public class EntityItem extends Entity
         {
             return false;
         }
-        else if (this.func_92014_d() != null && this.func_92014_d().itemID == Item.netherStar.itemID && par1DamageSource == DamageSource.explosion)
+        else if (this.getEntityItem() != null && this.getEntityItem().itemID == Item.netherStar.itemID && par1DamageSource == DamageSource.explosion)
         {
             return false;
         }
@@ -323,9 +323,9 @@ public class EntityItem extends Entity
         par1NBTTagCompound.setShort("Age", (short)this.age);
         par1NBTTagCompound.setInteger("Lifespan", lifespan);
 
-        if (this.func_92014_d() != null)
+        if (this.getEntityItem() != null)
         {
-            par1NBTTagCompound.setCompoundTag("Item", this.func_92014_d().writeToNBT(new NBTTagCompound()));
+            par1NBTTagCompound.setCompoundTag("Item", this.getEntityItem().writeToNBT(new NBTTagCompound()));
         }
     }
 
@@ -345,7 +345,7 @@ public class EntityItem extends Entity
 
             if (itemstack != null)
             {
-                this.func_92013_a(itemstack);
+                this.func_92058_a(itemstack);
             }
             else
             {
@@ -391,7 +391,7 @@ public class EntityItem extends Entity
                 return;
             }
 
-            ItemStack var2 = this.func_92014_d();
+            ItemStack var2 = this.getEntityItem();
             int var3 = var2.stackSize;
             // CraftBukkit start
             int canHold = par1EntityPlayer.inventory.canHold(var2);
@@ -456,7 +456,7 @@ public class EntityItem extends Entity
      */
     public String getEntityName()
     {
-        return StatCollector.translateToLocal("item." + this.func_92014_d().getItemName());
+        return StatCollector.translateToLocal("item." + this.getEntityItem().getItemName());
     }
 
     /**
@@ -480,7 +480,7 @@ public class EntityItem extends Entity
         }
     }
 
-    public ItemStack func_92014_d()
+    public ItemStack getEntityItem()
     {
         ItemStack var1 = this.getDataWatcher().getWatchableObjectItemStack(10);
 
@@ -495,7 +495,7 @@ public class EntityItem extends Entity
         }
     }
 
-    public void func_92013_a(ItemStack par1ItemStack)
+    public void func_92058_a(ItemStack par1ItemStack)
     {
         this.getDataWatcher().updateObject(10, par1ItemStack);
         this.getDataWatcher().func_82708_h(10);

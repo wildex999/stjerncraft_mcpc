@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 
 public class EntityLargeFireball extends EntityFireball
 {
-    public int field_92012_e = 1;
+    public int field_92057_e = 1;
 
     public EntityLargeFireball(World par1World)
     {
@@ -63,7 +63,7 @@ public class EntityLargeFireball extends EntityFireball
     public void writeEntityToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeEntityToNBT(par1NBTTagCompound);
-        par1NBTTagCompound.setInteger("ExplosionPower", this.field_92012_e);
+        par1NBTTagCompound.setInteger("ExplosionPower", this.field_92057_e);
     }
 
     /**
@@ -76,7 +76,7 @@ public class EntityLargeFireball extends EntityFireball
         if (par1NBTTagCompound.hasKey("ExplosionPower"))
         {
             // CraftBukkit - set yield when setting explosionpower
-            this.yield = this.field_92012_e = par1NBTTagCompound.getInteger("ExplosionPower");
+            this.yield = this.field_92057_e = par1NBTTagCompound.getInteger("ExplosionPower");
         }
     }
 }

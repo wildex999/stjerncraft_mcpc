@@ -256,9 +256,9 @@ public class ContainerEnchantment extends Container
                                 }
 
                                 EnchantmentData enchantment = new EnchantmentData(enchantId, entry.getValue());
-                                Item.field_92053_bW.func_92060_a(var3, enchantment);
+                                Item.enchantedBook.func_92115_a(var3, enchantment);
                                 applied = true;
-                                var3.itemID = Item.field_92053_bW.itemID;
+                                var3.itemID = Item.enchantedBook.itemID;
                                 break;
                             }
                             else

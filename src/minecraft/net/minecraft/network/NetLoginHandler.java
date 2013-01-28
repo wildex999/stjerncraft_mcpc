@@ -50,7 +50,7 @@ public class NetLoginHandler extends NetHandler
     public String clientUsername = null;
     private volatile boolean field_72544_i = false;
     private String loginServerId = Long.toString(rand.nextLong(), 16); // CraftBukkit - Security fix
-    private boolean field_92028_k = false;
+    private boolean field_92079_k = false;
 
     /** Secret AES key obtained from the client's Packet252SharedKey */
     private SecretKey sharedKey = null;
@@ -161,13 +161,13 @@ public class NetLoginHandler extends NetHandler
         {
             if (this.mcServer.isServerInOnlineMode())
             {
-                if (this.field_92028_k)
+                if (this.field_92079_k)
                 {
                     this.raiseErrorAndDisconnect("Duplicate login");
                     return;
                 }
 
-                this.field_92028_k = true;
+                this.field_92079_k = true;
                 (new ThreadLoginVerifier(this, mcServer.server)).start(); // CraftBukkit - add CraftServer
             }
             else

@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 
 public class BehaviorBucketEmptyDispense extends BehaviorDefaultDispenseItem
 {
-    private final BehaviorDefaultDispenseItem field_92018_c;
+    private final BehaviorDefaultDispenseItem field_92073_c;
 
     /** Reference to the MinecraftServer object. */
     final MinecraftServer mcServer;
@@ -23,7 +23,7 @@ public class BehaviorBucketEmptyDispense extends BehaviorDefaultDispenseItem
     public BehaviorBucketEmptyDispense(MinecraftServer par1)
     {
         this.mcServer = par1;
-        this.field_92018_c = new BehaviorDefaultDispenseItem();
+        this.field_92073_c = new BehaviorDefaultDispenseItem();
     }
 
     /**
@@ -31,11 +31,11 @@ public class BehaviorBucketEmptyDispense extends BehaviorDefaultDispenseItem
      */
     public ItemStack dispenseStack(IBlockSource par1IBlockSource, ItemStack par2ItemStack)
     {
-        EnumFacing var3 = EnumFacing.func_82600_a(par1IBlockSource.func_82620_h());
+        EnumFacing var3 = EnumFacing.getFront(par1IBlockSource.func_82620_h());
         World var4 = par1IBlockSource.getWorld();
-        int var5 = par1IBlockSource.getXInt() + var3.func_82601_c();
+        int var5 = par1IBlockSource.getXInt() + var3.getFrontOffsetX();
         int var6 = par1IBlockSource.getYInt();
-        int var7 = par1IBlockSource.getZInt() + var3.func_82599_e();
+        int var7 = par1IBlockSource.getZInt() + var3.getFrontOffsetZ();
         Material var8 = var4.getBlockMaterial(var5, var6, var7);
         int var9 = var4.getBlockMetadata(var5, var6, var7);
         Item var10;
@@ -91,7 +91,7 @@ public class BehaviorBucketEmptyDispense extends BehaviorDefaultDispenseItem
         }
         else if (((TileEntityDispenser)par1IBlockSource.func_82619_j()).addItem(new ItemStack(var10)) < 0)
         {
-            this.field_92018_c.dispense(par1IBlockSource, new ItemStack(var10));
+            this.field_92073_c.dispense(par1IBlockSource, new ItemStack(var10));
         }
 
         return par2ItemStack;

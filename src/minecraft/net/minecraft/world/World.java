@@ -637,7 +637,10 @@ public abstract class World implements IBlockAccess
         return Block.blocksList[var4] != null && Block.blocksList[var4].hasTileEntity(meta);
     }
 
-    public int func_85175_e(int par1, int par2, int par3)
+    /**
+     * Returns the render type of the block at the given coordinate.
+     */
+    public int blockGetRenderType(int par1, int par2, int par3)
     {
         int var4 = this.getBlockId(par1, par2, par3);
         return Block.blocksList[var4] != null ? Block.blocksList[var4].getRenderType() : -1;
@@ -1868,10 +1871,9 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * Dismounts the entity (and anything riding the entity), sets the dead flag, and removes the player entity from the
-     * player entity list. Called by the playerLoggedOut function.
+     * Schedule the entity for removal during the next tick. Marks the entity dead in anticipation.
      */
-    public void setEntityDead(Entity par1Entity)
+    public void removeEntity(Entity par1Entity)
     {
         if (par1Entity.riddenByEntity != null)
         {
@@ -1893,9 +1895,9 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * remove dat player from dem servers
+     * Do NOT use this method to remove normal entities- use normal removeEntity
      */
-    public void removeEntity(Entity par1Entity)
+    public void removePlayerEntityDangerously(Entity par1Entity)
     {
         par1Entity.setDead();
 
@@ -2395,9 +2397,9 @@ public abstract class World implements IBlockAccess
                 ++var2.ticksExisted;
                 var2.onUpdate();
             }
-            catch (Throwable var6)
+            catch (Throwable var8)
             {
-                var4 = CrashReport.makeCrashReport(var6, "Ticking entity");
+                var4 = CrashReport.makeCrashReport(var8, "Ticking entity");
                 var5 = var4.makeCategory("Entity being ticked");
 
                 if (var2 == null)
@@ -2475,9 +2477,9 @@ public abstract class World implements IBlockAccess
                 {
                     this.updateEntity(var2);
                 }
-                catch (Throwable var7)
+                catch (Throwable var6)
                 {
-                    var4 = CrashReport.makeCrashReport(var7, "Ticking entity");
+                    var4 = CrashReport.makeCrashReport(var6, "Ticking entity");
                     var5 = var4.makeCategory("Entity being ticked");
 
                     if (var2 == null)
@@ -4817,7 +4819,7 @@ public abstract class World implements IBlockAccess
 
         try
         {
-            this.worldInfo.func_85118_a(var2);
+            this.worldInfo.addToCrashReport(var2);
         }
         catch (Throwable var4)
         {

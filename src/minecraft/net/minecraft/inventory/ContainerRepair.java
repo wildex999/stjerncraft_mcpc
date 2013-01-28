@@ -121,7 +121,7 @@ public class ContainerRepair extends Container
 
             if (var6 != null)
             {
-                var8 = var6.itemID == Item.field_92053_bW.itemID && Item.field_92053_bW.func_92056_g(var6).tagCount() > 0;
+                var8 = var6.itemID == Item.enchantedBook.itemID && Item.enchantedBook.func_92110_g(var6).tagCount() > 0;
 
                 if (var5.isItemStackDamageable() && Item.itemsList[var5.itemID].getIsRepairable(var1, var6))
                 {
@@ -196,7 +196,7 @@ public class ContainerRepair extends Container
 
                         var14 = var10000;
                         int var15 = var14 - var13;
-                        boolean var16 = var22.func_92037_a(var1);
+                        boolean var16 = var22.func_92089_a(var1);
 
                         if (this.thePlayer.capabilities.isCreativeMode)
                         {

@@ -31,7 +31,9 @@ public class EntityGhast extends EntityFlying implements IMob
     private int aggroCooldown = 0;
     public int prevAttackCounter = 0;
     public int attackCounter = 0;
-    private int field_92009_j = 1;
+
+    /** The explosion radius of spawned fireballs. */
+    private int explosionStrength = 1;
 
     public EntityGhast(World par1World)
     {
@@ -197,7 +199,7 @@ public class EntityGhast extends EntityFlying implements IMob
                     this.worldObj.playAuxSFXAtEntity((EntityPlayer)null, 1008, (int)this.posX, (int)this.posY, (int)this.posZ, 0);
                     EntityLargeFireball var17 = new EntityLargeFireball(this.worldObj, this, var11, var13, var15);
                     // CraftBukkit - set yield when setting explosionpower
-                    var17.yield = var17.field_92012_e = this.field_92009_j;
+                    var17.yield = var17.field_92057_e = this.explosionStrength;
                     double var18 = 4.0D;
                     Vec3 var20 = this.getLook(1.0F);
                     var17.posX = this.posX + var20.xCoord * var18;
@@ -346,7 +348,7 @@ public class EntityGhast extends EntityFlying implements IMob
     public void writeEntityToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeEntityToNBT(par1NBTTagCompound);
-        par1NBTTagCompound.setInteger("ExplosionPower", this.field_92009_j);
+        par1NBTTagCompound.setInteger("ExplosionPower", this.explosionStrength);
     }
 
     /**
@@ -358,7 +360,7 @@ public class EntityGhast extends EntityFlying implements IMob
 
         if (par1NBTTagCompound.hasKey("ExplosionPower"))
         {
-            this.field_92009_j = par1NBTTagCompound.getInteger("ExplosionPower");
+            this.explosionStrength = par1NBTTagCompound.getInteger("ExplosionPower");
         }
     }
 }

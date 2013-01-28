@@ -26,7 +26,7 @@ public class TileEntityMobSpawner extends TileEntity
      * The string ID of the mobs being spawned from this spawner. Defaults to pig, apparently.
      */
     public String mobID = "Pig"; // CraftBukkit - private -> public
-    private List field_92016_e = null;
+    private List field_92060_e = null;
 
     /** The extra NBT data to add to spawned entities */
     private TileEntityMobSpawnerSpawnData spawnerTags = null;
@@ -35,7 +35,7 @@ public class TileEntityMobSpawner extends TileEntity
     private int minSpawnDelay = 200;
     private int maxSpawnDelay = 800;
     private int spawnCount = 4;
-    private Entity field_92017_j;
+    private Entity spawnedMob;
 
     /** Maximum number of entities for limiting mob spawning */
     private int maxNearbyEntities = 6;
@@ -51,9 +51,9 @@ public class TileEntityMobSpawner extends TileEntity
         this.delay = 20;
     }
 
-    public String func_92015_a()
+    public String getMobID()
     {
-        return this.spawnerTags == null ? this.mobID : this.spawnerTags.field_92033_c;
+        return this.spawnerTags == null ? this.mobID : this.spawnerTags.field_92084_c;
     }
 
     public void setMobID(String par1Str)
@@ -112,7 +112,7 @@ public class TileEntityMobSpawner extends TileEntity
 
                 for (int var2 = 0; var2 < this.spawnCount; ++var2)
                 {
-                    Entity var13 = EntityList.createEntityByName(this.func_92015_a(), this.worldObj);
+                    Entity var13 = EntityList.createEntityByName(this.getMobID(), this.worldObj);
 
                     if (var13 == null)
                     {
@@ -167,7 +167,7 @@ public class TileEntityMobSpawner extends TileEntity
         {
             NBTTagCompound var2 = new NBTTagCompound();
             par1Entity.addEntityID(var2);
-            Iterator var3 = this.spawnerTags.field_92032_b.getTags().iterator();
+            Iterator var3 = this.spawnerTags.field_92083_b.getTags().iterator();
 
             while (var3.hasNext())
             {
@@ -197,9 +197,9 @@ public class TileEntityMobSpawner extends TileEntity
             this.delay = this.minSpawnDelay + this.worldObj.rand.nextInt(this.maxSpawnDelay - this.minSpawnDelay);
         }
 
-        if (this.field_92016_e != null && this.field_92016_e.size() > 0)
+        if (this.field_92060_e != null && this.field_92060_e.size() > 0)
         {
-            this.spawnerTags = (TileEntityMobSpawnerSpawnData)WeightedRandom.getRandomItem(this.worldObj.rand, this.field_92016_e);
+            this.spawnerTags = (TileEntityMobSpawnerSpawnData)WeightedRandom.getRandomItem(this.worldObj.rand, this.field_92060_e);
             this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
         }
 
@@ -217,17 +217,17 @@ public class TileEntityMobSpawner extends TileEntity
 
         if (par1NBTTagCompound.hasKey("SpawnPotentials"))
         {
-            this.field_92016_e = new ArrayList();
+            this.field_92060_e = new ArrayList();
             NBTTagList var2 = par1NBTTagCompound.getTagList("SpawnPotentials");
 
             for (int var3 = 0; var3 < var2.tagCount(); ++var3)
             {
-                this.field_92016_e.add(new TileEntityMobSpawnerSpawnData(this, (NBTTagCompound)var2.tagAt(var3)));
+                this.field_92060_e.add(new TileEntityMobSpawnerSpawnData(this, (NBTTagCompound)var2.tagAt(var3)));
             }
         }
         else
         {
-            this.field_92016_e = null;
+            this.field_92060_e = null;
         }
 
         if (par1NBTTagCompound.hasKey("SpawnData"))
@@ -259,7 +259,7 @@ public class TileEntityMobSpawner extends TileEntity
 
         if (this.worldObj != null && this.worldObj.isRemote)
         {
-            this.field_92017_j = null;
+            this.spawnedMob = null;
         }
     }
 
@@ -269,7 +269,7 @@ public class TileEntityMobSpawner extends TileEntity
     public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeToNBT(par1NBTTagCompound);
-        par1NBTTagCompound.setString("EntityId", this.func_92015_a());
+        par1NBTTagCompound.setString("EntityId", this.getMobID());
         par1NBTTagCompound.setShort("Delay", (short)this.delay);
         par1NBTTagCompound.setShort("MinSpawnDelay", (short)this.minSpawnDelay);
         par1NBTTagCompound.setShort("MaxSpawnDelay", (short)this.maxSpawnDelay);
@@ -280,26 +280,26 @@ public class TileEntityMobSpawner extends TileEntity
 
         if (this.spawnerTags != null)
         {
-            par1NBTTagCompound.setCompoundTag("SpawnData", (NBTTagCompound)this.spawnerTags.field_92032_b.copy());
+            par1NBTTagCompound.setCompoundTag("SpawnData", (NBTTagCompound)this.spawnerTags.field_92083_b.copy());
         }
 
-        if (this.spawnerTags != null || this.field_92016_e != null && this.field_92016_e.size() > 0)
+        if (this.spawnerTags != null || this.field_92060_e != null && this.field_92060_e.size() > 0)
         {
             NBTTagList var2 = new NBTTagList();
 
-            if (this.field_92016_e != null && this.field_92016_e.size() > 0)
+            if (this.field_92060_e != null && this.field_92060_e.size() > 0)
             {
-                Iterator var3 = this.field_92016_e.iterator();
+                Iterator var3 = this.field_92060_e.iterator();
 
                 while (var3.hasNext())
                 {
                     TileEntityMobSpawnerSpawnData var4 = (TileEntityMobSpawnerSpawnData)var3.next();
-                    var2.appendTag(var4.func_92030_a());
+                    var2.appendTag(var4.func_92081_a());
                 }
             }
             else
             {
-                var2.appendTag(this.spawnerTags.func_92030_a());
+                var2.appendTag(this.spawnerTags.func_92081_a());
             }
 
             par1NBTTagCompound.setTag("SpawnPotentials", var2);
@@ -313,14 +313,14 @@ public class TileEntityMobSpawner extends TileEntity
      */
     public Entity getMobEntity()
     {
-        if (this.field_92017_j == null)
+        if (this.spawnedMob == null)
         {
-            Entity var1 = EntityList.createEntityByName(this.func_92015_a(), (World)null);
+            Entity var1 = EntityList.createEntityByName(this.getMobID(), (World)null);
             this.writeNBTTagsTo(var1);
-            this.field_92017_j = var1;
+            this.spawnedMob = var1;
         }
 
-        return this.field_92017_j;
+        return this.spawnedMob;
     }
 
     /**

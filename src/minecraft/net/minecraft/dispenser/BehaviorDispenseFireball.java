@@ -26,16 +26,16 @@ public class BehaviorDispenseFireball extends BehaviorDefaultDispenseItem
      */
     public ItemStack dispenseStack(IBlockSource par1IBlockSource, ItemStack par2ItemStack)
     {
-        EnumFacing var3 = EnumFacing.func_82600_a(par1IBlockSource.func_82620_h());
+        EnumFacing var3 = EnumFacing.getFront(par1IBlockSource.func_82620_h());
         IPosition var4 = BlockDispenser.func_82525_a(par1IBlockSource);
-        double var5 = var4.getX() + (double)((float)var3.func_82601_c() * 0.3F);
+        double var5 = var4.getX() + (double)((float)var3.getFrontOffsetX() * 0.3F);
         double var7 = var4.getY();
-        double var9 = var4.getZ() + (double)((float)var3.func_82599_e() * 0.3F);
+        double var9 = var4.getZ() + (double)((float)var3.getFrontOffsetZ() * 0.3F);
         World var11 = par1IBlockSource.getWorld();
         Random var12 = var11.rand;
-        double var13 = var12.nextGaussian() * 0.05D + (double)var3.func_82601_c();
+        double var13 = var12.nextGaussian() * 0.05D + (double)var3.getFrontOffsetX();
         double var15 = var12.nextGaussian() * 0.05D;
-        double var17 = var12.nextGaussian() * 0.05D + (double)var3.func_82599_e();
+        double var17 = var12.nextGaussian() * 0.05D + (double)var3.getFrontOffsetZ();
         // CraftBukkit start
         ItemStack itemstack1 = par2ItemStack.splitStack(1);
         org.bukkit.block.Block block = var11.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());

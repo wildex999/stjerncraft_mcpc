@@ -190,6 +190,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         this.setBuildLimit((this.getBuildLimit() + 8) / 16 * 16);
         this.setBuildLimit(MathHelper.clamp_int(this.getBuildLimit(), 64, 256));
         this.settings.setProperty("max-build-height", Integer.valueOf(this.getBuildLimit()));
+        if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
         logger.info("Preparing level \"" + this.getFolderName() + "\"");
         this.loadAllWorlds(this.getFolderName(), this.getFolderName(), var9, var17, var8);
         long var12 = System.nanoTime() - var4;
@@ -221,8 +222,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
             this.settings.saveProperties();
         }
 
-        FMLCommonHandler.instance().handleServerStarting(this);
-        return true;
+        return FMLCommonHandler.instance().handleServerStarting(this);
     }
 
     public PropertyManager getPropertyManager()
@@ -341,7 +341,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
             ServerCommandEvent event = new ServerCommandEvent(this.console, var1.command);
             this.server.getPluginManager().callEvent(event);
             var1 = new ServerCommand(event.getCommand(), var1.sender);
-            // this.getCommandHandler().a(servercommand.source, servercommand.command); // Called in dispatchServerCommand
+            // this.getCommandManager().executeCommand(var1.sender, var1.command); // Called in dispatchServerCommand
             this.server.dispatchServerCommand(this.console, var1);
             // CraftBukkit end
         }

@@ -11,12 +11,12 @@ import net.minecraft.world.World;
 
 public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // CraftBukkit - added extends
 {
-    private ItemStack field_92050_a;
+    private ItemStack field_92102_a;
 
     // CraftBukkit start - delegate to new parent class with bogus info
     public RecipeFireworks()
     {
-        super(new ItemStack(Item.field_92052_bU, 0, 0), java.util.Arrays.asList(new ItemStack(Item.gunpowder, 0, 5)));
+        super(new ItemStack(Item.firework, 0, 0), java.util.Arrays.asList(new ItemStack(Item.gunpowder, 0, 5)));
     }
     // CraftBukkit end
 
@@ -25,7 +25,7 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // Cr
      */
     public boolean matches(InventoryCrafting par1InventoryCrafting, World par2World)
     {
-        this.field_92050_a = null;
+        this.field_92102_a = null;
         int var3 = 0;
         int var4 = 0;
         int var5 = 0;
@@ -43,7 +43,7 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // Cr
                 {
                     ++var4;
                 }
-                else if (var10.itemID == Item.field_92054_bV.itemID)
+                else if (var10.itemID == Item.fireworkCharge.itemID)
                 {
                     ++var6;
                 }
@@ -96,7 +96,7 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // Cr
 
             if (var4 >= 1 && var3 == 1 && var7 == 0)
             {
-                this.field_92050_a = new ItemStack(Item.field_92052_bU);
+                this.field_92102_a = new ItemStack(Item.firework);
 
                 var15 = new NBTTagCompound();
                 if (var6 > 0)
@@ -108,7 +108,7 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // Cr
                     {
                         ItemStack var26 = par1InventoryCrafting.getStackInSlot(var22);
 
-                        if (var26 != null && var26.itemID == Item.field_92054_bV.itemID && var26.hasTagCompound() && var26.getTagCompound().hasKey("Explosion"))
+                        if (var26 != null && var26.itemID == Item.fireworkCharge.itemID && var26.hasTagCompound() && var26.getTagCompound().hasKey("Explosion"))
                         {
                             var25.appendTag(var26.getTagCompound().getCompoundTag("Explosion"));
                         }
@@ -119,12 +119,12 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // Cr
                     var15.setTag("Fireworks", var18);
                 }
 
-                this.field_92050_a.setTagCompound(var15);
+                this.field_92102_a.setTagCompound(var15);
                 return true;
             }
             else if (var4 == 1 && var3 == 0 && var6 == 0 && var5 > 0 && var8 <= 1)
             {
-                this.field_92050_a = new ItemStack(Item.field_92054_bV);
+                this.field_92102_a = new ItemStack(Item.fireworkCharge);
                 var15 = new NBTTagCompound();
                 var18 = new NBTTagCompound("Explosion");
                 byte var21 = 0;
@@ -177,7 +177,7 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // Cr
                 var18.setIntArray("Colors", var24);
                 var18.setByte("Type", var21);
                 var15.setTag("Explosion", var18);
-                this.field_92050_a.setTagCompound(var15);
+                this.field_92102_a.setTagCompound(var15);
                 return true;
             }
             else if (var4 == 0 && var3 == 0 && var6 == 1 && var5 > 0 && var5 == var7)
@@ -194,10 +194,10 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // Cr
                         {
                             var16.add(Integer.valueOf(ItemDye.dyeColors[var11.getItemDamage()]));
                         }
-                        else if (var11.itemID == Item.field_92054_bV.itemID)
+                        else if (var11.itemID == Item.fireworkCharge.itemID)
                         {
-                            this.field_92050_a = var11.copy();
-                            this.field_92050_a.stackSize = 1;
+                            this.field_92102_a = var11.copy();
+                            this.field_92102_a.stackSize = 1;
                         }
                     }
                 }
@@ -209,9 +209,9 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // Cr
                     var17[var19] = ((Integer)var16.get(var19)).intValue();
                 }
 
-                if (this.field_92050_a != null && this.field_92050_a.hasTagCompound())
+                if (this.field_92102_a != null && this.field_92102_a.hasTagCompound())
                 {
-                    NBTTagCompound var23 = this.field_92050_a.getTagCompound().getCompoundTag("Explosion");
+                    NBTTagCompound var23 = this.field_92102_a.getTagCompound().getCompoundTag("Explosion");
 
                     if (var23 == null)
                     {
@@ -244,7 +244,7 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // Cr
      */
     public ItemStack getCraftingResult(InventoryCrafting par1InventoryCrafting)
     {
-        return this.field_92050_a.copy();
+        return this.field_92102_a.copy();
     }
 
     /**
@@ -257,6 +257,6 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // Cr
 
     public ItemStack getRecipeOutput()
     {
-        return this.field_92050_a;
+        return this.field_92102_a;
     }
 }

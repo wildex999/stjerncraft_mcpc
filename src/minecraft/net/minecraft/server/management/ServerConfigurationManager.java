@@ -326,7 +326,7 @@ public abstract class ServerConfigurationManager
         GameRegistry.onPlayerLogout(entityplayer); // Forge
         this.writePlayerData(entityplayer);
         WorldServer worldserver = entityplayer.getServerForPlayer();
-        worldserver.setEntityDead(entityplayer);
+        worldserver.removeEntity(entityplayer);
         worldserver.getPlayerManager().removePlayer(entityplayer);
         this.playerEntityList.remove(entityplayer);
         ChunkIOExecutor.adjustPoolSize(this.getCurrentPlayerCount()); // CraftBukkit
@@ -555,7 +555,7 @@ public abstract class ServerConfigurationManager
         // entityplayer.p().getTracker().untrackEntity(entityplayer); // CraftBukkit
         entityplayer.getServerForPlayer().getPlayerManager().removePlayer(entityplayer);
         this.playerEntityList.remove(entityplayer);
-        this.mcServer.worldServerForDimension(entityplayer.dimension).removeEntity(entityplayer);
+        this.mcServer.worldServerForDimension(entityplayer.dimension).removePlayerEntityDangerously(entityplayer);
         ChunkCoordinates chunkcoordinates = entityplayer.getBedLocation();
         boolean flag1 = entityplayer.isSpawnForced();
         // CraftBukkit start
@@ -670,7 +670,7 @@ public abstract class ServerConfigurationManager
         WorldServer var5 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
 
         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, var5.getWorldInfo().getTerrainType(), var5.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
-        var4.removeEntity(par1EntityPlayerMP);
+        var4.removePlayerEntityDangerously(par1EntityPlayerMP);
         par1EntityPlayerMP.isDead = false;
         this.transferEntityToWorld(par1EntityPlayerMP, var3, var4, var5, teleporter);
         this.func_72375_a(par1EntityPlayerMP, var4);
@@ -1388,7 +1388,10 @@ public abstract class ServerConfigurationManager
         }
     }
 
-    public void func_92027_k(String par1Str)
+    /**
+     * Sends the given string to every player as chat message.
+     */
+    public void sendChatMsg(String par1Str)
     {
         this.mcServer.logInfo(par1Str);
         this.sendPacketToAllPlayers(new Packet3Chat(par1Str));

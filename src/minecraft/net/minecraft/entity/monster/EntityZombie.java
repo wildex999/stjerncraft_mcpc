@@ -197,7 +197,7 @@ public class EntityZombie extends EntityMob
      */
     public void onUpdate()
     {
-        if (!this.worldObj.isRemote && this.func_82230_o())
+        if (!this.worldObj.isRemote && this.isConverting())
         {
             int var1 = this.getConversionTimeBoost();
             this.conversionTime -= var1;
@@ -328,7 +328,7 @@ public class EntityZombie extends EntityMob
             par1NBTTagCompound.setBoolean("IsVillager", true);
         }
 
-        par1NBTTagCompound.setInteger("ConversionTime", this.func_82230_o() ? this.conversionTime : -1);
+        par1NBTTagCompound.setInteger("ConversionTime", this.isConverting() ? this.conversionTime : -1);
     }
 
     /**
@@ -370,7 +370,7 @@ public class EntityZombie extends EntityMob
 
             EntityZombie var2 = new EntityZombie(this.worldObj);
             var2.func_82149_j(par1EntityLiving);
-            this.worldObj.setEntityDead(par1EntityLiving);
+            this.worldObj.removeEntity(par1EntityLiving);
             var2.initCreature();
             var2.setVillager(true);
 
@@ -469,7 +469,10 @@ public class EntityZombie extends EntityMob
         }
     }
 
-    public boolean func_82230_o()
+    /**
+     * Returns whether this zombie is in the process of converting to a villager
+     */
+    public boolean isConverting()
     {
         return this.getDataWatcher().getWatchableObjectByte(14) == 1;
     }
@@ -489,7 +492,7 @@ public class EntityZombie extends EntityMob
             var1.setGrowingAge(-24000);
         }
 
-        this.worldObj.setEntityDead(this);
+        this.worldObj.removeEntity(this);
         this.worldObj.spawnEntityInWorld(var1);
         var1.addPotionEffect(new PotionEffect(Potion.confusion.id, 200, 0));
         this.worldObj.playAuxSFXAtEntity((EntityPlayer)null, 1017, (int)this.posX, (int)this.posY, (int)this.posZ, 0);

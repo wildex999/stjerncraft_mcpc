@@ -171,7 +171,7 @@ public class Explosion
                         {
                             damagee.setLastDamageCause(event);
                             var32.attackEntityFrom(DamageSource.explosion, event.getDamage());
-                            double d11 = EnchantmentProtection.func_92040_a(var32, var35);
+                            double d11 = EnchantmentProtection.func_92092_a(var32, var35);
                             var32.motionX += var15 * d11;
                             var32.motionY += var17 * d11;
                             var32.motionZ += var19 * d11;

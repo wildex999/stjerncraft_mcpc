@@ -50,46 +50,41 @@ public class GuiStatsComponent extends JComponent
         System.gc();
         this.displayStrings[0] = "Memory use: " + var1 / 1024L / 1024L + " mb (" + Runtime.getRuntime().freeMemory() * 100L / Runtime.getRuntime().maxMemory() + "% free)";
         this.displayStrings[1] = "Threads: " + TcpConnection.field_74471_a.get() + " + " + TcpConnection.field_74469_b.get();
-        this.displayStrings[2] = "Avg tick: " + field_79020_a.format(this.func_79015_a(this.field_79017_e.tickTimeArray) * 1.0E-6D) + " ms";
-        this.displayStrings[3] = "Avg sent: " + (int)this.func_79015_a(this.field_79017_e.sentPacketCountArray) + ", Avg size: " + (int)this.func_79015_a(this.field_79017_e.sentPacketSizeArray);
-        this.displayStrings[4] = "Avg rec: " + (int)this.func_79015_a(this.field_79017_e.receivedPacketCountArray) + ", Avg size: " + (int)this.func_79015_a(this.field_79017_e.receivedPacketSizeArray);
+        this.displayStrings[2] = "Avg tick: " + field_79020_a.format(this.calcArrayAverage(this.field_79017_e.tickTimeArray) * 1.0E-6D) + " ms";
+        this.displayStrings[3] = "Avg sent: " + (int)this.calcArrayAverage(this.field_79017_e.sentPacketCountArray) + ", Avg size: " + (int)this.calcArrayAverage(this.field_79017_e.sentPacketSizeArray);
+        this.displayStrings[4] = "Avg rec: " + (int)this.calcArrayAverage(this.field_79017_e.receivedPacketCountArray) + ", Avg size: " + (int)this.calcArrayAverage(this.field_79017_e.receivedPacketSizeArray);
 
-        if (this.field_79017_e.worlds.size() > 0)
+        if (this.field_79017_e.worldServers != null)
         {
             int var3 = 0;
-            Integer[] var4 = DimensionManager.getIDs();
-            int var5 = var4.length;
-
-            for (int var6 = 0; var6 < var5; ++var6)
+            for (Integer id : DimensionManager.getIDs())
             {
-                Integer var7 = var4[var6];
-                this.displayStrings[5 + var3] = "Lvl " + var7 + " tick: " + field_79020_a.format(this.func_79015_a((long[])this.field_79017_e.worldTickTimes.get(var7)) * 1.0E-6D) + " ms";
-                WorldServer var8 = DimensionManager.getWorld(var7.intValue());
+                this.displayStrings[5 + var3] = "Lvl " + id + " tick: " + field_79020_a.format(this.calcArrayAverage(this.field_79017_e.worldTickTimes.get(id)) * 1.0E-6D) + " ms";
 
-                if (var8 != null && var8.theChunkProviderServer != null)
+                WorldServer world = DimensionManager.getWorld(id);
+                if (world != null && world.theChunkProviderServer != null)
                 {
-                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", " + var8.theChunkProviderServer.makeString();
-                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", Vec3: " + var8.getWorldVec3Pool().func_82590_d() + " / " + var8.getWorldVec3Pool().getPoolSize();
+                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", " + world.theChunkProviderServer.makeString();
+                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", Vec3: " + world.getWorldVec3Pool().func_82590_d() + " / " + world.getWorldVec3Pool().getPoolSize();
                 }
-
-                ++var3;
+                var3++;
             }
         }
 
-        this.memoryUse[this.updateCounter++ & 255] = (int)(this.func_79015_a(this.field_79017_e.sentPacketSizeArray) * 100.0D / 12500.0D);
+        this.memoryUse[this.updateCounter++ & 255] = (int)(this.calcArrayAverage(this.field_79017_e.sentPacketSizeArray) * 100.0D / 12500.0D);
         this.repaint();
     }
 
-    private double func_79015_a(long[] par1ArrayOfLong)
+    /**
+     * Calculates the avarage value of the given long array.
+     */
+    private double calcArrayAverage(long[] par1ArrayOfLong)
     {
         long var2 = 0L;
-        long[] var4 = par1ArrayOfLong;
-        int var5 = par1ArrayOfLong.length;
 
-        for (int var6 = 0; var6 < var5; ++var6)
+        for (int var4 = 0; var4 < par1ArrayOfLong.length; ++var4)
         {
-            long var7 = var4[var6];
-            var2 += var7;
+            var2 += par1ArrayOfLong[var4];
         }
 
         return (double)var2 / (double)par1ArrayOfLong.length;

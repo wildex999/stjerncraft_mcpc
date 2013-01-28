@@ -31,14 +31,14 @@ public class BehaviorDispenseBoat extends BehaviorDefaultDispenseItem
      */
     public ItemStack dispenseStack(IBlockSource par1IBlockSource, ItemStack par2ItemStack)
     {
-        EnumFacing var3 = EnumFacing.func_82600_a(par1IBlockSource.func_82620_h());
+        EnumFacing var3 = EnumFacing.getFront(par1IBlockSource.func_82620_h());
         World var4 = par1IBlockSource.getWorld();
-        double var5 = par1IBlockSource.getX() + (double)((float)var3.func_82601_c() * 1.125F);
+        double var5 = par1IBlockSource.getX() + (double)((float)var3.getFrontOffsetX() * 1.125F);
         double var7 = par1IBlockSource.getY();
-        double var9 = par1IBlockSource.getZ() + (double)((float)var3.func_82599_e() * 1.125F);
-        int var11 = par1IBlockSource.getXInt() + var3.func_82601_c();
+        double var9 = par1IBlockSource.getZ() + (double)((float)var3.getFrontOffsetZ() * 1.125F);
+        int var11 = par1IBlockSource.getXInt() + var3.getFrontOffsetX();
         int var12 = par1IBlockSource.getYInt();
-        int var13 = par1IBlockSource.getZInt() + var3.func_82599_e();
+        int var13 = par1IBlockSource.getZInt() + var3.getFrontOffsetZ();
         Material var14 = var4.getBlockMaterial(var11, var12, var13);
         double var15;
 

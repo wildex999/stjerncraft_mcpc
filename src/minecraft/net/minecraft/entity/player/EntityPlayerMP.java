@@ -438,7 +438,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
         if (deathMessage != null && deathMessage.length() > 0)
         {
-            this.mcServer.getConfigurationManager().func_92027_k(event.getDeathMessage());
+            this.mcServer.getConfigurationManager().sendChatMsg(event.getDeathMessage());
         }
 
         // CraftBukkit - we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
@@ -536,7 +536,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         if (this.dimension == 1 && par1 == 1)
         {
             this.triggerAchievement(AchievementList.theEnd2);
-            this.worldObj.setEntityDead(this);
+            this.worldObj.removeEntity(this);
             this.playerConqueredTheEnd = true;
             this.playerNetServerHandler.sendPacketToPlayer(new Packet70GameEvent(4, 0));
         }

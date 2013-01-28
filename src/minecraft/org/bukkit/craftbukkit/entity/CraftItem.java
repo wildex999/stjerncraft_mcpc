@@ -20,11 +20,11 @@ public class CraftItem extends CraftEntity implements Item {
     }
 
     public ItemStack getItemStack() {
-        return CraftItemStack.asCraftMirror(item.func_92014_d/*was:getItemStack*/());
+        return CraftItemStack.asCraftMirror(item.getEntityItem/*was:getItemStack*/());
     }
 
     public void setItemStack(ItemStack stack) {
-        item.func_92013_a/*was:setItemStack*/(CraftItemStack.asNMSCopy(stack));
+        item.func_92058_a/*was:setItemStack*/(CraftItemStack.asNMSCopy(stack));
     }
 
     public int getPickupDelay() {

@@ -2,7 +2,6 @@ package net.minecraft.client;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.ItemData;
 import cpw.mods.fml.relauncher.ArgsWrapper;
@@ -1342,7 +1341,7 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
                     }
                     else if (var3.stackSize != var8 || this.playerController.isInCreativeMode())
                     {
-                        this.entityRenderer.itemRenderer.func_78444_b();
+                        this.entityRenderer.itemRenderer.resetEquippedProgress();
                     }
                 }
             }
@@ -1354,7 +1353,7 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
                 boolean result = !ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
                 if (result && var9 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, var9))
                 {
-                    this.entityRenderer.itemRenderer.func_78445_c();
+                    this.entityRenderer.itemRenderer.resetEquippedProgress2();
                 }
             }
         }
@@ -2184,7 +2183,7 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
         if (this.thePlayer != null)
         {
             var2 = this.thePlayer.entityId;
-            this.theWorld.setEntityDead(this.thePlayer);
+            this.theWorld.removeEntity(this.thePlayer);
         }
 
         this.renderViewEntity = null;

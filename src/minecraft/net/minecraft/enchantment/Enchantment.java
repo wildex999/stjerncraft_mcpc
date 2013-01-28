@@ -13,7 +13,7 @@ public abstract class Enchantment
 {
     // CraftBukkit - update CraftEnchant.getName(i) if this changes
     public static final Enchantment[] enchantmentsList = new Enchantment[256];
-    public static final Enchantment[] field_92038_c;
+    public static final Enchantment[] field_92090_c;
 
     /** Converts environmental damage to armour damage */
     public static final Enchantment protection = new EnchantmentProtection(0, 10, 0);
@@ -37,7 +37,7 @@ public abstract class Enchantment
 
     /** Increases underwater mining rate */
     public static final Enchantment aquaAffinity = new EnchantmentWaterWorker(6, 2);
-    public static final Enchantment field_92039_k = new EnchantmentThorns(7, 1);
+    public static final Enchantment field_92091_k = new EnchantmentThorns(7, 1);
 
     /** Extra damage to mobs */
     public static final Enchantment sharpness = new EnchantmentDamage(16, 10, 0);
@@ -205,13 +205,13 @@ public abstract class Enchantment
         return var2 + " " + StatCollector.translateToLocal("enchantment.level." + par1);
     }
 
-    public boolean func_92037_a(ItemStack par1ItemStack)
+    public boolean func_92089_a(ItemStack par1ItemStack)
     {
         return this.type.canEnchantItem(par1ItemStack.getItem());
     }
 
     /**
-    * This applies specifically to applying at the enchanting table. The other method {@link #func_92037_a(ItemStack)}
+    * This applies specifically to applying at the enchanting table. The other method {@link #func_92089_a(ItemStack)}
     * applies for <i>all possible</i> enchantments.
     * @param stack
     * @return
@@ -228,7 +228,7 @@ public abstract class Enchantment
      */
     public static void addToBookList(Enchantment enchantment)
     {
-        ObjectArrays.concat(field_92038_c, enchantment);
+        ObjectArrays.concat(field_92090_c, enchantment);
     }
 
     static
@@ -247,6 +247,6 @@ public abstract class Enchantment
             }
         }
 
-        field_92038_c = (Enchantment[])var0.toArray(new Enchantment[0]);
+        field_92090_c = (Enchantment[])var0.toArray(new Enchantment[0]);
     }
 }

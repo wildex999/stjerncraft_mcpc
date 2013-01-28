@@ -1,5 +1,9 @@
 package net.minecraft.block;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
@@ -89,6 +93,17 @@ public class BlockCocoa extends BlockDirectional
         return super.getCollisionBoundingBoxFromPool(par1World, par2, par3, par4);
     }
 
+    @SideOnly(Side.CLIENT)
+
+    /**
+     * Returns the bounding box of the wired rectangular prism to render.
+     */
+    public AxisAlignedBB getSelectedBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
+    {
+        this.setBlockBoundsBasedOnState(par1World, par2, par3, par4);
+        return super.getSelectedBoundingBoxFromPool(par1World, par2, par3, par4);
+    }
+
     /**
      * Updates the blocks bounds based on its current state. Args: world, x, y, z
      */
@@ -165,7 +180,14 @@ public class BlockCocoa extends BlockDirectional
      */
     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
     {
-        int var8 = func_72219_c(par5);
+        super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);
+    }
+
+    @Override
+    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
+    {
+        ArrayList<ItemStack> dropped = super.getBlockDropped(world, x, y, z, metadata, fortune);
+        int var8 = func_72219_c(metadata);
         byte var9 = 1;
 
         if (var8 >= 2)
@@ -175,8 +197,19 @@ public class BlockCocoa extends BlockDirectional
 
         for (int var10 = 0; var10 < var9; ++var10)
         {
-            this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(Item.dyePowder, 1, 3));
+            dropped.add(new ItemStack(Item.dyePowder, 1, 3));
         }
+        return dropped;
+    }
+
+    @SideOnly(Side.CLIENT)
+
+    /**
+     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
+     */
+    public int idPicked(World par1World, int par2, int par3, int par4)
+    {
+        return Item.dyePowder.itemID;
     }
 
     /**
@@ -185,5 +218,11 @@ public class BlockCocoa extends BlockDirectional
     public int getDamageValue(World par1World, int par2, int par3, int par4)
     {
         return 3;
+    }
+
+    @Override
+    public int idDropped(int par1, Random par2Random, int par3)
+    {
+        return 0;
     }
 }

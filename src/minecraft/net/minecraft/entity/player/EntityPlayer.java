@@ -1410,7 +1410,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
                         if (par1Entity instanceof EntityLiving)
                         {
-                            EnchantmentThorns.func_92044_a(this, (EntityLiving)par1Entity, this.rand);
+                            EnchantmentThorns.func_92096_a(this, (EntityLiving)par1Entity, this.rand);
                         }
                     }
 

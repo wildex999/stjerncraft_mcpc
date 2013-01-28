@@ -1,6 +1,6 @@
 This is Forge Mod Loader, or FML for short, by cpw.
 
-More information can be found at https://github.com/cpw/FML/wiki
+More information can be found at https://github.com/MinecraftForge/FML/wiki
 
 It is a clean reimplementation of a mod loading system for client, server and
 bukkit use, incorporating API implementations of client side ModLoader by
@@ -116,5 +116,5 @@ Forge source installation
 MinecraftForge ships with this code and installs it as part of the forge
 installation process, no further action is required on your part.
 
-For reference this is version 4.7.4.520 of FML
+For reference this is version 4.7.22.539 of FML
 for Minecraft version 1.4.7.

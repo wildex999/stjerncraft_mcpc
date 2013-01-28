@@ -11,8 +11,8 @@ import java.util.regex.Pattern; // CraftBukkit
 
 final class ConsoleLogFormatter extends Formatter
 {
-    /** Date Formatter of Log/Console. */
-    private SimpleDateFormat simpleDateFormatLogFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    /** The date format to use in the console log. */
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     // CraftBukkit start - add color stripping, change constructor to take it
     private Pattern pattern = Pattern.compile("\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]");
     private boolean strip = false;
@@ -33,7 +33,7 @@ final class ConsoleLogFormatter extends Formatter
     public String format(LogRecord par1LogRecord)
     {
         StringBuilder var2 = new StringBuilder();
-        var2.append(this.simpleDateFormatLogFormatter.format(Long.valueOf(par1LogRecord.getMillis())));
+        var2.append(this.dateFormat.format(Long.valueOf(par1LogRecord.getMillis())));
         Level var3 = par1LogRecord.getLevel();
 
         if (var3 == Level.FINEST)

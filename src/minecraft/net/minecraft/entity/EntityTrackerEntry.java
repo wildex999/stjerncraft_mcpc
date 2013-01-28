@@ -438,7 +438,7 @@ public class EntityTrackerEntry
                     Packet var6 = this.getPacketForThisEntity();
                     par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(var6);
 
-                    if (!this.myEntity.getDataWatcher().func_92034_d())
+                    if (!this.myEntity.getDataWatcher().func_92085_d())
                     {
                         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet40EntityMetadata(this.myEntity.entityId, this.myEntity.getDataWatcher(), true));
                     }

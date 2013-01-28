@@ -291,7 +291,7 @@ public class ForgeChunkManager
 
         /**
          * Get the entity associated with this {@link Type#ENTITY} type ticket
-         * @return
+         * @return the entity
          */
         public Entity getEntity()
         {
@@ -789,7 +789,7 @@ public class ForgeChunkManager
     /**
      * The list of persistent chunks in the world. This set is immutable.
      * @param world
-     * @return
+     * @return the list of persistent chunks in the world
      */
     public static ImmutableSetMultimap<ChunkCoordIntPair, Ticket> getPersistentChunksFor(World world)
     {
@@ -880,7 +880,22 @@ public class ForgeChunkManager
     public static Chunk fetchDormantChunk(long coords, World world)
     {
         Cache<Long, Chunk> cache = dormantChunkCache.get(world);
-        return cache == null ? null : cache.getIfPresent(coords);
+        if (cache == null)
+        {
+            return null;
+        }
+        Chunk chunk = cache.getIfPresent(coords);
+        if (chunk != null)
+        {
+            for (List<Entity> eList : chunk.entityLists)
+            {
+                for (Entity e: eList)
+                {
+                    e.resetEntityId();
+                }
+            }
+        }
+        return chunk;
     }
 
     static void captureConfig(File configDir)

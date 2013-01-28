@@ -52,7 +52,7 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public boolean canEnchantItem(ItemStack item) {
-        return target.func_92037_a/*was:canEnchant*/(CraftItemStack.asNMSCopy(item));
+        return target.func_92089_a/*was:canEnchant*/(CraftItemStack.asNMSCopy(item));
     }
 
     @Override

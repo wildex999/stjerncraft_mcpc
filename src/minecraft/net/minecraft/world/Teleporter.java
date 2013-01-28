@@ -18,7 +18,7 @@ import net.minecraft.util.MathHelper;
 
 public class Teleporter
 {
-    private final WorldServer field_85192_a;
+    private final WorldServer worldServerInstance;
 
     /** A private Random() function in Teleporter */
     private final Random random;
@@ -27,7 +27,7 @@ public class Teleporter
 
     public Teleporter(WorldServer par1WorldServer)
     {
-        this.field_85192_a = par1WorldServer;
+        this.worldServerInstance = par1WorldServer;
         this.random = new Random(par1WorldServer.getSeed());
     }
 
@@ -36,7 +36,7 @@ public class Teleporter
      */
     public void placeInPortal(Entity par1Entity, double par2, double par4, double par6, float par8)
     {
-        if (this.field_85192_a.provider.dimensionId != 1)
+        if (this.worldServerInstance.provider.dimensionId != 1)
         {
             if (!this.placeInExistingPortal(par1Entity, par2, par4, par6, par8))
             {
@@ -69,7 +69,7 @@ public class Teleporter
                         int var18 = var10 + var16;
                         int var19 = var11 + var15 * var13 - var14 * var12;
                         boolean var20 = var16 < 0;
-                        this.field_85192_a.setBlockWithNotify(var17, var18, var19, var20 ? Block.obsidian.blockID : 0);
+                        this.worldServerInstance.setBlockWithNotify(var17, var18, var19, var20 ? Block.obsidian.blockID : 0);
                     }
                 }
             }
@@ -97,7 +97,7 @@ public class Teleporter
                     int i2 = k + i1 * b1 - l * b0;
                     boolean flag = j1 < 0;
 
-                    if (this.field_85192_a.getTypeId(k1, l1, i2) != (flag ? Block.obsidian.blockID : 0)) {
+                    if (this.worldServerInstance.getTypeId(k1, l1, i2) != (flag ? Block.obsidian.blockID : 0)) {
                         return null;
                     }
                 }
@@ -114,7 +114,7 @@ public class Teleporter
             return false;
         }
 
-        Location exit = new Location(this.field_85192_a.getWorld(), found.posX, found.posY, found.posZ, f, entity.rotationPitch);
+        Location exit = new Location(this.worldServerInstance.getWorld(), found.posX, found.posY, found.posZ, f, entity.rotationPitch);
         Vector velocity = entity.getBukkitEntity().getVelocity();
         this.adjustExit(entity, exit, velocity);
         entity.setLocationAndAngles(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch());
@@ -125,8 +125,8 @@ public class Teleporter
     }
 
     public ChunkCoordinates findPortal(double x, double y, double z, int short1) {
-        if (this.field_85192_a.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
-            return this.findEndPortal(this.field_85192_a.provider.getEntrancePortalLocation());
+        if (this.worldServerInstance.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
+            return this.findEndPortal(this.worldServerInstance.provider.getEntrancePortalLocation());
         }
         // CraftBukkit end
         double d3 = -1.0D;
@@ -149,7 +149,7 @@ public class Teleporter
             i = chunkcoordinatesportal.posX;
             j = chunkcoordinatesportal.posY;
             k = chunkcoordinatesportal.posZ;
-            chunkcoordinatesportal.field_85087_d = this.field_85192_a.getTotalWorldTime();
+            chunkcoordinatesportal.field_85087_d = this.worldServerInstance.getTotalWorldTime();
             flag = false;
         } else {
             for (k1 = l - short1; k1 <= l + short1; ++k1) {
@@ -158,9 +158,9 @@ public class Teleporter
                 for (int l1 = i1 - short1; l1 <= i1 + short1; ++l1) {
                     double d6 = (double) l1 + 0.5D - z; // CraftBukkit
 
-                    for (int i2 = this.field_85192_a.getActualHeight() - 1; i2 >= 0; --i2) {
-                        if (this.field_85192_a.getTypeId(k1, i2, l1) == Block.portal.blockID) {
-                            while (this.field_85192_a.getTypeId(k1, i2 - 1, l1) == Block.portal.blockID) {
+                    for (int i2 = this.worldServerInstance.getActualHeight() - 1; i2 >= 0; --i2) {
+                        if (this.worldServerInstance.getTypeId(k1, i2, l1) == Block.portal.blockID) {
+                            while (this.worldServerInstance.getTypeId(k1, i2 - 1, l1) == Block.portal.blockID) {
                                 --i2;
                             }
 
@@ -181,7 +181,7 @@ public class Teleporter
 
         if (d3 >= 0.0D) {
             if (flag) {
-                this.field_85191_c.add(j1, new PortalPosition(this, i, j, k, this.field_85192_a.getTotalWorldTime()));
+                this.field_85191_c.add(j1, new PortalPosition(this, i, j, k, this.worldServerInstance.getTotalWorldTime()));
                 this.field_85190_d.add(Long.valueOf(j1));
             }
             // CraftBukkit start - moved entity teleportation logic into exit
@@ -199,7 +199,7 @@ public class Teleporter
         int k = position.getBlockZ();
         float f = position.getYaw();
 
-        if (this.field_85192_a.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
+        if (this.worldServerInstance.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
             // entity.setPositionRotation((double) i, (double) j, (double) k, entity.yaw, 0.0F);
             // entity.motX = entity.motY = entity.motZ = 0.0D;
             position.setPitch(0.0F);
@@ -217,19 +217,19 @@ public class Teleporter
             d4 = (double) k + 0.5D;
             int j2 = -1;
 
-            if (this.field_85192_a.getTypeId(i - 1, j, k) == Block.portal.blockID) {
+            if (this.worldServerInstance.getTypeId(i - 1, j, k) == Block.portal.blockID) {
                 j2 = 2;
             }
 
-            if (this.field_85192_a.getTypeId(i + 1, j, k) == Block.portal.blockID) {
+            if (this.worldServerInstance.getTypeId(i + 1, j, k) == Block.portal.blockID) {
                 j2 = 0;
             }
 
-            if (this.field_85192_a.getTypeId(i, j, k - 1) == Block.portal.blockID) {
+            if (this.worldServerInstance.getTypeId(i, j, k - 1) == Block.portal.blockID) {
                 j2 = 3;
             }
 
-            if (this.field_85192_a.getTypeId(i, j, k + 1) == Block.portal.blockID) {
+            if (this.worldServerInstance.getTypeId(i, j, k + 1) == Block.portal.blockID) {
                 j2 = 1;
             }
 
@@ -241,8 +241,8 @@ public class Teleporter
                 int j3 = Direction.offsetZ[j2];
                 int k3 = Direction.offsetX[l2];
                 int l3 = Direction.offsetZ[l2];
-                boolean flag1 = !this.field_85192_a.isEmpty(i + i3 + k3, j, k + j3 + l3) || !this.field_85192_a.isEmpty(i + i3 + k3, j + 1, k + j3 + l3);
-                boolean flag2 = !this.field_85192_a.isEmpty(i + i3, j, k + j3) || !this.field_85192_a.isEmpty(i + i3, j + 1, k + j3);
+                boolean flag1 = !this.worldServerInstance.isEmpty(i + i3 + k3, j, k + j3 + l3) || !this.worldServerInstance.isEmpty(i + i3 + k3, j + 1, k + j3 + l3);
+                boolean flag2 = !this.worldServerInstance.isEmpty(i + i3, j, k + j3) || !this.worldServerInstance.isEmpty(i + i3, j + 1, k + j3);
 
                 if (flag1 && flag2) {
                     j2 = Direction.footInvisibleFaceRemap[j2];
@@ -256,8 +256,8 @@ public class Teleporter
                     int i4 = k - l3;
 
                     d4 -= (double) l3;
-                    flag1 = !this.field_85192_a.isEmpty(k1 + i3 + k3, j, i4 + j3 + l3) || !this.field_85192_a.isEmpty(k1 + i3 + k3, j + 1, i4 + j3 + l3);
-                    flag2 = !this.field_85192_a.isEmpty(k1 + i3, j, i4 + j3) || !this.field_85192_a.isEmpty(k1 + i3, j + 1, i4 + j3);
+                    flag1 = !this.worldServerInstance.isEmpty(k1 + i3 + k3, j, i4 + j3 + l3) || !this.worldServerInstance.isEmpty(k1 + i3 + k3, j + 1, i4 + j3 + l3);
+                    flag2 = !this.worldServerInstance.isEmpty(k1 + i3, j, i4 + j3) || !this.worldServerInstance.isEmpty(k1 + i3, j + 1, i4 + j3);
                 }
 
                 float f1 = 0.5F;
@@ -316,7 +316,7 @@ public class Teleporter
         }
 
         EntityPortalExitEvent event = new EntityPortalExitEvent(entity.getBukkitEntity(), from, position, before, velocity);
-        this.field_85192_a.getServer().getPluginManager().callEvent(event);
+        this.worldServerInstance.getServer().getPluginManager().callEvent(event);
         Location to = event.getTo();
         if (event.isCancelled() || to == null || !entity.isEntityAlive()) {
             position = from;
@@ -335,7 +335,7 @@ public class Teleporter
     }
 
     public boolean createPortal(double x, double y, double z, int b0) {
-        if (this.field_85192_a.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
+        if (this.worldServerInstance.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
             this.createEndPortal(x, y, z);
             return true;
         }
@@ -375,11 +375,11 @@ public class Teleporter
                 var17 = (double)var16 + 0.5D - z;
                 label274:
 
-                for (var19 = this.field_85192_a.getActualHeight() - 1; var19 >= 0; --var19)
+                for (var19 = this.worldServerInstance.getActualHeight() - 1; var19 >= 0; --var19)
                 {
-                    if (this.field_85192_a.isAirBlock(var13, var19, var16))
+                    if (this.worldServerInstance.isAirBlock(var13, var19, var16))
                     {
-                        while (var19 > 0 && this.field_85192_a.isAirBlock(var13, var19 - 1, var16))
+                        while (var19 > 0 && this.worldServerInstance.isAirBlock(var13, var19 - 1, var16))
                         {
                             --var19;
                         }
@@ -405,7 +405,7 @@ public class Teleporter
                                         var27 = var19 + var25;
                                         int var28 = var16 + (var24 - 1) * var22 - var23 * var21;
 
-                                        if (var25 < 0 && !this.field_85192_a.getBlockMaterial(var26, var27, var28).isSolid() || var25 >= 0 && !this.field_85192_a.isAirBlock(var26, var27, var28))
+                                        if (var25 < 0 && !this.worldServerInstance.getBlockMaterial(var26, var27, var28).isSolid() || var25 >= 0 && !this.worldServerInstance.isAirBlock(var26, var27, var28))
                                         {
                                             continue label274;
                                         }
@@ -441,11 +441,11 @@ public class Teleporter
                     var17 = (double)var16 + 0.5D - z;
                     label222:
 
-                    for (var19 = this.field_85192_a.getActualHeight() - 1; var19 >= 0; --var19)
+                    for (var19 = this.worldServerInstance.getActualHeight() - 1; var19 >= 0; --var19)
                     {
-                        if (this.field_85192_a.isAirBlock(var13, var19, var16))
+                        if (this.worldServerInstance.isAirBlock(var13, var19, var16))
                         {
-                            while (var19 > 0 && this.field_85192_a.isAirBlock(var13, var19 - 1, var16))
+                            while (var19 > 0 && this.worldServerInstance.isAirBlock(var13, var19 - 1, var16))
                             {
                                 --var19;
                             }
@@ -463,7 +463,7 @@ public class Teleporter
                                         var26 = var19 + var24;
                                         var27 = var16 + (var23 - 1) * var22;
 
-                                        if (var24 < 0 && !this.field_85192_a.getBlockMaterial(var25, var26, var27).isSolid() || var24 >= 0 && !this.field_85192_a.isAirBlock(var25, var26, var27))
+                                        if (var24 < 0 && !this.worldServerInstance.getBlockMaterial(var25, var26, var27).isSolid() || var24 >= 0 && !this.worldServerInstance.isAirBlock(var25, var26, var27))
                                         {
                                             continue label222;
                                         }
@@ -509,9 +509,9 @@ public class Teleporter
                 var9 = 70;
             }
 
-            if (var9 > this.field_85192_a.getActualHeight() - 10)
+            if (var9 > this.worldServerInstance.getActualHeight() - 10)
             {
-                var9 = this.field_85192_a.getActualHeight() - 10;
+                var9 = this.worldServerInstance.getActualHeight() - 10;
             }
 
             var15 = var9;
@@ -526,7 +526,7 @@ public class Teleporter
                         var23 = var15 + var21;
                         var24 = var16 + (var20 - 1) * var18 - var19 * var30;
                         var33 = var21 < 0;
-                        this.field_85192_a.setBlockWithNotify(var22, var23, var24, var33 ? Block.obsidian.blockID : 0);
+                        this.worldServerInstance.setBlockWithNotify(var22, var23, var24, var33 ? Block.obsidian.blockID : 0);
                     }
                 }
             }
@@ -534,7 +534,7 @@ public class Teleporter
 
         for (var19 = 0; var19 < 4; ++var19)
         {
-            this.field_85192_a.editingBlocks = true;
+            this.worldServerInstance.editingBlocks = true;
 
             for (var20 = 0; var20 < 4; ++var20)
             {
@@ -544,11 +544,11 @@ public class Teleporter
                     var23 = var15 + var21;
                     var24 = var16 + (var20 - 1) * var18;
                     var33 = var20 == 0 || var20 == 3 || var21 == -1 || var21 == 3;
-                    this.field_85192_a.setBlockWithNotify(var22, var23, var24, var33 ? Block.obsidian.blockID : Block.portal.blockID);
+                    this.worldServerInstance.setBlockWithNotify(var22, var23, var24, var33 ? Block.obsidian.blockID : Block.portal.blockID);
                 }
             }
 
-            this.field_85192_a.editingBlocks = false;
+            this.worldServerInstance.editingBlocks = false;
 
             for (var20 = 0; var20 < 4; ++var20)
             {
@@ -557,7 +557,7 @@ public class Teleporter
                     var22 = var29 + (var20 - 1) * var30;
                     var23 = var15 + var21;
                     var24 = var16 + (var20 - 1) * var18;
-                    this.field_85192_a.notifyBlocksOfNeighborChange(var22, var23, var24, this.field_85192_a.getBlockId(var22, var23, var24));
+                    this.worldServerInstance.notifyBlocksOfNeighborChange(var22, var23, var24, this.worldServerInstance.getBlockId(var22, var23, var24));
                 }
             }
         }
