@@ -48,7 +48,7 @@ public class ChunkProviderServer implements IChunkProvider
     public Chunk defaultEmptyChunk;
     public IChunkProvider currentChunkProvider; // CraftBukkit
     public IChunkLoader currentChunkLoader; // Spigot
-    public boolean loadChunkOnProvideRequest = false; // true -> false
+    public boolean loadChunkOnProvideRequest = true; // MCPC+ - this must be set to true to allow forge mods to force load chunks via ForgeChunkManager callbacks.
     public LongObjectHashMap<Chunk> loadedChunkHashMap = new LongObjectHashMap<Chunk>();
     public List loadedChunks = new ArrayList(); // MCPC+  vanilla compatibility
     public WorldServer worldObj;
@@ -420,9 +420,12 @@ public class ChunkProviderServer implements IChunkProvider
         if (!this.worldObj.canNotSave)
         {
             // MCPC+ start - remove any chunk that has a ticket associated with it
-            for (ChunkCoordIntPair forcedChunk : this.worldObj.getPersistentChunks().keys())
+            if (!this.chunksToUnload.isEmpty())
             {
-                this.chunksToUnload.remove(forcedChunk.chunkXPos, forcedChunk.chunkZPos);
+                for (ChunkCoordIntPair forcedChunk : this.worldObj.getPersistentChunks().keys())
+                {
+                    this.chunksToUnload.remove(forcedChunk.chunkXPos, forcedChunk.chunkZPos);
+                }
             }
             // MCPC+ end
             // CraftBukkit start
