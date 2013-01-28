@@ -14,6 +14,7 @@
     <minecraft_version>1_4_R1</minecraft_version>
     <mcp.version>726a</mcp.version>
     <forge.version>1.4.7-6.6.0.497</forge.version>
+    <buildNumber>0</buildNumber>
 </properties>
 <pluginRepositories>
     <pluginRepository>
@@ -405,7 +406,7 @@
                         </manifestEntries>
                     </transformer>
                 </transformers>
-                <finalName>mcpc-plus-${project.version}-${BUILD_NUMBER}</finalName>
+                <finalName>mcpc-plus-${project.version}-${buildNumber}</finalName>
             </configuration>
         </plugin>
     </plugins>
@@ -490,6 +491,29 @@
             <mcpc.python>python</mcpc.python>
         </properties>
     </profile>
+    <!-- Build number profile -->
+    <profile>
+	    <id>static_build_number</id>
+	    <activation>
+	        <property>
+	            <name>!env.BUILD_NUMBER</name>
+	        </property>
+	    </activation>
+	    <properties>
+	        <buildNumber>0</buildNumber>
+	    </properties>
+	</profile>
+	<profile>
+	    <id>dynamic_build_number</id>
+	    <activation>
+	        <property>
+	            <name>env.BUILD_NUMBER</name>
+	        </property>
+	    </activation>
+	    <properties>
+	        <buildNumber>${env.BUILD_NUMBER}</buildNumber>
+	    </properties>
+	</profile>
     <!-- Preparation profile -->
     <profile>
         <id>mcpc-prepare-profile</id>
