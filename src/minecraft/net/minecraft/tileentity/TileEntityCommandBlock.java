@@ -133,6 +133,11 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
         {
             for (EntityPlayerMP player : players)
             {
+                if (player.worldObj != this.worldObj)
+                {
+                    continue;
+                }
+
                 String[] command = args.clone();
                 command[pos] = player.getEntityName();
                 commands.add(command);
