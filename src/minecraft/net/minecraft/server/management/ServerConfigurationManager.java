@@ -709,7 +709,9 @@ public abstract class ServerConfigurationManager
         Location exit = null;
         if ((cause == TeleportCause.END_PORTAL) && (i == 0)) {
             // THE_END -> NORMAL; use bed if available
-            exit = ((CraftPlayer) entityplayer.getBukkitEntity()).getBedSpawnLocation();
+            if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().dimension != 0) {  
+                exit = exitWorld.getWorld().getSpawnLocation();
+            }
         }
         if (exit == null) {
             exit = this.calculateTarget(enter, exitWorld);
