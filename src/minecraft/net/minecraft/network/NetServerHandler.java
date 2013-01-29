@@ -1380,11 +1380,12 @@ public class NetServerHandler extends NetHandler
             {
                 logger.info(event.getPlayer().getName() + " issued server command: " + event.getMessage());    // Spigot
             }
-            // MCPC+ start - process commands
+            // MCPC+ start - handle bukkit/vanilla commands
             int space = event.getMessage().indexOf(" ");
-            // process Bukkit command (can override vanilla)
-            if (this.server.dispatchCommand(event.getPlayer(), event.getMessage().substring(1)))
+            // if bukkit command exists then execute it over vanilla
+            if (this.server.getCommandMap().getCommand(event.getMessage().substring(1, space != -1 ? space : event.getMessage().length())) != null)
             {
+                this.server.dispatchCommand(event.getPlayer(), event.getMessage().substring(1));
                 return;
             }
             // process vanilla command
@@ -1393,6 +1394,7 @@ public class NetServerHandler extends NetHandler
                 this.server.dispatchVanillaCommand(event.getPlayer(), event.getMessage().substring(1));
                 return;
             }
+            else event.getPlayer().sendMessage("Unknown command. Type \"help\" for help.");
             // MCPC+ end
 
         }

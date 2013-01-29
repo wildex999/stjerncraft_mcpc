@@ -9,8 +9,13 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
 {
     public ServerCommandManager()
     {
-        // MCPC+ start - disable server vanilla commands so they don't register themselves on bukkit side
-        /*this.registerCommand(new CommandTime());
+        CommandBase.setAdminCommander(this);
+    }
+
+    // MCPC+ start - moved commands to it's own method to be executed further in server startup
+    public void registerVanillaCommands()
+    {
+        this.registerCommand(new CommandTime());
         this.registerCommand(new CommandGameMode());
         this.registerCommand(new CommandDifficulty());
         this.registerCommand(new CommandDefaultGameMode());
@@ -29,11 +34,10 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
         this.registerCommand(new CommandServerSay());
         this.registerCommand(new CommandSetSpawnpoint());
         this.registerCommand(new CommandGameRule());
-        this.registerCommand(new CommandClearInventory());*/
-
+        this.registerCommand(new CommandClearInventory());
         if (MinecraftServer.getServer().isDedicatedServer())
         {
-            /*this.registerCommand(new CommandServerOp());
+            this.registerCommand(new CommandServerOp());
             this.registerCommand(new CommandServerDeop());
             this.registerCommand(new CommandServerStop());
             this.registerCommand(new CommandServerSaveAll());
@@ -46,16 +50,14 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
             this.registerCommand(new CommandServerPardon());
             this.registerCommand(new CommandServerKick());
             this.registerCommand(new CommandServerList());
-            this.registerCommand(new CommandServerWhitelist());*/
-        // MCPC+ end
+            this.registerCommand(new CommandServerWhitelist());
         }
         else
         {
             this.registerCommand(new CommandServerPublishLocal());
         }
-
-        CommandBase.setAdminCommander(this);
     }
+    // MCPC+ end
 
     /**
      * Sends a message to the admins of the server from a given CommandSender with the given resource string and given
