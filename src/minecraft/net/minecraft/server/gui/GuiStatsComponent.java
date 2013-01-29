@@ -54,7 +54,7 @@ public class GuiStatsComponent extends JComponent
         this.displayStrings[3] = "Avg sent: " + (int)this.calcArrayAverage(this.field_79017_e.sentPacketCountArray) + ", Avg size: " + (int)this.calcArrayAverage(this.field_79017_e.sentPacketSizeArray);
         this.displayStrings[4] = "Avg rec: " + (int)this.calcArrayAverage(this.field_79017_e.receivedPacketCountArray) + ", Avg size: " + (int)this.calcArrayAverage(this.field_79017_e.receivedPacketSizeArray);
 
-        if (this.field_79017_e.worldServers != null)
+        if (this.field_79017_e.worlds.size() > 0)
         {
             int var3 = 0;
             for (Integer id : DimensionManager.getIDs())
