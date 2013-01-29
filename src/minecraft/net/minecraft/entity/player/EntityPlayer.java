@@ -1783,7 +1783,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         return this.sleeping && this.sleepTimer >= 100;
     }
 
-    @SideOnly(Side.CLIENT)
     public int getSleepTimer()
     {
         return this.sleepTimer;
