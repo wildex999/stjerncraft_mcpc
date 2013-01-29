@@ -120,21 +120,24 @@ public class PluginClassLoader extends URLClassLoader {
                 Map<String, String> relocations147 = new HashMap<String, String>();
                 // mc-dev jar to CB, apply version shading (aka plugin safeguard) over cb2obf
                 relocations147.put("net.minecraft.server", "net.minecraft.server.v1_4_R1");
-                relocations147.put("org.bouncycastle", "net.minecraft.v1_4_R1.org.bouncycastle");
 
                 jarMapping.loadMappings(
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("147cb2obf.csrg"))),
                         new ShadeRelocationSimulator(relocations147));
+
+                // remap bouncycastle to Forge's included copy, not the vanilla obfuscated copy (not in MCPC+), see #133
+                jarMapping.packages.put("net/minecraft/v1_4_R1/org/bouncycastle", "org/bouncycastle");
             }
 
             if ((flags & F_REMAP_NMS146) != 0) {
                 Map<String, String> relocations146 = new HashMap<String, String>();
                 relocations146.put("net.minecraft.server", "net.minecraft.server.v1_4_6");
-                relocations146.put("org.bouncycastle", "net.minecraft.v1_4_6.org.bouncycastle");
 
                 jarMapping.loadMappings(
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("146cb2obf.csrg"))),
                         new ShadeRelocationSimulator(relocations146));
+
+                jarMapping.packages.put("net/minecraft/v1_4_6/org/bouncycastle", "org/bouncycastle");
             }
 
             if ((flags & F_REMAP_OBC146) != 0) {
