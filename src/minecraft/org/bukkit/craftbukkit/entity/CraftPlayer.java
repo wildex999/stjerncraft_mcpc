@@ -616,7 +616,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         World world = getServer().getWorld(getHandle().spawnWorld);
         net.minecraft.util.ChunkCoordinates/*was:ChunkCoordinates*/ bed = getHandle().getBedLocation/*was:getBed*/();
 
-        if (world != null) {
+        if (world != null && bed != null) {
             bed = net.minecraft.entity.player.EntityPlayer/*was:EntityHuman*/.verifyRespawnCoordinates/*was:getBed*/(((CraftWorld) world).getHandle(), bed, getHandle().isSpawnForced/*was:isRespawnForced*/());
             if (bed != null) {
                 return new Location(world, bed.posX/*was:x*/, bed.posY/*was:y*/, bed.posZ/*was:z*/);
