@@ -138,6 +138,7 @@ public final class CraftServer implements Server {
     private int ambientSpawn = -1;
     public int chunkGCPeriod = -1;
     public int chunkGCLoadThresh = 0;
+    private boolean allowForcedChunks = true; // MCPC+
     private File container;
     private WarningState warningState = WarningState.DEFAULT;
     public String whitelistMessage = "You are not white-listed on this server!"; // Spigot
@@ -192,6 +193,7 @@ public final class CraftServer implements Server {
         warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
         chunkGCPeriod = configuration.getInt("chunk-gc.period-in-ticks");
         chunkGCLoadThresh = configuration.getInt("chunk-gc.load-threshold");
+        allowForcedChunks = configuration.getBoolean("mcpc.chunk-settings.default.allow-forced-chunks"); // MCPC+
 
         updater = new AutoUpdater(new BukkitDLUpdaterService(configuration.getString("auto-updater.host")), getLogger(), configuration.getString("auto-updater.preferred-channel"));
         updater.setEnabled(false);
@@ -543,6 +545,10 @@ public final class CraftServer implements Server {
         return false;
     }
 
+    public boolean getAllowForcedChunksEnabled() {
+        return this.configuration.getBoolean("mcpc.chunk-settings.default.allow-forced-chunks", true);
+    }
+
     public boolean getConnectionLoggingEnabled() {
         return this.configuration.getBoolean("mcpc.connection-logging", false);
     }
@@ -571,6 +577,7 @@ public final class CraftServer implements Server {
         console.autosavePeriod = configuration.getInt("ticks-per.autosave");
         chunkGCPeriod = configuration.getInt("chunk-gc.period-in-ticks");
         chunkGCLoadThresh = configuration.getInt("chunk-gc.load-threshold");
+        allowForcedChunks = configuration.getBoolean("mcpc.chunk-settings.default.allow-forced-chunks");
 
         playerList.getBannedIPs/*was:getIPBans*/().loadBanList/*was:load*/();
         playerList.getBannedPlayers/*was:getNameBans*/().loadBanList/*was:load*/();

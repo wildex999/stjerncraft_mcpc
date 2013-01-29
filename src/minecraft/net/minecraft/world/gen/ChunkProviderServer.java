@@ -48,7 +48,7 @@ public class ChunkProviderServer implements IChunkProvider
     public Chunk defaultEmptyChunk;
     public IChunkProvider currentChunkProvider; // CraftBukkit
     public IChunkLoader currentChunkLoader; // Spigot
-    public boolean loadChunkOnProvideRequest = true; // MCPC+ - this must be set to true to allow forge mods to force load chunks via ForgeChunkManager callbacks.
+    public boolean loadChunkOnProvideRequest;
     public LongObjectHashMap<Chunk> loadedChunkHashMap = new LongObjectHashMap<Chunk>();
     public List loadedChunks = new ArrayList(); // MCPC+  vanilla compatibility
     public WorldServer worldObj;
@@ -60,6 +60,7 @@ public class ChunkProviderServer implements IChunkProvider
         this.worldObj = par1WorldServer;
         this.currentChunkLoader = par2IChunkLoader;
         this.currentChunkProvider = par3IChunkProvider;
+        this.loadChunkOnProvideRequest = par1WorldServer.getServer().getAllowForcedChunksEnabled(); // MCPC+  load value from config
     }
 
     /**
