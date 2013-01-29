@@ -36,9 +36,6 @@ settings:
        - /skill
 mcpc:
     connection-logging: false
-    chunk-settings:
-        default:
-            allow-forced-chunks: true
     plugin-settings:
         default:
             remap-plugin-file: false
