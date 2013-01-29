@@ -125,8 +125,6 @@ public class PluginClassLoader extends URLClassLoader {
                 jarMapping.loadMappings(
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("147cb2obf.csrg"))),
                         new ShadeRelocationSimulator(relocations147));
-
-                jarMapping.classes.put("net/minecraft/server/v1_4_R1/MinecraftServer", "net/minecraft/server/MinecraftServer");
             }
 
             if ((flags & F_REMAP_NMS146) != 0) {
@@ -137,8 +135,6 @@ public class PluginClassLoader extends URLClassLoader {
                 jarMapping.loadMappings(
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("146cb2obf.csrg"))),
                         new ShadeRelocationSimulator(relocations146));
-
-                jarMapping.classes.put("net/minecraft/server/v1_4_6/MinecraftServer", "net/minecraft/server/MinecraftServer");
             }
 
             if ((flags & F_REMAP_OBC146) != 0) {
