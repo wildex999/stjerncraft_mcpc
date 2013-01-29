@@ -779,15 +779,10 @@ public class Chunk
 
                 if (par4 != 0)
                 {
-                    if (!this.worldObj.isRemote)
+                    // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer
+                    if (!this.worldObj.isRemote && (!this.worldObj.callingPlaceEvent || (Block.blocksList[par4] instanceof BlockContainer)))
                     {
-                        // CraftBukkit start - Don't extend piston until data is set
-                        if (!(Block.blocksList[par4] instanceof BlockPistonBase) || var9 != 0)
-                        {
-                            Block.blocksList[par4].onBlockAdded(this.worldObj, var12, par2, var13);
-                        }
-
-                        // CraftBukkit end
+                        Block.blocksList[par4].onBlockAdded(this.worldObj, var12, par2, var13);
                     }
 
                     if (Block.blocksList[par4] != null && Block.blocksList[par4].hasTileEntity(par5))

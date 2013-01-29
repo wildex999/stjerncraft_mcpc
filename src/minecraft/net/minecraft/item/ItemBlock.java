@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -199,22 +200,25 @@ public class ItemBlock extends Item
         org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
 
         world.editingBlocks = true;
+        world.callingPlaceEvent = true;
         world.setBlockAndMetadata(x, y, z, this.blockID, metadata);
 
         org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, player, blockstate, x, y, z);
         if (event.isCancelled() || !event.canBuild()) {
             blockstate.update(true);
             world.editingBlocks = false;
+            world.callingPlaceEvent = false;
             return false;
         }
 
         world.editingBlocks = false;
+        world.callingPlaceEvent = false;
 
         int newId = world.getBlockId(x, y, z);
         int newData = world.getBlockMetadata(x, y, z);
 
         Block block = Block.blocksList[newId];
-        if (block != null) {
+        if (block != null && !(block instanceof BlockContainer)) {
             block.onBlockAdded(world, x, y, z);
         }
 

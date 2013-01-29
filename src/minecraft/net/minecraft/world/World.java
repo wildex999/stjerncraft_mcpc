@@ -147,6 +147,7 @@ public abstract class World implements IBlockAccess
 
     /** true while the world is editing blocks */
     public boolean editingBlocks = false;
+    public boolean callingPlaceEvent = false; // CraftBukkit
 
     /** Option > Difficulty setting (0 - 3) */
     public int difficultySetting;
@@ -902,13 +903,9 @@ public abstract class World implements IBlockAccess
      */
     public boolean setBlockWithNotify(int par1, int par2, int par3, int par4)
     {
-        // CraftBukkit start
-        int old = this.getBlockId(par1, par2, par3);
-
         if (this.setBlock(par1, par2, par3, par4))
         {
-            this.notifyBlockChange(par1, par2, par3, par4 == 0 ? old : par4);
-            // CraftBukkit end
+            this.notifyBlockChange(par1, par2, par3, par4);
             return true;
         }
         else
