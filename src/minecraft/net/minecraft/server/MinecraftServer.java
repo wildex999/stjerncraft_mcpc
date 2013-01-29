@@ -965,15 +965,15 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     public WorldServer worldServerForDimension(int par1)
     {
-        // CraftBukkit start
-        for (WorldServer world : this.worlds) {
-            if (world.dimension == par1) {
-                return world;
-            }
+        // MCPC+ start - this is required for MystCraft agebooks to teleport correctly
+        WorldServer ret = DimensionManager.getWorld(par1);
+        if (ret == null)
+        {
+            DimensionManager.initDimension(par1);
+            ret = DimensionManager.getWorld(par1);
         }
-
-        return this.worlds.get(0);
-        // CraftBukkit end
+        return ret;
+        // MCPC+ end
     }
 
     @SideOnly(Side.SERVER)
