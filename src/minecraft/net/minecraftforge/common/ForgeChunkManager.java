@@ -657,12 +657,14 @@ public class ForgeChunkManager
         {
             FMLLog.info("The mod %s has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum : %d", modId, allowedCount);
             warnedMods.add(modId);
-            return null;
         }
-        Ticket ticket = new Ticket(modId, type, world);
-        tickets.get(world).put(modId, ticket);
-
-        return ticket;
+        if (!warnedMods.contains(modId))
+        {
+            Ticket ticket = new Ticket(modId, type, world);
+            tickets.get(world).put(modId, ticket);
+            return ticket;
+        }
+        return null;
     }
 
     /**
