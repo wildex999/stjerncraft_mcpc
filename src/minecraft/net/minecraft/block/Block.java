@@ -1114,12 +1114,13 @@ public class Block
         }
     }
 
+    private int silk_check_meta = -1; //Dirty hack to stop us from needing to special case the silk check hook.
     /**
      * Return true if a player with Silk Touch can harvest this block directly, and not its normal drops.
      */
     public boolean canSilkHarvest()
     {
-        return this.renderAsNormalBlock() && !this.isBlockContainer;
+        return this.renderAsNormalBlock() && !this.hasTileEntity(silk_check_meta);
     }
 
     /**
@@ -1759,11 +1760,10 @@ public class Block
      */
     public boolean canSilkHarvest(World world, EntityPlayer player, int x, int y, int z, int metadata)
     {
-        if (this instanceof BlockGlass || this instanceof BlockEnderChest)
-        {
-            return true;
-        }
-        return renderAsNormalBlock() && !hasTileEntity(metadata);
+        silk_check_meta = metadata;
+        boolean ret = this.canSilkHarvest();
+        silk_check_meta = 0;
+        return ret;
     }
 
     /**
