@@ -253,9 +253,12 @@ public class ShapedOreRecipe implements IRecipe
         mirrored = mirror;
         return this;
     }
+
+    // MCPC+ start - required for Bukkit API
     @Override
     public Recipe toBukkitRecipe() {
-        // TODO Auto-generated method stub
+        // TODO: implement a Bukkit API wrapper?
         return null;
     }
+    // MCPC+ end
 }

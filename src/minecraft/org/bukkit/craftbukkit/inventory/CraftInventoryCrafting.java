@@ -130,6 +130,14 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
     public Recipe getRecipe() {
         net.minecraft.item.crafting.IRecipe/*was:IRecipe*/ recipe = ((net.minecraft.inventory.InventoryCrafting/*was:InventoryCrafting*/)getInventory()).currentRecipe;
-        return recipe == null ? null : recipe.toBukkitRecipe();
+        // MCPC+ start - handle custom recipe classes without Bukkit API equivalents
+        try {
+            return recipe == null ? null : recipe.toBukkitRecipe();
+        } catch (AbstractMethodError ex) {
+            // No Bukkit wrapper provided
+            // TODO: wrap in a new 'custom mod recipe' class implementing org.bukkit.inventory.Recipe?
+            return null;
+        }
+        // MCPC+ end
     }
 }

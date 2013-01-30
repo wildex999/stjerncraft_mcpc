@@ -141,9 +141,12 @@ public class ShapelessOreRecipe implements IRecipe
     {
         return (target.itemID == input.itemID && (target.getItemDamage() == -1 || target.getItemDamage() == input.getItemDamage()));
     }
+
+    // MCPC+ start - required for Bukkit API
     @Override
     public Recipe toBukkitRecipe() {
-        // TODO Auto-generated method stub
+        // TODO: implement a Bukkit API wrapper?
         return null;
     }
+    // MCPC+ end
 }

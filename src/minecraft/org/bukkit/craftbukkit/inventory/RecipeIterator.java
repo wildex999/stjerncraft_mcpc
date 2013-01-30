@@ -27,11 +27,20 @@ public class RecipeIterator implements Iterator<Recipe> {
     public Recipe next() {
         if (recipes.hasNext()) {
             removeFrom = recipes;
-            return recipes.next().toBukkitRecipe();
+            // MCPC+ start - handle custom recipe classes without Bukkit API equivalents
+            net.minecraft.item.crafting.IRecipe iRecipe = recipes.next();
+            try {
+                return iRecipe.toBukkitRecipe();
+            } catch (AbstractMethodError ex) {
+                // No Bukkit wrapper provided
+                // TODO: wrap in a new 'custom mod recipe' class implementing org.bukkit.inventory.Recipe?
+                return null;
+            }
+            // MCPC+ end
         } else {
             removeFrom = smelting;
             int id = smelting.next();
-            CraftItemStack stack = CraftItemStack.asCraftMirror(net.minecraft.item.crafting.FurnaceRecipes/*was:RecipesFurnace*/.smelting/*was:getInstance*/().getSmeltingResult/*was:getResult*/(id));
+            CraftItemStack stack = CraftItemStack.asCraftMirror(net.minecraft.item.crafting.FurnaceRecipes/*was:RecipesFurnace*/.smelting/*was:getInstance*/().getSmeltingResult/*was:getResult*/(id)); // MCPC+ - TODO: use metadata-aware smelting result
             CraftFurnaceRecipe recipe = new CraftFurnaceRecipe(stack, new ItemStack(id, 1, (short) -1));
             return recipe;
         }
