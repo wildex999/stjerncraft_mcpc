@@ -343,7 +343,7 @@ public class BlockPistonBase extends Block
     {
         if ((par0 & 7) >= Facing.faceToSide.length)
         {
-            return 0;    // CraftBukkit - check for AIOOB on piston data
+            return 7;    // CraftBukkit - check for AIOOB on piston data
         }
 
         return par0 & 7;

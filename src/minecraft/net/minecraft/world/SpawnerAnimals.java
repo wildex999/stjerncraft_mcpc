@@ -37,7 +37,6 @@ public final class SpawnerAnimals
 
     /** An array of entity classes that spawn at night. */
     protected static final Class[] nightSpawnEntities = new Class[] {EntitySpider.class, EntityZombie.class, EntitySkeleton.class};
-    private static byte spawnRadius = 0; // Spigot
 
     /**
      * Given a chunk, find a random position in it.
@@ -67,28 +66,12 @@ public final class SpawnerAnimals
             int var4;
             int var7;
 
-            // Spigot start - limit radius to spawn distance (chunks aren't loaded)
-            if (spawnRadius == 0)
-            {
-                spawnRadius = (byte) par0WorldServer.getWorld().mobSpawnRange;
-                if (spawnRadius > (byte) par0WorldServer.getServer().getViewDistance()) {
-                    spawnRadius = (byte) par0WorldServer.getServer().getViewDistance();
-                }
-
-                if (spawnRadius > 8)
-                {
-                    spawnRadius = 8;
-                }
-            }
-
-            // Spigot end
-
             for (var4 = 0; var4 < par0WorldServer.playerEntities.size(); ++var4)
             {
                 EntityPlayer var5 = (EntityPlayer)par0WorldServer.playerEntities.get(var4);
                 int var6 = MathHelper.floor_double(var5.posX / 16.0D);
                 var7 = MathHelper.floor_double(var5.posZ / 16.0D);
-                byte var8 = spawnRadius; // Spigot - replace 8 with view distance constrained value
+                byte var8 = 8;
 
                 for (int var9 = -var8; var9 <= var8; ++var9)
                 {
@@ -147,10 +130,9 @@ public final class SpawnerAnimals
                     continue;
                 }
 
-                int mobcnt = 0;
                 // CraftBukkit end
 
-                if ((!var34.getPeacefulCreature() || par2) && (var34.getPeacefulCreature() || par1) && (!var34.getAnimal() || par3) && (mobcnt = par0WorldServer.countEntities(var34.getCreatureClass())) <= limit * eligibleChunksForSpawning.size() / 256) // CraftBukkit - use per-world limits
+                if ((!var34.getPeacefulCreature() || par2) && (var34.getPeacefulCreature() || par1) && (!var34.getAnimal() || par3) && par0WorldServer.countEntities(var34.getCreatureClass()) <= limit * eligibleChunksForSpawning.size() / 256) // CraftBukkit - use per-world limits
                 {
                     Iterator var35 = eligibleChunksForSpawning.keySet().iterator();
                     // Forge start
@@ -158,10 +140,9 @@ public final class SpawnerAnimals
                     //Collections.shuffle(tmp);
                     //var35 = tmp.iterator();
                     // Forge end
-                    int var37 = (limit * eligibleChunksForSpawning.size() / 256) - mobcnt + 1; // CraftBukkit - up to 1 more than limit
                     label110:
 
-                    while (var35.hasNext() && (var37 > 0))   // Spigot - while more allowed
+                    while (var35.hasNext())
                     {
                         // CraftBukkit start
                         long key = ((Long) var35.next()).longValue();
@@ -243,16 +224,7 @@ public final class SpawnerAnimals
                                                                 // CraftBukkit start - added a reason for spawning this creature, moved creatureSpecificInit(entityliving, world...) up
                                                                 creatureSpecificInit(var29, par0WorldServer, var22, var23, var24);
                                                                 par0WorldServer.addEntity(var29, SpawnReason.NATURAL);
-                                                                
-                                                                // Spigot start
-                                                                var37--;
 
-                                                                if (var37 <= 0)   // If we're past limit, stop spawn
-                                                                {
-                                                                    continue label110;
-                                                                }
-
-                                                                // Spigot end
                                                                 if (var14 >= var29.getMaxSpawnedInChunk())
                                                                 {
                                                                     continue label110;

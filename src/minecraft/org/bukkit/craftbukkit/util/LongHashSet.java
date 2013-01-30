@@ -81,11 +81,11 @@ public class LongHashSet {
     }
 
     public boolean add(int msw, int lsw) {
-        flat.put(msw, lsw, PRESENT); // Spigot
         return add(LongHash.toLong(msw, lsw));
     }
 
-    private boolean add(long value) { // Spigot
+    public boolean add(long value) {
+        flat.put(value, PRESENT); // Spigot
         int hash = hash(value);
         int index = (hash & 0x7FFFFFFF) % values.length;
         int offset = 1;
