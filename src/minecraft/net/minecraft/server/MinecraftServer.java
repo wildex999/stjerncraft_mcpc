@@ -322,6 +322,10 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
     protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
     {
+        // MCPC+ start - register vanilla server commands
+        ServerCommandManager vanillaCommandManager = (ServerCommandManager)this.getCommandManager();
+        vanillaCommandManager.registerVanillaCommands();
+        // MCPC+ end
         this.convertMapIfNeeded(par1Str);
         this.setUserMessage("menu.loadingLevel");
         // CraftBukkit - removed world and ticktime arrays
