@@ -1,15 +1,14 @@
 package org.bukkit.plugin.java;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import net.md_5.specialsource.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.PluginDescriptionFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -53,6 +52,7 @@ public class PluginClassLoader extends URLClassLoader {
         boolean remapNMS147 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_R1", true);
         boolean remapNMS146 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_6", true);
         boolean remapOBC146 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_4_6", true);
+        boolean nmsInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", false); // TODO: enable once stable
 
         // plugin-specific overrides
         useCustomClassLoader = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader);
@@ -61,6 +61,7 @@ public class PluginClassLoader extends URLClassLoader {
         remapNMS147 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_R1", remapNMS147);
         remapNMS146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_6", remapNMS146);
         remapOBC146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_4_6", remapOBC146);
+        nmsInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".global-inheritance", nmsInherit);
 
         if (debug) {
             System.out.println("PluginClassLoader debugging enabled for "+pluginName);
@@ -76,13 +77,36 @@ public class PluginClassLoader extends URLClassLoader {
         if (remapNMS147) flags |= F_REMAP_NMS147;
         if (remapNMS146) flags |= F_REMAP_NMS146;
         if (remapOBC146) flags |= F_REMAP_OBC146;
+        if (nmsInherit) flags |= F_NMS_INHERIT;
 
         JarMapping jarMapping = getJarMapping(flags);
 
         // Inheritance chain lookup
         IInheritanceProvider inheritanceProvider = null; // TODO
 
-        remapper = new JarRemapper(jarMapping, inheritanceProvider);
+        /* disabled - TODO: fix inheritance, but efficiently.
+        // see https://github.com/MinecraftPortCentral/MCPC-Plus/issues/87
+        inheritanceProviderList.add(new URLClassLoaderInheritanceProvider(this)); // plugin jar
+        inheritanceProviderList.add(new RemappedRuntimeInheritanceProvider(jarMapping)); // obfuscated NMS
+        inheritanceProviderList.add(new RuntimeInheritanceProvider()); // everything else
+        */
+
+        // Load inheritance map
+        if ((flags  & F_NMS_INHERIT) != 0) {
+            if (debug) {
+                System.out.println("Enabling inheritance remapping");
+            }
+            inheritanceProviderList.add(loader.getGlobalInheritanceMap());
+            // TODO: load inheritance from plugin classes
+        }
+
+
+        remapper = null;
+        try {
+            remapper = new JarRemapper(jarMapping, inheritanceProviderList);
+        } catch (Throwable ex) {
+            // IOException is never thrown in 1.2.1 - fixed in later versions of SpecialSource but have to catch it
+        }
     }
 
     private JarMapping getJarMapping(int flags) {
@@ -137,13 +161,6 @@ public class PluginClassLoader extends URLClassLoader {
 
             System.out.println("Mapping loaded "+ jarMapping.classes.size()+" classes, "+ jarMapping.fields.size()+" fields, "+ jarMapping.methods.size()+" methods, flags "+flags);
 
-            /* disabled - TODO: fix inheritance, but efficiently.
-            // see https://github.com/MinecraftPortCentral/MCPC-Plus/issues/87
-            // and https://github.com/MinecraftPortCentral/MCPC-Plus/issues/97
-            inheritanceProviderList.add(new URLClassLoaderInheritanceProvider(this)); // plugin jar
-            inheritanceProviderList.add(new RemappedRuntimeInheritanceProvider(jarMapping)); // obfuscated NMS
-            inheritanceProviderList.add(new RuntimeInheritanceProvider()); // everything else
-            */
             jarMappings.put(flags, jarMapping);
             return jarMapping;
         } catch (IOException ex) {

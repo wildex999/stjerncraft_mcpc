@@ -1,9 +1,6 @@
 package org.bukkit.plugin.java;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,7 +17,11 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import net.md_5.specialsource.InheritanceMap;
 import net.md_5.specialsource.JarMapping;
+import net.md_5.specialsource.ShadeRelocationSimulator;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -466,4 +467,44 @@ public class JavaPluginLoader implements PluginLoader {
             }
         }
     }
+
+    // MCPC+ start
+    private InheritanceMap globalInheritanceMap = null; // TODO: static?
+
+    /**
+     * Get the inheritance map for remapping all plugins
+     */
+    public InheritanceMap getGlobalInheritanceMap() {
+        if (globalInheritanceMap == null) {
+            // TODO: refactor
+            Map<String, String> relocationsCurrent = new HashMap<String, String>();
+            relocationsCurrent.put("net.minecraft.server", "net.minecraft.server.v1_4_R1");
+            JarMapping currentMappings = new JarMapping();
+
+            try {
+                currentMappings.loadMappings(
+                        new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("147cb2obf.csrg"))),
+                        new ShadeRelocationSimulator(relocationsCurrent));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                throw new RuntimeException(ex);
+            }
+
+            BiMap<String, String> inverseClassMap = HashBiMap.create(currentMappings.classes).inverse();
+            globalInheritanceMap = new InheritanceMap();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("147nms.inheritmap")));
+
+            try {
+                globalInheritanceMap.load(reader, inverseClassMap);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                throw new RuntimeException(ex);
+            }
+            System.out.println("Loaded inheritance map of "+globalInheritanceMap.inheritanceMap.size()+" classes");
+        }
+
+        return globalInheritanceMap;
+    }
+    // MCPC+ end
 }

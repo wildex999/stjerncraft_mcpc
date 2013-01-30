@@ -45,6 +45,7 @@ mcpc:
             remap-nms-v1_4_R1: true
             remap-nms-v1_4_6: true
             remap-obc-v1_4_6: true
+            global-inheritance: false
 world-settings:
     default:
         growth-chunks-per-tick: 650
