@@ -13,7 +13,7 @@
     <minecraft.version>1.4.7</minecraft.version>
     <minecraft_version>1_4_R1</minecraft_version>
     <mcp.version>726a</mcp.version>
-    <forge.version>1.4.7-6.6.0.516</forge.version>
+    <forge.version>1.4.7-6.6.0.517</forge.version>
     <buildNumber>0</buildNumber>
 </properties>
 <pluginRepositories>
@@ -315,7 +315,7 @@
                         <Implementation-Title>MCPC Plus</Implementation-Title>
                         <Implementation-Version>${describe}</Implementation-Version>
                         <Implementation-Vendor>MCPC</Implementation-Vendor>
-                        <Forge-Version>6.6.0.516</Forge-Version>
+                        <Forge-Version>6.6.0.517</Forge-Version>
                         <Specification-Title>Bukkit</Specification-Title>
                         <Specification-Version>${project.version}</Specification-Version>
                         <Specification-Vendor>Bukkit Team</Specification-Vendor>
@@ -399,7 +399,7 @@
                             <Implementation-Title>MCPC Plus</Implementation-Title>
                             <Implementation-Version>${describe}</Implementation-Version>
                             <Implementation-Vendor>MCPC</Implementation-Vendor>
-                            <Forge-Version>6.6.0.516</Forge-Version>
+                            <Forge-Version>6.6.0.517</Forge-Version>
                             <Specification-Title>Bukkit</Specification-Title>
                             <Specification-Version>${project.version}</Specification-Version>
                             <Specification-Vendor>Bukkit Team</Specification-Vendor>
