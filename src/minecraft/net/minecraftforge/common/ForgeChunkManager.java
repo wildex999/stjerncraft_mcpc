@@ -657,7 +657,6 @@ public class ForgeChunkManager
 
         if (tickets.get(world).get(modId).size() >= allowedCount)
         {
-            FMLLog.info("The mod %s has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum : %d", modId, allowedCount);
             if (!warnedMods.contains(modId))
             {
                 FMLLog.info("The mod %s has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum : %d", modId, allowedCount);
