@@ -33,8 +33,7 @@ public class RecipeIterator implements Iterator<Recipe> {
                 return iRecipe.toBukkitRecipe();
             } catch (AbstractMethodError ex) {
                 // No Bukkit wrapper provided
-                // TODO: wrap in a new 'custom mod recipe' class implementing org.bukkit.inventory.Recipe?
-                return null;
+                return new CustomModRecipe(iRecipe);
             }
             // MCPC+ end
         } else {

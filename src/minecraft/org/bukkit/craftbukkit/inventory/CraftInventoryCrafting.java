@@ -135,8 +135,7 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
             return recipe == null ? null : recipe.toBukkitRecipe();
         } catch (AbstractMethodError ex) {
             // No Bukkit wrapper provided
-            // TODO: wrap in a new 'custom mod recipe' class implementing org.bukkit.inventory.Recipe?
-            return null;
+            return new CustomModRecipe(recipe);
         }
         // MCPC+ end
     }

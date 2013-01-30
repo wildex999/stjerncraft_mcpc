@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.List;
 
+import org.bukkit.craftbukkit.inventory.CustomModRecipe;
 import org.bukkit.inventory.Recipe;
 
 import net.minecraft.block.Block;
@@ -156,7 +157,7 @@ public class ShapelessOreRecipe implements IRecipe
     @Override
     public Recipe toBukkitRecipe() {
         // TODO: implement a Bukkit API wrapper?
-        return null;
+        return new CustomModRecipe(this);
     }
     // MCPC+ end
 }
