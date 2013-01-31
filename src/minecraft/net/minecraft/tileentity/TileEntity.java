@@ -366,8 +366,7 @@ public class TileEntity
     }
 
     /**
-     * Default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
+     * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
      */
-    @SideOnly(Side.CLIENT)
     public static final AxisAlignedBB INFINITE_EXTENT_AABB = AxisAlignedBB.getBoundingBox(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 }
