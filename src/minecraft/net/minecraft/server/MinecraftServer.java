@@ -59,6 +59,7 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.world.EnumGameType;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.WorldManager;
+import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.WorldSettings;
@@ -337,21 +338,28 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         worldsettings.func_82750_a(par6Str);
         WorldServer world;
         WorldServer overWorld = initOverWorld(par1Str, par2Str, worldsettings);
-        int worldServerCount = 1; // MCPC+ - vanilla compatibility, start at 1 since we added overWorld
+
         for (int dimension : DimensionManager.getStaticDimensionIDs())
         {
             String worldType = "";
             String name = "";
+            // MCPC+ start
+            Environment env = Environment.getEnvironment(dimension);
             if (dimension >= -1 && dimension <= 1)
             {
                 if (dimension == 0 || (dimension == -1 && !this.getAllowNether()) || (dimension == 1 && !this.server.getAllowEnd()))
                     continue;
-                worldType = Environment.getEnvironment(dimension).toString().toLowerCase();
+                worldType = env.toString().toLowerCase();
                 name = par1Str + "_" + worldType;
             }
             else
             {
-                name = "world_forge" + "/world" + dimension; // MCPC+ - put dimensions in seperate folders to support MultiVerse teleport.
+                WorldProvider provider = WorldProvider.getProviderForDimension(dimension);
+                worldType = provider.getClass().getSimpleName();
+                env = DimensionManager.registerBukkitEnvironment(provider.dimensionId, provider.getClass().getSimpleName());
+                if (worldType.contains("WorldProvider"))
+                    worldType = worldType.replace("WorldProvider", "");
+                name = "world_forge/world_" + worldType.toLowerCase();
             }
             org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
 
@@ -404,8 +412,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
             this.setUserMessage(name);
             // CraftBukkit
-            world = new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, overWorld, this.theProfiler, Environment.getEnvironment(dimension), gen);
-
+            world = new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, overWorld, this.theProfiler, env, gen);
+            // MCPC+ end
             if (gen != null)
             {
                 world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
@@ -467,7 +475,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         for (int j = 0; j < this.worlds.size(); ++j)
         {
             WorldServer worldserver = this.worlds.get(j);
-            logger.info("Preparing start region for level " + j + " (Seed: " + worldserver.getSeed() + ")");
+            logger.info("Preparing start region for level " + j + " (Dimension: " + worldserver.provider.dimensionId + ", Seed: " + worldserver.getSeed() + ")");
 
             if (!worldserver.getWorld().getKeepSpawnInMemory())
             {

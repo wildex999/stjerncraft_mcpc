@@ -4,6 +4,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
@@ -214,7 +215,6 @@ public abstract class World implements IBlockAccess
 
     /** This is set to true for client worlds, and false for server worlds. */
     public boolean isRemote;
-    private boolean isForgeDimension; // MCPC+
     // Spigot start
 
     public static final long chunkToKey(int x, int z)
@@ -324,14 +324,6 @@ public abstract class World implements IBlockAccess
     // Changed signature
     public World(ISaveHandler idatamanager, String s, WorldSettings worldsettings, WorldProvider worldprovider, Profiler methodprofiler, ChunkGenerator gen, org.bukkit.World.Environment env)
     {
-        // MCPC+ start
-        isForgeDimension = false;
-        if (env == null)
-        {
-            env = Environment.getEnvironment(0); // MCPC+ set to 0 for CB support
-            isForgeDimension = true;
-        }
-        // MCPC+ end
         this.generator = gen;
         this.world = new CraftWorld((WorldServer) this, gen, env);
         this.ticksPerAnimalSpawns = this.getServer().getTicksPerAnimalSpawns(); // CraftBukkit
@@ -349,8 +341,8 @@ public abstract class World implements IBlockAccess
         this.saveHandler = idatamanager;
         this.theProfiler = methodprofiler;
         this.mapStorage = this.getMapStorage(idatamanager);
-        // MCPC+ start - since dimensions are not in overWorld directory, we must explicitly load it.
-        if (isForgeDimension || env == env.NETHER || env == env.THE_END) // make sure nether and end also use the same seed
+        // MCPC+ start - make sure all forge dimensions use overworld's info
+        if (Arrays.asList(DimensionManager.getStaticDimensionIDs()).contains(worldprovider.dimensionId) && DimensionManager.getWorld(0) != null) // if forge knows about it, use the same seed as overworld
         {
             this.worldInfo = DimensionManager.getWorld(0).getSaveHandler().loadWorldInfo();
         }

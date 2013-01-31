@@ -14,6 +14,7 @@ import net.minecraft.network.packet.Packet53BlockChange;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkCoordIntPair;
 
+import net.minecraftforge.common.ForgeDummyContainer;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkWatchEvent;
@@ -172,7 +173,7 @@ public class PlayerInstance
             {
                 int var4;
 
-                if (this.numberOfTilesToUpdate >= MinecraftForge.clumpingThreshold)
+                if (this.numberOfTilesToUpdate >= ForgeDummyContainer.clumpingThreshold)
                 {
                     var1 = this.chunkLocation.chunkXPos * 16;
                     var2 = this.chunkLocation.chunkZPos * 16;

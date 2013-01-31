@@ -41,6 +41,7 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
+import org.bukkit.World.Environment; // MCPC+
 
 public class DimensionManager
 {
@@ -422,4 +423,20 @@ public class DimensionManager
             return null;
         }
     }
+
+    // MCPC+ start - add registration for Bukkit Environments
+    public static Environment registerBukkitEnvironment(int dim, String providerName)
+    {
+        Environment env = Environment.getEnvironment(dim);
+        if (env == null) // MCPC+  if environment not found, register one
+        {
+            if (providerName.contains("WorldProvider"))
+                providerName = providerName.replace("WorldProvider", "");
+
+            env = EnumHelper.addBukkitEnvironment(dim, providerName.toUpperCase());
+            Environment.registerEnvironment(env);
+        }
+        return env;
+    }
+    // MCPC+ end
 }
