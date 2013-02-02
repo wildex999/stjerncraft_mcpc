@@ -16,13 +16,6 @@
     <forge.version>1.4.7-6.6.0.518</forge.version>
     <buildNumber>0</buildNumber>
 </properties>
-<pluginRepositories>
-    <pluginRepository>
-        <id>bukkit-plugins</id>
-        <url>http://repo.bukkit.org/content/groups/public</url>
-        <!-- for gitdescribe plugin -->
-    </pluginRepository>
-</pluginRepositories>
 <repositories>
     <repository>
         <id>repobo-snap</id>
@@ -45,6 +38,17 @@
         </snapshots>
     </repository>
 </repositories>
+<!-- Deployment -->
+<distributionManagement>
+  <repository>
+    <id>md_5-releases</id>
+    <url>http://repo.md-5.net/content/repositories/releases/</url>
+  </repository>
+  <snapshotRepository>
+    <id>md_5-snapshots</id>
+    <url>http://repo.md-5.net/content/repositories/snapshots/</url>
+  </snapshotRepository>
+</distributionManagement>
 <!-- FML/Forge -->
 <dependencies>
     <dependency>
