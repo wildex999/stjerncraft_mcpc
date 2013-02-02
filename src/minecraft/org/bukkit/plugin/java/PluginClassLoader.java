@@ -1,10 +1,14 @@
 package org.bukkit.plugin.java;
 
+import org.objectweb.asm.ClassWriter;
 import net.md_5.specialsource.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.ClassReader;
 
 import java.io.*;
 import java.net.JarURLConnection;
@@ -23,7 +27,8 @@ public class PluginClassLoader extends URLClassLoader {
     private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
     // MCPC+ start
     private JarRemapper remapper;     // class remapper for this plugin, or null
-    private boolean debug;
+    private boolean debug;            // classloader debugging
+    private boolean pluginInherit;    // record plugin inheritance for remapping
 
     private static HashMap<Integer,JarMapping> jarMappings = new HashMap<Integer, JarMapping>();
     private static final int F_USE_GUAVA10  = 1 << 1;
@@ -31,6 +36,7 @@ public class PluginClassLoader extends URLClassLoader {
     private static final int F_REMAP_NMS146 = 1 << 3;
     private static final int F_REMAP_OBC146 = 1 << 4;
     private static final int F_GLOBAL_INHERIT = 1 << 5;
+    private static final int F_PLUGIN_INHERIT = 1 << 6;
     // MCPC+ end
 
     public PluginClassLoader(final JavaPluginLoader loader, final URL[] urls, final ClassLoader parent, PluginDescriptionFile pluginDescriptionFile) { // MCPC+ - add PluginDescriptionFile
@@ -50,7 +56,8 @@ public class PluginClassLoader extends URLClassLoader {
         boolean remapNMS147 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_R1", true);
         boolean remapNMS146 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_6", true);
         boolean remapOBC146 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_4_6", true);
-        boolean nmsInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", false); // TODO: enable once stable
+        boolean globalInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", false); // TODO: enable once stable
+        pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", false); // TODO: enable once stable
 
         // plugin-specific overrides
         useCustomClassLoader = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader);
@@ -59,7 +66,8 @@ public class PluginClassLoader extends URLClassLoader {
         remapNMS147 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_R1", remapNMS147);
         remapNMS146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_6", remapNMS146);
         remapOBC146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_4_6", remapOBC146);
-        nmsInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".global-inheritance", nmsInherit);
+        globalInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".global-inheritance", globalInherit);
+        pluginInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".plugin-inheritance", pluginInherit);
 
         if (debug) {
             System.out.println("PluginClassLoader debugging enabled for "+pluginName);
@@ -75,7 +83,7 @@ public class PluginClassLoader extends URLClassLoader {
         if (remapNMS147) flags |= F_REMAP_NMS147;
         if (remapNMS146) flags |= F_REMAP_NMS146;
         if (remapOBC146) flags |= F_REMAP_OBC146;
-        if (nmsInherit) flags |= F_GLOBAL_INHERIT;
+        if (globalInherit) flags |= F_GLOBAL_INHERIT;
 
         JarMapping jarMapping = getJarMapping(flags);
 
@@ -210,13 +218,34 @@ public class PluginClassLoader extends URLClassLoader {
             if (url != null) {
                 InputStream stream = url.openStream();
                 if (stream != null) {
+                    // Save class inheritance
+                    if (pluginInherit) {
+                        if (debug) {
+                            System.out.println("Loading plugin class inheritance for "+name);
+                        }
+                        // Get inheritance
+                        // TODO: refactor
+                        ArrayList<String> parents = new ArrayList<String>();
+                        ClassReader classReader = new ClassReader(stream);
+                        ClassNode classNode = new ClassNode();
+                        classReader.accept(classNode, 0);
+                        InheritanceMap inheritanceMap = loader.getGlobalInheritanceMap();
+
+                        for (String iface : (List<String>) classNode.interfaces) {
+                            parents.add(iface);
+                        }
+                        parents.add(classNode.superName);
+
+                        inheritanceMap.inheritanceMap.put(name.replace('.', '/'), parents);
+
+                        if (debug) {
+                            System.out.println("Inheritance added "+name+" parents "+parents.size());
+                        }
+
+                        stream = url.openStream();
+                    }
+
                     // Remap the classes
-                            /*
-                            ClassReader classReader = new ClassReader(bytecode);
-                            ClassWriter classWriter = new ClassWriter(classReader, 0);
-                            classReader.accept(new RemappingClassAdapter(classWriter, new PluginClassRemapper()), ClassReader.EXPAND_FRAMES);
-                            byte[] remappedBytecode = classWriter.toByteArray();
-                            */
                     byte[] remappedBytecode = remapper.remapClassFile(stream);
 
                     // Define (create) the class using the modified byte code
