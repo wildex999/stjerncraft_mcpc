@@ -738,7 +738,7 @@ public abstract class ServerConfigurationManager
             return;
         }
 
-        exit = event.useTravelAgent() ? event.getPortalTravelAgent().findOrCreate(exit) : event.getTo();
+        exit = event.useTravelAgent() ? event.getPortalTravelAgent().findOrCreate(event.getTo()) : event.getTo();
         exitWorld = ((CraftWorld) exit.getWorld()).getHandle();
 
         Vector velocity = entityplayer.getBukkitEntity().getVelocity();

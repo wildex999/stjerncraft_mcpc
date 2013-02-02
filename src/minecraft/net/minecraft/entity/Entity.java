@@ -2775,7 +2775,7 @@ public abstract class Entity
             if (event.isCancelled() || event.getTo() == null || !this.isEntityAlive()) { 
                 return;
             } 
-            exit = event.useTravelAgent() ? event.getPortalTravelAgent().findOrCreate(exit) : event.getTo();
+            exit = event.useTravelAgent() ? event.getPortalTravelAgent().findOrCreate(event.getTo()) : event.getTo();
             this.teleportTo(exit, true);  
          }
      }
