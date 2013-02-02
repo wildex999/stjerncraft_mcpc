@@ -56,8 +56,8 @@ public class PluginClassLoader extends URLClassLoader {
         boolean remapNMS147 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_R1", true);
         boolean remapNMS146 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_6", true);
         boolean remapOBC146 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_4_6", true);
-        boolean globalInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", false); // TODO: enable once stable
-        pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", false); // TODO: enable once stable
+        boolean globalInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", true);
+        pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", true);
 
         // plugin-specific overrides
         useCustomClassLoader = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader);
