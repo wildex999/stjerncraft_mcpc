@@ -112,24 +112,6 @@ public class CraftWorld implements World {
         sugarGrowthModifier = configuration.getInt("world-settings." + name + ".sugar-growth-modifier", sugarGrowthModifier);
         treeGrowthModifier = configuration.getInt("world-settings." + name + ".tree-growth-modifier", treeGrowthModifier);
         mushroomGrowthModifier = configuration.getInt("world-settings." + name + ".mushroom-growth-modifier", mushroomGrowthModifier);
-
-        server.getLogger().info("-------------- Spigot ----------------");
-        server.getLogger().info("-------- World Settings For [" + name + "] --------");
-        server.getLogger().info("Growth Per Chunk: " + growthPerTick);
-        server.getLogger().info("Item Merge Radius: " + itemMergeRadius);
-        server.getLogger().info("Experience Merge Radius: " + expMergeRadius);
-        server.getLogger().info("Random Lighting Updates: " + randomLightingUpdates);
-        server.getLogger().info("Mob Spawn Range: " + mobSpawnRange);
-        server.getLogger().info("Aggregate Ticks: " + aggregateTicks);
-        server.getLogger().info("Wheat Growth Modifier: " + wheatGrowthModifier);
-        server.getLogger().info("Cactus Growth Modifier: " + cactusGrowthModifier);
-        server.getLogger().info("Melon Growth Modifier: " + melonGrowthModifier);
-        server.getLogger().info("Pumpkin Growth Modifier: " + pumpkinGrowthModifier);
-        server.getLogger().info("Sugar Growth Modifier: " + sugarGrowthModifier);
-        server.getLogger().info("Tree Growth Modifier: " + treeGrowthModifier);
-        server.getLogger().info("Mushroom Growth Modifier: " + mushroomGrowthModifier);
-        server.getLogger().info("-------------------------------------------------");
-        // Spigot end
     }
     // Spigot Start
     public int growthPerTick = 650;

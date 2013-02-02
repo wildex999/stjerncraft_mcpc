@@ -191,7 +191,6 @@ public abstract class World implements IBlockAccess
 
     /** Positions to update */
     public Set activeChunkSet = new HashSet();
-    private org.bukkit.craftbukkit.util.LightningSimulator lightningSim = new org.bukkit.craftbukkit.util.LightningSimulator(this); // Spigot
     public long ticksPerAnimalSpawns;
     public long ticksPerMonsterSpawns;
     // CraftBukkit end
@@ -3372,7 +3371,6 @@ public abstract class World implements IBlockAccess
     {
         if (!this.provider.hasNoSky)
         {
-            lightningSim.onTick(); // Spigot
             int i = this.worldInfo.getThunderTime();
 
             if (i <= 0)

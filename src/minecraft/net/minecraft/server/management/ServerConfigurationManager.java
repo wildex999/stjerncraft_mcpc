@@ -109,7 +109,7 @@ public abstract class ServerConfigurationManager
      * index into playerEntities of player to ping, updated every tick; currently hardcoded to max at 200 players
      */
     private int playerPingIndex = 0;
-
+    public boolean bukkitPluginTeleport = false;
     // CraftBukkit start
     private CraftServer cserver;
 
@@ -614,14 +614,26 @@ public abstract class ServerConfigurationManager
             entityplayer1.setPosition(entityplayer1.posX, entityplayer1.posY + 1.0D, entityplayer1.posZ);
         }
 
+        // MCPC+ start - add support for Mystcraft dimensions
+        byte actualDimension = 0;
         // CraftBukkit start
-        byte actualDimension = (byte)(worldserver.getWorld().getEnvironment().getId());
+        if (i == 0 || i == -1 || i == 1)
+            actualDimension = (byte)(worldserver.getWorld().getEnvironment().getId());
+        else actualDimension = (byte)entityplayer.dimension;
+        // MCPC+ end
         // Force the client to refresh their chunk cache.
         entityplayer1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn((byte)(actualDimension >= 0 ? -1 : 0), (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayer.theItemInWorldManager.getGameType()));
         entityplayer1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(actualDimension, (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayer.theItemInWorldManager.getGameType()));
         entityplayer1.setWorld(worldserver);
         entityplayer1.isDead = false;
         entityplayer1.playerNetServerHandler.teleport(new Location(worldserver.getWorld(), entityplayer1.posX, entityplayer1.posY, entityplayer1.posZ, entityplayer1.rotationYaw, entityplayer1.rotationPitch));
+        // MCPC+ start - This flag is set when a bukkit plugin initiates a teleport. This forces a dimension update to guarantee that the client is in sync with server. Fixes the IC2 texture orientation bug.
+        if (bukkitPluginTeleport)
+        {
+            entityplayer1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(i, (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayer.theItemInWorldManager.getGameType()));
+            bukkitPluginTeleport = false;
+        }
+        // MCPC+ end
         entityplayer1.setSneaking(false);
         chunkcoordinates1 = worldserver.getSpawnPoint();
         // CraftBukkit end
@@ -642,7 +654,6 @@ public abstract class ServerConfigurationManager
             entityplayer1.playerNetServerHandler.sendPacketToPlayer(new Packet41EntityEffect(entityplayer1.entityId, mobeffect));
         }
 
-        // entityplayer1.syncInventory();
         // CraftBukkit end
 
         // CraftBukkit start - don't fire on respawn
@@ -724,7 +735,7 @@ public abstract class ServerConfigurationManager
             entityplayer.getBukkitEntity().setVelocity(velocity);
         }
         // CraftBukkit end
-        GameRegistry.onPlayerChangedDimension(entityplayer); // Forge
+        GameRegistry.onPlayerChangedDimension(entityplayer);
     }
 
     // copy of original a(Entity, int, WorldServer, WorldServer) method with only location calculation logic

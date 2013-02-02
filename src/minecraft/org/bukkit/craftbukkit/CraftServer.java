@@ -213,8 +213,6 @@ public final class CraftServer implements Server {
         commandComplete = configuration.getBoolean("settings.command-complete", true);
         spamGuardExclusions = configuration.getStringList("settings.spam-exclusions");
 
-        org.bukkit.craftbukkit.util.LightningSimulator.configure(configuration);
-
         try {
             configuration.save(getConfigFile());
         } catch (IOException e) {
@@ -755,7 +753,7 @@ public final class CraftServer implements Server {
         }
 
         pluginManager.callEvent(new WorldInitEvent(internal.getWorld()));
-        System.out.print("Preparing start region for level " + (console.worlds.size() - 1) + " (Seed: " + internal.getSeed/*was:getSeed*/() + ")");
+        System.out.print("Preparing start region for level " + (console.worlds.size() - 1) + " (Dimension: " + internal.dimension + ", Seed: " + internal.getSeed/*was:getSeed*/() + ")");
 
         if (internal.getWorld().getKeepSpawnInMemory()) {
             short short1 = 196;

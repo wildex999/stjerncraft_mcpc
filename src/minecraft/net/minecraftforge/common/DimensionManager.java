@@ -41,7 +41,11 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
-import org.bukkit.World.Environment; // MCPC+
+// MCPC+ start
+import java.io.FilenameFilter;
+import net.minecraft.world.chunk.storage.AnvilSaveHandler;
+import org.bukkit.World.Environment;
+// MCPC+ end
 
 public class DimensionManager
 {
@@ -121,15 +125,20 @@ public class DimensionManager
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, provider type %d does not exist", id, providerType));
         }
+        // MCPC+ start - avoid throwing an exception to support Mystcraft.
         if (dimensions.containsKey(id))
         {
-            throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
+            FMLLog.warning(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        dimensions.put(id, providerType);
-        if (id >= 0)
+        else 
         {
-            dimensionMap.set(id);
+            dimensions.put(id, providerType);
+            if (id >= 0)
+            {
+                dimensionMap.set(id);
+            }
         }
+        // MCPC+ end
     }
 
     /**
@@ -226,6 +235,8 @@ public class DimensionManager
     }
 
     public static void initDimension(int dim) {
+        if (dim == 0 || dim == 1 || dim == -1)
+            return;
         WorldServer overworld = getWorld(0);
         if (overworld == null) {
             throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
@@ -236,20 +247,75 @@ public class DimensionManager
             System.err.println("Cannot Hotload Dim: " + e.getMessage());
             return; //If a provider hasn't been registered then we can't hotload the dim
         }
-        MinecraftServer mcServer = overworld.getMinecraftServer();
-        ISaveHandler savehandler = overworld.getSaveHandler();
-        WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
-
-        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler));
-        world.addWorldAccess(new WorldManager(mcServer, world));
-        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
-        if (!mcServer.isSinglePlayer())
+        // MCPC+ start - add MV support for Mystcraft
+        File mystconfig = new File("./config/mystcraft_config.txt");
+        boolean initMyst = false;
+        if (mystconfig.exists())
         {
-            world.getWorldInfo().setGameType(mcServer.getGameType());
+            Configuration config = new Configuration(mystconfig);
+            config.load();
+            int mystProvider = config.get(Configuration.CATEGORY_GENERAL, "options.providerId", -999).getInt();
+            if (mystProvider == DimensionManager.getProviderType(dim))
+            {
+                WorldServer mystWorld = initMystWorld("world_myst", overworld.worldInfo.worldSettings, dim);
+                initMyst = true;
+            }
+        }
+        if (!initMyst)
+        {
+            MinecraftServer mcServer = overworld.getMinecraftServer();
+            ISaveHandler savehandler = overworld.getSaveHandler();
+            WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
+    
+            WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler));
+            world.addWorldAccess(new WorldManager(mcServer, world));
+            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
+            if (!mcServer.isSinglePlayer())
+            {
+                world.getWorldInfo().setGameType(mcServer.getGameType());
+            }
+    
+            mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
+        }
+        // MCPC+ end
+    }
+
+    // MCPC+ start - used to create an isolated myst dimension
+    public static WorldServer initMystWorld(String par1Str, WorldSettings worldsettings, int mystDimension)
+    {
+        String worldType = par1Str;
+        MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (worldType.contains("world_"))
+            worldType = worldType.replace("world_", "");
+        Environment env;
+        if (Environment.getEnvironment(DimensionManager.getProviderType(mystDimension)) == null)
+            env = DimensionManager.registerBukkitEnvironment(DimensionManager.getProviderType(mystDimension), (worldType).toUpperCase());
+        else env = Environment.getEnvironment(DimensionManager.getProviderType(mystDimension));
+        String dim = "age" + mystDimension;
+        String name = par1Str + "/" + dim;
+        File newWorld = new File(new File(par1Str), dim);
+
+        org.bukkit.generator.ChunkGenerator gen = mcServer.server.getGenerator(name);
+        WorldServer mystWorld = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), name, mystDimension, worldsettings, getWorld(0), getWorld(0).theProfiler, env, gen);
+        if (gen != null)
+        {
+            mystWorld.getWorld().getPopulators().addAll(gen.getDefaultPopulators(mystWorld.getWorld()));
         }
 
-        mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
+        mcServer.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(mystWorld.getWorld()));
+        mystWorld.addWorldAccess(new WorldManager(mcServer, mystWorld));
+
+        if (!mcServer.isSinglePlayer())
+        {
+            mystWorld.getWorldInfo().setGameType(mcServer.getGameType());
+        }
+        
+        mcServer.worlds.add(mystWorld);
+        mcServer.getConfigurationManager().setPlayerManager(mcServer.worlds.toArray(new WorldServer[mcServer.worlds.size()]));
+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((World)mystWorld));
+        return mystWorld;
     }
+    // MCPC+ end
 
     public static WorldServer getWorld(int id)
     {

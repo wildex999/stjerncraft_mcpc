@@ -129,10 +129,10 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
             }
         }
 
-        return this.a(world, i, j, nbttagcompound);
+        return this.checkedReadChunkFromNBT(world, i, j, nbttagcompound);
     }
 
-    protected Object[] a(World world, int i, int j, NBTTagCompound nbttagcompound)   // CraftBukkit - return Chunk -> Object[]
+    protected Object[] checkedReadChunkFromNBT(World world, int i, int j, NBTTagCompound nbttagcompound)   // CraftBukkit - return Chunk -> Object[]
     {
         if (!nbttagcompound.hasKey("Level"))
         {

@@ -395,7 +395,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             if (getHandle().openContainer/*was:activeContainer*/ != getHandle().inventoryContainer/*was:defaultContainer*/){
                 getHandle().closeScreen/*was:closeInventory*/();
             }
+            // MCPC+ start - set this flag only if a plugin, such as MultiVerse, initiated the teleport
+            if (cause == cause.PLUGIN)
+                server.getHandle().getServerInstance().getConfigurationManager().bukkitPluginTeleport = true;
             server.getHandle().respawnPlayer(entity, toWorld.dimension, true, to);
+            // MCPC+ end
         }
         return true;
     }
