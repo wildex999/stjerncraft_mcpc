@@ -33,6 +33,7 @@ public class PluginClassLoader extends URLClassLoader {
     private static final int F_REMAP_NMS147 = 1 << 2;
     private static final int F_REMAP_NMS146 = 1 << 3;
     private static final int F_REMAP_OBC146 = 1 << 4;
+    private static final int F_GLOBAL_INHERIT = 1 << 5;
     // MCPC+ end
 
     public PluginClassLoader(final JavaPluginLoader loader, final URL[] urls, final ClassLoader parent, PluginDescriptionFile pluginDescriptionFile) { // MCPC+ - add PluginDescriptionFile
@@ -79,21 +80,9 @@ public class PluginClassLoader extends URLClassLoader {
         JarMapping jarMapping = getJarMapping(flags);
 
         // Inheritance chain lookup
-        List<IInheritanceProvider> inheritanceProviderList = new ArrayList<IInheritanceProvider>();
+        IInheritanceProvider inheritanceProvider = null; // TODO
 
-        /* disabled - TODO: fix inheritance, but efficiently.
-        // see https://github.com/MinecraftPortCentral/MCPC-Plus/issues/87
-        inheritanceProviderList.add(new URLClassLoaderInheritanceProvider(this)); // plugin jar
-        inheritanceProviderList.add(new RemappedRuntimeInheritanceProvider(jarMapping)); // obfuscated NMS
-        inheritanceProviderList.add(new RuntimeInheritanceProvider()); // everything else
-        */
-
-        remapper = null;
-        try {
-            remapper = new JarRemapper(jarMapping, inheritanceProviderList);
-        } catch (IOException ex) {
-            // this exception is never thrown in 1.2.1 - fixed in later versions of SpecialSource but have to catch it
-        }
+        remapper = new JarRemapper(jarMapping, inheritanceProvider);
     }
 
     private JarMapping getJarMapping(int flags) {
