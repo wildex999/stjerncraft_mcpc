@@ -1,7 +1,5 @@
 package org.bukkit.plugin.java;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import net.md_5.specialsource.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -77,36 +75,22 @@ public class PluginClassLoader extends URLClassLoader {
         if (remapNMS147) flags |= F_REMAP_NMS147;
         if (remapNMS146) flags |= F_REMAP_NMS146;
         if (remapOBC146) flags |= F_REMAP_OBC146;
-        if (nmsInherit) flags |= F_NMS_INHERIT;
+        if (nmsInherit) flags |= F_GLOBAL_INHERIT;
 
         JarMapping jarMapping = getJarMapping(flags);
 
         // Inheritance chain lookup
-        IInheritanceProvider inheritanceProvider = null; // TODO
-
-        /* disabled - TODO: fix inheritance, but efficiently.
-        // see https://github.com/MinecraftPortCentral/MCPC-Plus/issues/87
-        inheritanceProviderList.add(new URLClassLoaderInheritanceProvider(this)); // plugin jar
-        inheritanceProviderList.add(new RemappedRuntimeInheritanceProvider(jarMapping)); // obfuscated NMS
-        inheritanceProviderList.add(new RuntimeInheritanceProvider()); // everything else
-        */
+        IInheritanceProvider inheritanceProvider = null;
 
         // Load inheritance map
-        if ((flags  & F_NMS_INHERIT) != 0) {
+        if ((flags & F_GLOBAL_INHERIT) != 0) {
             if (debug) {
-                System.out.println("Enabling inheritance remapping");
+                System.out.println("Enabling global inheritance remapping");
             }
-            inheritanceProviderList.add(loader.getGlobalInheritanceMap());
-            // TODO: load inheritance from plugin classes
+            inheritanceProvider = loader.getGlobalInheritanceMap();
         }
 
-
-        remapper = null;
-        try {
-            remapper = new JarRemapper(jarMapping, inheritanceProviderList);
-        } catch (Throwable ex) {
-            // IOException is never thrown in 1.2.1 - fixed in later versions of SpecialSource but have to catch it
-        }
+        remapper = new JarRemapper(jarMapping, inheritanceProvider);
     }
 
     private JarMapping getJarMapping(int flags) {
