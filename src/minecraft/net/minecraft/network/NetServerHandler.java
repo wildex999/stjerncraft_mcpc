@@ -200,11 +200,8 @@ public class NetServerHandler extends NetHandler
     // Store the last block right clicked and what type it was
     private int lastMaterial;
 
-    public EntityPlayer getPlayerH()
-    {
-        return this.playerEntity;
-    }
-
+    // MCPC+ - rename getPlayer -> getPlayerB() to disambiguate with FML's getPlayer() method of the same name (below)
+    // Plugins calling this method will be remapped appropriately, but CraftBukkit code should be updated
     public CraftPlayer getPlayerB()
     {
         return (this.playerEntity == null) ? null : (CraftPlayer) this.playerEntity.getBukkitEntity();

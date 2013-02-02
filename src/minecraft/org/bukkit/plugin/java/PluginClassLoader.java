@@ -130,6 +130,9 @@ public class PluginClassLoader extends URLClassLoader {
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("147cb2obf.csrg"))),
                         new ShadeRelocationSimulator(relocations147));
 
+                // resolve naming conflict in FML/CB
+                jarMapping.methods.put("net/minecraft/server/v1_4_R1/PlayerConnection/getPlayer ()Lorg/bukkit/craftbukkit/v1_4_R1/entity/CraftPlayer;", "getPlayerB");
+
                 // remap bouncycastle to Forge's included copy, not the vanilla obfuscated copy (not in MCPC+), see #133
                 jarMapping.packages.put("net/minecraft/v1_4_R1/org/bouncycastle", "org/bouncycastle");
             }
@@ -142,6 +145,7 @@ public class PluginClassLoader extends URLClassLoader {
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("146cb2obf.csrg"))),
                         new ShadeRelocationSimulator(relocations146));
 
+                jarMapping.methods.put("net/minecraft/server/v1_4_6/PlayerConnection/getPlayer ()Lorg/bukkit/craftbukkit/v1_4_6/entity/CraftPlayer;", "getPlayerB");
                 jarMapping.packages.put("net/minecraft/v1_4_6/org/bouncycastle", "org/bouncycastle");
             }
 
