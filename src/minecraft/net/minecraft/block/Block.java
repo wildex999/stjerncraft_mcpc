@@ -334,6 +334,11 @@ public class Block
             opaqueCubeLookup[par1] = this.isOpaqueCube();
             lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
             canBlockGrass[par1] = !par2Material.getCanBlockGrass();
+
+            // MCPC+ start - register Bukkit API 'Material' enum for plugins
+            // In most cases, the Material is also registered in Item - but not all Blocks have Items (RP flax, etc.)
+            org.bukkit.Material.addMaterial(par1);
+            // MCPC+ end
         }
         isDefaultTexture = (getTextureFile() != null && getTextureFile().equalsIgnoreCase("/terrain.png"));
     }
