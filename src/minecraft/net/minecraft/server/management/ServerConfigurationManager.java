@@ -52,6 +52,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraft.network.NetLoginHandler;
 import org.bukkit.Location;
 import org.bukkit.TravelAgent;
+import org.bukkit.World.Environment;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
@@ -614,12 +615,11 @@ public abstract class ServerConfigurationManager
             entityplayer1.setPosition(entityplayer1.posX, entityplayer1.posY + 1.0D, entityplayer1.posZ);
         }
 
-        // MCPC+ start - add support for Mystcraft dimensions
-        byte actualDimension = 0;
         // CraftBukkit start
-        if (i == 0 || i == -1 || i == 1)
-            actualDimension = (byte)(worldserver.getWorld().getEnvironment().getId());
-        else actualDimension = (byte)entityplayer.dimension;
+        byte actualDimension = (byte)worldserver.getWorld().getEnvironment().getId(); // MCPC+ - represents the actual dimension for target world
+        // MCPC+ start - add support for Mystcraft dimensions
+        if (worldserver.getWorld().getEnvironment().name().equals("MYST"))
+            actualDimension = (byte)i;
         // MCPC+ end
         // Force the client to refresh their chunk cache.
         entityplayer1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn((byte)(actualDimension >= 0 ? -1 : 0), (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayer.theItemInWorldManager.getGameType()));
@@ -628,7 +628,7 @@ public abstract class ServerConfigurationManager
         entityplayer1.isDead = false;
         entityplayer1.playerNetServerHandler.teleport(new Location(worldserver.getWorld(), entityplayer1.posX, entityplayer1.posY, entityplayer1.posZ, entityplayer1.rotationYaw, entityplayer1.rotationPitch));
         // MCPC+ start - This flag is set when a bukkit plugin initiates a teleport. This forces a dimension update to guarantee that the client is in sync with server. Fixes the IC2 texture orientation bug.
-        if (bukkitPluginTeleport)
+        if (bukkitPluginTeleport && !DimensionManager.checkMVDim(i))
         {
             entityplayer1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(i, (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayer.theItemInWorldManager.getGameType()));
             bukkitPluginTeleport = false;

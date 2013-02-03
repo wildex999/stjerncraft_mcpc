@@ -734,8 +734,8 @@ public final class CraftServer implements Server {
         boolean hardcore = false;
 
         net.minecraft.world.WorldServer/*was:WorldServer*/ internal = new net.minecraft.world.WorldServer/*was:WorldServer*/(console, new net.minecraft.world.chunk.storage.AnvilSaveHandler/*was:ServerNBTManager*/(getWorldContainer(), name, true), name, dimension, new net.minecraft.world.WorldSettings/*was:WorldSettings*/(creator.seed(), net.minecraft.world.EnumGameType/*was:EnumGamemode*/.getByID/*was:a*/(getDefaultGameMode().getValue()), generateStructures, hardcore, type), console.theProfiler/*was:methodProfiler*/, creator.environment(), generator);
-
-        DimensionManager.registerDimension(dimension, internal.provider/*was:worldProvider*/.dimensionId/*was:dimension*/); // Forge
+        DimensionManager.addMVDimension(dimension); // MCPC+ allows us to keep track of which dimensions belong to MV so we can avoid sending a Packet9Respawn.
+        DimensionManager.registerDimension(dimension, internal.provider/*was:worldProvider*/.dimensionId/*was:dimension*/); // MCPC+ registers MultiVerse dimensions with forge
         if (!(worlds.containsKey(name.toLowerCase()))) {
             return null;
         }

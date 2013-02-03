@@ -58,6 +58,7 @@ public class DimensionManager
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
     private static Set<Integer> leakedWorlds = Sets.newHashSet();
+    private static ArrayList<Integer> mvDims = new ArrayList<Integer>(); // MCPC+ used to keep track of MV dimensions
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
@@ -505,4 +506,14 @@ public class DimensionManager
         return env;
     }
     // MCPC+ end
+    public static void addMVDimension(int dim)
+    {
+        if (!mvDims.contains(dim))
+            mvDims.add(dim);
+    }
+
+    public static boolean checkMVDim(int dim)
+    {
+        return mvDims.contains(dim);
+    }
 }
