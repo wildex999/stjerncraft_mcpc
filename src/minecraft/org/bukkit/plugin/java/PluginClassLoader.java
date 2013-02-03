@@ -150,12 +150,20 @@ public class PluginClassLoader extends URLClassLoader {
             }
 
             if ((flags & F_REMAP_OBC146) != 0) {
+                // This trick bypasses Maven Shade's clever rewriting of our getProperty call when using String literals [same trick in jline]
+                String obc146 = new String(new char[] {'o','r','g','/','b','u','k','k','i','t','/','c','r','a','f','t','b','u','k','k','i','t','/','v','1','_','4','_','6'});
+                String obc147 = new String(new char[] {'o','r','g','/','b','u','k','k','i','t','/','c','r','a','f','t','b','u','k','k','i','t','/','v','1','_','4','_','R','1'});
+
                 // Remap OBC v1_4_6  to v1_4_R1 (or current) for 1.4.6 plugin compatibility
                 // Note this should only be mapped statically - since plugins MAY use reflection to determine the OBC version
-                jarMapping.packages.put("org/bukkit/craftbukkit/v1_4_6", "org/bukkit/craftbukkit/v1_4_R1");
+                jarMapping.packages.put(obc146, obc147);
+
+                if (debug) {
+                    System.out.println("Adding OBC remap "+obc146+" -> "+obc147);
+                }
             }
 
-            System.out.println("Mapping loaded "+ jarMapping.classes.size()+" classes, "+ jarMapping.fields.size()+" fields, "+ jarMapping.methods.size()+" methods, flags "+flags);
+            System.out.println("Mapping loaded "+jarMapping.packages.size()+" packages, "+jarMapping.classes.size()+" classes, "+jarMapping.fields.size()+" fields, "+jarMapping.methods.size()+" methods, flags "+flags);
 
             jarMappings.put(flags, jarMapping);
             return jarMapping;
@@ -178,6 +186,9 @@ public class PluginClassLoader extends URLClassLoader {
 
     protected Class<?> findClass(String name, boolean checkGlobal) throws ClassNotFoundException {
         if (name.startsWith("org.bukkit.") || name.startsWith("net.minecraft.")) {
+            if (debug) {
+                System.out.println("Unexpected plugin findClass on OBC/NMS: name="+name+", checkGlobal="+checkGlobal+"; returning not found");
+            }
             throw new ClassNotFoundException(name);
         }
         Class<?> result = classes.get(name);
