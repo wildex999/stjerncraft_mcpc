@@ -1262,7 +1262,11 @@ public class NetServerHandler extends NetHandler
                 Player player = this.getPlayerB();
                 AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet());
                 this.server.getPluginManager().callEvent(event);
-
+                ServerChatEvent forgeEvent = new ServerChatEvent(this.playerEntity, s, "<" + this.playerEntity.username + "> " + s);
+                if (MinecraftForge.EVENT_BUS.post(forgeEvent))
+                {
+                    return;
+                }
                 if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0)
                 {
                     // Evil plugins still listening to deprecated event
