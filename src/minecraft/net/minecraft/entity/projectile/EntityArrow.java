@@ -33,7 +33,7 @@ public class EntityArrow extends Entity implements IProjectile
     private int zTile = -1;
     private int inTile = 0;
     private int inData = 0;
-    private boolean inGround = false;
+    public boolean inGround = false; // Spigot - private -> public
 
     /** 1 if the player can pick up the arrow */
     public int canBePickedUp = 0;

@@ -224,7 +224,7 @@ public abstract class Entity
     /**
      * Whether this entity is currently inside of water (if it handles water movement that is)
      */
-    protected boolean inWater;
+    public boolean inWater; // Spigot - protected -> public
 
     /**
      * Remaining time an entity will be "immune" to further damage after being hurt.
@@ -262,8 +262,14 @@ public abstract class Entity
     public EnumEntitySize myEntitySize;
     public boolean valid = false; // CraftBukkit
     
+    // Spigot start
     public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getEntityTimings(this); // Spigot
         
+    public final byte activationType = org.bukkit.craftbukkit.Spigot.initializeEntityActivationType(this);
+    public final boolean defaultActivationState;
+    public long activatedTick = 0;
+    // Spigot end
+            
     /** Forge: Used to store custom data for each entity. */
     private NBTTagCompound customEntityData;
     public boolean captureDrops = false;
@@ -314,8 +320,15 @@ public abstract class Entity
         if (par1World != null)
         {
             this.dimension = par1World.provider.dimensionId;
+            // Spigot start
+            this.defaultActivationState = org.bukkit.craftbukkit.Spigot.initializeEntityActivationState(this, par1World.getWorld());
+        }
+        else
+        {
+            this.defaultActivationState = false;
         }
 
+        // Spigot end
         this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
         this.dataWatcher.addObject(1, Short.valueOf((short)300));
         this.entityInit();

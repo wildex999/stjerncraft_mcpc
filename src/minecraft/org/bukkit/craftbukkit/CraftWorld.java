@@ -120,6 +120,10 @@ public class CraftWorld implements World {
         treeGrowthModifier = configuration.getInt("world-settings.default.tree-growth-modifier", treeGrowthModifier);
         mushroomGrowthModifier = configuration.getInt("world-settings.default.mushroom-growth-modifier", mushroomGrowthModifier);
 
+        miscEntityActivationRange = configuration.getInt("world-settings.default.entity-activation-range-misc");
+        animalEntityActivationRange = configuration.getInt("world-settings.default.entity-activation-range-animals");
+        monsterEntityActivationRange = configuration.getInt("world-settings.default.entity-activation-range-monsters");
+        
         //override defaults with world specific, if they exist
         info = configuration.getBoolean("world-settings." + name + ".info", info);        
         growthPerTick = configuration.getInt("world-settings." + name + ".growth-chunks-per-tick", growthPerTick);
@@ -144,6 +148,10 @@ public class CraftWorld implements World {
 
         obfuscated = !world.getServer().orebfuscatorDisabledWorlds.contains(name);
 
+        miscEntityActivationRange = configuration.getInt("world-settings." + name + ".entity-activation-range-misc", miscEntityActivationRange);
+        animalEntityActivationRange = configuration.getInt("world-settings." + name + ".entity-activation-range-animals", animalEntityActivationRange);
+        monsterEntityActivationRange = configuration.getInt("world-settings." + name + ".entity-activation-range-monsters", monsterEntityActivationRange);
+
         if (!info) return;
         server.getLogger().info("-------------- Spigot ----------------");
         server.getLogger().info("-------- World Settings For [" + name + "] --------");
@@ -160,6 +168,7 @@ public class CraftWorld implements World {
         server.getLogger().info("Mushroom Growth Modifier: " + mushroomGrowthModifier);
         server.getLogger().info("View distance: " + viewDistance);
         server.getLogger().info("Oreobfuscator: " + obfuscated);
+        server.getLogger().info("Entity Activation Range: An " + animalEntityActivationRange + " / Mo " + monsterEntityActivationRange + " / Mi " + miscEntityActivationRange);        
         server.getLogger().info("-------------------------------------------------");
         // Spigot end
     }
@@ -180,6 +189,10 @@ public class CraftWorld implements World {
     public int sugarGrowthModifier = 100;
     public int treeGrowthModifier = 100;
     public int mushroomGrowthModifier = 100;
+
+    public int miscEntityActivationRange = 16;
+    public int animalEntityActivationRange = 32;
+    public int monsterEntityActivationRange = 32;    
     // Spigot end
 
     public Block getBlockAt(int x, int y, int z) {

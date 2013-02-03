@@ -2155,7 +2155,7 @@ public abstract class World implements IBlockAccess
 
         this.unloadedEntityList.clear();
         this.theProfiler.endStartSection("regular");
-
+        org.bukkit.craftbukkit.Spigot.activateEntities(this); // Spigot
         timings.entityTick.startTiming(); // Spigot
 
         for (i = 0; i < this.loadedEntityList.size(); ++i)
@@ -2388,7 +2388,16 @@ public abstract class World implements IBlockAccess
     {
         int i = MathHelper.floor_double(par1Entity.posX);
         int j = MathHelper.floor_double(par1Entity.posZ);
-
+        
+        // Spigot start
+        if (!Spigot.checkIfActive(par1Entity))
+        {
+            par1Entity.ticksExisted++;
+            return;
+        }
+        par1Entity.tickTimer.startTiming();
+        // Spigot end        
+            
         boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
         byte b0 = isForced ? (byte)0 : 32;
         boolean canUpdate = !par2 || this.checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0);
@@ -2482,6 +2491,8 @@ public abstract class World implements IBlockAccess
                     par1Entity.riddenByEntity = null;
                 }
             }
+
+            par1Entity.tickTimer.stopTiming(); // Spigot
         }
     }
 

@@ -159,7 +159,7 @@ public class EntityItem extends Entity
         }
         } // Spigot
 
-        ++this.age;
+        this.age = ticksExisted;
 
         ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
         
