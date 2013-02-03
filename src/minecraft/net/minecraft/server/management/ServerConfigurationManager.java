@@ -546,10 +546,10 @@ public abstract class ServerConfigurationManager
      */
     public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
     {
-        return this.moveToWorld(par1EntityPlayerMP, par2, par3, null);
+        return this.moveToWorld(par1EntityPlayerMP, par2, par3, null, true);
     }
 
-    public EntityPlayerMP moveToWorld(EntityPlayerMP entityplayer, int i, boolean flag, Location location)
+    public EntityPlayerMP moveToWorld(EntityPlayerMP entityplayer, int i, boolean flag, Location location, boolean avoidSuffocation)
     {
         // CraftBukkit end
         entityplayer.getServerForPlayer().getEntityTracker().removeAllTrackingPlayers(entityplayer);
@@ -610,7 +610,7 @@ public abstract class ServerConfigurationManager
         // CraftBukkit end
         worldserver.theChunkProviderServer.loadChunk((int) entityplayer1.posX >> 4, (int) entityplayer1.posZ >> 4);
 
-        while (!worldserver.getCollidingBoundingBoxes(entityplayer1, entityplayer1.boundingBox).isEmpty())
+        while (avoidSuffocation && !worldserver.getCollidingBoundingBoxes(entityplayer1, entityplayer1.boundingBox).isEmpty())   // CraftBukkit
         {
             entityplayer1.setPosition(entityplayer1.posX, entityplayer1.posY + 1.0D, entityplayer1.posZ);
         }
@@ -699,10 +699,10 @@ public abstract class ServerConfigurationManager
 
         GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
     }
-    
+
+    // CraftBukkit start - Replaced the standard handling of portals with a more customised method.
     public void transferPlayerToDimension(EntityPlayerMP entityplayer, int i, TeleportCause cause)
     {
-        // CraftBukkit start -- Replaced the standard handling of portals with a more customised method.
         WorldServer exitWorld = null;
         if (entityplayer.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET) { // plugins must specify exit from custom Bukkit worlds
             // only target existing worlds (compensate for allow-nether/allow-end as false)
@@ -747,7 +747,7 @@ public abstract class ServerConfigurationManager
         exitWorld.func_85176_s().adjustExit(entityplayer, exit, velocity);
         exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = before;
 
-        this.moveToWorld(entityplayer, exitWorld.dimension, true, exit);
+        this.moveToWorld(entityplayer, exitWorld.dimension, true, exit, false); // Vanilla doesn't check for suffocation when handling portals, so neither should we
         if (entityplayer.motionX != velocity.getX() || entityplayer.motionY != velocity.getY() || entityplayer.motionZ != velocity.getZ()) {
             entityplayer.getBukkitEntity().setVelocity(velocity);
         }
