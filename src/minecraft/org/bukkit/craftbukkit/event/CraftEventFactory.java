@@ -16,7 +16,6 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
-import org.bukkit.craftbukkit.entity.CraftFakePlayer;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
@@ -44,7 +43,6 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.InventoryView;
 
 public class CraftEventFactory {
-    private static CraftFakePlayer fakePlayer;
     // helper methods
     private static boolean canBuild(CraftWorld world, Player player, int x, int z) {
         net.minecraft.world.WorldServer/*was:WorldServer*/ worldServer = world.getHandle();
@@ -73,23 +71,7 @@ public class CraftEventFactory {
         CraftWorld craftWorld = ((net.minecraft.world.WorldServer/*was:WorldServer*/) world).getWorld();
         CraftServer craftServer = ((net.minecraft.world.WorldServer/*was:WorldServer*/) world).getServer();
 
-        Player player = null;
-        if (who == null)
-            return null;
-        if(who.getBukkitEntity() instanceof Player)
-            player = (Player) who.getBukkitEntity();
-        else {
-            if (fakePlayer != null)
-            {
-                player = (Player)fakePlayer;
-            }
-            else { // MCPC - if block is placed by a non-player, we assume it's a special block such as RP2's Deployer and create a new CraftFakePlayer for it
-                CraftFakePlayer.setMethod("fakeplayer");
-                player = (Player)CraftFakePlayer.get(world);
-                fakePlayer = (CraftFakePlayer)player;
-            }
-        }
-        //Player player = (who == null) ? null : (Player) who.getBukkitEntity();
+        Player player = (who == null) ? null : (Player) who.getBukkitEntity();
 
         Block blockClicked = craftWorld.getBlockAt(clickedX, clickedY, clickedZ);
         Block placedBlock = replacedBlockState.getBlock();
@@ -114,23 +96,7 @@ public class CraftEventFactory {
     }
 
     private static PlayerEvent getPlayerBucketEvent(boolean isFilling, net.minecraft.entity.player.EntityPlayer/*was:EntityHuman*/ who, int clickedX, int clickedY, int clickedZ, int clickedFace, net.minecraft.item.ItemStack/*was:ItemStack*/ itemstack, /*was:net.minecraft.server.*/net.minecraft.item.Item/*was:Item*/ item) {
-        // MCPC+ start - handle bucket event with no player        
-        Player player = null;
-        
-        if(who.getBukkitEntity() instanceof Player)
-            player = (Player) who.getBukkitEntity();
-        else {
-            if (fakePlayer != null)
-            {
-                player = (Player)fakePlayer;
-            }
-            else {
-                CraftFakePlayer.setMethod("fakeplayer");
-                player = (Player)CraftFakePlayer.get(who.worldObj);
-                fakePlayer = (CraftFakePlayer)player;
-            }
-        }
-        // MCPC+ end
+        Player player = (who == null) ? null : (Player) who.getBukkitEntity();
         CraftItemStack itemInHand = CraftItemStack.asNewCraftStack(item);
         Material bucket = Material.getMaterial(itemstack.itemID/*was:id*/);
 

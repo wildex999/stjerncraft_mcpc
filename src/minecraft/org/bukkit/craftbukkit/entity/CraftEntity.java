@@ -10,6 +10,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.MetadataValue;
@@ -36,7 +37,13 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             // Players
             if (entity instanceof net.minecraft.entity.player.EntityPlayer/*was:EntityHuman*/) {
                 if (entity instanceof net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/) { return new CraftPlayer(server, (net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/) entity); }
-                else { return new CraftHumanEntity(server, (net.minecraft.entity.player.EntityPlayer/*was:EntityHuman*/) entity); }
+                // MCPC+ start - support fake player classes from mods
+                // This case is never hit in vanilla
+                //else { return new CraftHumanEntity(server, (net.minecraft.entity.player.EntityPlayer/*was:EntityHuman*/) entity); }
+                else {
+                    return new CraftFakePlayer(server, CraftFakePlayer.get(entity.worldObj, (net.minecraft.entity.player.EntityPlayer)entity));
+                }
+                // MCPC+ end
             }
             else if (entity instanceof net.minecraft.entity.EntityCreature/*was:EntityCreature*/) {
                 // Animals

@@ -36,6 +36,8 @@ settings:
        - /skill
 mcpc:
     connection-logging: false
+    fake-players:
+      com/eloraam/redpower/machine/EntityPlayerFake: '[RedPower]'
     plugin-settings:
         default:
             remap-plugin-file: false
