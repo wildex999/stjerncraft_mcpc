@@ -2947,4 +2947,9 @@ public abstract class Entity
     {
         this.entityId = nextEntityID++;
     }
+
+    public boolean shouldRenderInPass(int pass)
+    {
+        return pass == 0;
+    }
 }

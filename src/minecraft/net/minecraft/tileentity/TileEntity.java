@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 
@@ -316,6 +317,7 @@ public class TileEntity
     }
     // CraftBukkit end
 
+    // -- BEGIN FORGE PATCHES --
     /**
      * Determines if this TileEntity requires update calls.
      * @return True if you want updateEntity() to be called, false if not
@@ -328,10 +330,10 @@ public class TileEntity
     /**
      * Called when you receive a TileEntityData packet for the location this
      * TileEntity is currently in. On the client, the NetworkManager will always
-     * be the remote server. On the server, it will be whomever is responsible for 
+     * be the remote server. On the server, it will be whomever is responsible for
      * sending the packet.
-     * 
-     * @param net The NetworkManager the packet originated from 
+     *
+     * @param net The NetworkManager the packet originated from
      * @param pkt The data packet
      */
     public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
@@ -348,12 +350,12 @@ public class TileEntity
     /**
      * Called from Chunk.setBlockIDWithMetadata, determines if this tile entity should be re-created when the ID, or Metadata changes.
      * Use with caution as this will leave straggler TileEntities, or create conflicts with other TileEntities if not used properly.
-     * 
+     *
      * @param oldID The old ID of the block
      * @param newID The new ID of the block (May be the same)
      * @param oldMeta The old metadata of the block
      * @param newMeta The new metadata of the block (May be the same)
-     * @param world Current world 
+     * @param world Current world
      * @param x X Postion
      * @param y Y Position
      * @param z Z Position
@@ -363,4 +365,13 @@ public class TileEntity
     {
         return true;
     }
+
+    public boolean shouldRenderInPass(int pass)
+    {
+        return pass == 0;
+    }
+    /**
+     * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
+     */
+    public static final AxisAlignedBB INFINITE_EXTENT_AABB = AxisAlignedBB.getBoundingBox(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 }
