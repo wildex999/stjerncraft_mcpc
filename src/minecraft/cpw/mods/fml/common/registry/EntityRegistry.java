@@ -30,6 +30,8 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
+import net.minecraftforge.common.EnumHelper;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 
 public class EntityRegistry
 {
@@ -186,6 +188,9 @@ public class EntityRegistry
         }
         id = instance().validateAndClaimId(id);
         EntityList.addMapping(entityClass, entityName, id);
+        // MCPC+ start
+        EnumHelper.addBukkitEntityType(entityName, null /* TODO: Bukkit class wrappers for mod mobs */, id, false);
+        // MCPC+ end
     }
 
     private int validateAndClaimId(int id)
@@ -238,6 +243,9 @@ public class EntityRegistry
         }
         instance().validateAndClaimId(id);
         EntityList.addMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
+        // MCPC+ start
+        EnumHelper.addBukkitEntityType(entityName, null /* TODO: Bukkit class wrappers for mod mobs */, id, false);
+        // MCPC+ end
     }
 
     public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)

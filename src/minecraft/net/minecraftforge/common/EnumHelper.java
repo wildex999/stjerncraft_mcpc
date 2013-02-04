@@ -3,6 +3,7 @@ package net.minecraftforge.common;
 import java.lang.reflect.*;
 import java.util.*;
 
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 
@@ -20,6 +21,7 @@ import net.minecraft.util.EnumArt;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.EnumDoor;
+import org.bukkit.entity.EntityType;
 
 public class EnumHelper
 {
@@ -62,6 +64,19 @@ public class EnumHelper
         }
 
         return (World.Environment)addEnum(World.Environment.class, name, new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
+    }
+
+    public static EntityType addBukkitEntityType(String name, Class<? extends org.bukkit.entity.Entity> clazz, int typeId, boolean independent) {
+        EntityType bukkitType = addEnum(EntityType.class, name, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, new Object[] { name, clazz, typeId, independent });
+
+        Map<String, EntityType> NAME_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP"); // TODO: access
+        Map<Short, EntityType> ID_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
+
+        NAME_MAP.put(name, bukkitType);
+        ID_MAP.put((short)typeId, bukkitType);
+
+
+        return bukkitType;
     }
     // MCPC end
 
