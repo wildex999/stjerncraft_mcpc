@@ -959,6 +959,7 @@ public class NetServerHandler extends NetHandler
             this.playerEntity.playerInventoryBeingManipulated = true;
             this.playerEntity.inventory.mainInventory[this.playerEntity.inventory.currentItem] = ItemStack.copyItemStack(this.playerEntity.inventory.mainInventory[this.playerEntity.inventory.currentItem]);
             Slot var14 = this.playerEntity.openContainer.getSlotFromInventory(this.playerEntity.inventory, this.playerEntity.inventory.currentItem);
+            if (var14 == null) return; // MCPC+ - abort if no slot, fixes RP2 timer crash block place - see #181
             this.playerEntity.openContainer.detectAndSendChanges();
             this.playerEntity.playerInventoryBeingManipulated = false;
 
