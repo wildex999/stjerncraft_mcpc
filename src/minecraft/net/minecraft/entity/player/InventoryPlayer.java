@@ -15,7 +15,6 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.ITickingArmor;
 
 public class InventoryPlayer implements IInventory
 {
@@ -414,9 +413,9 @@ public class InventoryPlayer implements IInventory
 
         for (int i = 0; i < this.armorInventory.length; i++)
         {
-            if (this.armorInventory[i] != null && this.armorInventory[i].getItem() instanceof ITickingArmor)
+            if (this.armorInventory[i] != null)
             {
-                ((ITickingArmor)this.armorInventory[i].getItem()).onArmorTickUpdate(this.player.worldObj, this.player, this.armorInventory[i]);
+                this.armorInventory[i].getItem().onArmorTickUpdate(this.player.worldObj, this.player, this.armorInventory[i]);
             }
         }
     }

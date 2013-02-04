@@ -1016,4 +1016,18 @@ public class Item
     {
         return false;
     }
+
+
+    /**
+     * Called to tick armor in the armor slot. Override to do something
+     *
+     * @param world
+     * @param player
+     * @param itemStack
+     */
+    public void onArmorTickUpdate(World world, EntityPlayer player, ItemStack itemStack)
+    {
+
+    }
+
 }
