@@ -243,7 +243,7 @@ public class PluginClassLoader extends URLClassLoader {
                         ArrayList<String> parents = new ArrayList<String>();
                         ClassReader classReader = new ClassReader(stream);
                         ClassNode classNode = new ClassNode();
-                        classReader.accept(classNode, 0);
+                        classReader.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                         InheritanceMap inheritanceMap = loader.getGlobalInheritanceMap();
 
                         for (String iface : (List<String>) classNode.interfaces) {
