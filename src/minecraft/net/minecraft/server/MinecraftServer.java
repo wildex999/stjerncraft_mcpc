@@ -1030,6 +1030,12 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     public WorldServer worldServerForDimension(int par1)
     {
         // MCPC+ start - this is required for MystCraft agebooks to teleport correctly
+        // verify the nether or the end is allowed, and if not return overworld
+        if ((par1 == -1 && !this.getAllowNether()) || (par1 == 1 && !this.server.getAllowEnd()))
+        {
+            return DimensionManager.getWorld(0);
+        }
+
         WorldServer ret = DimensionManager.getWorld(par1);
         if (ret == null)
         {
