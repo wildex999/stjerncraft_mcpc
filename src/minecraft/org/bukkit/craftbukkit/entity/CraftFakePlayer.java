@@ -42,10 +42,11 @@ public class CraftFakePlayer extends CraftPlayer
     public static EntityPlayerMP get(World world, EntityPlayer modFakePlayer)
     {
         String name = defaultName;
+        String className = null;
 
         if (modFakePlayer != null)
         {
-            String className = modFakePlayer.getClass().getName().replace('.', '/');
+            className = modFakePlayer.getClass().getName().replace('.', '/');
             String modDefaultName;
 
             // Default to either the mod's fake player username, or class name if unspecified
@@ -61,7 +62,7 @@ public class CraftFakePlayer extends CraftPlayer
 
         if (!fakePlayers.containsKey(name))
         {
-            System.out.println("[FakePlayer] Initializing fake player: "+name);
+            System.out.println("[FakePlayer] Initializing fake player for " + className + ": " + name);
             EntityPlayerMP fakePlayer = new EntityPlayerMP(FMLCommonHandler.instance().getMinecraftServerInstance(), world,
                     name, new ItemInWorldManager(world));
 
