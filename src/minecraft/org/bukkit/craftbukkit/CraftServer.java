@@ -512,7 +512,18 @@ public final class CraftServer implements Server {
             }
         }
         try {
-            return dispatchCommand(sender, serverCommand.command/*was:command*/);
+            // MCPC+ start - handle bukkit/vanilla console commands
+            int space = serverCommand.command.indexOf(" ");
+            // if bukkit command exists then execute it over vanilla
+            if (this.getCommandMap().getCommand(serverCommand.command.substring(1, space != -1 ? space : serverCommand.command.length())) != null)
+            {
+                return this.dispatchCommand(sender, serverCommand.command);
+            }
+            else { // process vanilla console command
+                craftCommandMap.setVanillaConsoleSender(serverCommand.sender);
+                return this.dispatchVanillaCommand(sender, serverCommand.command);
+            }
+            // MCPC+ end
         } catch (Exception ex) {
             getLogger().log(Level.WARNING, "Unexpected exception while parsing console command \"" + serverCommand.command/*was:command*/ + '"', ex);
             return false;

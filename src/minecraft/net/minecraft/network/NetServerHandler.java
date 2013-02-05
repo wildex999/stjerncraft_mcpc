@@ -1390,15 +1390,11 @@ public class NetServerHandler extends NetHandler
                 this.server.dispatchCommand(event.getPlayer(), event.getMessage().substring(1));
                 return;
             }
-            // process vanilla command
-            else if (this.server.getCraftCommandMap().getCommand(event.getMessage().substring(1, space != -1 ? space : event.getMessage().length())) != null)
+            else // process vanilla command
             {
                 this.server.dispatchVanillaCommand(event.getPlayer(), event.getMessage().substring(1));
                 return;
             }
-            else event.getPlayer().sendMessage("Unknown command. Type \"help\" for help.");
-            // MCPC+ end
-
         }
         catch (org.bukkit.command.CommandException ex)
         {
@@ -1408,9 +1404,6 @@ public class NetServerHandler extends NetHandler
         }
 
         // CraftBukkit end
-        /* CraftBukkit start - No longer needed as we have already handled it in server.dispatchServerCommand above.
-        this.minecraftServer.getCommandHandler().a(this.player, s);
-        // CraftBukkit end */
     }
 
     public void handleAnimation(Packet18Animation par1Packet18Animation)

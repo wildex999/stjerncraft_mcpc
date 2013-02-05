@@ -4,10 +4,13 @@ import static org.bukkit.util.Java15Compat.Arrays_copyOfRange;
 
 import java.util.regex.Pattern;
 
+import net.minecraft.command.ICommandSender;
+
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 
@@ -16,6 +19,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 public class CraftSimpleCommandMap extends SimpleCommandMap {
 
     private static final Pattern PATTERN_ON_SPACE = Pattern.compile(" ", Pattern.LITERAL);
+    private ICommandSender vanillaConsoleSender; // MCPC+
 
     public CraftSimpleCommandMap(Server server) {
         super(server);
@@ -42,7 +46,11 @@ public class CraftSimpleCommandMap extends SimpleCommandMap {
             if (target instanceof ModCustomCommand)
             {
                 if (!target.testPermission(sender)) return true;
-                FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().executeCommand(((CraftPlayer)sender).getHandle(), commandLine);
+                if (sender instanceof ConsoleCommandSender)
+                {
+                    FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().executeCommand(this.vanillaConsoleSender, commandLine);
+                }
+                else FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().executeCommand(((CraftPlayer)sender).getHandle(), commandLine);
             }
             else {
             // MCPC+ end
@@ -58,4 +66,11 @@ public class CraftSimpleCommandMap extends SimpleCommandMap {
         // return true as command was handled
         return true;
     }
+
+    // MCPC+ start - sets the vanilla console sender
+    public void setVanillaConsoleSender(ICommandSender console)
+    {
+        this.vanillaConsoleSender = console;
+    }
+    // MCPC+ end
 }
