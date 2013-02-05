@@ -80,7 +80,7 @@ public abstract class ServerConfigurationManager
     private final MinecraftServer mcServer;
 
     /** A list of player entities that exist on this server. */
-    public final List playerEntityList = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
+    public final List playerEntityList = new ArrayList();
     private final BanList bannedPlayers = new BanList(new File("banned-players.txt"));
     private final BanList bannedIPs = new BanList(new File("banned-ips.txt"));
 
