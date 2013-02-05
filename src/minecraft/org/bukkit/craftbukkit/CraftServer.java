@@ -515,7 +515,7 @@ public final class CraftServer implements Server {
             // MCPC+ start - handle bukkit/vanilla console commands
             int space = serverCommand.command.indexOf(" ");
             // if bukkit command exists then execute it over vanilla
-            if (this.getCommandMap().getCommand(serverCommand.command.substring(1, space != -1 ? space : serverCommand.command.length())) != null)
+            if (this.getCommandMap().getCommand(serverCommand.command.substring(0, space != -1 ? space : serverCommand.command.length())) != null)
             {
                 return this.dispatchCommand(sender, serverCommand.command);
             }
