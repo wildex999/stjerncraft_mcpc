@@ -366,7 +366,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 name = "world_" + worldType.toLowerCase();
             }
             org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
-
+            worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
+            worldsettings.func_82750_a(par6Str);
             String dim = "DIM" + dimension;
             File newWorld = new File(new File(name), dim);
             File oldWorld = new File(new File(par1Str), dim);

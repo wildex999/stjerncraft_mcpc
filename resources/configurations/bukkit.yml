@@ -75,31 +75,6 @@ world-settings:
         growth-chunks-per-tick: 0
         random-light-updates: true
         water-creatures-per-chunk: 0
-storm-settings:
-    strong-electrical-storm:
-        chance: 5
-        lightning-delay: 10
-        lightning-random-delay: 20
-    electrical-storm:
-        chance: 15
-        lightning-delay: 40
-        lightning-random-delay: 150
-    strong-thunderstorm:
-        chance: 30
-        lightning-delay: 60
-        lightning-random-delay: 250
-    thunderstorm:
-        chance: 50
-        lightning-delay: 100
-        lightning-random-delay: 500
-    weak-thunderstorm:
-        chance: 75
-        lightning-delay: 300
-        lightning-random-delay: 1000
-    rainstorm:
-        chance: 100
-        lightning-delay: 500
-        lightning-random-delay: 2000
 spawn-limits:
     monsters: 70
     animals: 15

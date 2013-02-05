@@ -340,16 +340,7 @@ public abstract class World implements IBlockAccess
         this.saveHandler = idatamanager;
         this.theProfiler = methodprofiler;
         this.mapStorage = this.getMapStorage(idatamanager);
-        // MCPC+ start - make sure all forge dimensions use overworld's info
-        if (Arrays.asList(DimensionManager.getStaticDimensionIDs()).contains(worldprovider.dimensionId) && DimensionManager.getWorld(0) != null) // if forge knows about it, use the same seed as overworld
-        {
-            this.worldInfo = DimensionManager.getWorld(0).getSaveHandler().loadWorldInfo();
-        }
-        else 
-        {
-            this.worldInfo = idatamanager.loadWorldInfo();
-        }
-        // MCPC+ end
+        this.worldInfo = idatamanager.loadWorldInfo();
 
         if (worldprovider != null)
         {
@@ -702,21 +693,27 @@ public abstract class World implements IBlockAccess
         return this.getChunkFromChunkCoords(par1 >> 4, par2 >> 4);
     }
 
+    // CraftBukkit start
+
     /**
      * Returns back a chunk looked up by chunk coordinates Args: x, y
      */
-    // CraftBukkit start
     public Chunk getChunkFromChunkCoords(int par1, int par2)
     {
         Chunk result = null;
-        if (this.lastChunkAccessed == null || this.lastXAccessed != par1 || this.lastZAccessed != par2)
+
+        synchronized (this.chunkLock)
         {
-            this.lastChunkAccessed = this.chunkProvider.provideChunk(par1, par2);
-            this.lastXAccessed = par1;
-            this.lastZAccessed = par2;
+            if (this.lastChunkAccessed == null || this.lastXAccessed != par1 || this.lastZAccessed != par2)
+            {
+                this.lastChunkAccessed = this.chunkProvider.provideChunk(par1, par2);
+                this.lastXAccessed = par1;
+                this.lastZAccessed = par2;
+            }
+
+            result = this.lastChunkAccessed;
         }
 
-        result = this.lastChunkAccessed;
         return result;
     }
     // CraftBukkit end
@@ -1720,6 +1717,7 @@ public abstract class World implements IBlockAccess
     }
 
     // CraftBukkit start - used for entities other than creatures
+
     /**
      * Called to place all entities as part of a world
      */
@@ -1843,6 +1841,7 @@ public abstract class World implements IBlockAccess
         {
             ((IWorldAccess)this.worldAccesses.get(var2)).obtainEntitySkin(par1Entity);
         }
+
         par1Entity.valid = true; // CraftBukkit
     }
 
