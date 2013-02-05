@@ -37,8 +37,12 @@ settings:
 mcpc:
     connection-logging: false
     fake-players:
-      com/eloraam/redpower/machine/EntityPlayerFake: '[RedPower]'
-      dan200/turtle/shared/TurtlePlayer: '[ComputerCraft]'
+      com/eloraam/redpower/machine/EntityPlayerFake:
+        username: '[RedPower]'
+        do-login: false
+      dan200/turtle/shared/TurtlePlayer:
+        username: '[ComputerCraft]'
+        do-login: false
     plugin-settings:
         default:
             remap-plugin-file: false
