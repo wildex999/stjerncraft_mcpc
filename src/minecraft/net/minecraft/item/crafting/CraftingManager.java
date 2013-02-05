@@ -297,23 +297,27 @@ public class CraftingManager
                 var10 = 0;
             }
 
-            // CraftBukkit start - construct a dummy repair recipe
-            ItemStack result = new ItemStack(var4.itemID, 1, var10);
-            List<ItemStack> ingredients = new ArrayList<ItemStack>();
-            ingredients.add(var4.copy());
-            ingredients.add(var5.copy());
-            ShapelessRecipes recipe = new ShapelessRecipes(result.copy(), ingredients);
-            par1InventoryCrafting.currentRecipe = recipe;
-            result = CraftEventFactory.callPreCraftEvent(par1InventoryCrafting, result, lastCraftView, true);
-            return result;
-            // CraftBukkit end
+            if (par1InventoryCrafting.resultInventory != null) // MCPC - vanilla compatibility
+            {
+                // CraftBukkit start - construct a dummy repair recipe
+                ItemStack result = new ItemStack(var4.itemID, 1, var10);
+                List<ItemStack> ingredients = new ArrayList<ItemStack>();
+                ingredients.add(var4.copy());
+                ingredients.add(var5.copy());
+                ShapelessRecipes recipe = new ShapelessRecipes(result.copy(), ingredients);
+                par1InventoryCrafting.currentRecipe = recipe;
+                result = CraftEventFactory.callPreCraftEvent(par1InventoryCrafting, result, lastCraftView, true);
+                return result;
+                // CraftBukkit end
+            }
+            return new ItemStack(var4.itemID, 1, var10);
         }
         else
         {
             for (var6 = 0; var6 < this.recipes.size(); ++var6)
             {
                 IRecipe var12 = (IRecipe)this.recipes.get(var6);
-                if (var12.matches(par1InventoryCrafting, par2World) && par1InventoryCrafting.resultInventory != null) // MCPC - add check to allow vanilla to bypass
+                if (var12.matches(par1InventoryCrafting, par2World) && par1InventoryCrafting.resultInventory != null) // MCPC - vanilla compatibility
                 {
                     // CraftBukkit start - INVENTORY_PRE_CRAFT event
                     par1InventoryCrafting.currentRecipe = var12;
