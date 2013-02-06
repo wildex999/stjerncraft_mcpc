@@ -1,5 +1,6 @@
 package org.bukkit.plugin.java;
 
+import org.bouncycastle.util.io.Streams;
 import org.objectweb.asm.ClassWriter;
 import net.md_5.specialsource.*;
 import org.bukkit.Bukkit;
@@ -27,6 +28,7 @@ public class PluginClassLoader extends URLClassLoader {
     private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
     // MCPC+ start
     private JarRemapper remapper;     // class remapper for this plugin, or null
+    private ReflectionRemapper reflectionRemapper; // another remapper for reflection
     private boolean debug;            // classloader debugging
     private boolean pluginInherit;    // record plugin inheritance for remapping
 
@@ -37,6 +39,7 @@ public class PluginClassLoader extends URLClassLoader {
     private static final int F_REMAP_OBC146 = 1 << 4;
     private static final int F_GLOBAL_INHERIT = 1 << 5;
     private static final int F_PLUGIN_INHERIT = 1 << 6;
+    private static final int F_REFLECT_FIELDS = 1 << 7;
     // MCPC+ end
 
     public PluginClassLoader(final JavaPluginLoader loader, final URL[] urls, final ClassLoader parent, PluginDescriptionFile pluginDescriptionFile) { // MCPC+ - add PluginDescriptionFile
@@ -58,6 +61,7 @@ public class PluginClassLoader extends URLClassLoader {
         boolean remapOBC146 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_4_6", true);
         boolean globalInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", true);
         pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", true);
+        boolean reflectFields = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-field", false); // TODO: enable once stable
 
         // plugin-specific overrides
         useCustomClassLoader = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader);
@@ -68,6 +72,7 @@ public class PluginClassLoader extends URLClassLoader {
         remapOBC146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_4_6", remapOBC146);
         globalInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".global-inheritance", globalInherit);
         pluginInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".plugin-inheritance", pluginInherit);
+        reflectFields = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-reflect-field", reflectFields);
 
         if (debug) {
             System.out.println("PluginClassLoader debugging enabled for "+pluginName);
@@ -84,21 +89,24 @@ public class PluginClassLoader extends URLClassLoader {
         if (remapNMS146) flags |= F_REMAP_NMS146;
         if (remapOBC146) flags |= F_REMAP_OBC146;
         if (globalInherit) flags |= F_GLOBAL_INHERIT;
+        // F_PLUGIN_INHERIT not per-jarMapping
+        // F_REFLECT_FIELDS not per-jarMapping
 
         JarMapping jarMapping = getJarMapping(flags);
-
-        // Inheritance chain lookup
-        IInheritanceProvider inheritanceProvider = null;
 
         // Load inheritance map
         if ((flags & F_GLOBAL_INHERIT) != 0) {
             if (debug) {
                 System.out.println("Enabling global inheritance remapping");
             }
-            inheritanceProvider = loader.getGlobalInheritanceMap();
+            jarMapping.inheritanceProvider = loader.getGlobalInheritanceMap();
         }
 
-        remapper = new JarRemapper(jarMapping, inheritanceProvider);
+        remapper = new JarRemapper(jarMapping);
+        if (reflectFields) {
+            reflectionRemapper = new ReflectionRemapper(jarMapping);
+            reflectionRemapper.debug = debug;
+        }
     }
 
     private JarMapping getJarMapping(int flags) {
@@ -260,8 +268,18 @@ public class PluginClassLoader extends URLClassLoader {
                         stream = url.openStream();
                     }
 
+                    byte[] bytecode;
+
+                    // Reflection remap
+                    if (reflectionRemapper != null) {
+                        // TODO: avoid multiple remap passes?
+                        bytecode = reflectionRemapper.remapClassFile(stream);
+                    } else {
+                        bytecode = Streams.readAll(stream);
+                    }
+
                     // Remap the classes
-                    byte[] remappedBytecode = remapper.remapClassFile(stream);
+                    byte[] remappedBytecode = remapper.remapClassFile(bytecode);
 
                     // Define (create) the class using the modified byte code
                     // The top-child class loader is used for this to prevent access violations
