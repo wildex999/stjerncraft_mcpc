@@ -2105,7 +2105,10 @@ public class NetServerHandler extends NetHandler
             }
             catch (Exception exception)
             {
-                exception.printStackTrace();
+                // CraftBukkit start
+                logger.log(Level.WARNING, this.playerEntity.username + " sent invalid MC|BEdit data", exception);
+                this.kickPlayerFromServer("Invalid book data!");
+                // CraftBukkit end
             }
         }
         else if ("MC|BSign".equals(packet250custompayload.channel))
@@ -2133,7 +2136,8 @@ public class NetServerHandler extends NetHandler
             catch (Exception exception1)
             {
                 // CraftBukkit start
-                // exception1.printStackTrace();
+                logger.log(Level.WARNING, this.playerEntity.username + " sent invalid MC|BSign data", exception1);
+                this.kickPlayerFromServer("Invalid book data!");
                 // CraftBukkit end
             }
         }
@@ -2156,7 +2160,10 @@ public class NetServerHandler extends NetHandler
                 }
                 catch (Exception exception2)
                 {
-                    exception2.printStackTrace();
+                    // CraftBukkit start
+                    logger.log(Level.WARNING, this.playerEntity.username + " sent invalid MC|TrSel data", exception2);
+                    this.kickPlayerFromServer("Invalid trade data!");
+                    // CraftBukkit end
                 }
             }
             else
@@ -2189,7 +2196,10 @@ public class NetServerHandler extends NetHandler
                         }
                         catch (Exception exception3)
                         {
-                            exception3.printStackTrace();
+                            // CraftBukkit start
+                            logger.log(Level.WARNING, this.playerEntity.username + " sent invalid MC|AdvCdm data", exception3);
+                            this.kickPlayerFromServer("Invalid CommandBlock data!");
+                            // CraftBukkit end
                         }
                     }
                     else
@@ -2220,7 +2230,10 @@ public class NetServerHandler extends NetHandler
                         }
                         catch (Exception exception4)
                         {
-                            exception4.printStackTrace();
+                            // CraftBukkit start
+                            logger.log(Level.WARNING, this.playerEntity.username + " sent invalid MC|Beacon data", exception4);
+                            this.kickPlayerFromServer("Invalid beacon data!");
+                            // CraftBukkit end
                         }
                     }
                 }

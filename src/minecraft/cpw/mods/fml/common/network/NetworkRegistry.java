@@ -288,7 +288,7 @@ public class NetworkRegistry
         }
         catch (UnsupportedEncodingException ex)
         {
-            Logger.getLogger(NetServerHandler.class.getName()).log(Level.SEVERE, "Could not parse REGISTER payload in plugin message packet", ex);
+            throw new AssertionError(ex);
         }
     }
 
@@ -305,7 +305,7 @@ public class NetworkRegistry
         }
         catch (UnsupportedEncodingException ex)
         {
-            Logger.getLogger(NetServerHandler.class.getName()).log(Level.SEVERE, "Could not parse UNREGISTER payload in plugin message packet", ex);
+            throw new AssertionError(ex);
         }
     }
     // MCPC+ end
