@@ -1209,7 +1209,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
     public String getServerModName()
     {
-        return "craftbukkit"; // CraftBukkit - cb > vanilla!
+        return "mcpc"; // MCPC+
     }
 
     /**
