@@ -540,45 +540,42 @@ public enum Material {
         return result;
     }
     
-    /* ===============================  MCPC START ============================= */
+    /* ===============================  MCPC+ START ============================= */
     public static void addMaterial(int id)
     {
-      addMaterial(id, "X" + String.valueOf(id), false);
-    }
-    
-    public static void addMaterial(int id, String name)
-    {
-      addMaterial(id, name, false);
+      addMaterial(id, "X" + String.valueOf(id));
     }
 
-    public static void addMaterial(int id, String name, boolean xNameAlso) {
+    public static void addMaterial(int id, String name) {
       if (byId[id] == null) {
         Material material = (Material)addEnum(Material.class, name, new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
+        String material_name = name.toUpperCase().trim();
+        material_name = material_name.replaceAll("[^A-Za-z0-9]", "_");
 
         byId[id] = material;
-        BY_NAME.put(name, material);
-
-        String material_name = name.toUpperCase().trim();
-        material_name = material_name.replaceAll("\\s+", "_").replaceAll("\\W", "");
         BY_NAME.put(material_name, material);
-        
-        if (xNameAlso)
-        {
-            BY_NAME.put("X" + String.valueOf(id), material);
-        }
       }
     }
 
     public static void setMaterialName(int id, String name) {
       String material_name = name.toUpperCase().trim();
-      material_name = material_name.replaceAll("\\s+", "_").replaceAll("\\W", "");
+      material_name = material_name.replaceAll("[^A-Za-z0-9]", "_");
 
-      if (byId[id] == null) {
-        addMaterial(id, material_name, false);
-      } else {
-        Material material = getMaterial(id);
-        BY_NAME.put(name, material);
-        BY_NAME.put(material_name, material);
+      if (byId[id] == null)
+      {
+        addMaterial(id, material_name);
+      } 
+      else // replace existing enum
+      {
+          Material material = getMaterial(id);
+          BY_NAME.remove(material);
+          Material newMaterial = replaceEnum(Material.class, material_name, material.ordinal(), new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
+          if (newMaterial == null)
+              System.out.println("Error replacing Material " + name + " with id " + id);
+          else {
+              byId[id] = newMaterial;
+              BY_NAME.put(material_name, newMaterial);
+          }
       }
     }
     
@@ -680,8 +677,49 @@ public enum Material {
         throw new RuntimeException(e.getMessage(), e);
       }
     }
-    
-    /* ===============================  MCPC END============================= */
+
+    public static <T extends Enum<?>> T replaceEnum(Class<T> enumType, String enumName, int ordinal,  Class<?>[] paramTypes, Object[] paramValues)
+    {
+      if (!isSetup) setup();
+      Field valuesField = null;
+      Field[] fields = enumType.getDeclaredFields();
+      int flags = 4122;
+      String valueType = String.format("[L%s;", new Object[] { enumType.getName() });
+
+      for (Field field : fields) {
+        if (((field.getModifiers() & flags) != flags) || (!field.getType().getName().equals(valueType))) {
+          continue;
+        }
+        valuesField = field;
+        break;
+      }
+
+      valuesField.setAccessible(true);
+      try
+      {
+        Enum[] previousValues = (Enum[])(Enum[])valuesField.get(enumType);
+        Enum[] newValues = new Enum[previousValues.length];
+        Enum newValue = null;
+        for (Enum enumValue : previousValues)
+        {
+            if (enumValue.ordinal() == ordinal)
+            {
+               newValue = makeEnum(enumType, enumName, ordinal, paramTypes, paramValues);
+               newValues[enumValue.ordinal()] =  newValue;
+            }
+            else newValues[enumValue.ordinal()] = enumValue;
+        }
+        List values = new ArrayList(Arrays.asList(newValues));
+
+        setFailsafeFieldValue(valuesField, null, values.toArray((Enum[])(Enum[])Array.newInstance(enumType, 0)));
+        cleanEnumCache(enumType);
+        return (T) newValue;
+      } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException(e.getMessage(), e);
+      }
+    }
+    /* ===============================  MCPC+ END============================= */
 
     static {
     	byId = new Material[32000];

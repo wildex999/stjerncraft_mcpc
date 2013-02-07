@@ -248,7 +248,7 @@ public class Item
         itemsList[256 + par1] = this;
 
         GameData.newItemAdded(this);
-
+        org.bukkit.Material.addMaterial(this.itemID); // MCPC+ - many mods do not register items through GameRegistry so to be safe we need to add materials here
         if (!(this instanceof ItemBlock))
         {
             isDefaultTexture = "/gui/items.png".equals(getTextureFile());

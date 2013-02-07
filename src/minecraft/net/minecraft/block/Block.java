@@ -335,6 +335,7 @@ public class Block
             lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
             canBlockGrass[par1] = !par2Material.getCanBlockGrass();
         }
+        org.bukkit.Material.addMaterial(this.blockID); // MCPC+ - many mods do not register blocks through GameRegistry so to be safe we need to add materials here
         isDefaultTexture = (getTextureFile() != null && getTextureFile().equalsIgnoreCase("/terrain.png"));
     }
 
