@@ -187,6 +187,7 @@ public class GameRegistry
      */
     public static void registerItem(net.minecraft.item.Item item, String name, String modId)
     {
+        GameRegistry.registerMaterial(item, name, modId); // MCPC+ - register bukkit material
         GameData.setName(item, name, modId);
     }
 
@@ -254,7 +255,6 @@ public class GameRegistry
             int blockItemId = block.blockID - 256;
             Item i = itemclass.getConstructor(int.class).newInstance(blockItemId);
             GameRegistry.registerItem(i,name, modId);
-            GameRegistry.registerMaterial(i, name, modId); // MCPC+ - register bukkit material
         }
         catch (Exception e)
         {
