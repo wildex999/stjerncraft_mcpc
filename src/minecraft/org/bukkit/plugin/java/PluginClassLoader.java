@@ -28,9 +28,8 @@ public class PluginClassLoader extends URLClassLoader {
     private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
     // MCPC+ start
     private JarRemapper remapper;     // class remapper for this plugin, or null
-    private ReflectionRemapper reflectionRemapper; // another remapper for reflection
+    private RemapperPreprocessor remapperPreprocessor; // secondary; for inheritance & remapping reflection
     private boolean debug;            // classloader debugging
-    private boolean pluginInherit;    // record plugin inheritance for remapping
 
     private static HashMap<Integer,JarMapping> jarMappings = new HashMap<Integer, JarMapping>();
     private static final int F_USE_GUAVA10  = 1 << 1;
@@ -60,7 +59,7 @@ public class PluginClassLoader extends URLClassLoader {
         boolean remapNMS146 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_6", true);
         boolean remapOBC146 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_4_6", true);
         boolean globalInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", true);
-        pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", true);
+        boolean pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", true);
         boolean reflectFields = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-field", false); // TODO: enable once stable
 
         // plugin-specific overrides
@@ -103,9 +102,14 @@ public class PluginClassLoader extends URLClassLoader {
         }
 
         remapper = new JarRemapper(jarMapping);
-        if (reflectFields) {
-            reflectionRemapper = new ReflectionRemapper(jarMapping);
-            reflectionRemapper.debug = debug;
+
+        if (pluginInherit || reflectFields) {
+            remapperPreprocessor = new RemapperPreprocessor(
+                    pluginInherit ? loader.getGlobalInheritanceMap() : null,
+                    reflectFields ? jarMapping : null);
+            remapperPreprocessor.debug = debug;
+        } else {
+            remapperPreprocessor = null;
         }
     }
 
@@ -241,25 +245,16 @@ public class PluginClassLoader extends URLClassLoader {
             if (url != null) {
                 InputStream stream = url.openStream();
                 if (stream != null) {
-                    // Save class inheritance
-                    if (pluginInherit) {
-                        RemapperPreprocessor remapperPreprocessor = new RemapperPreprocessor(loader.getGlobalInheritanceMap());
+                    byte[] bytecode = null;
 
-                        remapperPreprocessor.debug = debug;
-
+                    // Reflection remap and inheritance extract
+                    if (remapperPreprocessor != null) {
                         // add to inheritance map
-                        remapperPreprocessor.preprocess(name, stream);
-
-                        stream = url.openStream();
+                        bytecode = remapperPreprocessor.preprocess(name, stream);
+                        if (bytecode == null) stream = url.openStream();
                     }
 
-                    byte[] bytecode;
-
-                    // Reflection remap
-                    if (reflectionRemapper != null) {
-                        // TODO: avoid multiple remap passes?
-                        bytecode = reflectionRemapper.remapClassFile(stream);
-                    } else {
+                    if (bytecode == null) {
                         bytecode = Streams.readAll(stream);
                     }
 
