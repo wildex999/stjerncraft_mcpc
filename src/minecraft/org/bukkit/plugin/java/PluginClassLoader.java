@@ -60,7 +60,7 @@ public class PluginClassLoader extends URLClassLoader {
         boolean remapOBC146 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_4_6", true);
         boolean globalInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", true);
         boolean pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", true);
-        boolean reflectFields = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-field", false); // TODO: enable once stable
+        boolean reflectFields = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-field", true);
 
         // plugin-specific overrides
         useCustomClassLoader = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader);

@@ -54,7 +54,7 @@ mcpc:
             remap-obc-v1_4_6: true
             global-inheritance: true
             plugin-inheritance: true
-            remap-reflect-field: false
+            remap-reflect-field: true
 world-settings:
     default:
         growth-chunks-per-tick: 650
