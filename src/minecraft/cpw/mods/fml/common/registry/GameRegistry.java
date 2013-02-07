@@ -254,6 +254,7 @@ public class GameRegistry
             int blockItemId = block.blockID - 256;
             Item i = itemclass.getConstructor(int.class).newInstance(blockItemId);
             GameRegistry.registerItem(i,name, modId);
+            GameRegistry.registerMaterial(i, name, modId); // MCPC+ - register bukkit material
         }
         catch (Exception e)
         {
@@ -262,6 +263,35 @@ public class GameRegistry
         }
         blockRegistry.put(Loader.instance().activeModContainer(), (BlockProxy) block);
     }
+
+    // MCPC+ start - register bukkit material names for modded items/blocks
+    /**
+     * Register the specified Material with a mod specific name : overrides the standard type XID name
+     * @param item The material to register
+     * @param name The material-unique name to register it as - null will default to modId_itemId
+     * @param modId An optional modId that will "own" this block - generally used by multi-mod systems
+     * where one mod should "own" all the blocks of all the mods, null defaults to the active mod
+     */
+    public static void registerMaterial(net.minecraft.item.Item item, String name, String modId)
+    {
+        if (name != null)
+        {
+            if (modId == null)
+               modId = Loader.instance().activeModContainer().getModId();
+            String materialName = modId + "_" + name;
+            materialName = materialName.replaceAll("[^A-Za-z0-9]", "_");
+            org.bukkit.Material.addMaterial(item.itemID, materialName.toUpperCase());
+        }
+        else 
+        {
+            if (modId == null)
+                modId = Loader.instance().activeModContainer().getModId();
+            String materialName = modId + "_" + String.valueOf(item.itemID);
+            materialName = materialName.replaceAll("[^A-Za-z0-9]", "_");
+            org.bukkit.Material.addMaterial(item.itemID, materialName.toUpperCase());
+        }
+    }
+    // MCPC+ end
 
     public static void addRecipe(ItemStack output, Object... params)
     {

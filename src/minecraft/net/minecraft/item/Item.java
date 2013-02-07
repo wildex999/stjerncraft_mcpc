@@ -248,12 +248,6 @@ public class Item
         itemsList[256 + par1] = this;
 
         GameData.newItemAdded(this);
-        // MCPC
-        /*
-         * This is required for mods that use custom materials or else plugins such as ModifyWorld will receive NPE's
-         * when looking up the custom material name.
-         */
-        org.bukkit.Material.addMaterial(256 + par1);
 
         if (!(this instanceof ItemBlock))
         {
