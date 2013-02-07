@@ -243,27 +243,12 @@ public class PluginClassLoader extends URLClassLoader {
                 if (stream != null) {
                     // Save class inheritance
                     if (pluginInherit) {
-                        if (debug) {
-                            System.out.println("Loading plugin class inheritance for "+name);
-                        }
-                        // Get inheritance
-                        // TODO: refactor
-                        ArrayList<String> parents = new ArrayList<String>();
-                        ClassReader classReader = new ClassReader(stream);
-                        ClassNode classNode = new ClassNode();
-                        classReader.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-                        InheritanceMap inheritanceMap = loader.getGlobalInheritanceMap();
+                        RemapperPreprocessor remapperPreprocessor = new RemapperPreprocessor(loader.getGlobalInheritanceMap());
 
-                        for (String iface : (List<String>) classNode.interfaces) {
-                            parents.add(iface);
-                        }
-                        parents.add(classNode.superName);
+                        remapperPreprocessor.debug = debug;
 
-                        inheritanceMap.inheritanceMap.put(name.replace('.', '/'), parents);
-
-                        if (debug) {
-                            System.out.println("Inheritance added "+name+" parents "+parents.size());
-                        }
+                        // add to inheritance map
+                        remapperPreprocessor.preprocess(name, stream);
 
                         stream = url.openStream();
                     }
