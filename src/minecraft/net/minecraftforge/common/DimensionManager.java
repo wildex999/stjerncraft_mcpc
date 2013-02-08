@@ -258,7 +258,9 @@ public class DimensionManager
             int mystProvider = config.get(Configuration.CATEGORY_GENERAL, "options.providerId", -999).getInt();
             if (mystProvider == DimensionManager.getProviderType(dim))
             {
-                WorldServer mystWorld = initMystWorld("world_myst", overworld.worldInfo.worldSettings, dim);
+                MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
+                WorldSettings worldsettings = new WorldSettings(overworld.getWorldInfo());
+                WorldServer mystWorld = initMystWorld("world_myst", worldsettings, dim);
                 initMyst = true;
             }
         }

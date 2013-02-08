@@ -74,7 +74,6 @@ public class WorldInfo
     private boolean initialized;
     private GameRules theGameRules;
     private Map<String, NBTBase> additionalProperties;
-    public WorldSettings worldSettings; // MCPC+
 
     protected WorldInfo()
     {
@@ -196,7 +195,6 @@ public class WorldInfo
         this.generatorOptions = par1WorldSettings.func_82749_j();
         this.allowCommands = par1WorldSettings.areCommandsAllowed();
         this.initialized = false;
-        this.worldSettings = par1WorldSettings; // MCPC+ used
     }
 
     public WorldInfo(WorldInfo par1WorldInfo)

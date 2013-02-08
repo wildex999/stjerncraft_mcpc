@@ -438,7 +438,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             // CraftBukkit end
             MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((World)world)); // Forge
         }
-        boolean mystLoaded = this.initMystWorld(worldsettings);
+        boolean mystLoaded = this.initMystWorld();
         if (mystLoaded)
             System.out.println("Successfully initialized Mystcraft support.");
         this.setDifficultyForAllWorlds(this.getDifficulty());
@@ -472,7 +472,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     // MCPC+ end
 
     // MCPC+ start - used to create an isolated myst dimension
-    protected boolean initMystWorld(WorldSettings worldsettings)
+    protected boolean initMystWorld()
     {
         //  search for myst dimensions and load them
         File mystconfig = new File("./config/mystcraft_config.txt");
@@ -506,6 +506,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                         dim = directories[i].replace("age", "");
                     if (Integer.parseInt(dim) != 0)
                     {
+                        WorldSettings worldsettings = new WorldSettings(DimensionManager.getWorld(0).getWorldInfo());
                         DimensionManager.registerDimension(Integer.parseInt(dim), mystProviderType);
                         WorldServer mystWorld = DimensionManager.initMystWorld("world_myst", worldsettings, Integer.parseInt(dim));
                         mystLoaded = true;
