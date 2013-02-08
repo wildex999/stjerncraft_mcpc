@@ -618,13 +618,11 @@
 /src/minecraft/net/minecraft/world/biome/WorldChunkManagerHell.java
 /src/minecraft/net/minecraft/world/chunk/EmptyChunk.java
 /src/minecraft/net/minecraft/world/chunk/IChunkProvider.java
-/src/minecraft/net/minecraft/world/chunk/NibbleArray.java
 /src/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoaderPending.java
 /src/minecraft/net/minecraft/world/chunk/storage/AnvilConverterData.java
 /src/minecraft/net/minecraft/world/chunk/storage/AnvilSaveConverter.java
 /src/minecraft/net/minecraft/world/chunk/storage/AnvilSaveConverterFileFilter.java
 /src/minecraft/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
-/src/minecraft/net/minecraft/world/chunk/storage/ChunkLoader.java
 /src/minecraft/net/minecraft/world/chunk/storage/IChunkLoader.java
 /src/minecraft/net/minecraft/world/chunk/storage/NibbleArrayReader.java
 /src/minecraft/net/minecraft/world/chunk/storage/RegionFileChunkBuffer.java
