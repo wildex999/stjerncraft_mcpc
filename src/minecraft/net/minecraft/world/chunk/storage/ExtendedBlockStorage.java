@@ -303,15 +303,14 @@ public class ExtendedBlockStorage
 
                 off++;
                 off2++;
-                // Spigot start
-                this.blockMSBArray.detectAndProcessTrivialArray();
-
-                if (this.blockMSBArray.isTrivialArray() && (this.blockMSBArray.getTrivialArrayValue() == 0))
-                {
-                    this.blockMSBArray = null;
-                }
-                // Spigot end
             }
+            // Spigot start
+            this.blockMSBArray.detectAndProcessTrivialArray();
+            if (this.blockMSBArray.isTrivialArray() && (this.blockMSBArray.getTrivialArrayValue() == 0))
+            {
+                this.blockMSBArray = null;
+            }
+            // Spigot end
         }
 
         this.blockRefCount = cntNonEmpty;
