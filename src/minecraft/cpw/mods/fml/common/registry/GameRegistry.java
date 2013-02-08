@@ -1,5 +1,6 @@
 package cpw.mods.fml.common.registry;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -27,6 +28,8 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderEnd;
 import net.minecraft.world.gen.ChunkProviderFlat;
 import net.minecraft.world.gen.ChunkProviderHell;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.Property;
 
 import org.bukkit.craftbukkit.generator.NormalChunkGenerator;
 // MCPC+ end
@@ -64,7 +67,7 @@ public class GameRegistry
     private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
     private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
     private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
-
+    private static Configuration config = new Configuration(new File(Loader.instance().getConfigDir(), "forge.cfg")); // MCPC+
     /**
      * Register a world generator - something that inserts new block types into the world
      *
@@ -72,7 +75,20 @@ public class GameRegistry
      */
     public static void registerWorldGenerator(IWorldGenerator generator)
     {
-        worldGenerators.add(generator);
+        // MCPC+ start - add config options to enable/disable mod world generators
+        config.load();
+        Property modWorldGen = config.get("worldgeneration", Loader.instance().activeModContainer().getModId(), true);
+        if (modWorldGen.value.equals("false"))
+        {
+            FMLLog.info(Loader.instance().activeModContainer().getModId() + " world generator " + generator + " is DISABLED. Skipping registration.");
+        }
+        else 
+        {
+            FMLLog.info(Loader.instance().activeModContainer().getModId() + " registered world generator " + generator);
+            worldGenerators.add(generator);
+        }
+        config.save();
+        // MCPC+ end
     }
 
     /**
