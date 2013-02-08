@@ -15,6 +15,8 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
     // MCPC+ start - moved commands to it's own method to be executed further in server startup + changed to registerVanillaCommand
     public void registerVanillaCommands()
     {
+        // MCPC+ - do not register vanilla commands replaced by Bukkit (TODO: option to choose vanilla or Bukkit?)
+        /*
         this.registerCommand("vanilla.command", new CommandTime());
         this.registerCommand("vanilla.command", new CommandGameMode());
         this.registerCommand("vanilla.command", new CommandDifficulty());
@@ -29,14 +31,18 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
         this.registerCommand("vanilla.command", new CommandServerEmote());
         this.registerCommand("vanilla.command", new CommandShowSeed());
         this.registerCommand("vanilla.command", new CommandHelp());
+        */
         this.registerCommand("vanilla.command", new CommandDebug());
+        /*
         this.registerCommand("vanilla.command", new CommandServerMessage());
         this.registerCommand("vanilla.command", new CommandServerSay());
         this.registerCommand("vanilla.command", new CommandSetSpawnpoint());
         this.registerCommand("vanilla.command", new CommandGameRule());
         this.registerCommand("vanilla.command", new CommandClearInventory());
+        */
         if (MinecraftServer.getServer().isDedicatedServer())
         {
+            /*
             this.registerCommand("vanilla.command", new CommandServerOp());
             this.registerCommand("vanilla.command", new CommandServerDeop());
             this.registerCommand("vanilla.command", new CommandServerStop());
@@ -51,6 +57,7 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
             this.registerCommand("vanilla.command", new CommandServerKick());
             this.registerCommand("vanilla.command", new CommandServerList());
             this.registerCommand("vanilla.command", new CommandServerWhitelist());
+            */
         }
         else
         {
