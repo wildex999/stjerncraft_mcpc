@@ -546,10 +546,10 @@ public abstract class ServerConfigurationManager
      */
     public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
     {
-        return this.respawnPlayer(par1EntityPlayerMP, par2, par3, null);
+        return this.moveToWorld(par1EntityPlayerMP, par2, par3, null);
     }
 
-    public EntityPlayerMP respawnPlayer(EntityPlayerMP entityplayer, int i, boolean flag, Location location)
+    public EntityPlayerMP moveToWorld(EntityPlayerMP entityplayer, int i, boolean flag, Location location)
     {
         // CraftBukkit end
         entityplayer.getServerForPlayer().getEntityTracker().removeAllTrackingPlayers(entityplayer);
@@ -747,7 +747,7 @@ public abstract class ServerConfigurationManager
         exitWorld.func_85176_s().adjustExit(entityplayer, exit, velocity);
         exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = before;
 
-        this.respawnPlayer(entityplayer, exitWorld.dimension, true, exit);
+        this.moveToWorld(entityplayer, exitWorld.dimension, true, exit);
         if (entityplayer.motionX != velocity.getX() || entityplayer.motionY != velocity.getY() || entityplayer.motionZ != velocity.getZ()) {
             entityplayer.getBukkitEntity().setVelocity(velocity);
         }
