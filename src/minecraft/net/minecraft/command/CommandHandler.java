@@ -117,6 +117,18 @@ public class CommandHandler implements ICommandManager
      */
     public ICommand registerCommand(ICommand par1ICommand)
     {
+        // MCPC+ start - register commands with permission nodes, defaulting to class name
+        return registerCommand(par1ICommand, par1ICommand.getClass().getName());
+    }
+
+    public ICommand registerCommand(String permissionGroup, ICommand par1ICommand)
+    {
+        return registerCommand(par1ICommand, permissionGroup + "." + par1ICommand.getCommandName());
+    }
+
+    public ICommand registerCommand(ICommand par1ICommand, String permissionNode)
+    {
+        // MCPC+ end
         List var2 = par1ICommand.getCommandAliases();
         this.commandMap.put(par1ICommand.getCommandName(), par1ICommand);
         this.commandSet.add(par1ICommand);
@@ -125,7 +137,7 @@ public class CommandHandler implements ICommandManager
         ModCustomCommand customCommand = new ModCustomCommand(par1ICommand.getCommandName());
         customCommand.setPermission(par1ICommand.getClass().getName());
         commandMap.register(par1ICommand.getCommandName(), customCommand);
-        FMLCommonHandler.instance().getMinecraftServerInstance().server.getLogger().info("Registered command " + par1ICommand.getCommandName() + " with permission node " + par1ICommand.getClass().getName());
+        FMLCommonHandler.instance().getMinecraftServerInstance().server.getLogger().info("Registered command " + par1ICommand.getCommandName() + " with permission node " + permissionNode);
         // MCPC+ end
         if (var2 != null)
         {
