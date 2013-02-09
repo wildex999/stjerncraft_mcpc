@@ -3,7 +3,7 @@ package net.minecraft.inventory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 // CraftBukkit start
-import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 // CraftBukkit end
 import net.minecraft.entity.player.EntityPlayer;
@@ -178,7 +178,7 @@ public class ContainerBrewingStand extends Container
             return bukkitEntity;
         }
 
-        CraftInventory inventory = new CraftInventory(this.tileBrewingStand);
+        CraftInventoryBrewer inventory = new CraftInventoryBrewer(this.tileBrewingStand);
         bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
         return bukkitEntity;
     }
