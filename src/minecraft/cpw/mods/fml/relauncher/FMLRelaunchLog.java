@@ -19,6 +19,8 @@ import java.util.logging.Logger;
 public class FMLRelaunchLog
 {
 
+    public static boolean useOnlyThisLogger = false;
+
     private static class ConsoleLogWrapper extends Handler
     {
         @Override
@@ -144,10 +146,15 @@ public class FMLRelaunchLog
 
         log.myLog = Logger.getLogger("ForgeModLoader");
 
+        // MCPC+ start - FML and CraftBukkit logging compatibility - add conditional
         Logger stdOut = Logger.getLogger("STDOUT");
-        stdOut.setParent(log.myLog);
         Logger stdErr = Logger.getLogger("STDERR");
-        stdErr.setParent(log.myLog);
+        if (useOnlyThisLogger)
+        {
+            stdOut.setParent(log.myLog);
+            stdErr.setParent(log.myLog);
+        }
+        // MCPC+ end
         log.myLog.setLevel(Level.ALL);
         log.myLog.setUseParentHandlers(false);
         consoleLogThread = new Thread(new ConsoleLogThread());
@@ -172,8 +179,13 @@ public class FMLRelaunchLog
         // Set system out to a log stream
         errCache = System.err;
 
-        System.setOut(new PrintStream(new LoggingOutStream(stdOut), true));
-        System.setErr(new PrintStream(new LoggingOutStream(stdErr), true));
+        // MCPC+ start - conditional
+        if (useOnlyThisLogger)
+        {
+            System.setOut(new PrintStream(new LoggingOutStream(stdOut), true));
+            System.setErr(new PrintStream(new LoggingOutStream(stdErr), true));
+        }
+        // MCPC+ end
 
         configured = true;
     }
