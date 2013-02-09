@@ -68,6 +68,39 @@ public class RelaunchClassLoader extends URLClassLoader
         addTransformerExclusion("javax.");
         addTransformerExclusion("org.objectweb.asm.");
         addTransformerExclusion("com.google.common.");
+
+        // MCPC+ start - exclude dependencies from transformation
+
+        // (Modified) Bukkit API classes
+        addTransformerExclusion("com.avaje."); // org.avaje:ebean
+        addTransformerExclusion("guava10."); // com.google.guava:guava [relocated]
+        addTransformerExclusion("javax."); // javax.persistence:persistence-api
+        addTransformerExclusion("org.apache.commons.lang."); // commons-lang:commons-lang
+        addTransformerExclusion("org.bukkit."); // za.co.mcportcentral:mcpc-api
+        addTransformerExclusion("org.json.simple."); // com.googlecode.json-simple:json-simple
+        addTransformerExclusion("org.yaml.snakeyaml."); // org.yaml:snakeyaml
+
+        // CraftBukkit libraries
+        addTransformerExclusion("org.ibex.nestedvm."); // org.xerial:sqlite-jdbc
+        addTransformerExclusion("org.sqlite."); // org.xerial:sqlite-jdbc
+        addTransformerExclusion("org.fusesource."); // org.fusesource.jansi:jansi
+        addTransformerExclusion("joptsimple."); // net.sf.jopt-simple:jopt-simple
+        addTransformerExclusion("org.gjt.mm.mysql."); // mysql:mysql-connector-java
+        addTransformerExclusion("com.mysql."); // mysql:mysql-connector-java
+
+        // Spigot libraries
+        addTransformerExclusion("gnu.trove."); // net.sf.trove4j:trove4j
+
+        // special libraries
+        addTransformerExclusion("net.md-5.specialsource."); // net.md-5:SpecialSource
+
+        // Minecraft / Forge
+        addTransformerExclusion("org.bouncycastle."); // org.bouncycastle:bcprov-jdk15on
+        addTransformerExclusion("argo."); // net.sourceforge.argo:argo
+        addTransformerExclusion("paulscode.sound."); // paulscode:sound
+        addTransformerExclusion("net.java."); // net.java.jutils and jinput
+
+        // MCPC+ end
     }
 
     public void registerTransformer(String transformerClassName)
