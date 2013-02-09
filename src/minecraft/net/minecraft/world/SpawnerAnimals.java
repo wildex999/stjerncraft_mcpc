@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -51,6 +52,26 @@ public final class SpawnerAnimals
         return new ChunkPosition(var4, var6, var5);
     }
 
+    // Spigot start - get entity count only from chunks being processed in eligibleChunksForSpawning
+    public static final int getEntityCount(WorldServer server, Class oClass) {
+        int i = 0;
+        for (Long coord : eligibleChunksForSpawning.keySet()) {
+            int x = LongHash.msw(coord);
+            int z = LongHash.lsw(coord);
+            if (!server.theChunkProviderServer.chunksToUnload.contains(x,z) && server.chunkExists(x, z)) {
+                for (List<Entity> entitySlice : server.getChunkFromChunkCoords(x, z).entityLists) {
+                    for (Entity entity : entitySlice) {
+                        if (oClass.isAssignableFrom(entity.getClass())) {
+                            ++i;
+                        }
+                    }
+                }
+            }
+        }
+        return i;
+    }
+    // Spigot end
+
     /**
      * adds all chunks within the spawn radius of the players to eligibleChunksForSpawning. pars: the world,
      * hostileCreatures, passiveCreatures. returns number of eligible chunks.
@@ -68,12 +89,12 @@ public final class SpawnerAnimals
             int var7;
 
             // Spigot start - limit radius to spawn distance (chunks aren't loaded)
-            if (spawnRadius == 0)
-            {
-                spawnRadius = (byte) par0WorldServer.getServer().getViewDistance();
-            
-                if (spawnRadius > 8)
-                {
+            if (spawnRadius == 0) {
+                spawnRadius = (byte) par0WorldServer.getWorld().mobSpawnRange;
+                if (spawnRadius > (byte) par0WorldServer.getServer().getViewDistance()) {
+                    spawnRadius = (byte) par0WorldServer.getServer().getViewDistance();
+                }
+                if (spawnRadius > 8) {
                     spawnRadius = 8;
                 }
             }
@@ -146,7 +167,7 @@ public final class SpawnerAnimals
                 int mobcnt = 0;
                 // CraftBukkit end
 
-                if ((!var34.getPeacefulCreature() || par2) && (var34.getPeacefulCreature() || par1) && (!var34.getAnimal() || par3) && (mobcnt = par0WorldServer.countEntities(var34.getCreatureClass())) <= limit * eligibleChunksForSpawning.size() / 256)   // CraftBukkit - use per-world limits
+                if ((!var34.getPeacefulCreature() || par2) && (var34.getPeacefulCreature() || par1) && (!var34.getAnimal() || par3) && (mobcnt = getEntityCount(par0WorldServer, var34.getCreatureClass())) <= limit * eligibleChunksForSpawning.size() / 256)   // CraftBukkit - use per-world limits
                 {
                     Iterator var35 = eligibleChunksForSpawning.keySet().iterator();
                     int var37 = (limit * eligibleChunksForSpawning.size() / 256) - mobcnt + 1; // CraftBukkit - up to 1 more than limit
