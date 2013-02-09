@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 
@@ -363,4 +364,10 @@ public class TileEntity
     {
         return true;
     }
+
+    /**
+     * Default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
+     */
+    @SideOnly(Side.CLIENT)
+    public static final AxisAlignedBB INFINITE_EXTENT_AABB = AxisAlignedBB.getBoundingBox(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 }
