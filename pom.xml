@@ -13,7 +13,8 @@
     <minecraft.version>1.4.7</minecraft.version>
     <minecraft_version>1_4_R1</minecraft_version>
     <mcp.version>726a</mcp.version>
-    <forge.version>1.4.7-6.6.0.518</forge.version>
+    <forge.build>518</forge.build>
+    <forge.version>1.4.7-6.6.0.${forge.build}</forge.version>
     <buildNumber>0</buildNumber>
 </properties>
 <repositories>
@@ -319,7 +320,7 @@
                         <Implementation-Title>MCPC Plus</Implementation-Title>
                         <Implementation-Version>${describe}</Implementation-Version>
                         <Implementation-Vendor>MCPC</Implementation-Vendor>
-                        <Forge-Version>6.6.0.518</Forge-Version>
+                        <Forge-Version>${forge.version}</Forge-Version>
                         <Specification-Title>Bukkit</Specification-Title>
                         <Specification-Version>${project.version}</Specification-Version>
                         <Specification-Vendor>Bukkit Team</Specification-Vendor>
@@ -403,14 +404,14 @@
                             <Implementation-Title>MCPC Plus</Implementation-Title>
                             <Implementation-Version>${describe}</Implementation-Version>
                             <Implementation-Vendor>MCPC</Implementation-Vendor>
-                            <Forge-Version>6.6.0.518</Forge-Version>
+                            <Forge-Version>${forge.version}</Forge-Version>
                             <Specification-Title>Bukkit</Specification-Title>
                             <Specification-Version>${project.version}</Specification-Version>
                             <Specification-Vendor>Bukkit Team</Specification-Vendor>
                         </manifestEntries>
                     </transformer>
                 </transformers>
-                <finalName>mcpc-plus-${project.version}-${buildNumber}</finalName>
+                <finalName>mcpc-plus-${project.version}-f${forge.build}-${buildNumber}</finalName>
             </configuration>
         </plugin>
     </plugins>
