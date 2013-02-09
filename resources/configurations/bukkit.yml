@@ -36,6 +36,7 @@ settings:
        - /skill
 mcpc:
     connection-logging: false
+    infinite-water-source: true
     fake-players:
       com/eloraam/redpower/machine/EntityPlayerFake:
         username: '[RedPower]'

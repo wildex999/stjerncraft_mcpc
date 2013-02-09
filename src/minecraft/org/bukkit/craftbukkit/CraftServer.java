@@ -564,6 +564,10 @@ public final class CraftServer implements Server {
     public boolean getConnectionLoggingEnabled() {
         return this.configuration.getBoolean("mcpc.connection-logging", false);
     }
+    
+    public boolean getInfiniteWaterSource() {
+        return this.configuration.getBoolean("mcpc.infinite-water-source", true);
+    }
     // MCPC+ end
 
     public void reload() {
