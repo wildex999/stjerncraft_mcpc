@@ -387,14 +387,15 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         net.minecraft.world.WorldServer/*was:WorldServer*/ fromWorld = ((CraftWorld) from.getWorld()).getHandle();
         net.minecraft.world.WorldServer/*was:WorldServer*/ toWorld = ((CraftWorld) to.getWorld()).getHandle();
 
+        // Close any foreign inventory
+        if (getHandle().openContainer/*was:activeContainer*/ != getHandle().inventoryContainer/*was:defaultContainer*/){
+            getHandle().closeScreen/*was:closeInventory*/();
+        }
+
         // Check if the fromWorld and toWorld are the same.
         if (fromWorld == toWorld) {
             entity.playerNetServerHandler/*was:playerConnection*/.teleport(to);
         } else {
-            // Close any foreign inventory
-            if (getHandle().openContainer/*was:activeContainer*/ != getHandle().inventoryContainer/*was:defaultContainer*/){
-                getHandle().closeScreen/*was:closeInventory*/();
-            }
             // MCPC+ start - set this flag only if a plugin, such as MultiVerse, initiated the teleport
             if (cause == cause.PLUGIN)
                 server.getHandle().getServerInstance().getConfigurationManager().bukkitPluginTeleport = true;
