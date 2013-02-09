@@ -390,7 +390,6 @@
 /src/minecraft/net/minecraft/item/ItemSword.java
 /src/minecraft/net/minecraft/item/ItemTool.java
 /src/minecraft/net/minecraft/item/ItemWritableBook.java
-/src/minecraft/net/minecraft/item/crafting/RecipeSorter.java
 /src/minecraft/net/minecraft/item/crafting/RecipesArmor.java
 /src/minecraft/net/minecraft/item/crafting/RecipesCrafting.java
 /src/minecraft/net/minecraft/item/crafting/RecipesDyes.java
