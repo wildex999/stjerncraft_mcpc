@@ -938,7 +938,7 @@ public final class CraftServer implements Server {
             }
         }
         toAdd.addToCraftingManager();
-        net.minecraft.item.crafting.CraftingManager/*was:CraftingManager*/.getInstance/*was:getInstance*/().sort();
+        //net.minecraft.item.crafting.CraftingManager/*was:CraftingManager*/.getInstance/*was:getInstance*/().sort(); // MCPC+ - mod recipes not necessarily sortable
         return true;
     }
 
