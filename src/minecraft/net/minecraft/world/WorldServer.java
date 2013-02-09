@@ -128,7 +128,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         // CraftBukkit end
         this.mcServer = minecraftserver;
         this.theEntityTracker = new EntityTracker(this);
-        this.thePlayerManager = new PlayerManager(this, minecraftserver.getConfigurationManager().getViewDistance());
+        this.thePlayerManager = new PlayerManager(this, getWorld().viewDistance); // Spigot
 
         if (this.entityIdMap == null)
         {
