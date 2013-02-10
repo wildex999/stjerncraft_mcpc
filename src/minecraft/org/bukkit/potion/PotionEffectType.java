@@ -174,8 +174,8 @@ public abstract class PotionEffectType {
         return "PotionEffectType[" + id + ", " + getName() + "]";
     }
 
-    // MCPC - change byId size to 32 to match MobEffectList
-    private static final PotionEffectType[] byId = new PotionEffectType[32];
+    // MCPC - change byId size to 128 to make room for custom potions
+    private static final PotionEffectType[] byId = new PotionEffectType[128];
     private static final Map<String, PotionEffectType> byName = new HashMap<String, PotionEffectType>();
     // will break on updates.
     private static boolean acceptingNew = true;
