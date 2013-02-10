@@ -8,7 +8,7 @@ public final class ExceptionReporter {
         for (String message : messages) {
             Bukkit.getLogger().severe(message);
         }
-        Bukkit.getLogger().severe("Spigot recommends you report this to md_5");
+        Bukkit.getLogger().severe("Spigot recommends you report this to http://www.mcportcentral.co.za/");
         Bukkit.getLogger().severe("");
         Bukkit.getLogger().severe("Spigot version: " + Bukkit.getBukkitVersion());
         Bukkit.getLogger().severe("Exception Trace Begins:");

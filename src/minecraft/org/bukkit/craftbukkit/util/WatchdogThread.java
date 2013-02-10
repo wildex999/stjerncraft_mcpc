@@ -54,7 +54,7 @@ public class WatchdogThread extends Thread {
             if (System.currentTimeMillis() > (lastTick.get() + timeoutTime)) {
                 Logger log = ((CraftServer) Bukkit.getServer()).getLogger();
                 log.log(Level.SEVERE, "The server has stopped responding!");
-                log.log(Level.SEVERE, "Please report this to md_5!");
+                log.log(Level.SEVERE, "Please report this to http://www.mcportcentral.co.za/");
                 log.log(Level.SEVERE, "Spigot version: " + Bukkit.getBukkitVersion());
                 log.log(Level.SEVERE, "Begin Exception Trace For All Threads:");
                 Map<Thread, StackTraceElement[]> traces = Thread.getAllStackTraces();

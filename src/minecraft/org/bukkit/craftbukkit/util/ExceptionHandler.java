@@ -11,7 +11,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     public void uncaughtException(Thread t, Throwable e) {
         Logger log = ((CraftServer) Bukkit.getServer()).getLogger();
         log.log(Level.SEVERE, "The server has crashed!");
-        log.log(Level.SEVERE, "Please report this to md_5!");
+        log.log(Level.SEVERE, "Please report this to http://www.mcportcentral.co.za/");
         log.log(Level.SEVERE, "Begin Exception Trace:");
         log.log(Level.SEVERE, "");
         StackTraceElement[] stack = e.getStackTrace();
