@@ -189,7 +189,7 @@ public class EntityRegistry
         id = instance().validateAndClaimId(id);
         EntityList.addMapping(entityClass, entityName, id);
         // MCPC+ start
-        EnumHelper.addBukkitEntityType(entityName, null /* TODO: Bukkit class wrappers for mod mobs */, id, false);
+        EnumHelper.addBukkitEntityType(entityName, org.bukkit.entity.Entity.class, id, false);
         // MCPC+ end
     }
 
@@ -244,7 +244,7 @@ public class EntityRegistry
         instance().validateAndClaimId(id);
         EntityList.addMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
         // MCPC+ start
-        EnumHelper.addBukkitEntityType(entityName, null /* TODO: Bukkit class wrappers for mod mobs */, id, false);
+        EnumHelper.addBukkitEntityType(entityName, org.bukkit.entity.Entity.class, id, false);
         // MCPC+ end
     }
 
