@@ -1448,6 +1448,10 @@ public abstract class EntityLiving extends Entity
     }
     // CraftBukkit end
 
+    // MCPC+ start - vanilla compatibility
+    protected void dropRareDrop(int par1) {}
+    // MCPC+ end
+
     /**
      * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
      * par2 - Level of Looting used to kill this mob.

@@ -281,7 +281,7 @@ public class NetServerHandler extends NetHandler
             }
 
             // CraftBukkit end
-            this.mcServer.getConfigurationManager().playerLoggedOut(this.playerEntity);
+            this.mcServer.getConfigurationManager().disconnect(this.playerEntity);
             this.connectionClosed = true;
         }
     }
@@ -980,7 +980,7 @@ public class NetServerHandler extends NetHandler
 
         logger.info(this.playerEntity.username + " lost connection: " + par1Str);
         // CraftBukkit start - we need to handle custom quit messages
-        String quitMessage = this.mcServer.getConfigurationManager().playerLoggedOut(this.playerEntity);
+        String quitMessage = this.mcServer.getConfigurationManager().disconnect(this.playerEntity);
 
         if ((quitMessage != null) && (quitMessage.length() > 0))
         {

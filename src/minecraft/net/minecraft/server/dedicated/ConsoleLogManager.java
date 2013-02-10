@@ -22,6 +22,13 @@ public class ConsoleLogManager
     public static Logger loggerLogManager = Logger.getLogger("Minecraft");
     public static Logger global = Logger.getLogger(""); // CraftBukkit
 
+    // MCPC+ start - vanilla incompatibility
+    public static void init()
+    {
+        init(MinecraftServer.getServer());
+    }
+    // MCPC+ end
+
     // CraftBukkit - change of method signature!
     public static void init(MinecraftServer server)
     {

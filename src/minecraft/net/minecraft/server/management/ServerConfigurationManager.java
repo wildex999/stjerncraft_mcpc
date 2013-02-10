@@ -312,7 +312,7 @@ public abstract class ServerConfigurationManager
     /**
      * Called when a player disconnects from the game. Writes player data to disk and removes them from the world.
      */
-    public String playerLoggedOut(EntityPlayerMP entityplayer)   // CraftBukkit - return string
+    public String disconnect(EntityPlayerMP entityplayer)   // CraftBukkit - return string
     {
         if (entityplayer.playerNetServerHandler.connectionClosed)
         {
@@ -347,6 +347,13 @@ public abstract class ServerConfigurationManager
         return playerQuitEvent.getQuitMessage();
         // CraftBukkit end
     }
+
+    // MCPC+ start - vanilla compatibility
+    public void playerLoggedOut(EntityPlayerMP entityPlayerMP)
+    {
+        disconnect(entityPlayerMP);
+    }
+    // MCPC+ end
 
     /**
      * checks ban-lists, then white-lists, then space for the server. Returns null on success, or an error message
@@ -497,6 +504,13 @@ public abstract class ServerConfigurationManager
 
         return new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), par1Str, (ItemInWorldManager)var6);
     }
+
+    // MCPC+ start - vanilla compatibility
+    public EntityPlayerMP processLogin(String player)
+    {
+        return processLogin(createPlayerForUser(player));
+    }
+    // MCPC+ end
 
     public EntityPlayerMP processLogin(EntityPlayerMP player)   // CraftBukkit - String -> EntityPlayer
     {

@@ -304,6 +304,14 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
         return null;
     }
 
+    // MCPC+ start - vanilla compatibility
+    protected void dropRareDrop(int par1)
+    {
+        ItemStack itemStack = this.l(par1);
+        this.dropItem(itemStack.itemID, itemStack.stackSize);
+    }
+    // MCPC+ end
+
     protected void func_82164_bB()
     {
         super.getHeldItem();

@@ -240,4 +240,11 @@ public class WorldGenHugeTrees extends WorldGenerator implements net.minecraft.b
             }
         }
     }
+
+    // MCPC+ start - vanilla compatibility
+    private void growLeaves(World par1World, int par2, int par3, int par4, int par5, Random par6Random)
+    {
+        a((BlockChangeDelegate) par1World, par2, par3, par4, par5, par6Random);
+    }
+    // MCPC+ end
 }

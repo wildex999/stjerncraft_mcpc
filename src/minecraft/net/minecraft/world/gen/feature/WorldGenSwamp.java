@@ -202,4 +202,11 @@ public class WorldGenSwamp extends WorldGenerator implements net.minecraft.block
             --i1;
         }
     }
+
+    // MCPC+ start - vanilla compatibility
+    private void generateVines(World par1World, int par2, int par3, int par4, int par5)
+    {
+        generateVines((BlockChangeDelegate) par1World, par2, par3, par4, par5);
+    }
+    // MCPC+ end
 }

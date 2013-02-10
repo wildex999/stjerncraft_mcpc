@@ -47,6 +47,14 @@ public class DedicatedServer extends MinecraftServer implements IServer
     private NetworkListenThread networkThread;
     private boolean guiIsEnabled = false;
 
+    // MCPC+ start - vanilla compatibility
+    public DedicatedServer(File par1File)
+    {
+        super(par1File);
+        new DedicatedServerSleepThread(this);
+    }
+    // MCPC+ end
+
     // CraftBukkit start - Signature changed
     public DedicatedServer(joptsimple.OptionSet options)
     {

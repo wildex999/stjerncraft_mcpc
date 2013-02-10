@@ -217,6 +217,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     public static double currentTPS = 0;
     // Spigot end
 
+    // MCPC+ start - vanilla compatibility
     public MinecraftServer(File par1File)
     {
         mcServer = this;
@@ -226,6 +227,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         this.registerDispenseBehaviors();
         primaryThread = null;
     }
+    // MCPC+ end
 
     public MinecraftServer(OptionSet options)   // CraftBukkit - signature file -> OptionSet
     {

@@ -276,7 +276,7 @@ public class EntityZombie extends EntityMob
     }
 
     // CraftBukkit start - return rare dropped item instead of dropping it
-    protected ItemStack dropRareDrop(int i)
+    protected ItemStack l(int i)
     {
         switch (this.rand.nextInt(3))
         {
@@ -291,6 +291,14 @@ public class EntityZombie extends EntityMob
         }
     }
     // CraftBukkit end
+
+    // MCPC+ start - vanilla compatibility
+    protected void dropRareDrop(int par1)
+    {
+        ItemStack itemStack = this.l(par1);
+        this.dropItem(itemStack.itemID, itemStack.stackSize);
+    }
+    // MCPC+ end
 
     protected void func_82164_bB()
     {

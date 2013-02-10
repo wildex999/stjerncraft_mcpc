@@ -49,7 +49,7 @@ public abstract class WorldGenerator
         }
     }
 
-    // MCPC - vanilla compatibility
+    // MCPC+ start - vanilla compatibility
     /**
      * Sets the block without metadata in the world, notifying neighbors if enabled.
      */
@@ -72,4 +72,5 @@ public abstract class WorldGenerator
             par1World.setBlockAndMetadata(par2, par3, par4, par5, par6);
         }
     }
+    // MCPC+ end
 }
