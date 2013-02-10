@@ -71,6 +71,7 @@ world-settings:
         sugar-growth-modifier: 100
         tree-growth-modifier: 100
         mushroom-growth-modifier: 100
+        verbose: false
     world:
         growth-chunks-per-tick: 1000
     world_nether:

@@ -120,6 +120,7 @@ public class CraftWorld implements World {
 
         obfuscated = !world.getServer().orebfuscatorDisabledWorlds.contains(name);
 
+        if (!configuration.getBoolean("world-settings.default.verbose", false)) return; // MCPC+
         server.getLogger().info("-------------- Spigot ----------------");
         server.getLogger().info("-------- World Settings For [" + name + "] --------");
         server.getLogger().info("Growth Per Chunk: " + growthPerTick);
