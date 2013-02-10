@@ -28,6 +28,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
+import org.bukkit.craftbukkit.generator.CustomChunkGenerator;
 import org.bukkit.craftbukkit.generator.NormalChunkGenerator;
 // MCPC+ end
 
@@ -108,9 +109,16 @@ public class GameRegistry
 
         for (IWorldGenerator generator : worldGenerators)
         {
-            // MCPC+ start - grab the forge compatible IChunkProvider to pass with callback
-            NormalChunkGenerator bukkitGenerator = (NormalChunkGenerator)chunkGenerator;
-            generator.generate(fmlRandom, chunkX, chunkZ, world, bukkitGenerator.getForgeChunkProvider(), chunkProvider);
+            // MCPC+ start - use the forge compatible IChunkProvider to pass with callback
+            if (chunkGenerator instanceof CustomChunkGenerator)
+            {
+                generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
+            }
+            else
+            {
+                NormalChunkGenerator bukkitGenerator = (NormalChunkGenerator)chunkGenerator;
+                generator.generate(fmlRandom, chunkX, chunkZ, world, bukkitGenerator.getForgeChunkProvider(), chunkProvider);
+            }
             // MCPC+ end
         }
     }
