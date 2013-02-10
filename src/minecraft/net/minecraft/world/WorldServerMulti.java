@@ -16,7 +16,7 @@ public class WorldServerMulti extends WorldServer
         // this.worldData = new SecondaryWorldData(worldserver.getWorldData()); // CraftBukkit - use unique worlddata
     }
 
-    // MCPC+ start - vanilla incompatibility
+    // MCPC+ start - vanilla compatibility
     public WorldServerMulti(MinecraftServer par1MinecraftServer, ISaveHandler par2ISaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, WorldServer par6WorldServer, Profiler par7Profiler)
     {
         super(par1MinecraftServer, par2ISaveHandler, par3Str, par4, par5WorldSettings, par7Profiler);
