@@ -203,6 +203,21 @@ public final class CraftServer implements Server {
         updater.check(serverVersion);
 
         // Spigot start
+        Spigot.initialize(this, commandMap, configuration);
+
+        try {
+            configuration.save(getConfigFile());
+        } catch (IOException e) {
+        }
+        try {
+            new org.bukkit.craftbukkit.util.Metrics().start();
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Could not start metrics", e);
+        }
+        // Spigot end
+
+
+        // Spigot start
         commandMap.register("bukkit", new org.bukkit.craftbukkit.command.RestartCommand("restart"));
         commandMap.register("bukkit", new org.bukkit.craftbukkit.command.TicksPerSecondCommand("tps"));
 
@@ -576,6 +591,7 @@ public final class CraftServer implements Server {
 
         ((net.minecraft.server.dedicated.DedicatedServer/*was:DedicatedServer*/) console).settings/*was:propertyManager*/ = config;
 
+        ((SimplePluginManager) pluginManager).useTimings(configuration.getBoolean("settings.plugin-profiling")); // Spigot
         boolean animals = config.getBooleanProperty/*was:getBoolean*/("spawn-animals", console.getCanSpawnAnimals/*was:getSpawnAnimals*/());
         boolean monsters = config.getBooleanProperty/*was:getBoolean*/("spawn-monsters", console.worlds.get(0).difficultySetting/*was:difficulty*/ > 0);
         int difficulty = config.getIntProperty/*was:getInt*/("difficulty", console.worlds.get(0).difficultySetting/*was:difficulty*/);
@@ -641,6 +657,7 @@ public final class CraftServer implements Server {
                 "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
             ));
         }
+        Spigot.initialize(this, commandMap, configuration); // Spigot
         loadPlugins();
         enablePlugins(PluginLoadOrder.STARTUP);
         enablePlugins(PluginLoadOrder.POSTWORLD);
