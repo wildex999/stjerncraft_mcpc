@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -48,6 +49,8 @@ public class Packet51MapChunk extends Packet
     private static byte[] temp = new byte[196864];
     private static final byte[] unloadSequence = new byte[] {0x78, (byte) 0x9C, 0x63, 0x64, 0x1C, (byte) 0xD9, 0x00, 0x00, (byte) 0x81, (byte) 0x80, 0x01, 0x01}; // Spigot
 
+    private Semaphore deflateGate;
+
     public Packet51MapChunk()
     {
         this.isChunkDataPacket = true;
@@ -73,17 +76,22 @@ public class Packet51MapChunk extends Packet
         this.zCh = par1Chunk.zPosition;
         this.includeInitialize = par2;
         Packet51MapChunkData var4 = getMapChunkData(par1Chunk, par2, par3);
-        Deflater var5 = new Deflater(-1);
         this.yChMax = var4.chunkHasAddSectionFlag;
         this.yChMin = var4.chunkExistFlag;
+        this.compressedChunkData = var4.compressedData;
+        this.deflateGate = new Semaphore(1);
+    }
 
+    private void deflate()
+    {
+        Deflater var5 = new Deflater(-1);
         try
         {
-            this.compressedChunkData = var4.compressedData;
-            var5.setInput(var4.compressedData, 0, var4.compressedData.length);
+            var5.setInput(compressedChunkData, 0, compressedChunkData.length);
             var5.finish();
-            this.chunkData = new byte[var4.compressedData.length];
-            this.tempLength = var5.deflate(this.chunkData);
+            byte[] deflated = new byte[compressedChunkData.length];
+            this.tempLength = var5.deflate(deflated);
+            this.chunkData = deflated;
         }
         finally
         {
@@ -91,7 +99,10 @@ public class Packet51MapChunk extends Packet
         }
     }
 
-    public void readPacketData(DataInputStream par1DataInputStream) throws IOException   // CraftBukkit - throws IOException
+    /**
+     * Abstract. Reads the raw packet data from the data stream.
+     */
+    public void readPacketData(DataInputStream par1DataInputStream) throws IOException
     {
         this.xCh = par1DataInputStream.readInt();
         this.zCh = par1DataInputStream.readInt();
@@ -108,13 +119,16 @@ public class Packet51MapChunk extends Packet
         par1DataInputStream.readFully(temp, 0, this.tempLength);
         int var2 = 0;
         int var3;
+        int msb = 0; //BugFix: MC does not read the MSB array from the packet properly, causing issues for servers that use blocks > 256
 
         for (var3 = 0; var3 < 16; ++var3)
         {
             var2 += this.yChMin >> var3 & 1;
+            msb  += this.yChMax >> var3 & 1;
         }
 
         var3 = 12288 * var2;
+        var3 += 2048 * msb;
 
         if (this.includeInitialize)
         {
@@ -139,13 +153,26 @@ public class Packet51MapChunk extends Packet
         }
     }
 
-    public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException   // CraftBukkit - throws IOException
+    /**
+     * Abstract. Writes the raw packet data to the data stream.
+     */
+    public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
     {
+        if (chunkData == null)
+        {
+            deflateGate.acquireUninterruptibly();
+            if (chunkData == null)
+            {
+                deflate();
+            }
+            deflateGate.release();
+        }
+
         par1DataOutputStream.writeInt(this.xCh);
         par1DataOutputStream.writeInt(this.zCh);
         par1DataOutputStream.writeBoolean(this.includeInitialize);
-        par1DataOutputStream.writeShort((short)(this.yChMin & '\uffff'));
-        par1DataOutputStream.writeShort((short)(this.yChMax & '\uffff'));
+        par1DataOutputStream.writeShort((short)(this.yChMin & 65535));
+        par1DataOutputStream.writeShort((short)(this.yChMax & 65535));
         par1DataOutputStream.writeInt(this.tempLength);
         par1DataOutputStream.write(this.chunkData, 0, this.tempLength);
     }
