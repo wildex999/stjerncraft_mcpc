@@ -59,6 +59,7 @@ public class DimensionManager
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
     private static Set<Integer> leakedWorlds = Sets.newHashSet();
     private static ArrayList<Integer> mvDims = new ArrayList<Integer>(); // MCPC+ used to keep track of MV dimensions
+    private static final String FILE_SEPARATOR = System.getProperty("file.separator");
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
@@ -295,7 +296,7 @@ public class DimensionManager
             env = DimensionManager.registerBukkitEnvironment(DimensionManager.getProviderType(mystDimension), (worldType).toUpperCase());
         else env = Environment.getEnvironment(DimensionManager.getProviderType(mystDimension));
         String dim = "age" + mystDimension;
-        String name = par1Str + "\\" + dim;
+        String name = par1Str + FILE_SEPARATOR + dim;
         File newWorld = new File(new File(par1Str), dim);
 
         org.bukkit.generator.ChunkGenerator gen = mcServer.server.getGenerator(name);
