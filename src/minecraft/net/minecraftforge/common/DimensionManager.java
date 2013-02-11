@@ -295,7 +295,7 @@ public class DimensionManager
             env = DimensionManager.registerBukkitEnvironment(DimensionManager.getProviderType(mystDimension), (worldType).toUpperCase());
         else env = Environment.getEnvironment(DimensionManager.getProviderType(mystDimension));
         String dim = "age" + mystDimension;
-        String name = par1Str + "/" + dim;
+        String name = par1Str + "\\" + dim;
         File newWorld = new File(new File(par1Str), dim);
 
         org.bukkit.generator.ChunkGenerator gen = mcServer.server.getGenerator(name);
