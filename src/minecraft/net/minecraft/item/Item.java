@@ -340,7 +340,7 @@ public class Item
      */
     public int getMetadata(int par1)
     {
-        return par1; // MCPC+ - change from 0 to par1 -- allow all metadata to be placed for mod compatibility
+        return 0;
     }
 
     public boolean getHasSubtypes()

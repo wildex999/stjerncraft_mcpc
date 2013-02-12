@@ -98,14 +98,45 @@ public class ItemBlock extends Item
             int var14 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
             // CraftBukkit start - redirect to common function handler
             /*
+            if (par3World.getBlockId(par4, par5, par6) == this.blockID)
+            {
+                Block.blocksList[this.blockID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer);
+                Block.blocksList[this.blockID].onPostBlockPlaced(par3World, par4, par5, par6, var14);
+            }
+
+            par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
+            --par1ItemStack.stackSize;
+            */
+            // MCPC+ start - merge CraftBukkit processBlockPlace() and Forge placeBlockAt()
+            //return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, var14, clickedX, clickedY, clickedZ);
+            //// CraftBukkit end
+
+            // send place event - copied from beginning of processBlockPlace()
+            org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(par3World, par4, par5, par6);
+            par3World.editingBlocks = true;
+            par3World.callingPlaceEvent = true;
+            // set block, then call the event (see also World#setBlockIDWithMetadata)
+            par3World.setBlockAndMetadata(par4, par5, par6, this.blockID, var14);
+            org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockstate, clickedX, clickedY, clickedZ);
+
+            if (event.isCancelled() || !event.canBuild())
+            {
+                // revert the block
+                blockstate.update(true);
+                par3World.editingBlocks = false;
+                par3World.callingPlaceEvent = false;
+                return false;
+            }
+
+            // we MUST call placeBlockAt() since Forge mods can override it
             if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14))
             {
                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
                 --par1ItemStack.stackSize;
             }
-            */
-            return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, var14, clickedX, clickedY, clickedZ);
-            // CraftBukkit end
+
+            return true;
+            // MCPC+ end
         }
         else
         {
@@ -113,7 +144,7 @@ public class ItemBlock extends Item
         }
     }
 
-    // CraftBukkit start - add method to process block placement
+    // CraftBukkit start - add method to process block placement // MCPC+ note: see above - this method is now ONLY used for NMS-patched items!
     static boolean processBlockPlace(final World world, final EntityPlayer entityhuman, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data, final int clickedX, final int clickedY, final int clickedZ)
     {
         org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
@@ -250,19 +281,21 @@ public class ItemBlock extends Item
      */
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
     {
-        org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
-
-        world.editingBlocks = true;
-        world.callingPlaceEvent = true;
-        world.setBlockAndMetadata(x, y, z, this.blockID, metadata);
-
-        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, player, blockstate, x, y, z);
-        if (event.isCancelled() || !event.canBuild()) {
-            blockstate.update(true);
-            world.editingBlocks = false;
-            world.callingPlaceEvent = false;
+        // MCPC+ start - replace Forge method - copy second half of CB processBlockPlace()
+        /*
+        if (!world.setBlockAndMetadataWithNotify(x, y, z, this.blockID, metadata))
+        {
             return false;
         }
+
+        if (world.getBlockId(x, y, z) == this.blockID)
+        {
+            Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player);
+            Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
+        }
+
+        return true;
+        */
 
         world.editingBlocks = false;
         world.callingPlaceEvent = false;
@@ -271,7 +304,9 @@ public class ItemBlock extends Item
         int newData = world.getBlockMetadata(x, y, z);
 
         Block block = Block.blocksList[newId];
-        if (block != null && !(block instanceof BlockContainer)) {
+
+        if (block != null && !(block instanceof BlockContainer))   // Containers get placed automatically
+        {
             block.onBlockAdded(world, x, y, z);
         }
 
@@ -282,8 +317,19 @@ public class ItemBlock extends Item
         {
             block.onBlockPlacedBy(world, x, y, z, player);
             block.onPostBlockPlaced(world, x, y, z, newData);
+            // MCPC+ - moved to end of onItemUse()
+        }
+        /*
+            world.playSoundEffect((double)((float) x + 0.5F), (double)((float) y + 0.5F), (double)((float) z + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
         }
 
+        if (stack != null)
+        {
+            --stack.stackSize;
+        }*/
+
         return true;
+
+        // MCPC+ end
     }
 }
