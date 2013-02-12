@@ -718,8 +718,19 @@ public abstract class ServerConfigurationManager
             if ((cause == TeleportCause.END_PORTAL) && (i == 0))
             {
                 // THE_END -> NORMAL; use bed if available, otherwise default spawn
-                exit = ((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayermp.getBukkitEntity()).getBedSpawnLocation();
+                ChunkCoordinates chunkcoordinates = entityplayermp.getBedLocation();
+                CraftWorld spawnWorld = (CraftWorld) this.mcServer.server.getWorld(entityplayermp.spawnWorld);
 
+                if (spawnWorld != null && chunkcoordinates != null)
+                {
+                    ChunkCoordinates chunkcoordinates1 = EntityPlayer.verifyRespawnCoordinates(spawnWorld.getHandle(), chunkcoordinates, entityplayermp.isSpawnForced());
+
+                    if (chunkcoordinates1 != null)
+                    {
+                        exit = new Location(spawnWorld, chunkcoordinates1.posX + 0.5, chunkcoordinates1.posY, chunkcoordinates1.posZ + 0.5);
+                    }
+                }
+                
                 if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().dimension != 0)
                 {
                     exit = exitWorld.getWorld().getSpawnLocation();
