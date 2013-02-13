@@ -696,7 +696,6 @@ public class Chunk
 
         if (var8 == par4 && var9 == par5)
         {
-            if (this.worldObj.callingPlaceEvent) return true; // MCPC+ - always succeed if a mod (RedPower) is calling us in placeBlockAt() during a place event (block already set)
             return false;
         }
         else

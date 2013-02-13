@@ -111,24 +111,8 @@ public class ItemBlock extends Item
             //return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, var14, clickedX, clickedY, clickedZ);
             //// CraftBukkit end
 
-            // send place event - copied from beginning of processBlockPlace()
-            org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(par3World, par4, par5, par6);
-            par3World.editingBlocks = true;
-            par3World.callingPlaceEvent = true;
-            // set block, then call the event (see also World#setBlockIDWithMetadata)
-            par3World.setBlockAndMetadata(par4, par5, par6, this.blockID, var14);
-            org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockstate, clickedX, clickedY, clickedZ);
-
-            if (event.isCancelled() || !event.canBuild())
-            {
-                // revert the block
-                blockstate.update(true);
-                par3World.editingBlocks = false;
-                par3World.callingPlaceEvent = false;
-                return false;
-            }
-
             // we MUST call placeBlockAt() since Forge mods can override it
+            // TODO: fix mods overriding placeBlockAt() not sending Bukkit place events
             if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14))
             {
                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
@@ -271,6 +255,7 @@ public class ItemBlock extends Item
         Block.blocksList[this.blockID].getSubBlocks(par1, par2CreativeTabs, par3List);
     }
 
+    // Forge start
     /**
      * Called to actually place the block, after the location is determined
      * and all permission checks have been made.
@@ -281,25 +266,26 @@ public class ItemBlock extends Item
      */
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
     {
-        // MCPC+ start - replace Forge method - copy second half of CB processBlockPlace()
-        /*
-        if (!world.setBlockAndMetadataWithNotify(x, y, z, this.blockID, metadata))
+        // MCPC+ start - merge Forge method with CB processBlockPlace()
+        // send event
+        org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
+        world.editingBlocks = true;
+        world.callingPlaceEvent = true;
+        // set block, then call the event (see also World#setBlockIDWithMetadata)
+        world.setBlockAndMetadata(x, y, z, this.blockID, metadata);
+        int clickedX = (int)(hitX + 0.5), clickedY = (int)(hitY + 0.5), clickedZ = (int)(hitZ + 0.5);
+        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, player, blockstate, clickedX, clickedY, clickedZ);
+
+        if (event.isCancelled() || !event.canBuild())
         {
+            blockstate.update(true);
+            world.editingBlocks = false;
+            world.callingPlaceEvent = false;
             return false;
         }
 
-        if (world.getBlockId(x, y, z) == this.blockID)
-        {
-            Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player);
-            Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
-        }
-
-        return true;
-        */
-
         world.editingBlocks = false;
         world.callingPlaceEvent = false;
-
         int newId = world.getBlockId(x, y, z);
         int newData = world.getBlockMetadata(x, y, z);
 
@@ -329,7 +315,7 @@ public class ItemBlock extends Item
         }*/
 
         return true;
-
         // MCPC+ end
     }
+    // Forge end
 }
