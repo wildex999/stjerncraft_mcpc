@@ -23,6 +23,10 @@
         <url>http://repo.bukkit.org/content/groups/public</url>
     </repository>
     <repository>
+        <id>md_5-snapshots</id>
+        <url>http://repo.md-5.net/content/repositories/snapshots/</url>
+    </repository>
+    <repository>
         <id>cma-repo</id>
         <url>http://cmastudios.me/repo/maven/</url>
         <!-- for paulscode -->
