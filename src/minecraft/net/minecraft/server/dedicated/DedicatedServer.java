@@ -69,7 +69,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         super(options);
         // CraftBukkit end
         this.field_98131_l = new LogAgent("Minecraft-Server", (String) null, (String) null); // CraftBukkit - null last argument
-        new DedicatedServerSleepThread(this);
+        // new ThreadSleepForever(this); // Spigot
     }
 
     /**
@@ -144,7 +144,11 @@ public class DedicatedServer extends MinecraftServer implements IServer
 
         try
         {
-            this.networkThread = new DedicatedServerListenThread(this, inetaddress, this.getServerPort());
+            // Spigot start
+            this.networkThread = (!Boolean.getBoolean("org.spigotmc.netty.disabled"))
+                    ? new org.spigotmc.netty.NettyServerConnection(this, inetaddress, this.getServerPort())
+                    : new DedicatedServerListenThread(this, inetaddress, this.getServerPort());
+            // Spigot end
         }
         catch (Throwable ioexception)     // CraftBukkit - IOException -> Throwable
         {

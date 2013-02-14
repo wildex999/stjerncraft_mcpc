@@ -12,6 +12,7 @@ class DedicatedServerCommandThread extends Thread
 
     DedicatedServerCommandThread(DedicatedServer par1DedicatedServer)
     {
+        super("Command Reader Thread"); // Spigot
         this.server = par1DedicatedServer;
     }
 

@@ -39,7 +39,7 @@ public class TcpConnection implements INetworkManager
     public Socket networkSocket; // CraftBukkit - private -> public
 
     /** The InetSocketAddress of the remote endpoint */
-    private final SocketAddress remoteSocketAddress;
+    private SocketAddress remoteSocketAddress; // Spigot - remove final
 
     /** The input stream connected to the socket. */
     private volatile DataInputStream socketInputStream;
@@ -571,5 +571,10 @@ public class TcpConnection implements INetworkManager
     static Thread getWriteThread(TcpConnection par0TcpConnection)
     {
         return par0TcpConnection.writeThread;
+    }
+
+    public void setSocketAddress(SocketAddress address)
+    {
+        remoteSocketAddress = address;    // Spigot
     }
 }

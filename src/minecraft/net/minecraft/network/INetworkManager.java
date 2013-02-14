@@ -46,4 +46,8 @@ public interface INetworkManager
      * stop reading and writing threads.
      */
     void networkShutdown(String s, Object... aobject);
+
+    java.net.Socket getSocket(); // Spigot
+
+    void setSocketAddress(java.net.SocketAddress address); // Spigot
 }

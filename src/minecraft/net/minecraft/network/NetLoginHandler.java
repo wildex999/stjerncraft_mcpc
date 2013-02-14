@@ -40,7 +40,7 @@ public class NetLoginHandler extends NetHandler
 
     /** Reference to the MinecraftServer object. */
     private final MinecraftServer mcServer;
-    public final TcpConnection myTCPConnection;
+    public final INetworkManager myTCPConnection; // Spigot - TcpConnection -> INetworkManager
     public boolean connectionComplete = false;
     private int connectionTimer = 0;
     public String clientUsername = null;
@@ -54,11 +54,19 @@ public class NetLoginHandler extends NetHandler
     private SecretKey sharedKey = null;
     public String hostname = ""; // CraftBukkit - add field
 
+    // Spigot start
+    public NetLoginHandler(MinecraftServer minecraftserver, org.spigotmc.netty.NettyNetworkManager networkManager)
+    {
+        this.mcServer = minecraftserver;
+        this.myTCPConnection = networkManager;
+    }
+    // Spigot end
+
     public NetLoginHandler(MinecraftServer par1MinecraftServer, Socket par2Socket, String par3Str) throws java.io.IOException   // CraftBukkit - throws IOException
     {
         this.mcServer = par1MinecraftServer;
         this.myTCPConnection = new TcpConnection(par1MinecraftServer.getLogAgent(), par2Socket, par3Str, this, par1MinecraftServer.getKeyPair().getPrivate());
-        this.myTCPConnection.field_74468_e = 0;
+        // this.myTCPConnection.field_74468_e = 0; // Spigot
     }
 
     // CraftBukkit start
@@ -234,7 +242,7 @@ public class NetLoginHandler extends NetHandler
             // CraftBukkit
             org.bukkit.event.server.ServerListPingEvent pingEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callServerListPingEvent(this.mcServer.server, getSocket().getInetAddress(), this.mcServer.getMOTD(), serverconfigurationmanager.getCurrentPlayerCount(), serverconfigurationmanager.getMaxPlayers());
 
-            if (par1Packet254ServerPing.field_82559_a == 1)
+            if (true || par1Packet254ServerPing.field_82559_a == 1) // Spigot
             {
                 // CraftBukkit start - Fix decompile issues, don't create a list from an array
                 Object[] list = new Object[] { 1, 60, this.mcServer.getMinecraftVersion(), pingEvent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), pingEvent.getMaxPlayers() };
