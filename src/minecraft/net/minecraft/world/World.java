@@ -4302,7 +4302,30 @@ public abstract class World implements IBlockAccess
             // CraftBukkit
             defaultReturn = var9 != null && var9.blockMaterial == Material.circuits && var10 == Block.anvil ? true : par1 > 0 && var9 == null && var10.canPlaceBlockOnSide(this, par2, par3, par4, par6);
         }
+        // MCPC+ start - send place event for items that bypass onItemUse such as RP2's microblocks 
+        if (par7Entity != null)
+        {
+            if (par7Entity instanceof EntityPlayer)
+            {
+                EntityPlayer player = (EntityPlayer)par7Entity;
+                org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(this, par2, par3, par4);
+                this.editingBlocks = true;
+                this.callingPlaceEvent = true;
+                // send place event
+                org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(this, player, blockstate, par2, par3, par4);
 
+                if (placeEvent.isCancelled() || !placeEvent.canBuild())
+                {
+                    this.editingBlocks = false;
+                    this.callingPlaceEvent = false;
+                    return false;
+                }
+
+                this.editingBlocks = false;
+                this.callingPlaceEvent = false;
+            }
+        }
+        // MCPC+ end
         // CraftBukkit start
         BlockCanBuildEvent event = new BlockCanBuildEvent(this.getWorld().getBlockAt(par2, par3, par4), par1, defaultReturn);
         this.getServer().getPluginManager().callEvent(event);
