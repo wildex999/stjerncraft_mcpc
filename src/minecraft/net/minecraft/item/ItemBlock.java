@@ -15,6 +15,7 @@ public class ItemBlock extends Item
 {
     /** The block ID of the Block associated with this ItemBlock */
     private int blockID;
+    private boolean isForgeBlock; // MCPC+
 
     public ItemBlock(int par1)
     {
@@ -22,6 +23,7 @@ public class ItemBlock extends Item
         this.blockID = par1 + 256;
         this.setIconIndex(Block.blocksList[par1 + 256].getBlockTextureFromSide(2));
         isDefaultTexture = Block.blocksList[par1 + 256].isDefaultTexture;
+        this.isForgeBlock = (this.getClass().getName().length() > 3) ? true : false;
     }
 
     /**
@@ -96,31 +98,38 @@ public class ItemBlock extends Item
             Block var12 = Block.blocksList[this.blockID];
             int var13 = this.getMetadata(par1ItemStack.getItemDamage());
             int var14 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
-            // CraftBukkit start - redirect to common function handler
-            /*
-            if (par3World.getBlockId(par4, par5, par6) == this.blockID)
+            // MCPC+ start - seperate forge/vanilla process block calls            
+            if (this.isForgeBlock) // process forge block
             {
-                Block.blocksList[this.blockID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer);
-                Block.blocksList[this.blockID].onPostBlockPlaced(par3World, par4, par5, par6, var14);
+                // send place event
+                org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(par3World, par4, par5, par6);
+                par3World.editingBlocks = true;
+                par3World.callingPlaceEvent = true;
+                // set block, then call the event (see also World#setBlockIDWithMetadata)
+                org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockstate, clickedX, clickedY, clickedZ);
+    
+                if (event.isCancelled() || !event.canBuild())
+                {
+                    par3World.editingBlocks = false;
+                    par3World.callingPlaceEvent = false;
+                    return false;
+                }
+
+                par3World.editingBlocks = false;
+                par3World.callingPlaceEvent = false;
+
+                if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14))
+                {
+                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
+                    --par1ItemStack.stackSize;
+                }
+                return true;
             }
-
-            par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
-            --par1ItemStack.stackSize;
-            */
-            // MCPC+ start - merge CraftBukkit processBlockPlace() and Forge placeBlockAt()
-            //return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, var14, clickedX, clickedY, clickedZ);
-            //// CraftBukkit end
-
-            // we MUST call placeBlockAt() since Forge mods can override it
-            // TODO: fix mods overriding placeBlockAt() not sending Bukkit place events
-            if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14))
+            else // process vanilla block 
             {
-                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
-                --par1ItemStack.stackSize;
-            }
-
-            return true;
             // MCPC+ end
+                return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, var14, clickedX, clickedY, clickedZ);
+            }
         }
         else
         {
@@ -132,9 +141,11 @@ public class ItemBlock extends Item
     static boolean processBlockPlace(final World world, final EntityPlayer entityhuman, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data, final int clickedX, final int clickedY, final int clickedZ)
     {
         org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
+
         world.editingBlocks = true;
         world.callingPlaceEvent = true;
         world.setBlockAndMetadata(x, y, z, id, data);
+
         org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockstate, clickedX, clickedY, clickedZ);
 
         if (event.isCancelled() || !event.canBuild())
@@ -255,7 +266,6 @@ public class ItemBlock extends Item
         Block.blocksList[this.blockID].getSubBlocks(par1, par2CreativeTabs, par3List);
     }
 
-    // Forge start
     /**
      * Called to actually place the block, after the location is determined
      * and all permission checks have been made.
@@ -266,18 +276,14 @@ public class ItemBlock extends Item
      */
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
     {
-        // MCPC+ start - merge Forge method with CB processBlockPlace()
-        // send event
         org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
+
         world.editingBlocks = true;
         world.callingPlaceEvent = true;
-        // set block, then call the event (see also World#setBlockIDWithMetadata)
         world.setBlockAndMetadata(x, y, z, this.blockID, metadata);
-        int clickedX = (int)(hitX + 0.5), clickedY = (int)(hitY + 0.5), clickedZ = (int)(hitZ + 0.5);
-        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, player, blockstate, clickedX, clickedY, clickedZ);
 
-        if (event.isCancelled() || !event.canBuild())
-        {
+        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, player, blockstate, x, y, z);
+        if (event.isCancelled() || !event.canBuild()) {
             blockstate.update(true);
             world.editingBlocks = false;
             world.callingPlaceEvent = false;
@@ -303,19 +309,9 @@ public class ItemBlock extends Item
         {
             block.onBlockPlacedBy(world, x, y, z, player);
             block.onPostBlockPlaced(world, x, y, z, newData);
-            // MCPC+ - moved to end of onItemUse()
         }
-        /*
-            world.playSoundEffect((double)((float) x + 0.5F), (double)((float) y + 0.5F), (double)((float) z + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
-        }
-
-        if (stack != null)
-        {
-            --stack.stackSize;
-        }*/
 
         return true;
         // MCPC+ end
     }
-    // Forge end
 }
