@@ -1030,4 +1030,25 @@ public class Item
 
     }
 
+    /**
+     * Determines if the specific ItemStack can be placed in the specified armor slot.
+     *
+     * @param stack The ItemStack
+     * @param armorType Armor slot ID: 0: Helmet, 1: Chest, 2: Legs, 3: Boots
+     * @return True if the given ItemStack can be inserted in the slot
+     */
+    public boolean isValidArmor(ItemStack stack, int armorType)
+    {
+        if (this instanceof ItemArmor)
+        {
+            return ((ItemArmor)this).armorType == armorType;
+        }
+
+        if (armorType == 0)
+        {
+            return itemID == Block.pumpkin.blockID || itemID == Item.skull.itemID;
+        }
+
+        return false;
+    }
 }
