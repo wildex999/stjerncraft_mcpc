@@ -341,7 +341,18 @@ public abstract class World implements IBlockAccess
         this.isRemote = false;
         this.saveHandler = idatamanager;
         this.theProfiler = methodprofiler;
-        this.mapStorage = this.getMapStorage(idatamanager);
+        // MCPC+ start
+        // Provides a solution for different worlds getting different copies of the same data, potentially rewriting the data or causing race conditions/stale data
+        // Buildcraft has suffered from the issue this fixes.  If you load the same data from two different worlds they can get two different copies of the same object, thus the last saved gets final say.
+        if (DimensionManager.getWorld(0) != null) // if overworld has loaded, use its mapstorage
+        {
+            this.mapStorage = DimensionManager.getWorld(0).mapStorage;
+        }
+        else // if we are loading overworld, create a new mapstorage
+        {
+            this.mapStorage = new MapStorage(idatamanager);
+        }
+        // MCPC+ end
 
         if (worldprovider != null)
         {
@@ -429,7 +440,18 @@ public abstract class World implements IBlockAccess
         this.isRemote = false;
         this.saveHandler = par1ISaveHandler;
         this.theProfiler = par5Profiler;
-        this.mapStorage = getMapStorage(par1ISaveHandler);
+        // MCPC+ start
+        // Provides a solution for different worlds getting different copies of the same data, potentially rewriting the data or causing race conditions/stale data
+        // Buildcraft has suffered from the issue this fixes.  If you load the same data from two different worlds they can get two different copies of the same object, thus the last saved gets final say.
+        if (DimensionManager.getWorld(0) != null) // if overworld has loaded, use its mapstorage
+        {
+            this.mapStorage = DimensionManager.getWorld(0).mapStorage;
+        }
+        else // if we are loading overworld, create a new mapstorage
+        {
+            this.mapStorage = new MapStorage(par1ISaveHandler);
+        }
+        // MCPC+ end
         this.worldInfo = par1ISaveHandler.loadWorldInfo();
 
         if (par4WorldProvider != null)
@@ -507,19 +529,6 @@ public abstract class World implements IBlockAccess
         this.calculateInitialWeather();
     }
     // MCPC+ end
-
-    private static MapStorage s_mapStorage;
-    private static ISaveHandler s_savehandler;
-    //Provides a solution for different worlds getting different copies of the same data, potentially rewriting the data or causing race conditions/stale data
-    //Buildcraft has suffered from the issue this fixes.  If you load the same data from two different worlds they can get two different copies of the same object, thus the last saved gets final say.
-    private MapStorage getMapStorage(ISaveHandler savehandler)
-    {
-        if (s_savehandler != savehandler || s_mapStorage == null) {
-            s_mapStorage = new MapStorage(savehandler);
-            s_savehandler = savehandler;
-        }
-        return s_mapStorage;
-    }
 
     /**
      * Creates the chunk provider for this world. Called in the constructor. Retrieves provider from worldProvider?
