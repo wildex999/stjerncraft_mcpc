@@ -30,6 +30,10 @@ settings:
     restart-on-crash: false
     filter-unsafe-ips: false
     whitelist-message: You are not white-listed on this server!
+    fml-missing-message: You do not have FML installed, you cannot connect to this server
+    fml-missing-mods-message: The server requires mods that are absent or out of date on your client
+    fml-outdated-message: Your client is not running a new enough version of FML to connect to this server
+    fml-other-error-message: There was a problem during FML negotiation
     log-commands: true
     command-complete: true
     spam-exclusions:
