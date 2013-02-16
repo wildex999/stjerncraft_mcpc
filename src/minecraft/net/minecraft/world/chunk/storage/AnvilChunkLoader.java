@@ -368,8 +368,10 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
                 catch (Exception e)
                 {
                     FMLLog.log(Level.SEVERE, e,
-                            "An Entity type %s has thrown an exception trying to write state. It will not persist. Report this to the mod author",
-                            var21.getClass().getName());
+                            "An Entity type %s at %s,%f,%f,%f has thrown an exception trying to write state. It will not persist. Report this to the mod author",
+                            var21.getClass().getName(),
+                            var21.worldObj.getWorld().getName(),
+                            var21.posX, var21.posY, var21.posZ);
                  }
             }
         }
@@ -390,8 +392,10 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
             catch (Exception e)
             {
                 FMLLog.log(Level.SEVERE, e,
-                        "A TileEntity type %s has throw an exception trying to write state. It will not persist. Report this to the mod author",
-                        var22.getClass().getName());
+                        "A TileEntity type %s at %s,%d,%d,%d has throw an exception trying to write state. It will not persist. Report this to the mod author",
+                        var22.getClass().getName(),
+                        var22.worldObj.getWorld().getName(),
+                        var22.xCoord, var22.yCoord, var22.zCoord);
             }
         }
 
