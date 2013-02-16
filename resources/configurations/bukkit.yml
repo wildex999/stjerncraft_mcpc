@@ -40,6 +40,7 @@ settings:
        - /skill
 mcpc:
     connection-logging: false
+    dump-materials: false
     infinite-water-source: true
     fake-players:
       com/eloraam/redpower/machine/EntityPlayerFake:

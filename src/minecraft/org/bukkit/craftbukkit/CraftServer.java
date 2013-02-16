@@ -148,6 +148,7 @@ public final class CraftServer implements Server {
     public boolean commandComplete = true;
     public List<String> spamGuardExclusions;
     // Spigot end
+    private boolean dumpMaterials = false; // MCPC+
 
     private final BooleanWrapper online = new BooleanWrapper();
 
@@ -199,6 +200,7 @@ public final class CraftServer implements Server {
         warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
         chunkGCPeriod = configuration.getInt("chunk-gc.period-in-ticks");
         chunkGCLoadThresh = configuration.getInt("chunk-gc.load-threshold");
+        dumpMaterials = configuration.getBoolean("mcpc.dump-materials"); // MCPC+ - dumps all materials with their corresponding id's
 
         updater = new AutoUpdater(new BukkitDLUpdaterService(configuration.getString("auto-updater.host")), getLogger(), configuration.getString("auto-updater.preferred-channel"));
         updater.setEnabled(false);
@@ -556,6 +558,10 @@ public final class CraftServer implements Server {
     
     public boolean getInfiniteWaterSource() {
         return this.configuration.getBoolean("mcpc.infinite-water-source", true);
+    }
+
+    public boolean getDumpMaterials() {
+        return this.configuration.getBoolean("mcpc.dump-materials", false);
     }
     // MCPC+ end
 

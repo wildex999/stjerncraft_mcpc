@@ -21,6 +21,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BlockVector;
+// MCPC+ start
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
+// MCPC+ end
 
 public class CraftBlock implements Block {
 
@@ -28,10 +32,10 @@ public class CraftBlock implements Block {
     private final int x;
     private final int y;
     private final int z;
-    // MCPC start - add support for ExtraBiomesXL
+    // MCPC+ start - add support for custom biomes
     private static final Biome[] BIOME_MAPPING = new Biome[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.biomeList/*was:biomes*/.length];
     private static final net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/[] BIOMEBASE_MAPPING = new net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.biomeList/*was:biomes*/.length];
-    // MCPC end
+    // MCPC+ end
 
     public CraftBlock(CraftChunk chunk, int x, int y, int z) {
         this.x = x;
@@ -464,6 +468,22 @@ public class CraftBlock implements Block {
             if (BIOME_MAPPING[i] != null)
                 BIOMEBASE_MAPPING[BIOME_MAPPING[i].ordinal()] = net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.biomeList/*was:biomes*/[i];
         }
+        // MCPC+ start - if mcpc.dump-materials is true, dump all materials with their corresponding id's
+        if (FMLCommonHandler.instance().getMinecraftServerInstance().server.getDumpMaterials())
+        {
+            FMLLog.info("MCPC Dump Materials is ENABLED. Starting dump...");
+            for (int i = 0; i < 32000; i++)
+            {
+                Material material = Material.getMaterial(i);
+                if (material != null)
+                {
+                    FMLLog.info("Found material " + material + " with ID " + i);
+                }
+            }
+            FMLLog.info("MCPC Dump Materials complete.");
+            FMLLog.info("To disable these dumps, set mcpc.dump-materials to false in bukkit.yml.");
+        }
+        // MCPC+ end
     }
 
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
