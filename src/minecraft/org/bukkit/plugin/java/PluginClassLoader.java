@@ -235,7 +235,7 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     // MCPC+ start
-    private Class<?> remappedFindClass(String name) {
+    private Class<?> remappedFindClass(String name) throws ClassNotFoundException {
         Class<?> result = null;
 
         try {
@@ -278,7 +278,11 @@ public class PluginClassLoader extends URLClassLoader {
                 }
             }
         } catch (Throwable t) {
-            t.printStackTrace();
+            if (debug) {
+                System.out.println("remappedFindClass("+name+") exception: "+t);
+                t.printStackTrace();
+            }
+            throw new ClassNotFoundException("Failed to remap class "+name, t);
         }
 
         return result;
