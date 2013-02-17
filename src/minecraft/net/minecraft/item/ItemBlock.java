@@ -15,7 +15,6 @@ public class ItemBlock extends Item
 {
     /** The block ID of the Block associated with this ItemBlock */
     private int blockID;
-    private boolean isForgeBlock; // MCPC+
 
     public ItemBlock(int par1)
     {
@@ -23,7 +22,6 @@ public class ItemBlock extends Item
         this.blockID = par1 + 256;
         this.setIconIndex(Block.blocksList[par1 + 256].getBlockTextureFromSide(2));
         isDefaultTexture = Block.blocksList[par1 + 256].isDefaultTexture;
-        this.isForgeBlock = (this.getClass().getName().length() > 3) ? true : false;
     }
 
     /**
@@ -41,7 +39,11 @@ public class ItemBlock extends Item
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
         final int clickedX = par4, clickedY = par5, clickedZ = par6;
-
+        // MCPC+ start - set the current placed item hit coords for canPlaceEntityOnSide
+        par3World.curPlacedItemHitX = par8;
+        par3World.curPlacedItemHitY = par9;
+        par3World.curPlacedItemHitZ = par10;
+        // MCPC+ end
         int var11 = par3World.getBlockId(par4, par5, par6);
         if (var11 == Block.snow.blockID)
         {
@@ -99,30 +101,9 @@ public class ItemBlock extends Item
             int var13 = this.getMetadata(par1ItemStack.getItemDamage());
             int var14 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
             // MCPC+ start - seperate forge/vanilla process block calls            
-            if (this.isForgeBlock) // process forge block
+            if (var12.isForgeBlock) // process forge block
             {
-                // send place event
-                org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(par3World, par4, par5, par6);
-                par3World.editingBlocks = true;
-                par3World.callingPlaceEvent = true;
-                // set block, then call the event (see also World#setBlockIDWithMetadata)
-                org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockstate, clickedX, clickedY, clickedZ);
-    
-                if (event.isCancelled() || !event.canBuild())
-                {
-                    par3World.editingBlocks = false;
-                    par3World.callingPlaceEvent = false;
-                    return false;
-                }
-
-                par3World.editingBlocks = false;
-                par3World.callingPlaceEvent = false;
-
-                if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14))
-                {
-                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
-                    --par1ItemStack.stackSize;
-                }
+                // we already processed placeBlockAt in canPlaceEntityOnSide so if it made it here then return true
                 return true;
             }
             else // process vanilla block 
@@ -276,42 +257,17 @@ public class ItemBlock extends Item
      */
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
     {
-        org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
-
-        world.editingBlocks = true;
-        world.callingPlaceEvent = true;
-        world.setBlockAndMetadata(x, y, z, this.blockID, metadata);
-
-        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, player, blockstate, x, y, z);
-        if (event.isCancelled() || !event.canBuild()) {
-            blockstate.update(true);
-            world.editingBlocks = false;
-            world.callingPlaceEvent = false;
-            return false;
-        }
-
-        world.editingBlocks = false;
-        world.callingPlaceEvent = false;
-        int newId = world.getBlockId(x, y, z);
-        int newData = world.getBlockMetadata(x, y, z);
-
-        Block block = Block.blocksList[newId];
-
-        if (block != null && !(block instanceof BlockContainer))   // Containers get placed automatically
+        if (world.setBlockAndMetadataWithNotify(x, y, z, this.blockID, metadata))
         {
-            block.onBlockAdded(world, x, y, z);
+            if (world.getBlockId(x, y, z) == this.blockID)
+            {
+                Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player);
+                Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
+            }
+
+            return true;
         }
 
-        world.notifyBlockChange(x, y, z, newId);
-
-        // Skulls don't get block data applied to them
-        if (block != null && block != Block.skull)
-        {
-            block.onBlockPlacedBy(world, x, y, z, player);
-            block.onPostBlockPlaced(world, x, y, z, newData);
-        }
-
-        return true;
-        // MCPC+ end
+        return false;
     }
 }

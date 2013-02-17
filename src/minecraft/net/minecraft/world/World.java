@@ -46,6 +46,7 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldInfo;
 
+import net.minecraft.item.ItemBlock; // MCPC+
 // CraftBukkit start
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
@@ -215,6 +216,11 @@ public abstract class World implements IBlockAccess
 
     /** This is set to true for client worlds, and false for server worlds. */
     public boolean isRemote;
+    // MCPC+ start - used only during a block place event in canPlaceEntityOnSide
+    public float curPlacedItemHitX = 0;
+    public float curPlacedItemHitY = 0;
+    public float curPlacedItemHitZ = 0;
+    // MCPC+ end
     // Spigot start
 
     public static final long chunkToKey(int x, int z)
@@ -4311,35 +4317,53 @@ public abstract class World implements IBlockAccess
             // CraftBukkit
             defaultReturn = var9 != null && var9.blockMaterial == Material.circuits && var10 == Block.anvil ? true : par1 > 0 && var9 == null && var10.canPlaceBlockOnSide(this, par2, par3, par4, par6);
         }
-        // MCPC+ start - send place event for items that bypass onItemUse such as RP2's microblocks 
-        if (par7Entity != null)
+        boolean result = false;
+        BlockCanBuildEvent event = new BlockCanBuildEvent(this.getWorld().getBlockAt(par2, par3, par4), par1, defaultReturn);
+        this.getServer().getPluginManager().callEvent(event);
+        result = event.isBuildable();
+        // MCPC+ start - moved place event for forge blocks here to counter mods that bypass onItemUse such as RP2's microblocks 
+        if (par7Entity != null && !this.callingPlaceEvent && var10 != null && var10.isForgeBlock && result)
         {
             if (par7Entity instanceof EntityPlayer)
             {
                 EntityPlayer player = (EntityPlayer)par7Entity;
+                ItemStack itemstack = (player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem() : null);
                 org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(this, par2, par3, par4);
                 this.editingBlocks = true;
                 this.callingPlaceEvent = true;
+                if (itemstack != null && itemstack.getItem() instanceof ItemBlock)
+                {
+                    ItemBlock itemblock = (ItemBlock)itemstack.getItem();
+                    int itemData = itemblock.getMetadata(itemstack.getItemDamage());
+                    int metadata = Block.blocksList[par1].onBlockPlaced(this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, itemData);
+                    if (itemblock.placeBlockAt(itemstack, player, this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, metadata))
+                    {
+                        this.playSoundEffect((double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F), var10.stepSound.getPlaceSound(), (var10.stepSound.getVolume() + 1.0F) / 2.0F, var10.stepSound.getPitch() * 0.8F);
+                    }
+                }
+                this.curPlacedItemHitX = 0;
+                this.curPlacedItemHitY = 0;
+                this.curPlacedItemHitZ = 0;
+
                 // send place event
                 org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(this, player, blockstate, par2, par3, par4);
 
                 if (placeEvent.isCancelled() || !placeEvent.canBuild())
                 {
-                    this.editingBlocks = false;
-                    this.callingPlaceEvent = false;
-                    return false;
+                    blockstate.update(true);
+                    result = false;
+                }
+                else
+                {
+                    --itemstack.stackSize;
                 }
 
                 this.editingBlocks = false;
                 this.callingPlaceEvent = false;
             }
         }
+        return result;
         // MCPC+ end
-        // CraftBukkit start
-        BlockCanBuildEvent event = new BlockCanBuildEvent(this.getWorld().getBlockAt(par2, par3, par4), par1, defaultReturn);
-        this.getServer().getPluginManager().callEvent(event);
-        return event.isBuildable();
-        // CraftBukkit end
     }
 
     public PathEntity getPathEntityToEntity(Entity par1Entity, Entity par2Entity, float par3, boolean par4, boolean par5, boolean par6, boolean par7)

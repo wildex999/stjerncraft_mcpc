@@ -312,6 +312,7 @@ public class Block
      */
     public float slipperiness;
     private String blockName;
+    public boolean isForgeBlock; // MCPC+
 
     public Block(int par1, Material par2Material)
     {
@@ -337,6 +338,7 @@ public class Block
         }
         org.bukkit.Material.addMaterial(this.blockID); // MCPC+ - many mods do not register blocks through GameRegistry so to be safe we need to add materials here
         isDefaultTexture = (getTextureFile() != null && getTextureFile().equalsIgnoreCase("/terrain.png"));
+        this.isForgeBlock = (this.getClass().getName().length() > 3) ? true : false; // MCPC+
     }
 
     /**
@@ -702,7 +704,7 @@ public class Block
      */
     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
     {
-        if (!par1World.isRemote && !par1World.callingPlaceEvent) // MCPC+ do not drop items during a place event, fixes item dupes
+        if (!par1World.isRemote && !par1World.callingPlaceEvent) // MCPC+ do not drop items during a place event, prevents item dupe
         {
             ArrayList<ItemStack> items = getBlockDropped(par1World, par2, par3, par4, par5, par7);
 
@@ -722,7 +724,7 @@ public class Block
      */
     protected void dropBlockAsItem_do(World par1World, int par2, int par3, int par4, ItemStack par5ItemStack)
     {
-        if (!par1World.isRemote && par1World.getGameRules().getGameRuleBooleanValue("doTileDrops"))
+        if (!par1World.isRemote && par1World.getGameRules().getGameRuleBooleanValue("doTileDrops") && !par1World.callingPlaceEvent) // MCPC+ do not drop items during a place event, prevents item dupe
         {
             float var6 = 0.7F;
             double var7 = (double)(par1World.rand.nextFloat() * var6) + (double)(1.0F - var6) * 0.5D;
