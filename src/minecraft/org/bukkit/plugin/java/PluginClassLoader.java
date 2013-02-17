@@ -261,6 +261,18 @@ public class PluginClassLoader extends URLClassLoader {
                     // Remap the classes
                     byte[] remappedBytecode = remapper.remapClassFile(bytecode);
 
+                    if (debug) {
+                        File file = new File("remapped-plugin-classes/"+name+".class");
+                        file.getParentFile().mkdirs();
+                        try {
+                            FileOutputStream fileOutputStream = new FileOutputStream(file);
+                            fileOutputStream.write(remappedBytecode);
+                            fileOutputStream.close();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+
                     // Define (create) the class using the modified byte code
                     // The top-child class loader is used for this to prevent access violations
                     // Set the codesource to the jar, not within the jar, for compatibility with
