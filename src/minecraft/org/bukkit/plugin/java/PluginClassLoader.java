@@ -1,15 +1,11 @@
 package org.bukkit.plugin.java;
 
 import org.bouncycastle.util.io.Streams;
-import org.objectweb.asm.ClassWriter;
 import net.md_5.specialsource.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.ClassReader;
 
 import java.io.*;
 import java.net.JarURLConnection;
@@ -32,13 +28,16 @@ public class PluginClassLoader extends URLClassLoader {
     private boolean debug;            // classloader debugging
 
     private static HashMap<Integer,JarMapping> jarMappings = new HashMap<Integer, JarMapping>();
-    private static final int F_USE_GUAVA10  = 1 << 1;
-    private static final int F_REMAP_NMS147 = 1 << 2;
-    private static final int F_REMAP_NMS146 = 1 << 3;
-    private static final int F_REMAP_OBC146 = 1 << 4;
-    private static final int F_GLOBAL_INHERIT = 1 << 5;
-    private static final int F_PLUGIN_INHERIT = 1 << 6;
-    private static final int F_REFLECT_FIELDS = 1 << 7;
+    private static final int F_USE_GUAVA10      = 1 << 1;
+    private static final int F_GLOBAL_INHERIT   = 1 << 2;
+    private static final int F_REMAP_OBCPRE     = 1 << 3;
+    private static final int F_REMAP_NMS146     = 1 << 4;
+    private static final int F_REMAP_OBC146     = 1 << 5;
+    private static final int F_REMAP_NMS147     = 1 << 6;
+    private static final int F_REMAP_NMSPRE_MASK= 0x0fff0000;  // "unversioned" NMS plugin version
+
+    // This trick bypasses Maven Shade's package rewriting when using String literals [same trick in jline]
+    private final static String org_bukkit_craftbukkit = new String(new char[] {'o','r','g','/','b','u','k','k','i','t','/','c','r','a','f','t','b','u','k','k','i','t'});
     // MCPC+ end
 
     public PluginClassLoader(final JavaPluginLoader loader, final URL[] urls, final ClassLoader parent, PluginDescriptionFile pluginDescriptionFile) { // MCPC+ - add PluginDescriptionFile
@@ -57,7 +56,9 @@ public class PluginClassLoader extends URLClassLoader {
         boolean useGuava10 = config.getBoolean("mcpc.plugin-settings.default.use-guava10", true);
         boolean remapNMS147 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_R1", true);
         boolean remapNMS146 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_6", true);
+        String remapNMSPre = config.getString("mcpc.plugin-settings.default.remap-nms-pre", "false");
         boolean remapOBC146 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_4_6", true);
+        boolean remapOBCPre = config.getBoolean("mcpc.plugin-settings.default.remap-obc-pre", false);
         boolean globalInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", true);
         boolean pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", true);
         boolean reflectFields = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-field", true);
@@ -68,7 +69,9 @@ public class PluginClassLoader extends URLClassLoader {
         useGuava10 = config.getBoolean("mcpc.plugin-settings."+pluginName+".use-guava10", useGuava10);
         remapNMS147 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_R1", remapNMS147);
         remapNMS146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_6", remapNMS146);
+        remapNMSPre = config.getString("mcpc.plugin-settings."+pluginName+".remap-nms-pre", remapNMSPre);
         remapOBC146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_4_6", remapOBC146);
+        remapOBCPre = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-pre", remapOBCPre);
         globalInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".global-inheritance", globalInherit);
         pluginInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".plugin-inheritance", pluginInherit);
         reflectFields = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-reflect-field", reflectFields);
@@ -86,10 +89,22 @@ public class PluginClassLoader extends URLClassLoader {
         if (useGuava10) flags |= F_USE_GUAVA10;
         if (remapNMS147) flags |= F_REMAP_NMS147;
         if (remapNMS146) flags |= F_REMAP_NMS146;
+        if (!remapNMSPre.equals("false")) {
+            if      (remapNMSPre.equals("1.4.7")) flags |= 0x01470000;
+            else if (remapNMSPre.equals("1.4.6")) flags |= 0x01460000;
+            else if (remapNMSPre.equals("1.4.5")) flags |= 0x01450000;
+            else if (remapNMSPre.equals("1.4.4")) flags |= 0x01440000;
+            else if (remapNMSPre.equals("1.4.2")) flags |= 0x01420000;
+            else if (remapNMSPre.equals("1.3.2")) flags |= 0x01320000;
+            else if (remapNMSPre.equals("1.3.1")) flags |= 0x01310000;
+            else if (remapNMSPre.equals("1.2.5")) flags |= 0x01250000;
+            else {
+                System.out.println("Unsupported nms-remap-pre version '"+remapNMSPre+"', disabling");
+            }
+        }
         if (remapOBC146) flags |= F_REMAP_OBC146;
+        if (remapOBCPre) flags |= F_REMAP_OBCPRE;
         if (globalInherit) flags |= F_GLOBAL_INHERIT;
-        // F_PLUGIN_INHERIT not per-jarMapping
-        // F_REFLECT_FIELDS not per-jarMapping
 
         JarMapping jarMapping = getJarMapping(flags);
 
@@ -118,7 +133,7 @@ public class PluginClassLoader extends URLClassLoader {
 
         if (jarMappings.containsKey(flags)) {
             if (debug) {
-                System.out.println("Mapping reused for "+flags);
+                System.out.println("Mapping reused for "+Integer.toHexString(flags));
             }
             return jarMappings.get(flags);
         }
@@ -162,12 +177,10 @@ public class PluginClassLoader extends URLClassLoader {
             }
 
             if ((flags & F_REMAP_OBC146) != 0) {
-                // This trick bypasses Maven Shade's clever rewriting of our getProperty call when using String literals [same trick in jline]
-                String obc146 = new String(new char[] {'o','r','g','/','b','u','k','k','i','t','/','c','r','a','f','t','b','u','k','k','i','t','/','v','1','_','4','_','6'});
-                String obc147 = new String(new char[] {'o','r','g','/','b','u','k','k','i','t','/','c','r','a','f','t','b','u','k','k','i','t','/','v','1','_','4','_','R','1'});
-
                 // Remap OBC v1_4_6  to v1_4_R1 (or current) for 1.4.6 plugin compatibility
                 // Note this should only be mapped statically - since plugins MAY use reflection to determine the OBC version
+                String obc146 = org_bukkit_craftbukkit+"/v1_4_6";
+                String obc147 = org_bukkit_craftbukkit+"/v1_4_R1";
                 jarMapping.packages.put(obc146, obc147);
 
                 if (debug) {
@@ -175,7 +188,36 @@ public class PluginClassLoader extends URLClassLoader {
                 }
             }
 
-            System.out.println("Mapping loaded "+jarMapping.packages.size()+" packages, "+jarMapping.classes.size()+" classes, "+jarMapping.fields.size()+" fields, "+jarMapping.methods.size()+" methods, flags "+flags);
+            if ((flags & F_REMAP_OBCPRE) != 0) {
+                jarMapping.packages.put(org_bukkit_craftbukkit+"/libs/org/objectweb/asm", "org/objectweb/asm"); // ?
+                jarMapping.packages.put(org_bukkit_craftbukkit, org_bukkit_craftbukkit+"/v1_4_R1");
+            }
+
+            if ((flags & F_REMAP_NMSPRE_MASK) != 0) {
+                // map reality unto itself to prevent matching on unversioned remappings below
+                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_4_R1", org_bukkit_craftbukkit+"/v1_4_R1");
+                jarMapping.packages.put("net/minecraft/server/v1_4_R1", "net/minecraft/server/v1_4_R1");
+
+                String filename;
+                switch (flags & F_REMAP_NMSPRE_MASK)
+                {
+                    case 0x01470000: filename = "mappings/1.4.7/cb2obf.csrg"; break;
+                    case 0x01460000: filename = "mappings/1.4.6/cb2obf.csrg"; break;
+                    case 0x01450000: filename = "mappings/1.4.5/cb145-to-obf147.srg"; break;
+                    case 0x01440000: filename = "mappings/1.4.4/cb144-to-obf147.srg"; break;
+                    case 0x01420000: filename = "mappings/1.4.2/cb142-to-obf147.srg"; break;
+                    case 0x01320000: filename = "mappings/1.3.2/cb132-to-obf147.srg"; break;
+                    case 0x01310000: filename = "mappings/1.3.1/cb131-to-obf147.srg"; break;
+                    case 0x01250000: filename = "mappings/1.2.5/cb125-to-obf147.srg"; break;
+                    default: throw new IllegalArgumentException("Invalid unversioned mapping flags: "+Integer.toHexString(flags & F_REMAP_NMSPRE_MASK)+" in "+Integer.toHexString(flags));
+                }
+
+                jarMapping.loadMappings(
+                        new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream(filename))),
+                        null); // no version!
+            }
+
+            System.out.println("Mapping loaded "+jarMapping.packages.size()+" packages, "+jarMapping.classes.size()+" classes, "+jarMapping.fields.size()+" fields, "+jarMapping.methods.size()+" methods, flags "+Integer.toHexString(flags));
 
             jarMappings.put(flags, jarMapping);
             return jarMapping;
