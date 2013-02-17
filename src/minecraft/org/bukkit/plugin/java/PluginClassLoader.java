@@ -139,7 +139,7 @@ public class PluginClassLoader extends URLClassLoader {
                 relocations147.put("net.minecraft.server", "net.minecraft.server.v1_4_R1");
 
                 jarMapping.loadMappings(
-                        new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("147cb2obf.csrg"))),
+                        new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/1.4.7/cb2obf.csrg"))),
                         new ShadeRelocationSimulator(relocations147));
 
                 // resolve naming conflict in FML/CB
@@ -154,7 +154,7 @@ public class PluginClassLoader extends URLClassLoader {
                 relocations146.put("net.minecraft.server", "net.minecraft.server.v1_4_6");
 
                 jarMapping.loadMappings(
-                        new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("146cb2obf.csrg"))),
+                        new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/1.4.6/cb2obf.csrg"))),
                         new ShadeRelocationSimulator(relocations146));
 
                 jarMapping.methods.put("net/minecraft/server/v1_4_6/PlayerConnection/getPlayer ()Lorg/bukkit/craftbukkit/v1_4_6/entity/CraftPlayer;", "getPlayerB");

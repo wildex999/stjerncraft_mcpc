@@ -84,10 +84,10 @@ public class JavaPluginLoader implements PluginLoader {
 
             InputStream srg;
             if (getClass().getClassLoader().getResourceAsStream("net/minecraft/src") == null) {
-                srg = getClass().getClassLoader().getResourceAsStream("vcb2obf.srg");
+                srg = getClass().getClassLoader().getResourceAsStream("mappings/1.4.7/vcb2obf.srg");
             }
             else {
-                srg = getClass().getClassLoader().getResourceAsStream("cb2pkgmcp.srg");
+                srg = getClass().getClassLoader().getResourceAsStream("mappings/1.4.7/cb2pkgmcp.srg");
             }
             if (srg == null) {
                 throw new RuntimeException("MCPC+ was packaged incorrectly - sorry.");
@@ -485,7 +485,7 @@ public class JavaPluginLoader implements PluginLoader {
 
         try {
             currentMappings.loadMappings(
-                    new BufferedReader(new InputStreamReader(ClassLoader.getSystemClassLoader().getResourceAsStream("147cb2obf.csrg"))),
+                    new BufferedReader(new InputStreamReader(ClassLoader.getSystemClassLoader().getResourceAsStream("mappings/1.4.7/cb2obf.csrg"))),
                     new ShadeRelocationSimulator(relocationsCurrent));
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -495,7 +495,7 @@ public class JavaPluginLoader implements PluginLoader {
         BiMap<String, String> inverseClassMap = HashBiMap.create(currentMappings.classes).inverse();
         globalInheritanceMap = new InheritanceMap();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(ClassLoader.getSystemClassLoader().getResourceAsStream("147nms.inheritmap")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(ClassLoader.getSystemClassLoader().getResourceAsStream("mappings/1.4.7/nms.inheritmap")));
 
         try {
             globalInheritanceMap.load(reader, inverseClassMap);
