@@ -503,7 +503,7 @@ public class JavaPluginLoader implements PluginLoader {
             ex.printStackTrace();
             throw new RuntimeException(ex);
         }
-        System.out.println("Loaded inheritance map of "+globalInheritanceMap.inheritanceMap.size()+" classes");
+        System.out.println("Loaded inheritance map of "+globalInheritanceMap.size()+" classes");
     }
     // MCPC+ end
 }
