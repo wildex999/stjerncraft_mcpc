@@ -530,15 +530,16 @@ public class ItemInWorldManager
     public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
         int var11 = par2World.getBlockId(par4, par5, par6);
-        Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
+
         // CraftBukkit start - Interact
         boolean result = false;
 
-        if (var11 > 0 || item != null) // MCPC+ - call interact event if valid block ID or have item in hand
+        if (var11 > 0)
         {
             PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7, par3ItemStack);
             net.minecraftforge.event.entity.player.PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
             // MCPC+ start - try to use an item in hand before activating a block. Used for items such as IC2's wrench.
+            Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
             if (item != null && item != item.doorWood && item.onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
             {
                 if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
