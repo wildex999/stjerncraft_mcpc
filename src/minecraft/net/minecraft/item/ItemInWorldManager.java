@@ -538,12 +538,23 @@ public class ItemInWorldManager
         {
             PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7, par3ItemStack);
             net.minecraftforge.event.entity.player.PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
-            // MCPC+ start - try to use an item in hand before activating a block. Used for items such as IC2's wrench.
-            Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
-            if (item != null && item != item.doorWood && item.onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
+            // MCPC+ start
+            // if forge event is explicitly cancelled, return
+            if (forgeEvent.isCanceled())
             {
-                if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
-                    return true;
+                thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
+                return false;
+            }
+            // if we have no explicit deny, check if item can be used
+            if (event.useItemInHand() != Event.Result.DENY && forgeEvent.useItem != net.minecraftforge.event.Event.Result.DENY)
+            {
+                Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
+                // MCPC+ - try to use an item in hand before activating a block. Used for items such as IC2's wrench.
+                if (item != null && item.onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
+                {
+                    if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
+                        return true;
+                }
             }
             // MCPC+ end
             if (event.useInteractedBlock() == Event.Result.DENY || forgeEvent.useBlock == net.minecraftforge.event.Event.Result.DENY)
@@ -564,15 +575,15 @@ public class ItemInWorldManager
 
             if (par3ItemStack != null && !result)
             {
-                int j1 = par3ItemStack.getItemDamage();
-                int k1 = par3ItemStack.stackSize;
+                int meta = par3ItemStack.getItemDamage();
+                int size = par3ItemStack.stackSize;
                 result = par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
 
                 // The item count should not decrement in Creative mode.
                 if (this.isCreative())
                 {
-                    par3ItemStack.setItemDamage(j1);
-                    par3ItemStack.stackSize = k1;
+                    par3ItemStack.setItemDamage(meta);
+                    par3ItemStack.stackSize = size;
                 }
 
                 if (par3ItemStack.stackSize <= 0)
@@ -581,11 +592,12 @@ public class ItemInWorldManager
                 }
             }
 
+            /* Re-enable if this causes bukkit incompatibility, or re-write client side to only send a single packet per right click.
             // If we have 'true' and no explicit deny *or* an explicit allow -- run the item part of the hook
-            if (par3ItemStack != null && ((!result && event.useItemInHand() != Event.Result.DENY) || event.useItemInHand() == Event.Result.ALLOW))
+            /*if (par3ItemStack != null && ((!result && event.useItemInHand() != Event.Result.DENY) || event.useItemInHand() == Event.Result.ALLOW))
             {
                 this.tryUseItem(par1EntityPlayer, par2World, par3ItemStack);
-            }
+            }*/
         }
 
         return result;
