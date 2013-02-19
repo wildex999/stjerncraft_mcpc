@@ -189,15 +189,16 @@ public class PluginClassLoader extends URLClassLoader {
             }
 
             if ((flags & F_REMAP_OBCPRE) != 0) {
+                // enabling unversioned obc not currently compatible with versioned obc plugins (overmapped) -
+                // admins should enable remap-obc-pre on a per-plugin basis, as needed
+                //jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_4_R1", org_bukkit_craftbukkit+"/v1_4_R1");
+
+                // then map unversioned to current version
                 jarMapping.packages.put(org_bukkit_craftbukkit+"/libs/org/objectweb/asm", "org/objectweb/asm"); // ?
                 jarMapping.packages.put(org_bukkit_craftbukkit, org_bukkit_craftbukkit+"/v1_4_R1");
             }
 
             if ((flags & F_REMAP_NMSPRE_MASK) != 0) {
-                // map reality unto itself to prevent matching on unversioned remappings below
-                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_4_R1", org_bukkit_craftbukkit+"/v1_4_R1");
-                jarMapping.packages.put("net/minecraft/server/v1_4_R1", "net/minecraft/server/v1_4_R1");
-
                 String filename;
                 switch (flags & F_REMAP_NMSPRE_MASK)
                 {
