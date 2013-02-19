@@ -103,7 +103,11 @@ public class ItemBlock extends Item
             // MCPC+ start - seperate forge/vanilla process block calls            
             if (var12.isForgeBlock) // process forge block
             {
-                // we already processed placeBlockAt in canPlaceEntityOnSide so if it made it here then return true
+                if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14))
+                {
+                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
+                    --par1ItemStack.stackSize;
+                }
                 return true;
             }
             else // process vanilla block 

@@ -216,7 +216,8 @@ public abstract class World implements IBlockAccess
 
     /** This is set to true for client worlds, and false for server worlds. */
     public boolean isRemote;
-    // MCPC+ start - used only during a block place event in canPlaceEntityOnSide
+    // MCPC+ start
+    /** These hit coords are set by ItemBlock.onItemUse and are only used during a forge block place event in canPlaceEntityOnSide */
     public float curPlacedItemHitX = 0;
     public float curPlacedItemHitY = 0;
     public float curPlacedItemHitZ = 0;
@@ -4321,7 +4322,8 @@ public abstract class World implements IBlockAccess
         BlockCanBuildEvent event = new BlockCanBuildEvent(this.getWorld().getBlockAt(par2, par3, par4), par1, defaultReturn);
         this.getServer().getPluginManager().callEvent(event);
         result = event.isBuildable();
-        // MCPC+ start - moved place event for forge blocks here to counter mods that bypass onItemUse such as RP2's microblocks 
+        // MCPC+ start - all forge blocks will now send a BlockPlaceEvent here to allow events to occur with mods 
+        //               that override ItemBlock.onItemUse and ItemBlock.placeBlockAt such as RP2's microblocks, BC pipes, etc.
         if (par7Entity != null && !this.callingPlaceEvent && var10 != null && var10.isForgeBlock && result)
         {
             if (par7Entity instanceof EntityPlayer)
@@ -4338,7 +4340,7 @@ public abstract class World implements IBlockAccess
                     int metadata = Block.blocksList[par1].onBlockPlaced(this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, itemData);
                     if (itemblock.placeBlockAt(itemstack, player, this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, metadata))
                     {
-                        this.playSoundEffect((double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F), var10.stepSound.getPlaceSound(), (var10.stepSound.getVolume() + 1.0F) / 2.0F, var10.stepSound.getPitch() * 0.8F);
+                        // since this is only a simulation, there is no need to play sound or decrement stacksize
                     }
                 }
                 this.curPlacedItemHitX = 0;
@@ -4350,14 +4352,9 @@ public abstract class World implements IBlockAccess
 
                 if (placeEvent.isCancelled() || !placeEvent.canBuild())
                 {
-                    blockstate.update(true);
-                    result = false;
+                    result = false; // cancel placement
                 }
-                else
-                {
-                    --itemstack.stackSize;
-                }
-
+                blockstate.update(true); // revert blockstate since this is only a simulation
                 this.editingBlocks = false;
                 this.callingPlaceEvent = false;
             }

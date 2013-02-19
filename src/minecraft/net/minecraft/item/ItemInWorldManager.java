@@ -549,7 +549,7 @@ public class ItemInWorldManager
             if (event.useItemInHand() != Event.Result.DENY && forgeEvent.useItem != net.minecraftforge.event.Event.Result.DENY)
             {
                 Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
-                // MCPC+ - try to use an item in hand before activating a block. Used for items such as IC2's wrench.
+                // try to use an item in hand before activating a block. Used for items such as IC2's wrench.
                 if (item != null && item.onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
                 {
                     if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
@@ -588,16 +588,16 @@ public class ItemInWorldManager
 
                 if (par3ItemStack.stackSize <= 0)
                 {
-                    ForgeEventFactory.onPlayerDestroyItem(this.thisPlayerMP, par3ItemStack);    // Forge
+                    ForgeEventFactory.onPlayerDestroyItem(this.thisPlayerMP, par3ItemStack);
                 }
             }
 
-            /* Re-enable if this causes bukkit incompatibility, or re-write client side to only send a single packet per right click.
+            // MCPC+ - Disabling this causes bukkit incompatibility with placing liquids(water, lava, etc.)
             // If we have 'true' and no explicit deny *or* an explicit allow -- run the item part of the hook
-            /*if (par3ItemStack != null && ((!result && event.useItemInHand() != Event.Result.DENY) || event.useItemInHand() == Event.Result.ALLOW))
+            if (par3ItemStack != null && ((!result && event.useItemInHand() != Event.Result.DENY) || event.useItemInHand() == Event.Result.ALLOW))
             {
                 this.tryUseItem(par1EntityPlayer, par2World, par3ItemStack);
-            }*/
+            }
         }
 
         return result;
