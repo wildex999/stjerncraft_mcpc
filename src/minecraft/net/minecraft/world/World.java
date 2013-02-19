@@ -2649,56 +2649,12 @@ public abstract class World implements IBlockAccess
         this.updateEntityWithOptionalForce(par1Entity, true);
     }
 
-    // Spigot start
-    public int tickEntityExceptions = 0;
     /**
      * Will update the entity in the world if the chunk the entity is in is currently loaded or its forced to update.
      * Args: entity, forceUpdate
      */
-    public void updateEntityWithOptionalForce(final Entity par1Entity, final boolean par2)
+    public void updateEntityWithOptionalForce(Entity par1Entity, boolean par2)
     {
-        if (par1Entity == null)
-        {
-            return;
-        }
-
-        try
-        {
-            tickEntity(par1Entity, par2);
-        }
-        catch (Exception var3)
-        {
-            try
-            {
-                tickEntityExceptions++;
-                List<String> var4 = new ArrayList<String>();
-                var4.add("Spigot has detected an unexpected exception while handling");
-
-                if (!(par1Entity instanceof EntityPlayerMP))
-                {
-                    var4.add("entity " + par1Entity.toString() + " (id: " + par1Entity.entityId + ")");
-                    var4.add("Spigot will kill the entity from the game instead of crashing your server.");
-                    par1Entity.setDead();
-                }
-                else
-                {
-                    var4.add("player '" + ((EntityPlayerMP) par1Entity).username + "'. They will be kicked instead of crashing your server.");
-                    ((EntityPlayerMP) par1Entity).getBukkitEntity().kickPlayer("The server experienced and error and was forced to kick you. Please re-login.");
-                }
-
-                org.bukkit.craftbukkit.util.ExceptionReporter.handle(var3, var4.toArray(new String[0]));
-            }
-            catch (Throwable var5)
-            {
-                org.bukkit.craftbukkit.util.ExceptionReporter.handle(var5, "Spigot has detected an unexpected exception while attempting to handle an exception (yes you read that correctly).");
-                Bukkit.shutdown();
-            }
-        }
-    }
-
-    public void tickEntity(Entity par1Entity, boolean par2)
-    {
-        // Spigot end
         int var3 = MathHelper.floor_double(par1Entity.posX);
         int var4 = MathHelper.floor_double(par1Entity.posZ);
 
