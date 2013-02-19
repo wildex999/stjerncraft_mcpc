@@ -113,7 +113,8 @@ public class PluginClassLoader extends URLClassLoader {
             if (debug) {
                 System.out.println("Enabling global inheritance remapping");
             }
-            jarMapping.inheritanceProvider = loader.getGlobalInheritanceMap();
+            jarMapping.setInheritanceMap(loader.getGlobalInheritanceMap());
+            jarMapping.setFallbackInheritanceProvider(new URLClassLoaderInheritanceProvider(this, debug));
         }
 
         remapper = new JarRemapper(jarMapping);
