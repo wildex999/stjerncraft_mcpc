@@ -124,6 +124,12 @@ public class CraftWorld implements World {
         animalEntityActivationRange = configuration.getInt("world-settings.default.entity-activation-range-animals");
         monsterEntityActivationRange = configuration.getInt("world-settings.default.entity-activation-range-monsters");
         
+        playerTrackingRange = configuration.getInt("world-settings.default.entity-tracking-range-players");
+        miscTrackingRange = configuration.getInt("world-settings.default.entity-tracking-range-misc");
+        animalTrackingRange = configuration.getInt("world-settings.default.entity-tracking-range-animals");
+        monsterTrackingRange = configuration.getInt("world-settings.default.entity-tracking-range-monsters");
+        maxTrackingRange = configuration.getInt("world-settings.default.entity-tracking-range-max");
+        
         //override defaults with world specific, if they exist
         info = configuration.getBoolean("world-settings." + name + ".info", info);        
         growthPerTick = configuration.getInt("world-settings." + name + ".growth-chunks-per-tick", growthPerTick);
@@ -152,6 +158,15 @@ public class CraftWorld implements World {
         animalEntityActivationRange = configuration.getInt("world-settings." + name + ".entity-activation-range-animals", animalEntityActivationRange);
         monsterEntityActivationRange = configuration.getInt("world-settings." + name + ".entity-activation-range-monsters", monsterEntityActivationRange);
 
+        maxTrackingRange = configuration.getInt("world-settings." + name + ".entity-tracking-range-max", maxTrackingRange);
+        playerTrackingRange = Math.min(maxTrackingRange, configuration.getInt("world-settings." + name + ".entity-tracking-range-players", playerTrackingRange));
+        miscTrackingRange = Math.min(maxTrackingRange, configuration.getInt("world-settings." + name + ".entity-tracking-range-misc", miscTrackingRange));
+        animalTrackingRange = Math.min(maxTrackingRange, configuration.getInt("world-settings." + name + ".entity-tracking-range-animals", animalTrackingRange));
+        monsterTrackingRange = Math.min(maxTrackingRange, configuration.getInt("world-settings." + name + ".entity-tracking-range-monsters", monsterTrackingRange));
+        if (maxTrackingRange == 0) {
+            System.err.println("Error! Should not have 0 maxRange");
+        }
+
         if (!info) return;
         server.getLogger().info("-------------- Spigot ----------------");
         server.getLogger().info("-------- World Settings For [" + name + "] --------");
@@ -169,6 +184,7 @@ public class CraftWorld implements World {
         server.getLogger().info("View distance: " + viewDistance);
         server.getLogger().info("Oreobfuscator: " + obfuscated);
         server.getLogger().info("Entity Activation Range: An " + animalEntityActivationRange + " / Mo " + monsterEntityActivationRange + " / Mi " + miscEntityActivationRange);        
+        server.getLogger().info("Entity Tracking Range: Pl " + playerTrackingRange + " / An " + animalTrackingRange + " / Mo " + monsterTrackingRange + " / Mi " + miscTrackingRange + " / Max " + maxTrackingRange);
         server.getLogger().info("-------------------------------------------------");
         // Spigot end
     }
@@ -193,6 +209,12 @@ public class CraftWorld implements World {
     public int miscEntityActivationRange = 16;
     public int animalEntityActivationRange = 32;
     public int monsterEntityActivationRange = 32;    
+
+    public int playerTrackingRange = 64;
+    public int miscTrackingRange = 32;
+    public int animalTrackingRange = 48;
+    public int monsterTrackingRange = 48;
+    public int maxTrackingRange = 64;
     // Spigot end
 
     public Block getBlockAt(int x, int y, int z) {

@@ -349,4 +349,30 @@ public class Spigot {
             ex.printStackTrace();
         }
     }    
+
+    /**
+     * Gets the range an entity should be 'tracked' by players and visible in the client.
+     * @param entity
+     * @param defaultRange Default range defined by Mojang
+     * @return
+     */
+    public static int getEntityTrackingRange(net.minecraft.entity.Entity entity, int defaultRange) {
+        CraftWorld world = entity.worldObj.getWorld();
+        int range = defaultRange;
+        if (entity instanceof net.minecraft.entity.player.EntityPlayerMP) {
+            range = world.playerTrackingRange;
+        } else if (entity.defaultActivationState || entity instanceof net.minecraft.entity.monster.EntityGhast) {
+            range = defaultRange;
+        } else if (entity.activationType == 1) {
+            range = world.monsterTrackingRange;
+        } else if (entity.activationType == 2) {
+            range = world.animalTrackingRange;
+        } else if (entity instanceof net.minecraft.entity.item.EntityItemFrame || entity instanceof net.minecraft.entity.item.EntityPainting || entity instanceof net.minecraft.entity.item.EntityItem || entity instanceof net.minecraft.entity.item.EntityXPOrb) {
+            range = world.miscTrackingRange;
+        }
+        if (range == 0) {
+            return defaultRange;
+        }
+        return Math.min(world.maxTrackingRange, range);
+    }
 }

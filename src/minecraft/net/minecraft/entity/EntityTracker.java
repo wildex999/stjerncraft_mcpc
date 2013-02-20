@@ -195,6 +195,9 @@ public class EntityTracker
         {
             throw new IllegalStateException("Asynchronous entity track!");    // Spigot
         }    
+
+        par2 = org.bukkit.craftbukkit.Spigot.getEntityTrackingRange(par1Entity, par2); // Spigot
+
         if (par2 > this.entityViewDistance)
         {
             par2 = this.entityViewDistance;
