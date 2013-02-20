@@ -469,41 +469,41 @@ public class JavaPluginLoader implements PluginLoader {
     }
 
     // MCPC+ start
-    private static InheritanceMap globalInheritanceMap = null;
+    private InheritanceMap globalInheritanceMap = null;
 
     /**
      * Get the inheritance map for remapping all plugins
      */
-    public static InheritanceMap getGlobalInheritanceMap() {
+    public InheritanceMap getGlobalInheritanceMap() {
+        if (globalInheritanceMap == null) {
+            Map<String, String> relocationsCurrent = new HashMap<String, String>();
+            relocationsCurrent.put("net.minecraft.server", "net.minecraft.server.v1_4_R1");
+            JarMapping currentMappings = new JarMapping();
+
+            try {
+                currentMappings.loadMappings(
+                        new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("mappings/1.4.7/cb2obf.csrg"))),
+                        new ShadeRelocationSimulator(relocationsCurrent));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                throw new RuntimeException(ex);
+            }
+
+            BiMap<String, String> inverseClassMap = HashBiMap.create(currentMappings.classes).inverse();
+            globalInheritanceMap = new InheritanceMap();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("mappings/1.4.7/nms.inheritmap")));
+
+            try {
+                globalInheritanceMap.load(reader, inverseClassMap);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                throw new RuntimeException(ex);
+            }
+            System.out.println("Loaded inheritance map of "+globalInheritanceMap.size()+" classes");
+        }
+
         return globalInheritanceMap;
-    }
-
-    static {
-        Map<String, String> relocationsCurrent = new HashMap<String, String>();
-        relocationsCurrent.put("net.minecraft.server", "net.minecraft.server.v1_4_R1");
-        JarMapping currentMappings = new JarMapping();
-
-        try {
-            currentMappings.loadMappings(
-                    new BufferedReader(new InputStreamReader(ClassLoader.getSystemClassLoader().getResourceAsStream("mappings/1.4.7/cb2obf.csrg"))),
-                    new ShadeRelocationSimulator(relocationsCurrent));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            throw new RuntimeException(ex);
-        }
-
-        BiMap<String, String> inverseClassMap = HashBiMap.create(currentMappings.classes).inverse();
-        globalInheritanceMap = new InheritanceMap();
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(ClassLoader.getSystemClassLoader().getResourceAsStream("mappings/1.4.7/nms.inheritmap")));
-
-        try {
-            globalInheritanceMap.load(reader, inverseClassMap);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            throw new RuntimeException(ex);
-        }
-        System.out.println("Loaded inheritance map of "+globalInheritanceMap.size()+" classes");
     }
     // MCPC+ end
 }
