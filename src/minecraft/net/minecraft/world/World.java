@@ -4081,9 +4081,7 @@ public abstract class World implements IBlockAccess
      */
     public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
     {
-        // Spigot start;
-        ArrayList<?> entities = new ArrayList();
-        // Spigot end
+        this.entitiesWithinAABBExcludingEntity.clear();
         int var3 = MathHelper.floor_double((par2AxisAlignedBB.minX - MAX_ENTITY_RADIUS) / 16.0D);
         int var4 = MathHelper.floor_double((par2AxisAlignedBB.maxX + MAX_ENTITY_RADIUS) / 16.0D);
         int var5 = MathHelper.floor_double((par2AxisAlignedBB.minZ - MAX_ENTITY_RADIUS) / 16.0D);
@@ -4095,12 +4093,12 @@ public abstract class World implements IBlockAccess
             {
                 if (this.chunkExists(var7, var8))
                 {
-                    this.getChunkFromChunkCoords(var7, var8).getEntitiesWithinAABBForEntity(par1Entity, par2AxisAlignedBB, entities); // Spigot
+                    this.getChunkFromChunkCoords(var7, var8).getEntitiesWithinAABBForEntity(par1Entity, par2AxisAlignedBB, this.entitiesWithinAABBExcludingEntity);
                 }
             }
         }
 
-        return entities; // Spigot
+        return this.entitiesWithinAABBExcludingEntity;
     }
 
     /**
