@@ -1002,20 +1002,32 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     public List getAllTileEntityInBox(int par1, int par2, int par3, int par4, int par5, int par6)
     {
         ArrayList arraylist = new ArrayList();
-        // CraftBukkit start - Use iterator
-        Iterator iterator = this.loadedTileEntityList.iterator();
-
-        while (iterator.hasNext())
+        
+        // Spigot start - check in chunks: usually just from one
+        for (int cx = (par1 >> 4); cx <= ((par4 - 1) >> 4); cx++)
         {
-            TileEntity tileentity = (TileEntity) iterator.next();
-            // CraftBukkit end
-
-            if (tileentity.xCoord >= par1 && tileentity.yCoord >= par2 && tileentity.zCoord >= par3 && tileentity.xCoord < par4 && tileentity.yCoord < par5 && tileentity.zCoord < par6)
+            for (int cz = (par3 >> 4); cz <= ((par6 - 1) >> 4); cz++)
             {
-                arraylist.add(tileentity);
+                Chunk c = getChunkFromChunkCoords(cx, cz);
+
+                if (c == null)
+                {
+                    continue;
+                }
+
+                for (Object te : c.chunkTileEntityMap.values())
+                {
+                    TileEntity tileentity = (TileEntity) te;
+
+                    if ((tileentity.xCoord >= par1) && (tileentity.yCoord >= par2) && (tileentity.zCoord >= par3) && (tileentity.xCoord < par4) && (tileentity.yCoord < par5) && (tileentity.zCoord < par6))
+                    {
+                        arraylist.add(tileentity);
+                    }
+                }
             }
         }
 
+        // Spigot end
         return arraylist;
     }
 
