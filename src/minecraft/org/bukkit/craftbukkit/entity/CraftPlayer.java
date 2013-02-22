@@ -634,10 +634,28 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         net.minecraft.util.ChunkCoordinates bed = getHandle().getBedLocation();
 
         if (world != null && bed != null) {
-            bed = net.minecraft.entity.player.EntityPlayer.verifyRespawnCoordinates(((CraftWorld) world).getHandle(), bed, getHandle().isSpawnForced());
-            if (bed != null) {
+            if (getHandle().isSpawnForced()) {
                 return new Location(world, bed.posX, bed.posY, bed.posZ);
             }
+
+            int cx = bed.posX >> 4;
+            int cz = bed.posZ >> 4;
+            boolean before = world.isChunkLoaded(cx, cz);
+
+            if (!before) {
+                world.loadChunk(cx, cz);
+            }
+
+            Location location = null;
+            if (world.getBlockTypeIdAt(bed.posX, bed.posY, bed.posZ) == net.minecraft.block.Block.bed.blockID) {
+                location = new Location(world, bed.posX, bed.posY, bed.posZ);
+            }
+
+            if (!before) {
+                world.unloadChunk(cx, cz);
+            }
+
+            return location;
         }
         return null;
     }
