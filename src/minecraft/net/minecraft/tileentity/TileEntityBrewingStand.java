@@ -134,7 +134,7 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
         {
             ItemStack var1 = this.brewingItemStacks[3];
 
-            if (!Item.itemsList[var1.itemID].isPotionIngredient())
+            if (!Item.itemsList[var1.itemID].isPotionIngredient(var1))
             {
                 return false;
             }
@@ -239,7 +239,7 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
      */
     private int getPotionResult(int par1, ItemStack par2ItemStack)
     {
-        return par2ItemStack == null ? par1 : (Item.itemsList[par2ItemStack.itemID].isPotionIngredient() ? PotionHelper.applyIngredient(par1, Item.itemsList[par2ItemStack.itemID].getPotionEffect()) : par1);
+        return par2ItemStack == null ? par1 : (Item.itemsList[par2ItemStack.itemID].isPotionIngredient(par2ItemStack) ? PotionHelper.applyIngredient(par1, Item.itemsList[par2ItemStack.itemID].getPotionEffect(par2ItemStack)) : par1);
     }
 
     /**
