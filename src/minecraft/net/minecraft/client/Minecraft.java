@@ -129,8 +129,10 @@ import org.lwjgl.util.glu.GLU;
 import com.google.common.collect.MapDifference;
 
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.event.world.WorldEvent;
 
 @SideOnly(Side.CLIENT)
 public abstract class Minecraft implements Runnable, IPlayerUsage
@@ -2029,6 +2031,12 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
 
         if (par1WorldClient == null)
         {
+            
+            if (theWorld != null)
+            {
+                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(theWorld));
+            }
+            
             NetClientHandler var3 = this.getSendQueue();
 
             if (var3 != null)
