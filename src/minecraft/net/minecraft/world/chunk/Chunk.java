@@ -1180,10 +1180,18 @@ public class Chunk
         {
             var4 = 0;
         }
+        else if (var4 >= this.entityLists.length) //BugFix: Collision above the world
+        {
+            var4 = this.entityLists.length - 1;
+        }
 
         if (var5 >= this.entityLists.length)
         {
             var5 = this.entityLists.length - 1;
+        }
+        else if (var5 < 0) //BugFix: Collision below the world
+        {
+            var5 = 0;
         }
 
         for (int var6 = var4; var6 <= var5; ++var6)
