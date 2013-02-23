@@ -13,7 +13,7 @@
     <minecraft.version>1.4.7</minecraft.version>
     <minecraft_version>1_4_R1</minecraft_version>
     <mcp.version>726a</mcp.version>
-    <forge.build>524</forge.build>
+    <forge.build>528</forge.build>
     <forge.version>1.4.7-6.6.1.${forge.build}</forge.version>
     <buildNumber>0</buildNumber>
 </properties>
