@@ -940,6 +940,10 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
             NBTTagList var3 = par1NBTTagCompound.getTagList("EnderItems");
             this.theInventoryEnderChest.loadInventoryFromNBT(var3);
         }
+        
+        //Disable vanilla mob armor/item pickup, players can already pickup items 
+        //and it causes issues with overwriting items, dropping items, etc..
+        this.canPickUpLoot = false;
     }
 
     /**
@@ -2387,7 +2391,14 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
      */
     public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
     {
-        this.inventory.armorInventory[par1] = par2ItemStack;
+        if (par1 == 0)
+        {
+            this.inventory.mainInventory[this.inventory.currentItem] = par2ItemStack;
+        }
+        else
+        {
+            this.inventory.armorInventory[par1 - 1] = par2ItemStack;
+        }
     }
 
     public ItemStack[] getLastActiveItems()
