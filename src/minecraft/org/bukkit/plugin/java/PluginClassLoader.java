@@ -156,7 +156,8 @@ public class PluginClassLoader extends URLClassLoader {
 
                 jarMapping.loadMappings(
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/1.4.7/cb2obf.csrg"))),
-                        new ShadeRelocationSimulator(relocations147));
+                        new ShadeRelocationSimulator(relocations147),
+                        null, false);
 
                 // resolve naming conflict in FML/CB
                 jarMapping.methods.put("net/minecraft/server/v1_4_R1/PlayerConnection/getPlayer ()Lorg/bukkit/craftbukkit/v1_4_R1/entity/CraftPlayer;", "getPlayerB");
@@ -171,7 +172,8 @@ public class PluginClassLoader extends URLClassLoader {
 
                 jarMapping.loadMappings(
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/1.4.6/cb2obf.csrg"))),
-                        new ShadeRelocationSimulator(relocations146));
+                        new ShadeRelocationSimulator(relocations146),
+                        null, false);
 
                 jarMapping.methods.put("net/minecraft/server/v1_4_6/PlayerConnection/getPlayer ()Lorg/bukkit/craftbukkit/v1_4_6/entity/CraftPlayer;", "getPlayerB");
                 jarMapping.packages.put("net/minecraft/v1_4_6/org/bouncycastle", "org/bouncycastle");
@@ -216,7 +218,8 @@ public class PluginClassLoader extends URLClassLoader {
 
                 jarMapping.loadMappings(
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream(filename))),
-                        null); // no version!
+                        null, // no version relocation!
+                        null, false);
             }
 
             System.out.println("Mapping loaded "+jarMapping.packages.size()+" packages, "+jarMapping.classes.size()+" classes, "+jarMapping.fields.size()+" fields, "+jarMapping.methods.size()+" methods, flags "+Integer.toHexString(flags));

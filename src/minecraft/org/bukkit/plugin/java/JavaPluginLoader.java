@@ -483,7 +483,8 @@ public class JavaPluginLoader implements PluginLoader {
             try {
                 currentMappings.loadMappings(
                         new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("mappings/1.4.7/cb2obf.csrg"))),
-                        new ShadeRelocationSimulator(relocationsCurrent));
+                        new ShadeRelocationSimulator(relocationsCurrent),
+                        null, false);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 throw new RuntimeException(ex);
