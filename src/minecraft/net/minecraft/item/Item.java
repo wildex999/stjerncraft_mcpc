@@ -572,6 +572,7 @@ public class Item
 
     /**
      * Returns a string representing what this item does to a potion.
+     * @Deprecated In favor of ItemStack sensitive version
      */
     public String getPotionEffect()
     {
@@ -1050,5 +1051,27 @@ public class Item
         }
 
         return false;
+    }
+
+    /**
+     * ItemStack sensitive version of isPotionIngredient
+     *
+     * @param stack The item stack
+     * @return True if this stack can be used as a potion ingredient
+     */
+    public boolean isPotionIngredient(ItemStack stack)
+    {
+        return isPotionIngredient();
+    }
+
+    /**
+     * ItemStack sensitive version of getPotionEffect
+     *
+     * @param stack The item stack
+     * @return A string containing the bit manipulation to apply the the potion.
+     */
+    public String getPotionEffect(ItemStack stack)
+    {
+        return getPotionEffect();
     }
 }
