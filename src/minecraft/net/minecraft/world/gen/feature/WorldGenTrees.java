@@ -2,10 +2,12 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSapling;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraft.block.BlockSapling.TreeGenerator;
 import org.bukkit.BlockChangeDelegate; // CraftBukkit
+import net.minecraftforge.common.ForgeDirection;
 
 public class WorldGenTrees extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
 {
@@ -79,7 +81,10 @@ public class WorldGenTrees extends WorldGenerator implements net.minecraft.block
                             // Forge start
                             Block block = Block.blocksList[k1];
 
-                            if (k1 != 0 && !block.isLeaves(w, l1, i1, j1) && k1 != Block.grass.blockID && k1 != Block.dirt.blockID && !block.isWood(w, l1, i1, j1))
+                            if (block != null &&
+                                !block.isLeaves(w, l1, i1, j1) &&
+                                !block.canSustainPlant(w, l1, i1, j1, ForgeDirection.UP, (BlockSapling)Block.sapling) &&
+                                !block.isWood(w, l1, i1, j1))
                             {
                                 // Forge end
                                 flag = false;
@@ -100,10 +105,12 @@ public class WorldGenTrees extends WorldGenerator implements net.minecraft.block
             else
             {
                 i1 = world.getTypeId(i, j - 1, k);
+                Block soil = Block.blocksList[i1];
+                boolean isSoil = (soil != null && soil.canSustainPlant(w, i, j - 1, k, ForgeDirection.UP, (BlockSapling)Block.sapling));
 
-                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && j < 256 - l - 1)
+                if (isSoil && j < 256 - l - 1)
                 {
-                    this.setType(world, i, j - 1, k, Block.dirt.blockID);
+                    soil.onPlantGrow(w, i, j - 1, k, i, j, k);
                     b0 = 3;
                     byte b1 = 0;
                     int i2;

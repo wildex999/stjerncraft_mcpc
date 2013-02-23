@@ -2,10 +2,12 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSapling;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.block.BlockSapling.TreeGenerator;
-import org.bukkit.BlockChangeDelegate; // CraftBukkit
+import org.bukkit.BlockChangeDelegate; // CraftBukkita
+import net.minecraftforge.common.ForgeDirection;
 
 public class WorldGenHugeTrees extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
 {
@@ -67,8 +69,13 @@ public class WorldGenHugeTrees extends WorldGenerator implements net.minecraft.b
                         if (i1 >= 0 && i1 < 256)
                         {
                             l1 = world.getTypeId(j1, i1, k1);
+                            Block block = Block.blocksList[l1];
 
-                            if (l1 != 0 && Block.blocksList[l1] != null && !Block.blocksList[l1].isLeaves(w, j1, i1, k1) && l1 != Block.grass.blockID && l1 != Block.dirt.blockID && !Block.blocksList[l1].isWood(w, j1, i1, k1) && l1 != Block.sapling.blockID)   // Forge
+                            if (block != null &&
+                                !block.isLeaves(w, j1, i1, k1) &&
+                                !block.canSustainPlant(w, j1, i1, k1, ForgeDirection.UP, (BlockSapling)Block.sapling) &&
+                                !block.isWood(w, j1, i1, k1) &&
+                                l1 != Block.sapling.blockID)   // Forge
                             {
                                 flag = false;
                             }
@@ -88,13 +95,15 @@ public class WorldGenHugeTrees extends WorldGenerator implements net.minecraft.b
             else
             {
                 i1 = world.getTypeId(i, j - 1, k);
+                Block soil = Block.blocksList[i1];
+                boolean isValidSoil = soil != null && soil.canSustainPlant(w, i, j - 1, k, ForgeDirection.UP, (BlockSapling)Block.sapling);
 
-                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && j < 256 - l - 1)
+                if (isValidSoil && j < 256 - l - 1)
                 {
-                    world.setRawTypeId(i, j - 1, k, Block.dirt.blockID);
-                    world.setRawTypeId(i + 1, j - 1, k, Block.dirt.blockID);
-                    world.setRawTypeId(i, j - 1, k + 1, Block.dirt.blockID);
-                    world.setRawTypeId(i + 1, j - 1, k + 1, Block.dirt.blockID);
+                    onPlantGrow(w, i,     j - 1, k,     i, j ,k);
+                    onPlantGrow(w, i + 1, j - 1, k,     i, j, k);
+                    onPlantGrow(w, i,     j - 1, k + 1, i, j, k);
+                    onPlantGrow(w, i + 1, j - 1, k + 1, i, j, k);
                     this.a(world, i, k, j + l, 2, random);
 
                     for (int i2 = j + l - 2 - random.nextInt(4); i2 > j + l / 2; i2 -= 2 + random.nextInt(4))
@@ -238,6 +247,15 @@ public class WorldGenHugeTrees extends WorldGenerator implements net.minecraft.b
                     }
                 }
             }
+        }
+    }
+
+    private void onPlantGrow(World world, int x, int y, int z, int sourceX, int sourceY, int sourceZ)
+    {
+        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        if (block != null)
+        {
+            block.onPlantGrow(world, x, y, z, sourceX, sourceY, sourceZ);
         }
     }
 

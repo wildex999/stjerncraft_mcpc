@@ -2,10 +2,12 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSapling;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.block.BlockSapling.TreeGenerator;
 import org.bukkit.BlockChangeDelegate; // CraftBukkit
+import net.minecraftforge.common.ForgeDirection;
 
 public class WorldGenBigTree extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
 {
@@ -442,7 +444,9 @@ public class WorldGenBigTree extends WorldGenerator implements net.minecraft.blo
         int[] var2 = new int[] {this.basePos[0], this.basePos[1] + this.heightLimit - 1, this.basePos[2]};
         int var3 = this.worldObj.getTypeId(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
 
-        if (var3 != 2 && var3 != 3)
+        Block soil = Block.blocksList[var3];
+        boolean isValidSoil = (soil != null && soil.canSustainPlant((World)worldObj, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Block.sapling));
+        if (!isValidSoil)
         {
             return false;
         }

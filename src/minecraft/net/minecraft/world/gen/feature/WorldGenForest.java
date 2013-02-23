@@ -2,9 +2,11 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSapling;
 import net.minecraft.world.World;
 import net.minecraft.block.BlockSapling.TreeGenerator;
 import org.bukkit.BlockChangeDelegate; // CraftBukkit
+import net.minecraftforge.common.ForgeDirection;
 
 public class WorldGenForest extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
 {
@@ -76,10 +78,12 @@ public class WorldGenForest extends WorldGenerator implements net.minecraft.bloc
             else
             {
                 i1 = world.getTypeId(i, j - 1, k);
+                Block soil = Block.blocksList[i1];
+                boolean isValidSoil = soil != null && soil.canSustainPlant(w, i, j - 1, k, ForgeDirection.UP, (BlockSapling)Block.sapling);
 
-                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && j < 256 - l - 1)
+                if (isValidSoil && j < 256 - l - 1)
                 {
-                    this.setType(world, i, j - 1, k, Block.dirt.blockID);
+                    soil.onPlantGrow(w, i, j - 1, k, i, j, k);
                     int i2;
 
                     for (i2 = j - 3 + l; i2 <= j + l; ++i2)
