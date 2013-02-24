@@ -62,6 +62,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.gen.ChunkProviderServer;
 import org.bukkit.Bukkit;
 import org.bukkit.World.Environment;
+import org.bukkit.craftbukkit.entity.CraftFakePlayer;
 import org.bukkit.craftbukkit.util.LongHashSet;
 import org.bukkit.craftbukkit.util.UnsafeList;
 import org.bukkit.generator.ChunkGenerator;
@@ -776,6 +777,63 @@ public abstract class World implements IBlockAccess
             return false;
         }
     }
+
+    // MCPC+ start - new method for adding mod events
+
+    /**
+     * Attempt to set a block in the world, sending required events and cancelling if necessary.
+     * @param x
+     * @param y
+     * @param z
+     * @param blockID
+     * @param metadata
+     * @param needsUpdate
+     * @param username A real player's username (possibly offline) or fake player name enclosed in [brackets]
+     * @param doLogin If true, sends join events for fake players (should be configurable in the mod)
+     * @return true if successful, false if denied. Mods MUST not continue if denied.
+     */
+    public boolean trySetBlockAndMetadata(int x, int y, int z, int blockID, int metadata, boolean needsUpdate, String username, boolean doLogin)
+    {
+        int oldBlockID = this.getBlockId(x, y, z);
+        int oldMetadata = this.getBlockMetadata(x, y, z);
+
+        if (blockID == oldBlockID && metadata == oldMetadata) {
+            // no change
+            return false;
+        }
+
+        org.bukkit.entity.Player player = CraftFakePlayer.getPossiblyRealPlayerBukkitEntity(this, username, doLogin);
+
+        if (blockID == 0)
+        {
+            // Block break - modeled after ItemInWorldManager#tryHarvestBlock
+            org.bukkit.block.Block block = this.getWorld().getBlockAt(x, y, z);
+            org.bukkit.event.block.BlockBreakEvent event = new org.bukkit.event.block.BlockBreakEvent(block, player);
+
+            this.getServer().getPluginManager().callEvent(event);
+
+            if (event.isCancelled())
+            {
+                return false;
+            }
+            return setBlockAndMetadataWithUpdate(x, y, z, blockID, metadata, needsUpdate);
+        }
+        else
+        {
+            // Block place - delegate to ItemBlock#processBlockPlace
+            int clickedX = x, clickedY = y, clickedZ = z;
+            ItemStack itemstack = null;
+
+            return ItemBlock.processBlockPlace(this,
+                    ((org.bukkit.craftbukkit.entity.CraftPlayer)player).getHandle(),
+                    itemstack,
+                    x, y, z,
+                    blockID,
+                    metadata,
+                    clickedX, clickedY, clickedZ);
+        }
+    }
+    // MCPC+ end
 
     /**
      * Sets the block to the specified blockID at the block coordinates Args x, y, z, blockID

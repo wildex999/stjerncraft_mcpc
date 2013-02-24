@@ -122,8 +122,8 @@ public class ItemBlock extends Item
         }
     }
 
-    // CraftBukkit start - add method to process block placement // MCPC+ note: see above - this method is now ONLY used for NMS-patched items!
-    static boolean processBlockPlace(final World world, final EntityPlayer entityhuman, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data, final int clickedX, final int clickedY, final int clickedZ)
+    // CraftBukkit start - add method to process block placement // MCPC+ note: see above + World#trySetBlockAndMetadata
+    static public boolean processBlockPlace(final World world, final EntityPlayer entityhuman, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data, final int clickedX, final int clickedY, final int clickedZ)
     {
         org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
 
