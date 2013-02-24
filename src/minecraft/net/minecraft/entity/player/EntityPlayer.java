@@ -943,7 +943,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         
         //Disable vanilla mob armor/item pickup, players can already pickup items 
         //and it causes issues with overwriting items, dropping items, etc..
-        this.canPickUpLoot = false;
+        //this.canPickUpLoot = false; // MCPC+ - keep enabled because CB relies on this flag for player pickup
     }
 
     /**
