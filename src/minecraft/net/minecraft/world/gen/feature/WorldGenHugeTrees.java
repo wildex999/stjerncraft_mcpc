@@ -100,10 +100,19 @@ public class WorldGenHugeTrees extends WorldGenerator implements net.minecraft.b
 
                 if (isValidSoil && j < 256 - l - 1)
                 {
-                    onPlantGrow(w, i,     j - 1, k,     i, j ,k);
-                    onPlantGrow(w, i + 1, j - 1, k,     i, j, k);
-                    onPlantGrow(w, i,     j - 1, k + 1, i, j, k);
-                    onPlantGrow(w, i + 1, j - 1, k + 1, i, j, k);
+                    // MCPC+ start - BlockChangeDelegate vs. Forge
+                    if (world instanceof World) {
+                        onPlantGrow(w, i,     j - 1, k,     i, j ,k);
+                        onPlantGrow(w, i + 1, j - 1, k,     i, j, k);
+                        onPlantGrow(w, i,     j - 1, k + 1, i, j, k);
+                        onPlantGrow(w, i + 1, j - 1, k + 1, i, j, k);
+                    } else {
+                        world.setRawTypeId(i, j - 1, k, Block.dirt.blockID);
+                        world.setRawTypeId(i + 1, j - 1, k, Block.dirt.blockID);
+                        world.setRawTypeId(i, j - 1, k + 1, Block.dirt.blockID);
+                        world.setRawTypeId(i + 1, j - 1, k + 1, Block.dirt.blockID);
+                    }
+                    // MCPC+ end
                     this.a(world, i, k, j + l, 2, random);
 
                     for (int i2 = j + l - 2 - random.nextInt(4); i2 > j + l / 2; i2 -= 2 + random.nextInt(4))

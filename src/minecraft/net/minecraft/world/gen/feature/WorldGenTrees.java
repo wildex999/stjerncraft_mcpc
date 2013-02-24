@@ -110,7 +110,13 @@ public class WorldGenTrees extends WorldGenerator implements net.minecraft.block
 
                 if (isSoil && j < 256 - l - 1)
                 {
-                    soil.onPlantGrow(w, i, j - 1, k, i, j, k);
+                    // MCPC+ start - BlockChangeDelegate vs. Forge
+                    if (world instanceof World) {
+                        soil.onPlantGrow((World) world, i, j - 1, k, i, j, k);
+                    } else {
+                        world.setRawTypeId(i, j - 1, k, Block.dirt.blockID);
+                    }
+                    // MCPC+ end
                     b0 = 3;
                     byte b1 = 0;
                     int i2;

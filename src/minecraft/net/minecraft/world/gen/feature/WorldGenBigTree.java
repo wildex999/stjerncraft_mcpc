@@ -443,9 +443,10 @@ public class WorldGenBigTree extends WorldGenerator implements net.minecraft.blo
         int[] var1 = new int[] {this.basePos[0], this.basePos[1], this.basePos[2]};
         int[] var2 = new int[] {this.basePos[0], this.basePos[1] + this.heightLimit - 1, this.basePos[2]};
         int var3 = this.worldObj.getTypeId(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
+        World w = worldObj instanceof World ? (World)worldObj : null; // MCPC
 
         Block soil = Block.blocksList[var3];
-        boolean isValidSoil = (soil != null && soil.canSustainPlant((World)worldObj, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Block.sapling));
+        boolean isValidSoil = (soil != null && soil.canSustainPlant(w, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Block.sapling));
         if (!isValidSoil)
         {
             return false;

@@ -87,7 +87,13 @@ public class WorldGenTaiga2 extends WorldGenerator implements net.minecraft.bloc
 
                 if (isValidSoil && j < 256 - l - 1)
                 {
-                    soil.onPlantGrow(w, i, j - 1, k, i, j, k);
+                    // MCPC+ start - BlockChangeDelegate vs. Forge
+                    if (world instanceof World) {
+                        soil.onPlantGrow((World) world, i, j - 1, k, i, j, k);
+                    } else {
+                        this.setType(world, i, j - 1, k, Block.dirt.blockID);
+                    }
+                    // MCPC+ end
                     k2 = random.nextInt(2);
                     i2 = 1;
                     byte b0 = 0;
