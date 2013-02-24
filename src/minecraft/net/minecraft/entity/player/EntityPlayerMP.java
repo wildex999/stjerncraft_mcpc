@@ -177,6 +177,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
     public int newLevel = 0;
     public int newTotalExp = 0;
     public boolean keepLevel = false;
+    public int lastPing = -1; // Spigot
     // CraftBukkit end
     public java.util.Set<java.util.UUID> sentFrames = new java.util.HashSet<java.util.UUID>(); // Spigot
 

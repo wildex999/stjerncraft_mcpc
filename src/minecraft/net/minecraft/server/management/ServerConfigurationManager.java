@@ -1038,7 +1038,31 @@ public abstract class ServerConfigurationManager
             this.sendAll(new Packet201PlayerInfo(entityplayermp.name, true, entityplayermp.ping));
         }
         // CraftBukkit end */
+        // Spigot start
+        if (this.playerEntityList.size() == 0 || !org.bukkit.craftbukkit.Spigot.tabPing)
+        {
+            return;
+        }
+
+        int index = MinecraftServer.currentTick % this.playerEntityList.size();
+        EntityPlayerMP player = (EntityPlayerMP) this.playerEntityList.get(index);
+
+        if (player.lastPing == -1 || Math.abs(player.ping - player.lastPing) > 20)
+        {
+            Packet packet = new Packet201PlayerInfo(player.listName, true, player.ping);
+
+            for (EntityPlayerMP splayer : (List<EntityPlayerMP>) this.playerEntityList)
+            {
+                if (splayer.getBukkitEntity().canSee(player.getBukkitEntity()))
+                {
+                    splayer.playerNetServerHandler.sendPacketToPlayer(packet);
+                }
+            }
+
+            player.lastPing = player.ping;
+        }
     }
+    // Spigot end
 
     /**
      * sends a packet to all players

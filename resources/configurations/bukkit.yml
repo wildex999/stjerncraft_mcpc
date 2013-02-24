@@ -37,6 +37,7 @@ settings:
     tps-command: true
     spam-exclusions:
        - /skill
+    tab-ping: false
     timeout-time: 300
     restart-on-crash: false
     restart-script-location: /path/to/server/start.sh
