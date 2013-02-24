@@ -10,6 +10,7 @@ We use maven to handle our dependencies.
 
 * Install [Maven 3](http://maven.apache.org/download.html)
 * Install [MCPC API](https://github.com/MinecraftPortCentral/Bukkit/tree/mcpc-api)
+* Install [SpecialSource](https://github.com/md-5/SpecialSource)
 * Check out this repo and: `mvn clean package`
 
 Coding and Pull Request Conventions
