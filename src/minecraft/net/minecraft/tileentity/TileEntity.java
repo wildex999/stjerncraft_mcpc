@@ -386,7 +386,16 @@ public class TileEntity
     public AxisAlignedBB getRenderBoundingBox()
     {
         AxisAlignedBB bb = INFINITE_EXTENT_AABB;
-        if (getBlockType()!=null && getBlockType() != Block.chest)
+        Block type = getBlockType();
+        if (type == Block.enchantmentTable)
+        {
+            bb = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
+        }
+        else if (type == Block.chest)
+        {
+            bb = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 1, zCoord + 2);
+        }
+        else if (type != null && type != Block.beacon)
         {
             AxisAlignedBB cbb = getBlockType().getCollisionBoundingBoxFromPool(worldObj, xCoord, yCoord, zCoord);
             if (cbb != null)
