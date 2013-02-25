@@ -673,7 +673,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public void wakeUpPlayer(boolean par1, boolean par2, boolean par3)
     {
-        if (this.fauxSleeping && !this.sleeping)
+        if (!this.sleeping)
         {
             return;    // CraftBukkit - Can't leave bed if not in one!
         }
