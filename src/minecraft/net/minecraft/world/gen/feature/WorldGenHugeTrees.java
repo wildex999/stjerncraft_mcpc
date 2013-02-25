@@ -71,9 +71,18 @@ public class WorldGenHugeTrees extends WorldGenerator implements net.minecraft.b
                             l1 = world.getTypeId(j1, i1, k1);
                             Block block = Block.blocksList[l1];
 
+                            // MCPC+ start - BlockChangeDelegate vs. Forge
+                            boolean canSustainPlant;
+                            if (world instanceof World) {
+                                canSustainPlant = block.canSustainPlant((World) world, j1, i1, k1, ForgeDirection.UP, (BlockSapling)Block.sapling);
+                            } else {
+                                canSustainPlant = l1 == Block.grass.blockID || l1 == Block.dirt.blockID;
+                            }
+                            // MCPC+ end
+
                             if (block != null &&
                                 !block.isLeaves(w, j1, i1, k1) &&
-                                !block.canSustainPlant(w, j1, i1, k1, ForgeDirection.UP, (BlockSapling)Block.sapling) &&
+                                !canSustainPlant &&
                                 !block.isWood(w, j1, i1, k1) &&
                                 l1 != Block.sapling.blockID)   // Forge
                             {
@@ -96,7 +105,14 @@ public class WorldGenHugeTrees extends WorldGenerator implements net.minecraft.b
             {
                 i1 = world.getTypeId(i, j - 1, k);
                 Block soil = Block.blocksList[i1];
-                boolean isValidSoil = soil != null && soil.canSustainPlant(w, i, j - 1, k, ForgeDirection.UP, (BlockSapling)Block.sapling);
+                // MCPC+ start - BlockChangeDelegate vs. Forge
+                boolean isValidSoil;
+                if (world instanceof World) {
+                    isValidSoil = soil != null && soil.canSustainPlant((World) world, i, j - 1, k, ForgeDirection.UP, (BlockSapling)Block.sapling);
+                } else {
+                    isValidSoil = i1 == Block.grass.blockID || i1 == Block.dirt.blockID;
+                }
+                // MCPC+ end
 
                 if (isValidSoil && j < 256 - l - 1)
                 {

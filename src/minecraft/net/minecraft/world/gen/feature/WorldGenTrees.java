@@ -81,9 +81,18 @@ public class WorldGenTrees extends WorldGenerator implements net.minecraft.block
                             // Forge start
                             Block block = Block.blocksList[k1];
 
+                            // MCPC+ start - BlockChangeDelegate vs. Forge
+                            boolean canSustainPlant;
+                            if (world instanceof World) {
+                                canSustainPlant = block.canSustainPlant((World) world, j1, i1, k1, ForgeDirection.UP, (BlockSapling)Block.sapling);
+                            } else {
+                                canSustainPlant = k1 == Block.grass.blockID || k1 == Block.dirt.blockID;
+                            }
+                            // MCPC+ end
+
                             if (block != null &&
                                 !block.isLeaves(w, l1, i1, j1) &&
-                                !block.canSustainPlant(w, l1, i1, j1, ForgeDirection.UP, (BlockSapling)Block.sapling) &&
+                                !canSustainPlant &&
                                 !block.isWood(w, l1, i1, j1))
                             {
                                 // Forge end
@@ -106,7 +115,14 @@ public class WorldGenTrees extends WorldGenerator implements net.minecraft.block
             {
                 i1 = world.getTypeId(i, j - 1, k);
                 Block soil = Block.blocksList[i1];
-                boolean isSoil = (soil != null && soil.canSustainPlant(w, i, j - 1, k, ForgeDirection.UP, (BlockSapling)Block.sapling));
+                // MCPC+ start - BlockChangeDelegate vs. Forge
+                boolean isSoil;
+                if (world instanceof World) {
+                    isSoil = (soil != null && soil.canSustainPlant((World) world, i, j - 1, k, ForgeDirection.UP, (BlockSapling)Block.sapling));
+                } else {
+                    isSoil = i1 == Block.grass.blockID || i1 == Block.dirt.blockID;
+                }
+                // MCPC+ end
 
                 if (isSoil && j < 256 - l - 1)
                 {

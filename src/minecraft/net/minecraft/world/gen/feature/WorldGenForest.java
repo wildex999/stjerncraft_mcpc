@@ -79,7 +79,14 @@ public class WorldGenForest extends WorldGenerator implements net.minecraft.bloc
             {
                 i1 = world.getTypeId(i, j - 1, k);
                 Block soil = Block.blocksList[i1];
-                boolean isValidSoil = soil != null && soil.canSustainPlant(w, i, j - 1, k, ForgeDirection.UP, (BlockSapling)Block.sapling);
+                // MCPC+ start - BlockChangeDelegate vs. Forge
+                boolean isValidSoil;
+                if (world instanceof World) {
+                    isValidSoil = soil != null && soil.canSustainPlant((World) world, i, j - 1, k, ForgeDirection.UP, (BlockSapling)Block.sapling);
+                } else {
+                    isValidSoil = i1 == Block.grass.blockID || i1 == Block.dirt.blockID;
+                }
+                // MCPC+ end
 
                 if (isValidSoil && j < 256 - l - 1)
                 {

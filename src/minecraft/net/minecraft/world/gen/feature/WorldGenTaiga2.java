@@ -83,7 +83,14 @@ public class WorldGenTaiga2 extends WorldGenerator implements net.minecraft.bloc
             {
                 l1 = world.getTypeId(i, j - 1, k);
                 Block soil = Block.blocksList[l1];
-                boolean isValidSoil = soil != null && soil.canSustainPlant(w, i, j - 1, k, ForgeDirection.UP, (BlockSapling)Block.sapling);
+                // MCPC+ start - BlockChangeDelegate vs. Forge
+                boolean isValidSoil;
+                if (world instanceof World) {
+                    isValidSoil = soil != null && soil.canSustainPlant((World) world, i, j - 1, k, ForgeDirection.UP, (BlockSapling)Block.sapling);
+                } else {
+                    isValidSoil = l1 == Block.grass.blockID || l1 == Block.dirt.blockID;
+                }
+                // MCPC+ end
 
                 if (isValidSoil && j < 256 - l - 1)
                 {
