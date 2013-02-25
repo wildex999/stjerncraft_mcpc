@@ -2198,6 +2198,7 @@ public class Block
      */
     public void onPlantGrow(World world, int x, int y, int z, int sourceX, int sourceY, int sourceZ)
     {
+        if (world == null) return; // MCPC+ - safeguard
         if (blockID == grass.blockID)
         {
             world.setBlock(x, y, z, dirt.blockID);

@@ -6,7 +6,7 @@ import net.minecraft.block.BlockSapling;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.block.BlockSapling.TreeGenerator;
-import org.bukkit.BlockChangeDelegate; // CraftBukkita
+import org.bukkit.BlockChangeDelegate; // CraftBukkit
 import net.minecraftforge.common.ForgeDirection;
 
 public class WorldGenHugeTrees extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
