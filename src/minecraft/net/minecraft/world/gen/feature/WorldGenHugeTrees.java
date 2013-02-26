@@ -74,7 +74,7 @@ public class WorldGenHugeTrees extends WorldGenerator implements net.minecraft.b
                             // MCPC+ start - BlockChangeDelegate vs. Forge
                             boolean canSustainPlant;
                             if (world instanceof World) {
-                                canSustainPlant = block.canSustainPlant((World) world, j1, i1, k1, ForgeDirection.UP, (BlockSapling)Block.sapling);
+                                canSustainPlant = block != null && block.canSustainPlant((World) world, j1, i1, k1, ForgeDirection.UP, (BlockSapling)Block.sapling);
                             } else {
                                 canSustainPlant = l1 == Block.grass.blockID || l1 == Block.dirt.blockID;
                             }
