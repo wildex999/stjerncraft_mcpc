@@ -35,6 +35,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.packet.Packet103SetSlot;
 import net.minecraft.potion.Potion;
 import net.minecraft.stats.AchievementList;
 import net.minecraft.stats.StatBase;
@@ -69,6 +70,7 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftItem;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
@@ -76,6 +78,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 // CraftBukkit end
 
 public abstract class EntityPlayer extends EntityLiving implements ICommandSender
@@ -473,6 +476,38 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         {
             this.updateItemUse(this.itemInUse, 16);
             int var1 = this.itemInUse.stackSize;
+            // CraftBukkit start
+            org.bukkit.inventory.ItemStack craftItem = CraftItemStack.asBukkitCopy(this.itemInUse);
+            PlayerItemConsumeEvent event = new PlayerItemConsumeEvent((Player) this.getBukkitEntity(), craftItem);
+            worldObj.getServer().getPluginManager().callEvent(event);
+
+            if (event.isCancelled())
+            {
+                // Update client
+                if (this instanceof EntityPlayerMP)
+                {
+                    ((EntityPlayerMP) this).playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot((byte) 0, openContainer.getSlotFromInventory((IInventory) this.inventory, this.inventory.currentItem).slotIndex, this.itemInUse));
+                }
+
+                return;
+            }
+
+            // Plugin modified the item, process it but don't remove it
+            if (!craftItem.equals(event.getItem()))
+            {
+                CraftItemStack.asNMSCopy(event.getItem()).onFoodEaten(this.worldObj, this);
+
+                // Update client
+                if (this instanceof EntityPlayerMP)
+                {
+                    ((EntityPlayerMP) this).playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot((byte) 0, openContainer.getSlotFromInventory((IInventory) this.inventory, this.inventory.currentItem).slotIndex, this.itemInUse));
+                }
+
+                return;
+            }
+
+            // CraftBukkit end
+
             ItemStack var2 = this.itemInUse.onFoodEaten(this.worldObj, this);
 
             if (var2 != this.itemInUse || var2 != null && var2.stackSize != var1)
