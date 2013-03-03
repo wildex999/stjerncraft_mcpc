@@ -174,7 +174,7 @@ public class CraftChunk implements Chunk {
                         if (tval != 0) {
                             tval = tval << 8;
                                 for (int j = 0; j < 4096; j++) {
-                                    blockids[j << 1] |= tval;
+                                    blockids[j] |= tval;
                                 }
                         }
                     } else {
