@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -290,8 +291,15 @@ public final class ItemStack
         return Item.itemsList[this.itemID].getMaxDamage();
     }
 
+    // Spigot start
     public boolean func_96631_a(int par1, Random par2Random)
     {
+        return isDamaged(par1, par2Random, null);
+    }
+
+    public boolean isDamaged(int par1, Random par2Random, EntityLiving entityliving)
+    {
+        // Spigot end
         if (!this.isItemStackDamageable())
         {
             return false;
@@ -313,6 +321,21 @@ public final class ItemStack
 
                 par1 -= k;
 
+                // Spigot start
+                if (entityliving instanceof EntityPlayerMP)
+                {
+                    org.bukkit.craftbukkit.inventory.CraftItemStack item = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(this);
+                    org.bukkit.event.player.PlayerItemDamageEvent event = new org.bukkit.event.player.PlayerItemDamageEvent((org.bukkit.entity.Player) entityliving.getBukkitEntity(), item, par1);
+                    org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
+
+                    if (event.isCancelled())
+                    {
+                        return false;
+                    }
+
+                    par1 = event.getDamage();
+                }
+
                 if (par1 <= 0)
                 {
                     return false;
@@ -333,7 +356,7 @@ public final class ItemStack
         {
             if (this.isItemStackDamageable())
             {
-                if (this.func_96631_a(par1, par2EntityLiving.getRNG()))
+                if (this.isDamaged(par1, par2EntityLiving.getRNG(), par2EntityLiving)) // Spigot
                 {
                     par2EntityLiving.renderBrokenItemStack(this);
 
