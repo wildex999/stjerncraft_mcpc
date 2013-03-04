@@ -245,7 +245,8 @@
                         <executable>${mcpc.python}</executable>
                         <arguments>
                             <argument>runtime/reobfuscate.py</argument>
-                            <argument>-a</argument>
+                            <argument>--all</argument>
+                            <argument>--generics</argument>
                         </arguments>
                     </configuration>
                 </execution>
