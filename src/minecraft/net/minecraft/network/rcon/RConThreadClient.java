@@ -43,9 +43,9 @@ public class RConThreadClient extends RConThreadBase
 
     public void run()
     {
-        while (true)
+        try
         {
-            try
+            while (true)
             {
                 if (!this.running)
                 {
@@ -94,7 +94,6 @@ public class RConThreadClient extends RConThreadBase
                             continue;
                         case 3:
                             String var7 = RConUtils.getBytesAsString(this.buffer, var21, var2);
-                            int var10000 = var21 + var7.length();
 
                             if (0 != var7.length() && var7.equals(this.rconPassword))
                             {
@@ -112,25 +111,21 @@ public class RConThreadClient extends RConThreadBase
                     }
                 }
             }
-            catch (SocketTimeoutException var17)
-            {
-                break;
-            }
-            catch (IOException var18)
-            {
-                break;
-            }
-            catch (Exception var19)
-            {
-                System.out.println(var19);
-                break;
-            }
-            finally
-            {
-                this.closeSocket();
-            }
-
-            return;
+        }
+        catch (SocketTimeoutException var17)
+        {
+        }
+        catch (IOException var18)
+        {
+        }
+        catch (Exception var19)
+        {
+            var19.printStackTrace();
+            System.out.println(var19);
+        }
+        finally
+        {
+            this.closeSocket();
         }
     }
 
