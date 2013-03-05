@@ -490,7 +490,14 @@
 /src/minecraft/net/minecraft/network/packet/Packet8UpdateHealth.java
 /src/minecraft/net/minecraft/network/packet/Packet9Respawn.java
 /src/minecraft/net/minecraft/network/packet/PacketCount.java
-/src/minecraft/net/minecraft/network/rcon/
+/src/minecraft/net/minecraft/network/rcon/IServer.java
+/src/minecraft/net/minecraft/network/rcon/RConConsoleSource.java
+/src/minecraft/net/minecraft/network/rcon/RConOutputStream.java
+/src/minecraft/net/minecraft/network/rcon/RConThreadBase.java
+/src/minecraft/net/minecraft/network/rcon/RConThreadMain.java
+/src/minecraft/net/minecraft/network/rcon/RConThreadQuery.java
+/src/minecraft/net/minecraft/network/rcon/RConThreadQueryAuth.java
+/src/minecraft/net/minecraft/network/rcon/RConUtils.java
 /src/minecraft/net/minecraft/pathfinding/PathEntity.java
 /src/minecraft/net/minecraft/pathfinding/PathFinder.java
 /src/minecraft/net/minecraft/pathfinding/PathNavigate.java
