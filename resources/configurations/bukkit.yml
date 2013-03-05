@@ -36,6 +36,8 @@ settings:
     fml-other-error-message: There was a problem during FML negotiation
     log-commands: true
     command-complete: true
+    restart-command: true
+    tps-command: true
     spam-exclusions:
        - /skill
 mcpc:

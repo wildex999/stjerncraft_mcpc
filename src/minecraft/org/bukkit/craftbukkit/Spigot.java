@@ -5,8 +5,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Spigot {
     public static void initialize(CraftServer server, SimpleCommandMap commandMap, YamlConfiguration configuration) {
-        commandMap.register("bukkit", new org.bukkit.craftbukkit.command.RestartCommand("restart"));
-        commandMap.register("bukkit", new org.bukkit.craftbukkit.command.TicksPerSecondCommand("tps"));
+        if (configuration.getBoolean("settings.restart-command", true)) {
+            commandMap.register("bukkit", new org.bukkit.craftbukkit.command.RestartCommand("restart"));
+        }
+
+        if (configuration.getBoolean("settings.tps-command", true)) {
+            commandMap.register("bukkit", new org.bukkit.craftbukkit.command.TicksPerSecondCommand("tps"));
+        }
 
         int timeout = configuration.getInt("settings.timeout-time", 300);
         if (timeout == 180) {
