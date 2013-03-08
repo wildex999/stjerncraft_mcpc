@@ -16,6 +16,7 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
+import org.bukkit.craftbukkit.OrebfuscatorManager;
 
 public class OreDictionary
 {
@@ -288,6 +289,12 @@ public class OreDictionary
         ore = ore.copy();
         ores.add(ore);
         MinecraftForge.EVENT_BUS.post(new OreRegisterEvent(name, ore));
+        // MCPC+ start - add custom ores to orebfuscator
+        // TODO: move to an OreRegisterEvent subscription
+        if (name.startsWith("ore")) {
+            OrebfuscatorManager.obfuscateBlocks[id] = true;
+        }
+        // MCPC+ end
     }
     
     public static class OreRegisterEvent extends Event

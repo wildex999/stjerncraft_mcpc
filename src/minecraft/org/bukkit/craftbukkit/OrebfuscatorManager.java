@@ -4,7 +4,7 @@ package org.bukkit.craftbukkit;
 public class OrebfuscatorManager {
 
     // Used to keep track of which blocks to obfuscate
-    private static boolean[] obfuscateBlocks = new boolean[Short.MAX_VALUE];
+    public static boolean[] obfuscateBlocks = new boolean[Short.MAX_VALUE]; // MCPC+ - private -> public for custom ores
 
     // Default blocks
     static {
@@ -39,7 +39,7 @@ public class OrebfuscatorManager {
                             for (int x = 0; x < 16; x++) {
                                 byte data = buffer[index];
                                 // Check if the block should be obfuscated for the default engine modes
-                                if (obfuscateBlocks[data & 0xFF]) {
+                                if (obfuscateBlocks[data & 0xFF]) { // TODO: decode extended block IDs (4-bit 'add' field)
                                     if (initialRadius == 0 || !areAjacentBlocksTransparent(world, startX + x, (i << 4) + y, startZ + z, initialRadius)) {
                                         // Replace with stone
                                         buffer[index] = (byte) net.minecraft.block.Block/*was:Block*/.stone/*was:STONE*/.blockID/*was:id*/;
