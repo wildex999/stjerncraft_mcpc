@@ -297,7 +297,7 @@ public class PluginClassLoader extends URLClassLoader {
                     // Reflection remap and inheritance extract
                     if (remapperPreprocessor != null) {
                         // add to inheritance map
-                        bytecode = remapperPreprocessor.preprocess(name, stream);
+                        bytecode = remapperPreprocessor.preprocess(stream);
                         if (bytecode == null) stream = url.openStream();
                     }
 
