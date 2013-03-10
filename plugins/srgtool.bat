@@ -1,1 +1,0 @@
-java -jar srgtool-2.0.jar apply --srg vcb2obf.srg --in plugin.jar --inheritance plugin.jar --out plugin-MCPC.jar

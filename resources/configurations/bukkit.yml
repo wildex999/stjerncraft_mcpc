@@ -53,7 +53,6 @@ mcpc:
         do-login: false
     plugin-settings:
         default:
-            remap-plugin-file: false
             debug: false
             custom-class-loader: true
             use-guava10: true
