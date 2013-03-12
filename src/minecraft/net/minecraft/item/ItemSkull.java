@@ -123,9 +123,9 @@ public class ItemSkull extends Item
      */
     public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
     {
-        for (int var4 = 0; var4 < skullTypes.length; ++var4)
+        for (int j = 0; j < skullTypes.length; ++j)
         {
-            par3List.add(new ItemStack(par1, 1, var4));
+            par3List.add(new ItemStack(par1, 1, j));
         }
     }
 
@@ -154,14 +154,14 @@ public class ItemSkull extends Item
 
     public String getItemNameIS(ItemStack par1ItemStack)
     {
-        int var2 = par1ItemStack.getItemDamage();
+        int i = par1ItemStack.getItemDamage();
 
-        if (var2 < 0 || var2 >= skullTypes.length)
+        if (i < 0 || i >= skullTypes.length)
         {
-            var2 = 0;
+            i = 0;
         }
 
-        return super.getItemName() + "." + skullTypes[var2];
+        return super.getItemName() + "." + skullTypes[i];
     }
 
     public String getItemDisplayName(ItemStack par1ItemStack)

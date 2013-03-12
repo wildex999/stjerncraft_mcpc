@@ -402,8 +402,8 @@ public class Block
 
     public static boolean isNormalCube(int par0)
     {
-        Block var1 = blocksList[par0];
-        return var1 == null ? false : var1.blockMaterial.isOpaque() && var1.renderAsNormalBlock();
+        Block block = blocksList[par0];
+        return block == null ? false : block.blockMaterial.isOpaque() && block.renderAsNormalBlock();
     }
 
     /**
@@ -567,11 +567,11 @@ public class Block
      */
     public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
     {
-        AxisAlignedBB var8 = this.getCollisionBoundingBoxFromPool(par1World, par2, par3, par4);
+        AxisAlignedBB axisalignedbb1 = this.getCollisionBoundingBoxFromPool(par1World, par2, par3, par4);
 
-        if (var8 != null && par5AxisAlignedBB.intersectsWith(var8))
+        if (axisalignedbb1 != null && par5AxisAlignedBB.intersectsWith(axisalignedbb1))
         {
-            par6List.add(var8);
+            par6List.add(axisalignedbb1);
         }
     }
 
@@ -726,13 +726,13 @@ public class Block
     {
         if (!par1World.isRemote && par1World.getGameRules().getGameRuleBooleanValue("doTileDrops") && !par1World.callingPlaceEvent) // MCPC+ do not drop items during a place event, prevents item dupe
         {
-            float var6 = 0.7F;
-            double var7 = (double)(par1World.rand.nextFloat() * var6) + (double)(1.0F - var6) * 0.5D;
-            double var9 = (double)(par1World.rand.nextFloat() * var6) + (double)(1.0F - var6) * 0.5D;
-            double var11 = (double)(par1World.rand.nextFloat() * var6) + (double)(1.0F - var6) * 0.5D;
-            EntityItem var13 = new EntityItem(par1World, (double)par2 + var7, (double)par3 + var9, (double)par4 + var11, par5ItemStack);
-            var13.delayBeforeCanPickup = 10;
-            par1World.spawnEntityInWorld(var13);
+            float f = 0.7F;
+            double d0 = (double)(par1World.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            double d1 = (double)(par1World.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            double d2 = (double)(par1World.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            EntityItem entityitem = new EntityItem(par1World, (double)par2 + d0, (double)par3 + d1, (double)par4 + d2, par5ItemStack);
+            entityitem.delayBeforeCanPickup = 10;
+            par1World.spawnEntityInWorld(entityitem);
         }
     }
 
@@ -745,9 +745,9 @@ public class Block
         {
             while (par5 > 0)
             {
-                int var6 = EntityXPOrb.getXPSplit(par5);
-                par5 -= var6;
-                par1World.spawnEntityInWorld(new EntityXPOrb(par1World, (double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, var6));
+                int i1 = EntityXPOrb.getXPSplit(par5);
+                par5 -= i1;
+                par1World.spawnEntityInWorld(new EntityXPOrb(par1World, (double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, i1));
             }
         }
     }
@@ -777,114 +777,114 @@ public class Block
         this.setBlockBoundsBasedOnState(par1World, par2, par3, par4);
         par5Vec3 = par5Vec3.addVector((double)(-par2), (double)(-par3), (double)(-par4));
         par6Vec3 = par6Vec3.addVector((double)(-par2), (double)(-par3), (double)(-par4));
-        Vec3 var7 = par5Vec3.getIntermediateWithXValue(par6Vec3, this.minX);
-        Vec3 var8 = par5Vec3.getIntermediateWithXValue(par6Vec3, this.maxX);
-        Vec3 var9 = par5Vec3.getIntermediateWithYValue(par6Vec3, this.minY);
-        Vec3 var10 = par5Vec3.getIntermediateWithYValue(par6Vec3, this.maxY);
-        Vec3 var11 = par5Vec3.getIntermediateWithZValue(par6Vec3, this.minZ);
-        Vec3 var12 = par5Vec3.getIntermediateWithZValue(par6Vec3, this.maxZ);
+        Vec3 vec32 = par5Vec3.getIntermediateWithXValue(par6Vec3, this.minX);
+        Vec3 vec33 = par5Vec3.getIntermediateWithXValue(par6Vec3, this.maxX);
+        Vec3 vec34 = par5Vec3.getIntermediateWithYValue(par6Vec3, this.minY);
+        Vec3 vec35 = par5Vec3.getIntermediateWithYValue(par6Vec3, this.maxY);
+        Vec3 vec36 = par5Vec3.getIntermediateWithZValue(par6Vec3, this.minZ);
+        Vec3 vec37 = par5Vec3.getIntermediateWithZValue(par6Vec3, this.maxZ);
 
-        if (!this.isVecInsideYZBounds(var7))
+        if (!this.isVecInsideYZBounds(vec32))
         {
-            var7 = null;
+            vec32 = null;
         }
 
-        if (!this.isVecInsideYZBounds(var8))
+        if (!this.isVecInsideYZBounds(vec33))
         {
-            var8 = null;
+            vec33 = null;
         }
 
-        if (!this.isVecInsideXZBounds(var9))
+        if (!this.isVecInsideXZBounds(vec34))
         {
-            var9 = null;
+            vec34 = null;
         }
 
-        if (!this.isVecInsideXZBounds(var10))
+        if (!this.isVecInsideXZBounds(vec35))
         {
-            var10 = null;
+            vec35 = null;
         }
 
-        if (!this.isVecInsideXYBounds(var11))
+        if (!this.isVecInsideXYBounds(vec36))
         {
-            var11 = null;
+            vec36 = null;
         }
 
-        if (!this.isVecInsideXYBounds(var12))
+        if (!this.isVecInsideXYBounds(vec37))
         {
-            var12 = null;
+            vec37 = null;
         }
 
-        Vec3 var13 = null;
+        Vec3 vec38 = null;
 
-        if (var7 != null && (var13 == null || par5Vec3.squareDistanceTo(var7) < par5Vec3.squareDistanceTo(var13)))
+        if (vec32 != null && (vec38 == null || par5Vec3.squareDistanceTo(vec32) < par5Vec3.squareDistanceTo(vec38)))
         {
-            var13 = var7;
+            vec38 = vec32;
         }
 
-        if (var8 != null && (var13 == null || par5Vec3.squareDistanceTo(var8) < par5Vec3.squareDistanceTo(var13)))
+        if (vec33 != null && (vec38 == null || par5Vec3.squareDistanceTo(vec33) < par5Vec3.squareDistanceTo(vec38)))
         {
-            var13 = var8;
+            vec38 = vec33;
         }
 
-        if (var9 != null && (var13 == null || par5Vec3.squareDistanceTo(var9) < par5Vec3.squareDistanceTo(var13)))
+        if (vec34 != null && (vec38 == null || par5Vec3.squareDistanceTo(vec34) < par5Vec3.squareDistanceTo(vec38)))
         {
-            var13 = var9;
+            vec38 = vec34;
         }
 
-        if (var10 != null && (var13 == null || par5Vec3.squareDistanceTo(var10) < par5Vec3.squareDistanceTo(var13)))
+        if (vec35 != null && (vec38 == null || par5Vec3.squareDistanceTo(vec35) < par5Vec3.squareDistanceTo(vec38)))
         {
-            var13 = var10;
+            vec38 = vec35;
         }
 
-        if (var11 != null && (var13 == null || par5Vec3.squareDistanceTo(var11) < par5Vec3.squareDistanceTo(var13)))
+        if (vec36 != null && (vec38 == null || par5Vec3.squareDistanceTo(vec36) < par5Vec3.squareDistanceTo(vec38)))
         {
-            var13 = var11;
+            vec38 = vec36;
         }
 
-        if (var12 != null && (var13 == null || par5Vec3.squareDistanceTo(var12) < par5Vec3.squareDistanceTo(var13)))
+        if (vec37 != null && (vec38 == null || par5Vec3.squareDistanceTo(vec37) < par5Vec3.squareDistanceTo(vec38)))
         {
-            var13 = var12;
+            vec38 = vec37;
         }
 
-        if (var13 == null)
+        if (vec38 == null)
         {
             return null;
         }
         else
         {
-            byte var14 = -1;
+            byte b0 = -1;
 
-            if (var13 == var7)
+            if (vec38 == vec32)
             {
-                var14 = 4;
+                b0 = 4;
             }
 
-            if (var13 == var8)
+            if (vec38 == vec33)
             {
-                var14 = 5;
+                b0 = 5;
             }
 
-            if (var13 == var9)
+            if (vec38 == vec34)
             {
-                var14 = 0;
+                b0 = 0;
             }
 
-            if (var13 == var10)
+            if (vec38 == vec35)
             {
-                var14 = 1;
+                b0 = 1;
             }
 
-            if (var13 == var11)
+            if (vec38 == vec36)
             {
-                var14 = 2;
+                b0 = 2;
             }
 
-            if (var13 == var12)
+            if (vec38 == vec37)
             {
-                var14 = 3;
+                b0 = 3;
             }
 
-            return new MovingObjectPosition(par2, par3, par4, var14, var13.addVector((double)par2, (double)par3, (double)par4));
+            return new MovingObjectPosition(par2, par3, par4, b0, vec38.addVector((double)par2, (double)par3, (double)par4));
         }
     }
 
@@ -940,8 +940,8 @@ public class Block
      */
     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
     {
-        int var5 = par1World.getBlockId(par2, par3, par4);
-        return var5 == 0 || blocksList[var5].blockMaterial.isReplaceable();
+        int l = par1World.getBlockId(par2, par3, par4);
+        return l == 0 || blocksList[l].blockMaterial.isReplaceable();
     }
 
     /**
@@ -1103,17 +1103,17 @@ public class Block
 
         if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
         {
-            ItemStack var8 = this.createStackedBlock(par6);
+            ItemStack itemstack = this.createStackedBlock(par6);
 
-            if (var8 != null)
+            if (itemstack != null)
             {
-                this.dropBlockAsItem_do(par1World, par3, par4, par5, var8);
+                this.dropBlockAsItem_do(par1World, par3, par4, par5, itemstack);
             }
         }
         else
         {
-            int var7 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
-            this.dropBlockAsItem(par1World, par3, par4, par5, par6, var7);
+            int i1 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
+            this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1);
         }
     }
 
@@ -1132,14 +1132,14 @@ public class Block
      */
     protected ItemStack createStackedBlock(int par1)
     {
-        int var2 = 0;
+        int j = 0;
 
         if (this.blockID >= 0 && this.blockID < Item.itemsList.length && Item.itemsList[this.blockID].getHasSubtypes())
         {
-            var2 = par1;
+            j = par1;
         }
 
-        return new ItemStack(this.blockID, 1, var2);
+        return new ItemStack(this.blockID, 1, j);
     }
 
     /**
@@ -1347,44 +1347,44 @@ public class Block
         // Item.itemsList[mobSpawner.blockID] = new ItemColored(mobSpawner.blockID - 256, true);
         // CraftBukkit end
 
-        for (int var0 = 0; var0 < 256; ++var0)
+        for (int i = 0; i < 256; ++i)
         {
-            if (blocksList[var0] != null)
+            if (blocksList[i] != null)
             {
-                if (Item.itemsList[var0] == null)
+                if (Item.itemsList[i] == null)
                 {
-                    Item.itemsList[var0] = new ItemBlock(var0 - 256);
-                    blocksList[var0].initializeBlock();
+                    Item.itemsList[i] = new ItemBlock(i - 256);
+                    blocksList[i].initializeBlock();
                 }
 
-                boolean var1 = false;
+                boolean flag = false;
 
-                if (var0 > 0 && blocksList[var0].getRenderType() == 10)
+                if (i > 0 && blocksList[i].getRenderType() == 10)
                 {
-                    var1 = true;
+                    flag = true;
                 }
 
-                if (var0 > 0 && blocksList[var0] instanceof BlockHalfSlab)
+                if (i > 0 && blocksList[i] instanceof BlockHalfSlab)
                 {
-                    var1 = true;
+                    flag = true;
                 }
 
-                if (var0 == tilledField.blockID)
+                if (i == tilledField.blockID)
                 {
-                    var1 = true;
+                    flag = true;
                 }
 
-                if (canBlockGrass[var0])
+                if (canBlockGrass[i])
                 {
-                    var1 = true;
+                    flag = true;
                 }
 
-                if (lightOpacity[var0] == 0)
+                if (lightOpacity[i] == 0)
                 {
-                    var1 = true;
+                    flag = true;
                 }
 
-                useNeighborBrightness[var0] = var1;
+                useNeighborBrightness[i] = flag;
             }
         }
 

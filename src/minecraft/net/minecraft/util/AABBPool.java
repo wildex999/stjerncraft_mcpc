@@ -49,21 +49,21 @@ public class AABBPool
             return new AxisAlignedBB(par1, par3, par5, par7, par9, par11);
         }
 
-        AxisAlignedBB var13;
+        AxisAlignedBB axisalignedbb;
 
         if (this.nextPoolIndex >= this.listAABB.size())
         {
-            var13 = new AxisAlignedBB(par1, par3, par5, par7, par9, par11);
-            this.listAABB.add(var13);
+            axisalignedbb = new AxisAlignedBB(par1, par3, par5, par7, par9, par11);
+            this.listAABB.add(axisalignedbb);
         }
         else
         {
-            var13 = (AxisAlignedBB)this.listAABB.get(this.nextPoolIndex);
-            var13.setBounds(par1, par3, par5, par7, par9, par11);
+            axisalignedbb = (AxisAlignedBB)this.listAABB.get(this.nextPoolIndex);
+            axisalignedbb.setBounds(par1, par3, par5, par7, par9, par11);
         }
 
         ++this.nextPoolIndex;
-        return var13;
+        return axisalignedbb;
     }
 
     /**

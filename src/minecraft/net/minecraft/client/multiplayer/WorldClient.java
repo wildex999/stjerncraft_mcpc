@@ -77,14 +77,14 @@ public class WorldClient extends World
         this.setWorldTime(this.getWorldTime() + 1L);
         this.theProfiler.startSection("reEntryProcessing");
 
-        for (int var1 = 0; var1 < 10 && !this.entitySpawnQueue.isEmpty(); ++var1)
+        for (int i = 0; i < 10 && !this.entitySpawnQueue.isEmpty(); ++i)
         {
-            Entity var2 = (Entity)this.entitySpawnQueue.iterator().next();
-            this.entitySpawnQueue.remove(var2);
+            Entity entity = (Entity)this.entitySpawnQueue.iterator().next();
+            this.entitySpawnQueue.remove(entity);
 
-            if (!this.loadedEntityList.contains(var2))
+            if (!this.loadedEntityList.contains(entity))
             {
-                this.spawnEntityInWorld(var2);
+                this.spawnEntityInWorld(entity);
             }
         }
 
@@ -127,25 +127,25 @@ public class WorldClient extends World
             this.previousActiveChunkSet.clear();
         }
 
-        int var1 = 0;
-        Iterator var2 = this.activeChunkSet.iterator();
+        int i = 0;
+        Iterator iterator = this.activeChunkSet.iterator();
 
-        while (var2.hasNext())
+        while (iterator.hasNext())
         {
-            ChunkCoordIntPair var3 = (ChunkCoordIntPair)var2.next();
+            ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair)iterator.next();
 
-            if (!this.previousActiveChunkSet.contains(var3))
+            if (!this.previousActiveChunkSet.contains(chunkcoordintpair))
             {
-                int var4 = var3.chunkXPos * 16;
-                int var5 = var3.chunkZPos * 16;
+                int j = chunkcoordintpair.chunkXPos * 16;
+                int k = chunkcoordintpair.chunkZPos * 16;
                 this.theProfiler.startSection("getChunk");
-                Chunk var6 = this.getChunkFromChunkCoords(var3.chunkXPos, var3.chunkZPos);
-                this.moodSoundAndLightCheck(var4, var5, var6);
+                Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
+                this.moodSoundAndLightCheck(j, k, chunk);
                 this.theProfiler.endSection();
-                this.previousActiveChunkSet.add(var3);
-                ++var1;
+                this.previousActiveChunkSet.add(chunkcoordintpair);
+                ++i;
 
-                if (var1 >= 10)
+                if (i >= 10)
                 {
                     return;
                 }
@@ -175,15 +175,15 @@ public class WorldClient extends World
      */
     public boolean spawnEntityInWorld(Entity par1Entity)
     {
-        boolean var2 = super.spawnEntityInWorld(par1Entity);
+        boolean flag = super.spawnEntityInWorld(par1Entity);
         this.entityList.add(par1Entity);
 
-        if (!var2)
+        if (!flag)
         {
             this.entitySpawnQueue.add(par1Entity);
         }
 
-        return var2;
+        return flag;
     }
 
     /**
@@ -233,11 +233,11 @@ public class WorldClient extends World
      */
     public void addEntityToWorld(int par1, Entity par2Entity)
     {
-        Entity var3 = this.getEntityByID(par1);
+        Entity entity1 = this.getEntityByID(par1);
 
-        if (var3 != null)
+        if (entity1 != null)
         {
-            this.removeEntity(var3);
+            this.removeEntity(entity1);
         }
 
         this.entityList.add(par2Entity);
@@ -261,15 +261,15 @@ public class WorldClient extends World
 
     public Entity removeEntityFromWorld(int par1)
     {
-        Entity var2 = (Entity)this.entityHashSet.removeObject(par1);
+        Entity entity = (Entity)this.entityHashSet.removeObject(par1);
 
-        if (var2 != null)
+        if (entity != null)
         {
-            this.entityList.remove(var2);
-            this.removeEntity(var2);
+            this.entityList.remove(entity);
+            this.removeEntity(entity);
         }
 
-        return var2;
+        return entity;
     }
 
     public boolean setBlockAndMetadataAndInvalidate(int par1, int par2, int par3, int par4, int par5)
@@ -350,23 +350,23 @@ public class WorldClient extends World
 
     public void func_73029_E(int par1, int par2, int par3)
     {
-        byte var4 = 16;
-        Random var5 = new Random();
+        byte b0 = 16;
+        Random random = new Random();
 
-        for (int var6 = 0; var6 < 1000; ++var6)
+        for (int l = 0; l < 1000; ++l)
         {
-            int var7 = par1 + this.rand.nextInt(var4) - this.rand.nextInt(var4);
-            int var8 = par2 + this.rand.nextInt(var4) - this.rand.nextInt(var4);
-            int var9 = par3 + this.rand.nextInt(var4) - this.rand.nextInt(var4);
-            int var10 = this.getBlockId(var7, var8, var9);
+            int i1 = par1 + this.rand.nextInt(b0) - this.rand.nextInt(b0);
+            int j1 = par2 + this.rand.nextInt(b0) - this.rand.nextInt(b0);
+            int k1 = par3 + this.rand.nextInt(b0) - this.rand.nextInt(b0);
+            int l1 = this.getBlockId(i1, j1, k1);
 
-            if (var10 == 0 && this.rand.nextInt(8) > var8 && this.provider.getWorldHasVoidParticles())
+            if (l1 == 0 && this.rand.nextInt(8) > j1 && this.provider.getWorldHasVoidParticles())
             {
-                this.spawnParticle("depthsuspend", (double)((float)var7 + this.rand.nextFloat()), (double)((float)var8 + this.rand.nextFloat()), (double)((float)var9 + this.rand.nextFloat()), 0.0D, 0.0D, 0.0D);
+                this.spawnParticle("depthsuspend", (double)((float)i1 + this.rand.nextFloat()), (double)((float)j1 + this.rand.nextFloat()), (double)((float)k1 + this.rand.nextFloat()), 0.0D, 0.0D, 0.0D);
             }
-            else if (var10 > 0)
+            else if (l1 > 0)
             {
-                Block.blocksList[var10].randomDisplayTick(this, var7, var8, var9, var5);
+                Block.blocksList[l1].randomDisplayTick(this, i1, j1, k1, random);
             }
         }
     }
@@ -377,57 +377,57 @@ public class WorldClient extends World
     public void removeAllEntities()
     {
         this.loadedEntityList.removeAll(this.unloadedEntityList);
-        int var1;
-        Entity var2;
-        int var3;
-        int var4;
+        int i;
+        Entity entity;
+        int j;
+        int k;
 
-        for (var1 = 0; var1 < this.unloadedEntityList.size(); ++var1)
+        for (i = 0; i < this.unloadedEntityList.size(); ++i)
         {
-            var2 = (Entity)this.unloadedEntityList.get(var1);
-            var3 = var2.chunkCoordX;
-            var4 = var2.chunkCoordZ;
+            entity = (Entity)this.unloadedEntityList.get(i);
+            j = entity.chunkCoordX;
+            k = entity.chunkCoordZ;
 
-            if (var2.addedToChunk && this.chunkExists(var3, var4))
+            if (entity.addedToChunk && this.chunkExists(j, k))
             {
-                this.getChunkFromChunkCoords(var3, var4).removeEntity(var2);
+                this.getChunkFromChunkCoords(j, k).removeEntity(entity);
             }
         }
 
-        for (var1 = 0; var1 < this.unloadedEntityList.size(); ++var1)
+        for (i = 0; i < this.unloadedEntityList.size(); ++i)
         {
-            this.releaseEntitySkin((Entity)this.unloadedEntityList.get(var1));
+            this.releaseEntitySkin((Entity)this.unloadedEntityList.get(i));
         }
 
         this.unloadedEntityList.clear();
 
-        for (var1 = 0; var1 < this.loadedEntityList.size(); ++var1)
+        for (i = 0; i < this.loadedEntityList.size(); ++i)
         {
-            var2 = (Entity)this.loadedEntityList.get(var1);
+            entity = (Entity)this.loadedEntityList.get(i);
 
-            if (var2.ridingEntity != null)
+            if (entity.ridingEntity != null)
             {
-                if (!var2.ridingEntity.isDead && var2.ridingEntity.riddenByEntity == var2)
+                if (!entity.ridingEntity.isDead && entity.ridingEntity.riddenByEntity == entity)
                 {
                     continue;
                 }
 
-                var2.ridingEntity.riddenByEntity = null;
-                var2.ridingEntity = null;
+                entity.ridingEntity.riddenByEntity = null;
+                entity.ridingEntity = null;
             }
 
-            if (var2.isDead)
+            if (entity.isDead)
             {
-                var3 = var2.chunkCoordX;
-                var4 = var2.chunkCoordZ;
+                j = entity.chunkCoordX;
+                k = entity.chunkCoordZ;
 
-                if (var2.addedToChunk && this.chunkExists(var3, var4))
+                if (entity.addedToChunk && this.chunkExists(j, k))
                 {
-                    this.getChunkFromChunkCoords(var3, var4).removeEntity(var2);
+                    this.getChunkFromChunkCoords(j, k).removeEntity(entity);
                 }
 
-                this.loadedEntityList.remove(var1--);
-                this.releaseEntitySkin(var2);
+                this.loadedEntityList.remove(i--);
+                this.releaseEntitySkin(entity);
             }
         }
     }
@@ -437,10 +437,10 @@ public class WorldClient extends World
      */
     public CrashReportCategory addWorldInfoToCrashReport(CrashReport par1CrashReport)
     {
-        CrashReportCategory var2 = super.addWorldInfoToCrashReport(par1CrashReport);
-        var2.addCrashSectionCallable("Forced entities", new CallableMPL1(this));
-        var2.addCrashSectionCallable("Retry entities", new CallableMPL2(this));
-        return var2;
+        CrashReportCategory crashreportcategory = super.addWorldInfoToCrashReport(par1CrashReport);
+        crashreportcategory.addCrashSectionCallable("Forced entities", new CallableMPL1(this));
+        crashreportcategory.addCrashSectionCallable("Retry entities", new CallableMPL2(this));
+        return crashreportcategory;
     }
 
     /**
@@ -448,21 +448,21 @@ public class WorldClient extends World
      */
     public void playSound(double par1, double par3, double par5, String par7Str, float par8, float par9, boolean par10)
     {
-        float var11 = 16.0F;
+        float f2 = 16.0F;
 
         if (par8 > 1.0F)
         {
-            var11 *= par8;
+            f2 *= par8;
         }
 
-        double var12 = this.mc.renderViewEntity.getDistanceSq(par1, par3, par5);
+        double d3 = this.mc.renderViewEntity.getDistanceSq(par1, par3, par5);
 
-        if (var12 < (double)(var11 * var11))
+        if (d3 < (double)(f2 * f2))
         {
-            if (par10 && var12 > 100.0D)
+            if (par10 && d3 > 100.0D)
             {
-                double var14 = Math.sqrt(var12) / 40.0D;
-                this.mc.sndManager.func_92070_a(par7Str, (float)par1, (float)par3, (float)par5, par8, par9, (int)Math.round(var14 * 20.0D));
+                double d4 = Math.sqrt(d3) / 40.0D;
+                this.mc.sndManager.func_92070_a(par7Str, (float)par1, (float)par3, (float)par5, par8, par9, (int)Math.round(d4 * 20.0D));
             }
             else
             {

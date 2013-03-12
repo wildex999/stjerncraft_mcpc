@@ -40,23 +40,23 @@ public class MapGenStronghold extends MapGenStructure
         this.structureCoords = new ChunkCoordIntPair[3];
         this.field_82671_h = 32.0D;
         this.field_82672_i = 3;
-        Iterator var2 = par1Map.entrySet().iterator();
+        Iterator iterator = par1Map.entrySet().iterator();
 
-        while (var2.hasNext())
+        while (iterator.hasNext())
         {
-            Entry var3 = (Entry)var2.next();
+            Entry entry = (Entry)iterator.next();
 
-            if (((String)var3.getKey()).equals("distance"))
+            if (((String)entry.getKey()).equals("distance"))
             {
-                this.field_82671_h = MathHelper.func_82713_a((String)var3.getValue(), this.field_82671_h, 1.0D);
+                this.field_82671_h = MathHelper.func_82713_a((String)entry.getValue(), this.field_82671_h, 1.0D);
             }
-            else if (((String)var3.getKey()).equals("count"))
+            else if (((String)entry.getKey()).equals("count"))
             {
-                this.structureCoords = new ChunkCoordIntPair[MathHelper.parseIntWithDefaultAndMax((String)var3.getValue(), this.structureCoords.length, 1)];
+                this.structureCoords = new ChunkCoordIntPair[MathHelper.parseIntWithDefaultAndMax((String)entry.getValue(), this.structureCoords.length, 1)];
             }
-            else if (((String)var3.getKey()).equals("spread"))
+            else if (((String)entry.getKey()).equals("spread"))
             {
-                this.field_82672_i = MathHelper.parseIntWithDefaultAndMax((String)var3.getValue(), this.field_82672_i, 1);
+                this.field_82672_i = MathHelper.parseIntWithDefaultAndMax((String)entry.getValue(), this.field_82672_i, 1);
             }
         }
     }
@@ -65,47 +65,47 @@ public class MapGenStronghold extends MapGenStructure
     {
         if (!this.ranBiomeCheck)
         {
-            Random var3 = new Random();
-            var3.setSeed(this.worldObj.getSeed());
-            double var4 = var3.nextDouble() * Math.PI * 2.0D;
-            int var6 = 1;
+            Random random = new Random();
+            random.setSeed(this.worldObj.getSeed());
+            double d0 = random.nextDouble() * Math.PI * 2.0D;
+            int k = 1;
 
-            for (int var7 = 0; var7 < this.structureCoords.length; ++var7)
+            for (int l = 0; l < this.structureCoords.length; ++l)
             {
-                double var8 = (1.25D * (double)var6 + var3.nextDouble()) * this.field_82671_h * (double)var6;
-                int var10 = (int)Math.round(Math.cos(var4) * var8);
-                int var11 = (int)Math.round(Math.sin(var4) * var8);
-                ArrayList var12 = new ArrayList();
-                Collections.addAll(var12, this.allowedBiomeGenBases);
-                ChunkPosition var13 = this.worldObj.getWorldChunkManager().findBiomePosition((var10 << 4) + 8, (var11 << 4) + 8, 112, var12, var3);
+                double d1 = (1.25D * (double)k + random.nextDouble()) * this.field_82671_h * (double)k;
+                int i1 = (int)Math.round(Math.cos(d0) * d1);
+                int j1 = (int)Math.round(Math.sin(d0) * d1);
+                ArrayList arraylist = new ArrayList();
+                Collections.addAll(arraylist, this.allowedBiomeGenBases);
+                ChunkPosition chunkposition = this.worldObj.getWorldChunkManager().findBiomePosition((i1 << 4) + 8, (j1 << 4) + 8, 112, arraylist, random);
 
-                if (var13 != null)
+                if (chunkposition != null)
                 {
-                    var10 = var13.x >> 4;
-                    var11 = var13.z >> 4;
+                    i1 = chunkposition.x >> 4;
+                    j1 = chunkposition.z >> 4;
                 }
 
-                this.structureCoords[var7] = new ChunkCoordIntPair(var10, var11);
-                var4 += (Math.PI * 2D) * (double)var6 / (double)this.field_82672_i;
+                this.structureCoords[l] = new ChunkCoordIntPair(i1, j1);
+                d0 += (Math.PI * 2D) * (double)k / (double)this.field_82672_i;
 
-                if (var7 == this.field_82672_i)
+                if (l == this.field_82672_i)
                 {
-                    var6 += 2 + var3.nextInt(5);
-                    this.field_82672_i += 1 + var3.nextInt(2);
+                    k += 2 + random.nextInt(5);
+                    this.field_82672_i += 1 + random.nextInt(2);
                 }
             }
 
             this.ranBiomeCheck = true;
         }
 
-        ChunkCoordIntPair[] var14 = this.structureCoords;
-        int var15 = var14.length;
+        ChunkCoordIntPair[] achunkcoordintpair = this.structureCoords;
+        int k1 = achunkcoordintpair.length;
 
-        for (int var5 = 0; var5 < var15; ++var5)
+        for (int l1 = 0; l1 < k1; ++l1)
         {
-            ChunkCoordIntPair var16 = var14[var5];
+            ChunkCoordIntPair chunkcoordintpair = achunkcoordintpair[l1];
 
-            if (par1 == var16.chunkXPos && par2 == var16.chunkZPos)
+            if (par1 == chunkcoordintpair.chunkXPos && par2 == chunkcoordintpair.chunkZPos)
             {
                 return true;
             }
@@ -120,32 +120,32 @@ public class MapGenStronghold extends MapGenStructure
      */
     protected List getCoordList()
     {
-        ArrayList var1 = new ArrayList();
-        ChunkCoordIntPair[] var2 = this.structureCoords;
-        int var3 = var2.length;
+        ArrayList arraylist = new ArrayList();
+        ChunkCoordIntPair[] achunkcoordintpair = this.structureCoords;
+        int i = achunkcoordintpair.length;
 
-        for (int var4 = 0; var4 < var3; ++var4)
+        for (int j = 0; j < i; ++j)
         {
-            ChunkCoordIntPair var5 = var2[var4];
+            ChunkCoordIntPair chunkcoordintpair = achunkcoordintpair[j];
 
-            if (var5 != null)
+            if (chunkcoordintpair != null)
             {
-                var1.add(var5.getChunkPosition(64));
+                arraylist.add(chunkcoordintpair.getChunkPosition(64));
             }
         }
 
-        return var1;
+        return arraylist;
     }
 
     protected StructureStart getStructureStart(int par1, int par2)
     {
-        StructureStrongholdStart var3;
+        StructureStrongholdStart structurestrongholdstart;
 
-        for (var3 = new StructureStrongholdStart(this.worldObj, this.rand, par1, par2); var3.getComponents().isEmpty() || ((ComponentStrongholdStairs2)var3.getComponents().get(0)).strongholdPortalRoom == null; var3 = new StructureStrongholdStart(this.worldObj, this.rand, par1, par2))
+        for (structurestrongholdstart = new StructureStrongholdStart(this.worldObj, this.rand, par1, par2); structurestrongholdstart.getComponents().isEmpty() || ((ComponentStrongholdStairs2)structurestrongholdstart.getComponents().get(0)).strongholdPortalRoom == null; structurestrongholdstart = new StructureStrongholdStart(this.worldObj, this.rand, par1, par2))
         {
             ;
         }
 
-        return var3;
+        return structurestrongholdstart;
     }
 }

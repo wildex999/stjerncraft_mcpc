@@ -32,58 +32,58 @@ final class ConsoleLogFormatter extends Formatter
 
     public String format(LogRecord par1LogRecord)
     {
-        StringBuilder var2 = new StringBuilder();
-        var2.append(this.dateFormat.format(Long.valueOf(par1LogRecord.getMillis())));
-        Level var3 = par1LogRecord.getLevel();
+        StringBuilder stringbuilder = new StringBuilder();
+        stringbuilder.append(this.dateFormat.format(Long.valueOf(par1LogRecord.getMillis())));
+        Level level = par1LogRecord.getLevel();
 
-        if (var3 == Level.FINEST)
+        if (level == Level.FINEST)
         {
-            var2.append(" [FINEST] ");
+            stringbuilder.append(" [FINEST] ");
         }
-        else if (var3 == Level.FINER)
+        else if (level == Level.FINER)
         {
-            var2.append(" [FINER] ");
+            stringbuilder.append(" [FINER] ");
         }
-        else if (var3 == Level.FINE)
+        else if (level == Level.FINE)
         {
-            var2.append(" [FINE] ");
+            stringbuilder.append(" [FINE] ");
         }
-        else if (var3 == Level.INFO)
+        else if (level == Level.INFO)
         {
-            var2.append(" [INFO] ");
+            stringbuilder.append(" [INFO] ");
         }
-        else if (var3 == Level.WARNING)
+        else if (level == Level.WARNING)
         {
-            var2.append(" [WARNING] ");
+            stringbuilder.append(" [WARNING] ");
         }
-        else if (var3 == Level.SEVERE)
+        else if (level == Level.SEVERE)
         {
-            var2.append(" [SEVERE] ");
+            stringbuilder.append(" [SEVERE] ");
         }
         else     // CraftBukkit
         {
-            var2.append(" [").append(var3.getLocalizedName()).append("] ");
+            stringbuilder.append(" [").append(level.getLocalizedName()).append("] ");
         }
 
-        var2.append(formatMessage(par1LogRecord)); // CraftBukkit
-        var2.append('\n');
-        Throwable var4 = par1LogRecord.getThrown();
+        stringbuilder.append(formatMessage(par1LogRecord)); // CraftBukkit
+        stringbuilder.append('\n');
+        Throwable throwable = par1LogRecord.getThrown();
 
-        if (var4 != null)
+        if (throwable != null)
         {
-            StringWriter var5 = new StringWriter();
-            var4.printStackTrace(new PrintWriter(var5));
-            var2.append(var5.toString());
+            StringWriter stringwriter = new StringWriter();
+            throwable.printStackTrace(new PrintWriter(stringwriter));
+            stringbuilder.append(stringwriter.toString());
         }
 
         // CraftBukkit start - handle stripping color
         if (this.strip)
         {
-            return this.pattern.matcher(var2.toString()).replaceAll("");
+            return this.pattern.matcher(stringbuilder.toString()).replaceAll("");
         }
         else
         {
-            return var2.toString();
+            return stringbuilder.toString();
         }
 
         // CraftBukkit end

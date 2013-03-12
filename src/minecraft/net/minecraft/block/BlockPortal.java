@@ -31,20 +31,20 @@ public class BlockPortal extends BlockBreakable
 
         if (par1World.provider.isSurfaceWorld() && par5Random.nextInt(2000) < par1World.difficultySetting)
         {
-            int var6;
+            int l;
 
-            for (var6 = par3; !par1World.doesBlockHaveSolidTopSurface(par2, var6, par4) && var6 > 0; --var6)
+            for (l = par3; !par1World.doesBlockHaveSolidTopSurface(par2, l, par4) && l > 0; --l)
             {
                 ;
             }
 
-            if (var6 > 0 && !par1World.isBlockNormalCube(par2, var6 + 1, par4))
+            if (l > 0 && !par1World.isBlockNormalCube(par2, l + 1, par4))
             {
-                Entity var7 = ItemMonsterPlacer.spawnCreature(par1World, 57, (double)par2 + 0.5D, (double)var6 + 1.1D, (double)par4 + 0.5D);
+                Entity entity = ItemMonsterPlacer.spawnCreature(par1World, 57, (double)par2 + 0.5D, (double)l + 1.1D, (double)par4 + 0.5D);
 
-                if (var7 != null)
+                if (entity != null)
                 {
-                    var7.timeUntilPortal = var7.getPortalCooldown();
+                    entity.timeUntilPortal = entity.getPortalCooldown();
                 }
             }
         }
@@ -64,20 +64,20 @@ public class BlockPortal extends BlockBreakable
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        float var5;
-        float var6;
+        float f;
+        float f1;
 
         if (par1IBlockAccess.getBlockId(par2 - 1, par3, par4) != this.blockID && par1IBlockAccess.getBlockId(par2 + 1, par3, par4) != this.blockID)
         {
-            var5 = 0.125F;
-            var6 = 0.5F;
-            this.setBlockBounds(0.5F - var5, 0.0F, 0.5F - var6, 0.5F + var5, 1.0F, 0.5F + var6);
+            f = 0.125F;
+            f1 = 0.5F;
+            this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f1, 0.5F + f, 1.0F, 0.5F + f1);
         }
         else
         {
-            var5 = 0.5F;
-            var6 = 0.125F;
-            this.setBlockBounds(0.5F - var5, 0.0F, 0.5F - var6, 0.5F + var5, 1.0F, 0.5F + var6);
+            f = 0.5F;
+            f1 = 0.125F;
+            this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f1, 0.5F + f, 1.0F, 0.5F + f1);
         }
     }
 
@@ -103,20 +103,20 @@ public class BlockPortal extends BlockBreakable
      */
     public boolean tryToCreatePortal(World par1World, int par2, int par3, int par4)
     {
-        byte var5 = 0;
-        byte var6 = 0;
+        byte b0 = 0;
+        byte b1 = 0;
 
         if (par1World.getBlockId(par2 - 1, par3, par4) == Block.obsidian.blockID || par1World.getBlockId(par2 + 1, par3, par4) == Block.obsidian.blockID)
         {
-            var5 = 1;
+            b0 = 1;
         }
 
         if (par1World.getBlockId(par2, par3, par4 - 1) == Block.obsidian.blockID || par1World.getBlockId(par2, par3, par4 + 1) == Block.obsidian.blockID)
         {
-            var6 = 1;
+            b1 = 1;
         }
 
-        if (var5 == var6)
+        if (b0 == b1)
         {
             return false;
         }
@@ -126,37 +126,37 @@ public class BlockPortal extends BlockBreakable
             java.util.Collection<org.bukkit.block.Block> blocks = new java.util.HashSet<org.bukkit.block.Block>();
             org.bukkit.World bworld = par1World.getWorld();
             // CraftBukkit end
-            if (par1World.getBlockId(par2 - var5, par3, par4 - var6) == 0)
+            if (par1World.getBlockId(par2 - b0, par3, par4 - b1) == 0)
             {
-                par2 -= var5;
-                par4 -= var6;
+                par2 -= b0;
+                par4 -= b1;
             }
 
-            int var7;
-            int var8;
+            int l;
+            int i1;
 
-            for (var7 = -1; var7 <= 2; ++var7)
+            for (l = -1; l <= 2; ++l)
             {
-                for (var8 = -1; var8 <= 3; ++var8)
+                for (i1 = -1; i1 <= 3; ++i1)
                 {
-                    boolean var9 = var7 == -1 || var7 == 2 || var8 == -1 || var8 == 3;
+                    boolean flag = l == -1 || l == 2 || i1 == -1 || i1 == 3;
 
-                    if (var7 != -1 && var7 != 2 || var8 != -1 && var8 != 3)
+                    if (l != -1 && l != 2 || i1 != -1 && i1 != 3)
                     {
-                        int var10 = par1World.getBlockId(par2 + var5 * var7, par3 + var8, par4 + var6 * var7);
+                        int j1 = par1World.getBlockId(par2 + b0 * l, par3 + i1, par4 + b1 * l);
 
-                        if (var9)
+                        if (flag)
                         {
-                            if (var10 != Block.obsidian.blockID)
+                            if (j1 != Block.obsidian.blockID)
                             {
                                 return false;
                             }
                             else     // CraftBukkit
                             {
-                                blocks.add(bworld.getBlockAt(par2 + var5 * var7, par3 + var8, par4 + var6 * var7)); // CraftBukkit
+                                blocks.add(bworld.getBlockAt(par2 + b0 * l, par3 + i1, par4 + b1 * l)); // CraftBukkit
                             }
                         }
-                        else if (var10 != 0 && var10 != Block.fire.blockID)
+                        else if (j1 != 0 && j1 != Block.fire.blockID)
                         {
                             return false;
                         }
@@ -165,11 +165,11 @@ public class BlockPortal extends BlockBreakable
             }
 
             // CraftBukkit start
-            for (var7 = 0; var7 < 2; ++var7)
+            for (l = 0; l < 2; ++l)
             {
-                for (var8 = 0; var8 < 3; ++var8)
+                for (i1 = 0; i1 < 3; ++i1)
                 {
-                    blocks.add(bworld.getBlockAt(par2 + var5 * var7, par3 + var8, par4 + var6 * var7));
+                    blocks.add(bworld.getBlockAt(par2 + b0 * l, par3 + i1, par4 + b1 * l));
                 }
             }
 
@@ -183,11 +183,11 @@ public class BlockPortal extends BlockBreakable
             // CraftBukkit end
             par1World.editingBlocks = true;
 
-            for (var7 = 0; var7 < 2; ++var7)
+            for (l = 0; l < 2; ++l)
             {
-                for (var8 = 0; var8 < 3; ++var8)
+                for (i1 = 0; i1 < 3; ++i1)
                 {
-                    par1World.setBlockWithNotify(par2 + var5 * var7, par3 + var8, par4 + var6 * var7, Block.portal.blockID);
+                    par1World.setBlockWithNotify(par2 + b0 * l, par3 + i1, par4 + b1 * l, Block.portal.blockID);
                 }
             }
 
@@ -202,47 +202,47 @@ public class BlockPortal extends BlockBreakable
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        byte var6 = 0;
-        byte var7 = 1;
+        byte b0 = 0;
+        byte b1 = 1;
 
         if (par1World.getBlockId(par2 - 1, par3, par4) == this.blockID || par1World.getBlockId(par2 + 1, par3, par4) == this.blockID)
         {
-            var6 = 1;
-            var7 = 0;
+            b0 = 1;
+            b1 = 0;
         }
 
-        int var8;
+        int i1;
 
-        for (var8 = par3; par1World.getBlockId(par2, var8 - 1, par4) == this.blockID; --var8)
+        for (i1 = par3; par1World.getBlockId(par2, i1 - 1, par4) == this.blockID; --i1)
         {
             ;
         }
 
-        if (par1World.getBlockId(par2, var8 - 1, par4) != Block.obsidian.blockID)
+        if (par1World.getBlockId(par2, i1 - 1, par4) != Block.obsidian.blockID)
         {
             par1World.setBlockWithNotify(par2, par3, par4, 0);
         }
         else
         {
-            int var9;
+            int j1;
 
-            for (var9 = 1; var9 < 4 && par1World.getBlockId(par2, var8 + var9, par4) == this.blockID; ++var9)
+            for (j1 = 1; j1 < 4 && par1World.getBlockId(par2, i1 + j1, par4) == this.blockID; ++j1)
             {
                 ;
             }
 
-            if (var9 == 3 && par1World.getBlockId(par2, var8 + var9, par4) == Block.obsidian.blockID)
+            if (j1 == 3 && par1World.getBlockId(par2, i1 + j1, par4) == Block.obsidian.blockID)
             {
-                boolean var10 = par1World.getBlockId(par2 - 1, par3, par4) == this.blockID || par1World.getBlockId(par2 + 1, par3, par4) == this.blockID;
-                boolean var11 = par1World.getBlockId(par2, par3, par4 - 1) == this.blockID || par1World.getBlockId(par2, par3, par4 + 1) == this.blockID;
+                boolean flag = par1World.getBlockId(par2 - 1, par3, par4) == this.blockID || par1World.getBlockId(par2 + 1, par3, par4) == this.blockID;
+                boolean flag1 = par1World.getBlockId(par2, par3, par4 - 1) == this.blockID || par1World.getBlockId(par2, par3, par4 + 1) == this.blockID;
 
-                if (var10 && var11)
+                if (flag && flag1)
                 {
                     par1World.setBlockWithNotify(par2, par3, par4, 0);
                 }
                 else
                 {
-                    if ((par1World.getBlockId(par2 + var6, par3, par4 + var7) != Block.obsidian.blockID || par1World.getBlockId(par2 - var6, par3, par4 - var7) != this.blockID) && (par1World.getBlockId(par2 - var6, par3, par4 - var7) != Block.obsidian.blockID || par1World.getBlockId(par2 + var6, par3, par4 + var7) != this.blockID))
+                    if ((par1World.getBlockId(par2 + b0, par3, par4 + b1) != Block.obsidian.blockID || par1World.getBlockId(par2 - b0, par3, par4 - b1) != this.blockID) && (par1World.getBlockId(par2 - b0, par3, par4 - b1) != Block.obsidian.blockID || par1World.getBlockId(par2 + b0, par3, par4 + b1) != this.blockID))
                     {
                         par1World.setBlockWithNotify(par2, par3, par4, 0);
                     }
@@ -269,13 +269,13 @@ public class BlockPortal extends BlockBreakable
         }
         else
         {
-            boolean var6 = par1IBlockAccess.getBlockId(par2 - 1, par3, par4) == this.blockID && par1IBlockAccess.getBlockId(par2 - 2, par3, par4) != this.blockID;
-            boolean var7 = par1IBlockAccess.getBlockId(par2 + 1, par3, par4) == this.blockID && par1IBlockAccess.getBlockId(par2 + 2, par3, par4) != this.blockID;
-            boolean var8 = par1IBlockAccess.getBlockId(par2, par3, par4 - 1) == this.blockID && par1IBlockAccess.getBlockId(par2, par3, par4 - 2) != this.blockID;
-            boolean var9 = par1IBlockAccess.getBlockId(par2, par3, par4 + 1) == this.blockID && par1IBlockAccess.getBlockId(par2, par3, par4 + 2) != this.blockID;
-            boolean var10 = var6 || var7;
-            boolean var11 = var8 || var9;
-            return var10 && par5 == 4 ? true : (var10 && par5 == 5 ? true : (var11 && par5 == 2 ? true : var11 && par5 == 3));
+            boolean flag = par1IBlockAccess.getBlockId(par2 - 1, par3, par4) == this.blockID && par1IBlockAccess.getBlockId(par2 - 2, par3, par4) != this.blockID;
+            boolean flag1 = par1IBlockAccess.getBlockId(par2 + 1, par3, par4) == this.blockID && par1IBlockAccess.getBlockId(par2 + 2, par3, par4) != this.blockID;
+            boolean flag2 = par1IBlockAccess.getBlockId(par2, par3, par4 - 1) == this.blockID && par1IBlockAccess.getBlockId(par2, par3, par4 - 2) != this.blockID;
+            boolean flag3 = par1IBlockAccess.getBlockId(par2, par3, par4 + 1) == this.blockID && par1IBlockAccess.getBlockId(par2, par3, par4 + 2) != this.blockID;
+            boolean flag4 = flag || flag1;
+            boolean flag5 = flag2 || flag3;
+            return flag4 && par5 == 4 ? true : (flag4 && par5 == 5 ? true : (flag5 && par5 == 2 ? true : flag5 && par5 == 3));
         }
     }
 
@@ -324,31 +324,31 @@ public class BlockPortal extends BlockBreakable
             par1World.playSound((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "portal.portal", 0.5F, par5Random.nextFloat() * 0.4F + 0.8F, false);
         }
 
-        for (int var6 = 0; var6 < 4; ++var6)
+        for (int l = 0; l < 4; ++l)
         {
-            double var7 = (double)((float)par2 + par5Random.nextFloat());
-            double var9 = (double)((float)par3 + par5Random.nextFloat());
-            double var11 = (double)((float)par4 + par5Random.nextFloat());
-            double var13 = 0.0D;
-            double var15 = 0.0D;
-            double var17 = 0.0D;
-            int var19 = par5Random.nextInt(2) * 2 - 1;
-            var13 = ((double)par5Random.nextFloat() - 0.5D) * 0.5D;
-            var15 = ((double)par5Random.nextFloat() - 0.5D) * 0.5D;
-            var17 = ((double)par5Random.nextFloat() - 0.5D) * 0.5D;
+            double d0 = (double)((float)par2 + par5Random.nextFloat());
+            double d1 = (double)((float)par3 + par5Random.nextFloat());
+            double d2 = (double)((float)par4 + par5Random.nextFloat());
+            double d3 = 0.0D;
+            double d4 = 0.0D;
+            double d5 = 0.0D;
+            int i1 = par5Random.nextInt(2) * 2 - 1;
+            d3 = ((double)par5Random.nextFloat() - 0.5D) * 0.5D;
+            d4 = ((double)par5Random.nextFloat() - 0.5D) * 0.5D;
+            d5 = ((double)par5Random.nextFloat() - 0.5D) * 0.5D;
 
             if (par1World.getBlockId(par2 - 1, par3, par4) != this.blockID && par1World.getBlockId(par2 + 1, par3, par4) != this.blockID)
             {
-                var7 = (double)par2 + 0.5D + 0.25D * (double)var19;
-                var13 = (double)(par5Random.nextFloat() * 2.0F * (float)var19);
+                d0 = (double)par2 + 0.5D + 0.25D * (double)i1;
+                d3 = (double)(par5Random.nextFloat() * 2.0F * (float)i1);
             }
             else
             {
-                var11 = (double)par4 + 0.5D + 0.25D * (double)var19;
-                var17 = (double)(par5Random.nextFloat() * 2.0F * (float)var19);
+                d2 = (double)par4 + 0.5D + 0.25D * (double)i1;
+                d5 = (double)(par5Random.nextFloat() * 2.0F * (float)i1);
             }
 
-            par1World.spawnParticle("portal", var7, var9, var11, var13, var15, var17);
+            par1World.spawnParticle("portal", d0, d1, d2, d3, d4, d5);
         }
     }
 

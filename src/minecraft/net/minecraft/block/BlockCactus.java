@@ -32,25 +32,25 @@ public class BlockCactus extends Block implements IPlantable
     {
         if (par1World.isAirBlock(par2, par3 + 1, par4))
         {
-            int var6;
+            int l;
 
-            for (var6 = 1; par1World.getBlockId(par2, par3 - var6, par4) == this.blockID; ++var6)
+            for (l = 1; par1World.getBlockId(par2, par3 - l, par4) == this.blockID; ++l)
             {
                 ;
             }
 
-            if (var6 < 3)
+            if (l < 3)
             {
-                int var7 = par1World.getBlockMetadata(par2, par3, par4);
+                int i1 = par1World.getBlockMetadata(par2, par3, par4);
 
-                if (var7 >= (byte) range(3, (par1World.growthOdds / par1World.getWorld().cactusGrowthModifier * 15) + 0.5F, 15))   // Spigot
+                if (i1 >= (byte) range(3, (par1World.growthOdds / par1World.getWorld().cactusGrowthModifier * 15) + 0.5F, 15))   // Spigot
                 {
                     org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3 + 1, par4, this.blockID, 0); // CraftBukkit
                     par1World.setBlockMetadataWithNotify(par2, par3, par4, 0);
                 }
                 else
                 {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 + 1);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 + 1);
                 }
             }
         }
@@ -62,8 +62,8 @@ public class BlockCactus extends Block implements IPlantable
      */
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
-        float var5 = 0.0625F;
-        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + var5), (double)par3, (double)((float)par4 + var5), (double)((float)(par2 + 1) - var5), (double)((float)(par3 + 1) - var5), (double)((float)(par4 + 1) - var5));
+        float f = 0.0625F;
+        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + f), (double)par3, (double)((float)par4 + f), (double)((float)(par2 + 1) - f), (double)((float)(par3 + 1) - f), (double)((float)(par4 + 1) - f));
     }
 
     @SideOnly(Side.CLIENT)
@@ -73,8 +73,8 @@ public class BlockCactus extends Block implements IPlantable
      */
     public AxisAlignedBB getSelectedBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
-        float var5 = 0.0625F;
-        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + var5), (double)par3, (double)((float)par4 + var5), (double)((float)(par2 + 1) - var5), (double)(par3 + 1), (double)((float)(par4 + 1) - var5));
+        float f = 0.0625F;
+        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + f), (double)par3, (double)((float)par4 + f), (double)((float)(par2 + 1) - f), (double)(par3 + 1), (double)((float)(par4 + 1) - f));
     }
 
     /**
@@ -154,8 +154,8 @@ public class BlockCactus extends Block implements IPlantable
         }
         else
         {
-            int var5 = par1World.getBlockId(par2, par3 - 1, par4);
-            return blocksList[var5] != null && blocksList[var5].canSustainPlant(par1World, par2, par3 - 1, par4, ForgeDirection.UP, this);
+            int l = par1World.getBlockId(par2, par3 - 1, par4);
+            return blocksList[l] != null && blocksList[l].canSustainPlant(par1World, par2, par3 - 1, par4, ForgeDirection.UP, this);
         }
     }
 

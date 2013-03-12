@@ -55,12 +55,12 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
     {
         if (!par1World.isRemote)
         {
-            MinecraftServer var2 = MinecraftServer.getServer();
+            MinecraftServer minecraftserver = MinecraftServer.getServer();
 
-            if (var2 != null && var2.isCommandBlockEnabled())
+            if (minecraftserver != null && minecraftserver.isCommandBlockEnabled())
             {
                 // CraftBukkit start - handle command block as console
-                org.bukkit.command.SimpleCommandMap commandMap = var2.server.getCommandMap();
+                org.bukkit.command.SimpleCommandMap commandMap = minecraftserver.server.getCommandMap();
                 Joiner joiner = Joiner.on(" ");
                 String command = this.command;
 
@@ -205,8 +205,8 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
      */
     public Packet getDescriptionPacket()
     {
-        NBTTagCompound var1 = new NBTTagCompound();
-        this.writeToNBT(var1);
-        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 2, var1);
+        NBTTagCompound nbttagcompound = new NBTTagCompound();
+        this.writeToNBT(nbttagcompound);
+        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 2, nbttagcompound);
     }
 }

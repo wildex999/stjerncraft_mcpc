@@ -112,12 +112,12 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
             this.ingredientID = this.brewingItemStacks[3].itemID;
         }
 
-        int var1 = this.getFilledSlots();
+        int i = this.getFilledSlots();
 
-        if (var1 != this.filledSlots)
+        if (i != this.filledSlots)
         {
-            this.filledSlots = var1;
-            this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, var1);
+            this.filledSlots = i;
+            this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, i);
         }
 
         super.updateEntity();
@@ -132,41 +132,41 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
     {
         if (this.brewingItemStacks[3] != null && this.brewingItemStacks[3].stackSize > 0)
         {
-            ItemStack var1 = this.brewingItemStacks[3];
+            ItemStack itemstack = this.brewingItemStacks[3];
 
-            if (!Item.itemsList[var1.itemID].isPotionIngredient(var1))
+            if (!Item.itemsList[itemstack.itemID].isPotionIngredient(itemstack))
             {
                 return false;
             }
             else
             {
-                boolean var2 = false;
+                boolean flag = false;
 
-                for (int var3 = 0; var3 < 3; ++var3)
+                for (int i = 0; i < 3; ++i)
                 {
-                    if (this.brewingItemStacks[var3] != null && this.brewingItemStacks[var3].itemID == Item.potion.itemID)
+                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
                     {
-                        int var4 = this.brewingItemStacks[var3].getItemDamage();
-                        int var5 = this.getPotionResult(var4, var1);
+                        int j = this.brewingItemStacks[i].getItemDamage();
+                        int k = this.getPotionResult(j, itemstack);
 
-                        if (!ItemPotion.isSplash(var4) && ItemPotion.isSplash(var5))
+                        if (!ItemPotion.isSplash(j) && ItemPotion.isSplash(k))
                         {
-                            var2 = true;
+                            flag = true;
                             break;
                         }
 
-                        List var6 = Item.potion.getEffects(var4);
-                        List var7 = Item.potion.getEffects(var5);
+                        List list = Item.potion.getEffects(j);
+                        List list1 = Item.potion.getEffects(k);
 
-                        if ((var4 <= 0 || var6 != var7) && (var6 == null || !var6.equals(var7) && var7 != null) && var4 != var5)
+                        if ((j <= 0 || list != list1) && (list == null || !list.equals(list1) && list1 != null) && j != k)
                         {
-                            var2 = true;
+                            flag = true;
                             break;
                         }
                     }
                 }
 
-                return var2;
+                return flag;
             }
         }
         else
@@ -179,7 +179,7 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
     {
         if (this.canBrew())
         {
-            ItemStack var1 = this.brewingItemStacks[3];
+            ItemStack itemstack = this.brewingItemStacks[3];
 
             // CraftBukkit start - fire BREW event
             if (getOwner() != null)
@@ -195,32 +195,32 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
 
             // CraftBukkit end
 
-            for (int var2 = 0; var2 < 3; ++var2)
+            for (int i = 0; i < 3; ++i)
             {
-                if (this.brewingItemStacks[var2] != null && this.brewingItemStacks[var2].itemID == Item.potion.itemID)
+                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
                 {
-                    int var3 = this.brewingItemStacks[var2].getItemDamage();
-                    int var4 = this.getPotionResult(var3, var1);
-                    List var5 = Item.potion.getEffects(var3);
-                    List var6 = Item.potion.getEffects(var4);
+                    int j = this.brewingItemStacks[i].getItemDamage();
+                    int k = this.getPotionResult(j, itemstack);
+                    List list = Item.potion.getEffects(j);
+                    List list1 = Item.potion.getEffects(k);
 
-                    if ((var3 <= 0 || var5 != var6) && (var5 == null || !var5.equals(var6) && var6 != null))
+                    if ((j <= 0 || list != list1) && (list == null || !list.equals(list1) && list1 != null))
                     {
-                        if (var3 != var4)
+                        if (j != k)
                         {
-                            this.brewingItemStacks[var2].setItemDamage(var4);
+                            this.brewingItemStacks[i].setItemDamage(k);
                         }
                     }
-                    else if (!ItemPotion.isSplash(var3) && ItemPotion.isSplash(var4))
+                    else if (!ItemPotion.isSplash(j) && ItemPotion.isSplash(k))
                     {
-                        this.brewingItemStacks[var2].setItemDamage(var4);
+                        this.brewingItemStacks[i].setItemDamage(k);
                     }
                 }
             }
 
-            if (Item.itemsList[var1.itemID].hasContainerItem())
+            if (Item.itemsList[itemstack.itemID].hasContainerItem())
             {
-                this.brewingItemStacks[3] = Item.itemsList[var1.itemID].getContainerItemStack(brewingItemStacks[3]);
+                this.brewingItemStacks[3] = Item.itemsList[itemstack.itemID].getContainerItemStack(brewingItemStacks[3]);
             }
             else
             {
@@ -248,17 +248,17 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
     public void readFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.readFromNBT(par1NBTTagCompound);
-        NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
+        NBTTagList nbttaglist = par1NBTTagCompound.getTagList("Items");
         this.brewingItemStacks = new ItemStack[this.getSizeInventory()];
 
-        for (int var3 = 0; var3 < var2.tagCount(); ++var3)
+        for (int i = 0; i < nbttaglist.tagCount(); ++i)
         {
-            NBTTagCompound var4 = (NBTTagCompound)var2.tagAt(var3);
-            byte var5 = var4.getByte("Slot");
+            NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
+            byte b0 = nbttagcompound1.getByte("Slot");
 
-            if (var5 >= 0 && var5 < this.brewingItemStacks.length)
+            if (b0 >= 0 && b0 < this.brewingItemStacks.length)
             {
-                this.brewingItemStacks[var5] = ItemStack.loadItemStackFromNBT(var4);
+                this.brewingItemStacks[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
             }
         }
 
@@ -272,20 +272,20 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
     {
         super.writeToNBT(par1NBTTagCompound);
         par1NBTTagCompound.setShort("BrewTime", (short)this.brewTime);
-        NBTTagList var2 = new NBTTagList();
+        NBTTagList nbttaglist = new NBTTagList();
 
-        for (int var3 = 0; var3 < this.brewingItemStacks.length; ++var3)
+        for (int i = 0; i < this.brewingItemStacks.length; ++i)
         {
-            if (this.brewingItemStacks[var3] != null)
+            if (this.brewingItemStacks[i] != null)
             {
-                NBTTagCompound var4 = new NBTTagCompound();
-                var4.setByte("Slot", (byte)var3);
-                this.brewingItemStacks[var3].writeToNBT(var4);
-                var2.appendTag(var4);
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                nbttagcompound1.setByte("Slot", (byte)i);
+                this.brewingItemStacks[i].writeToNBT(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
             }
         }
 
-        par1NBTTagCompound.setTag("Items", var2);
+        par1NBTTagCompound.setTag("Items", nbttaglist);
     }
 
     /**
@@ -304,9 +304,9 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
     {
         if (par1 >= 0 && par1 < this.brewingItemStacks.length)
         {
-            ItemStack var3 = this.brewingItemStacks[par1];
+            ItemStack itemstack = this.brewingItemStacks[par1];
             this.brewingItemStacks[par1] = null;
-            return var3;
+            return itemstack;
         }
         else
         {
@@ -322,9 +322,9 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
     {
         if (par1 >= 0 && par1 < this.brewingItemStacks.length)
         {
-            ItemStack var2 = this.brewingItemStacks[par1];
+            ItemStack itemstack = this.brewingItemStacks[par1];
             this.brewingItemStacks[par1] = null;
-            return var2;
+            return itemstack;
         }
         else
         {
@@ -375,17 +375,17 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
      */
     public int getFilledSlots()
     {
-        int var1 = 0;
+        int i = 0;
 
-        for (int var2 = 0; var2 < 3; ++var2)
+        for (int j = 0; j < 3; ++j)
         {
-            if (this.brewingItemStacks[var2] != null)
+            if (this.brewingItemStacks[j] != null)
             {
-                var1 |= 1 << var2;
+                i |= 1 << j;
             }
         }
 
-        return var1;
+        return i;
     }
 
     @Override

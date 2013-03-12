@@ -288,18 +288,18 @@ public class NetServerHandler extends NetHandler
 
     public void handleFlying(Packet10Flying par1Packet10Flying)
     {
-        WorldServer var2 = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
+        WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
         this.field_72584_h = true;
 
         if (!this.playerEntity.playerConqueredTheEnd)
         {
-            double var3;
+            double d0;
 
             if (!this.hasMoved)
             {
-                var3 = par1Packet10Flying.yPosition - this.lastPosY;
+                d0 = par1Packet10Flying.yPosition - this.lastPosY;
 
-                if (par1Packet10Flying.xPosition == this.lastPosX && var3 * var3 < 0.01D && par1Packet10Flying.zPosition == this.lastPosZ)
+                if (par1Packet10Flying.xPosition == this.lastPosX && d0 * d0 < 0.01D && par1Packet10Flying.zPosition == this.lastPosZ)
                 {
                     this.hasMoved = true;
                 }
@@ -380,26 +380,26 @@ public class NetServerHandler extends NetHandler
             if (this.hasMoved && !this.playerEntity.isDead)
             {
                 // CraftBukkit end
-                double var5;
-                double var7;
-                double var9;
-                double var13;
+                double d1;
+                double d2;
+                double d3;
+                double d4;
 
                 if (this.playerEntity.ridingEntity != null)
                 {
-                    float var34 = this.playerEntity.rotationYaw;
-                    float var4 = this.playerEntity.rotationPitch;
+                    float f = this.playerEntity.rotationYaw;
+                    float f1 = this.playerEntity.rotationPitch;
                     this.playerEntity.ridingEntity.updateRiderPosition();
-                    var5 = this.playerEntity.posX;
-                    var7 = this.playerEntity.posY;
-                    var9 = this.playerEntity.posZ;
-                    double var35 = 0.0D;
-                    var13 = 0.0D;
+                    d1 = this.playerEntity.posX;
+                    d2 = this.playerEntity.posY;
+                    d3 = this.playerEntity.posZ;
+                    double d5 = 0.0D;
+                    d4 = 0.0D;
 
                     if (par1Packet10Flying.rotating)
                     {
-                        var34 = par1Packet10Flying.yaw;
-                        var4 = par1Packet10Flying.pitch;
+                        f = par1Packet10Flying.yaw;
+                        f1 = par1Packet10Flying.pitch;
                     }
 
                     if (par1Packet10Flying.moving && par1Packet10Flying.yPosition == -999.0D && par1Packet10Flying.stance == -999.0D)
@@ -411,20 +411,20 @@ public class NetServerHandler extends NetHandler
                             return;
                         }
 
-                        var35 = par1Packet10Flying.xPosition;
-                        var13 = par1Packet10Flying.zPosition;
+                        d5 = par1Packet10Flying.xPosition;
+                        d4 = par1Packet10Flying.zPosition;
                     }
 
                     this.playerEntity.onGround = par1Packet10Flying.onGround;
                     this.playerEntity.onUpdateEntity();
-                    this.playerEntity.moveEntity(var35, 0.0D, var13);
-                    this.playerEntity.setPositionAndRotation(var5, var7, var9, var34, var4);
-                    this.playerEntity.motionX = var35;
-                    this.playerEntity.motionZ = var13;
+                    this.playerEntity.moveEntity(d5, 0.0D, d4);
+                    this.playerEntity.setPositionAndRotation(d1, d2, d3, f, f1);
+                    this.playerEntity.motionX = d5;
+                    this.playerEntity.motionZ = d4;
 
                     if (this.playerEntity.ridingEntity != null)
                     {
-                        var2.uncheckedUpdateEntity(this.playerEntity.ridingEntity, true);
+                        worldserver.uncheckedUpdateEntity(this.playerEntity.ridingEntity, true);
                     }
 
                     if (this.playerEntity.ridingEntity != null)
@@ -441,7 +441,7 @@ public class NetServerHandler extends NetHandler
                     this.lastPosX = this.playerEntity.posX;
                     this.lastPosY = this.playerEntity.posY;
                     this.lastPosZ = this.playerEntity.posZ;
-                    var2.updateEntity(this.playerEntity);
+                    worldserver.updateEntity(this.playerEntity);
                     return;
                 }
 
@@ -449,19 +449,19 @@ public class NetServerHandler extends NetHandler
                 {
                     this.playerEntity.onUpdateEntity();
                     this.playerEntity.setPositionAndRotation(this.lastPosX, this.lastPosY, this.lastPosZ, this.playerEntity.rotationYaw, this.playerEntity.rotationPitch);
-                    var2.updateEntity(this.playerEntity);
+                    worldserver.updateEntity(this.playerEntity);
                     return;
                 }
 
-                var3 = this.playerEntity.posY;
+                d0 = this.playerEntity.posY;
                 this.lastPosX = this.playerEntity.posX;
                 this.lastPosY = this.playerEntity.posY;
                 this.lastPosZ = this.playerEntity.posZ;
-                var5 = this.playerEntity.posX;
-                var7 = this.playerEntity.posY;
-                var9 = this.playerEntity.posZ;
-                float var11 = this.playerEntity.rotationYaw;
-                float var12 = this.playerEntity.rotationPitch;
+                d1 = this.playerEntity.posX;
+                d2 = this.playerEntity.posY;
+                d3 = this.playerEntity.posZ;
+                float f2 = this.playerEntity.rotationYaw;
+                float f3 = this.playerEntity.rotationPitch;
 
                 if (par1Packet10Flying.moving && par1Packet10Flying.yPosition == -999.0D && par1Packet10Flying.stance == -999.0D)
                 {
@@ -470,15 +470,15 @@ public class NetServerHandler extends NetHandler
 
                 if (par1Packet10Flying.moving)
                 {
-                    var5 = par1Packet10Flying.xPosition;
-                    var7 = par1Packet10Flying.yPosition;
-                    var9 = par1Packet10Flying.zPosition;
-                    var13 = par1Packet10Flying.stance - par1Packet10Flying.yPosition;
+                    d1 = par1Packet10Flying.xPosition;
+                    d2 = par1Packet10Flying.yPosition;
+                    d3 = par1Packet10Flying.zPosition;
+                    d4 = par1Packet10Flying.stance - par1Packet10Flying.yPosition;
 
-                    if (!this.playerEntity.isPlayerSleeping() && (var13 > 1.65D || var13 < 0.1D))
+                    if (!this.playerEntity.isPlayerSleeping() && (d4 > 1.65D || d4 < 0.1D))
                     {
                         this.kickPlayerFromServer("Illegal stance");
-                        logger.warning(this.playerEntity.username + " had an illegal stance: " + var13);
+                        logger.warning(this.playerEntity.username + " had an illegal stance: " + d4);
                         return;
                     }
 
@@ -492,40 +492,40 @@ public class NetServerHandler extends NetHandler
 
                 if (par1Packet10Flying.rotating)
                 {
-                    var11 = par1Packet10Flying.yaw;
-                    var12 = par1Packet10Flying.pitch;
+                    f2 = par1Packet10Flying.yaw;
+                    f3 = par1Packet10Flying.pitch;
                 }
 
                 this.playerEntity.onUpdateEntity();
                 this.playerEntity.ySize = 0.0F;
-                this.playerEntity.setPositionAndRotation(this.lastPosX, this.lastPosY, this.lastPosZ, var11, var12);
+                this.playerEntity.setPositionAndRotation(this.lastPosX, this.lastPosY, this.lastPosZ, f2, f3);
 
                 if (!this.hasMoved)
                 {
                     return;
                 }
 
-                var13 = var5 - this.playerEntity.posX;
-                double var15 = var7 - this.playerEntity.posY;
-                double var17 = var9 - this.playerEntity.posZ;
+                d4 = d1 - this.playerEntity.posX;
+                double d6 = d2 - this.playerEntity.posY;
+                double d7 = d3 - this.playerEntity.posZ;
                 // CraftBukkit start - min to max
-                double d8 = Math.max(Math.abs(var13), Math.abs(this.playerEntity.motionX));
-                double d9 = Math.max(Math.abs(var15), Math.abs(this.playerEntity.motionY));
-                double d10 = Math.max(Math.abs(var17), Math.abs(this.playerEntity.motionZ));
+                double d8 = Math.max(Math.abs(d4), Math.abs(this.playerEntity.motionX));
+                double d9 = Math.max(Math.abs(d6), Math.abs(this.playerEntity.motionY));
+                double d10 = Math.max(Math.abs(d7), Math.abs(this.playerEntity.motionZ));
                 // CraftBukkit end
-                double var19 = d8 * d8 + d9 * d9 + d10 * d10;
+                double d8 = d8 * d8 + d9 * d9 + d10 * d10;
 
-                if (var19 > 100.0D && this.hasMoved && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.username)))   // CraftBukkit - Added this.checkMovement condition to solve this check being triggered by teleports
+                if (d8 > 100.0D && this.hasMoved && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.username)))   // CraftBukkit - Added this.checkMovement condition to solve this check being triggered by teleports
                 {
-                    logger.warning(this.playerEntity.username + " moved too quickly! " + var13 + "," + var15 + "," + var17 + " (" + d8 + ", " + d9 + ", " + d10 + ")");
+                    logger.warning(this.playerEntity.username + " moved too quickly! " + d4 + "," + d6 + "," + d7 + " (" + d8 + ", " + d9 + ", " + d10 + ")");
                     this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, this.playerEntity.rotationYaw, this.playerEntity.rotationPitch);
                     return;
                 }
 
-                float var21 = 0.0625F;
-                boolean var23 = var2.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double) var21, (double) var21, (double) var21)).isEmpty();
+                float f4 = 0.0625F;
+                boolean flag = worldserver.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double) f4, (double) f4, (double) f4)).isEmpty();
 
-                if (this.playerEntity.onGround && !par1Packet10Flying.onGround && var15 > 0.0D)
+                if (this.playerEntity.onGround && !par1Packet10Flying.onGround && d6 > 0.0D)
                 {
                     this.playerEntity.addExhaustion(0.2F);
                 }
@@ -535,25 +535,25 @@ public class NetServerHandler extends NetHandler
                     return;
                 }
 
-                this.playerEntity.moveEntity(var13, var15, var17);
+                this.playerEntity.moveEntity(d4, d6, d7);
                 this.playerEntity.onGround = par1Packet10Flying.onGround;
-                this.playerEntity.addMovementStat(var13, var15, var17);
-                double var25 = var15;
-                var13 = var5 - this.playerEntity.posX;
-                var15 = var7 - this.playerEntity.posY;
+                this.playerEntity.addMovementStat(d4, d6, d7);
+                double d9 = d6;
+                d4 = d1 - this.playerEntity.posX;
+                d6 = d2 - this.playerEntity.posY;
 
-                if (var15 > -0.5D || var15 < 0.5D)
+                if (d6 > -0.5D || d6 < 0.5D)
                 {
-                    var15 = 0.0D;
+                    d6 = 0.0D;
                 }
 
-                var17 = var9 - this.playerEntity.posZ;
-                var19 = var13 * var13 + var15 * var15 + var17 * var17;
-                boolean var27 = false;
+                d7 = d3 - this.playerEntity.posZ;
+                d8 = d4 * d4 + d6 * d6 + d7 * d7;
+                boolean flag1 = false;
 
-                if (var19 > 0.0625D && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.theItemInWorldManager.isCreative())
+                if (d8 > 0.0625D && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.theItemInWorldManager.isCreative())
                 {
-                    var27 = true;
+                    flag1 = true;
                     logger.warning(this.playerEntity.username + " moved wrongly!");
                 }
 
@@ -562,20 +562,20 @@ public class NetServerHandler extends NetHandler
                     return;
                 }
 
-                this.playerEntity.setPositionAndRotation(var5, var7, var9, var11, var12);
-                boolean var28 = var2.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double) var21, (double) var21, (double) var21)).isEmpty();
+                this.playerEntity.setPositionAndRotation(d1, d2, d3, f2, f3);
+                boolean flag2 = worldserver.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double) f4, (double) f4, (double) f4)).isEmpty();
 
-                if (var23 && (var27 || !var28) && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.noClip)   // Forge
+                if (flag && (flag1 || !flag2) && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.noClip)   // Forge
                 {
-                    this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, var11, var12);
+                    this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, f2, f3);
                     return;
                 }
 
-                AxisAlignedBB var29 = this.playerEntity.boundingBox.copy().expand((double) var21, (double) var21, (double) var21).addCoord(0.0D, -0.55D, 0.0D);
+                AxisAlignedBB axisalignedbb = this.playerEntity.boundingBox.copy().expand((double) f4, (double) f4, (double) f4).addCoord(0.0D, -0.55D, 0.0D);
 
-                if (!this.mcServer.isFlightAllowed() && !this.playerEntity.capabilities.allowFlying && !var2.isAABBNonEmpty(var29))   // CraftBukkit - check abilities instead of creative mode
+                if (!this.mcServer.isFlightAllowed() && !this.playerEntity.capabilities.allowFlying && !worldserver.isAABBNonEmpty(axisalignedbb))   // CraftBukkit - check abilities instead of creative mode
                 {
-                    if (var25 >= -0.03125D)
+                    if (d9 >= -0.03125D)
                     {
                         ++this.ticksForFloatKick;
 
@@ -605,7 +605,7 @@ public class NetServerHandler extends NetHandler
                     return;    // CraftBukkit - fixed fall distance accumulating while being in Creative mode.
                 }
 
-                this.playerEntity.updateFlyingState(this.playerEntity.posY - var3, par1Packet10Flying.onGround);
+                this.playerEntity.updateFlyingState(this.playerEntity.posY - d0, par1Packet10Flying.onGround);
             }
         }
     }
@@ -669,7 +669,7 @@ public class NetServerHandler extends NetHandler
             return;    // CraftBukkit
         }
 
-        WorldServer var2 = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
+        WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
 
         if (par1Packet14BlockDig.status == 4)
         {
@@ -706,69 +706,69 @@ public class NetServerHandler extends NetHandler
         }
         else
         {
-            int var3 = this.mcServer.getSpawnProtectionSize();
-            boolean var4 = var2.provider.dimensionId != 0 || this.mcServer.getConfigurationManager().getOps().isEmpty() || this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username) || var3 <= 0 || this.mcServer.isSinglePlayer();
-            boolean var5 = false;
+            int i = this.mcServer.getSpawnProtectionSize();
+            boolean flag = worldserver.provider.dimensionId != 0 || this.mcServer.getConfigurationManager().getOps().isEmpty() || this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username) || i <= 0 || this.mcServer.isSinglePlayer();
+            boolean flag1 = false;
 
             if (par1Packet14BlockDig.status == 0)
             {
-                var5 = true;
+                flag1 = true;
             }
 
             if (par1Packet14BlockDig.status == 1)
             {
-                var5 = true;
+                flag1 = true;
             }
 
             if (par1Packet14BlockDig.status == 2)
             {
-                var5 = true;
+                flag1 = true;
             }
 
-            int var6 = par1Packet14BlockDig.xPosition;
-            int var7 = par1Packet14BlockDig.yPosition;
-            int var8 = par1Packet14BlockDig.zPosition;
+            int j = par1Packet14BlockDig.xPosition;
+            int k = par1Packet14BlockDig.yPosition;
+            int l = par1Packet14BlockDig.zPosition;
 
-            if (var5)
+            if (flag1)
             {
-                double var9 = this.playerEntity.posX - ((double)var6 + 0.5D);
-                double var11 = this.playerEntity.posY - ((double)var7 + 0.5D) + 1.5D;
-                double var13 = this.playerEntity.posZ - ((double)var8 + 0.5D);
-                double var15 = var9 * var9 + var11 * var11 + var13 * var13;
+                double d0 = this.playerEntity.posX - ((double)j + 0.5D);
+                double d1 = this.playerEntity.posY - ((double)k + 0.5D) + 1.5D;
+                double d2 = this.playerEntity.posZ - ((double)l + 0.5D);
+                double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 
                 double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
                 dist *= dist;
 
-                if (var15 > dist)
+                if (d3 > dist)
                 {
                     return;
                 }
 
-                if (var7 >= this.mcServer.getBuildLimit())
+                if (k >= this.mcServer.getBuildLimit())
                 {
                     return;
                 }
             }
 
-            ChunkCoordinates var17 = var2.getSpawnPoint();
-            int var10 = MathHelper.abs_int(var6 - var17.posX);
-            int var18 = MathHelper.abs_int(var8 - var17.posZ);
+            ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
+            int i1 = MathHelper.abs_int(j - chunkcoordinates.posX);
+            int j1 = MathHelper.abs_int(l - chunkcoordinates.posZ);
 
-            if (var10 > var18)
+            if (i1 > j1)
             {
-                var18 = var10;
+                j1 = i1;
             }
 
             if (par1Packet14BlockDig.status == 0)
             {
                 // CraftBukkit start
-                if (var18 < this.server.getSpawnRadius() && !var4)
+                if (j1 < this.server.getSpawnRadius() && !flag)
                 {
-                    CraftEventFactory.callPlayerInteractEvent(this.playerEntity, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, var6, var7, var8, var10, this.playerEntity.inventory.getCurrentItem());
-                    ForgeEventFactory.onPlayerInteract(this.playerEntity, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, var6, var7, var8, 0); // Forge
-                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var6, var7, var8, var2));
+                    CraftEventFactory.callPlayerInteractEvent(this.playerEntity, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, j, k, l, i1, this.playerEntity.inventory.getCurrentItem());
+                    ForgeEventFactory.onPlayerInteract(this.playerEntity, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, j, k, l, 0); // Forge
+                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(j, k, l, worldserver));
                     // Update any tile entity data for this block
-                    TileEntity tileentity = var2.getBlockTileEntity(var6, var7, var8);
+                    TileEntity tileentity = worldserver.getBlockTileEntity(j, k, l);
 
                     if (tileentity != null)
                     {
@@ -779,25 +779,25 @@ public class NetServerHandler extends NetHandler
                 }
                 else
                 {
-                    this.playerEntity.theItemInWorldManager.onBlockClicked(var6, var7, var8, par1Packet14BlockDig.face);
+                    this.playerEntity.theItemInWorldManager.onBlockClicked(j, k, l, par1Packet14BlockDig.face);
                 }
             }
             else if (par1Packet14BlockDig.status == 2)
             {
-                this.playerEntity.theItemInWorldManager.uncheckedTryHarvestBlock(var6, var7, var8);
+                this.playerEntity.theItemInWorldManager.uncheckedTryHarvestBlock(j, k, l);
 
-                if (var2.getBlockId(var6, var7, var8) != 0)
+                if (worldserver.getBlockId(j, k, l) != 0)
                 {
-                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var6, var7, var8, var2));
+                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(j, k, l, worldserver));
                 }
             }
             else if (par1Packet14BlockDig.status == 1)
             {
-                this.playerEntity.theItemInWorldManager.cancelDestroyingBlock(var6, var7, var8);
+                this.playerEntity.theItemInWorldManager.cancelDestroyingBlock(j, k, l);
 
-                if (var2.getBlockId(var6, var7, var8) != 0)
+                if (worldserver.getBlockId(j, k, l) != 0)
                 {
-                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var6, var7, var8, var2));
+                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(j, k, l, worldserver));
                 }
             }
         }
@@ -805,7 +805,7 @@ public class NetServerHandler extends NetHandler
 
     public void handlePlace(Packet15Place par1Packet15Place)
     {
-        WorldServer var2 = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
+        WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
 
         // CraftBukkit start
         if (this.playerEntity.isDead)
@@ -840,133 +840,133 @@ public class NetServerHandler extends NetHandler
         // a notch bug where the item doesn't update correctly.
         boolean always = false;
         // CraftBukkit end
-        ItemStack var3 = this.playerEntity.inventory.getCurrentItem();
-        boolean var4 = false;
-        int var5 = par1Packet15Place.getXPosition();
-        int var6 = par1Packet15Place.getYPosition();
-        int var7 = par1Packet15Place.getZPosition();
-        int var8 = par1Packet15Place.getDirection();
-        int var9 = this.mcServer.getSpawnProtectionSize();
-        boolean var10 = var2.provider.dimensionId != 0 || this.mcServer.getConfigurationManager().getOps().isEmpty() || this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username) || var9 <= 0 || this.mcServer.isSinglePlayer();
+        ItemStack itemstack = this.playerEntity.inventory.getCurrentItem();
+        boolean flag = false;
+        int i = par1Packet15Place.getXPosition();
+        int j = par1Packet15Place.getYPosition();
+        int k = par1Packet15Place.getZPosition();
+        int l = par1Packet15Place.getDirection();
+        int i1 = this.mcServer.getSpawnProtectionSize();
+        boolean flag1 = worldserver.provider.dimensionId != 0 || this.mcServer.getConfigurationManager().getOps().isEmpty() || this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username) || i1 <= 0 || this.mcServer.isSinglePlayer();
 
         if (par1Packet15Place.getDirection() == 255)
         {
-            if (var3 == null)
+            if (itemstack == null)
             {
                 return;
             }
 
             // CraftBukkit start
-            int itemstackAmount = var3.stackSize;
-            org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this.playerEntity, org.bukkit.event.block.Action.RIGHT_CLICK_AIR, var3);
+            int itemstackAmount = itemstack.stackSize;
+            org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this.playerEntity, org.bukkit.event.block.Action.RIGHT_CLICK_AIR, itemstack);
             // Forge start
             PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(this.playerEntity, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1);
 
             if (event.useItemInHand() != org.bukkit.event.Event.Result.DENY && forgeEvent.useItem != net.minecraftforge.event.Event.Result.DENY)
             {
-                this.playerEntity.theItemInWorldManager.tryUseItem(this.playerEntity, this.playerEntity.worldObj, var3);
+                this.playerEntity.theItemInWorldManager.tryUseItem(this.playerEntity, this.playerEntity.worldObj, itemstack);
             }
 
             // Forge end
             // CraftBukkit - notch decrements the counter by 1 in the above method with food,
             // snowballs and so forth, but he does it in a place that doesn't cause the
             // inventory update packet to get sent
-            always = (var3.stackSize != itemstackAmount);
+            always = (itemstack.stackSize != itemstackAmount);
             // CraftBukkit end
         }
         else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
         {
             this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet3Chat("\u00A77Height limit for building is " + this.mcServer.getBuildLimit()));
-            var4 = true;
+            flag = true;
         }
         else
         {
-            ChunkCoordinates var11 = var2.getSpawnPoint();
-            int var12 = MathHelper.abs_int(var5 - var11.posX);
-            int var13 = MathHelper.abs_int(var7 - var11.posZ);
+            ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
+            int j1 = MathHelper.abs_int(i - chunkcoordinates.posX);
+            int k1 = MathHelper.abs_int(k - chunkcoordinates.posZ);
 
-            if (var12 > var13)
+            if (j1 > k1)
             {
-                var13 = var12;
+                k1 = j1;
             }
 
             // CraftBukkit start - Check if we can actually do something over this large a distance
             Location eyeLoc = this.getPlayerB().getEyeLocation();
 
-            if (Math.pow(eyeLoc.getX() - var5, 2) + Math.pow(eyeLoc.getY() - var6, 2) + Math.pow(eyeLoc.getZ() - var7, 2) > PLACE_DISTANCE_SQUARED)
+            if (Math.pow(eyeLoc.getX() - i, 2) + Math.pow(eyeLoc.getY() - j, 2) + Math.pow(eyeLoc.getZ() - k, 2) > PLACE_DISTANCE_SQUARED)
             {
                 return;
             }
 
-            var10 = true; // spawn protection moved to ItemBlock!!!
+            flag1 = true; // spawn protection moved to ItemBlock!!!
 
-            if (var12 > var9 || var10)
+            if (j1 > i1 || flag1)
             {
                 // CraftBukkit end
-                this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
+                this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
             }
 
-            var4 = true;
+            flag = true;
         }
 
-        if (var4)
+        if (flag)
         {
-            this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
+            this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j, k, worldserver));
 
-            if (var8 == 0)
+            if (l == 0)
             {
-                --var6;
+                --j;
             }
 
-            if (var8 == 1)
+            if (l == 1)
             {
-                ++var6;
+                ++j;
             }
 
-            if (var8 == 2)
+            if (l == 2)
             {
-                --var7;
+                --k;
             }
 
-            if (var8 == 3)
+            if (l == 3)
             {
-                ++var7;
+                ++k;
             }
 
-            if (var8 == 4)
+            if (l == 4)
             {
-                --var5;
+                --i;
             }
 
-            if (var8 == 5)
+            if (l == 5)
             {
-                ++var5;
+                ++i;
             }
 
-            this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
+            this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j, k, worldserver));
         }
 
-        var3 = this.playerEntity.inventory.getCurrentItem();
+        itemstack = this.playerEntity.inventory.getCurrentItem();
 
-        if (var3 != null && var3.stackSize == 0)
+        if (itemstack != null && itemstack.stackSize == 0)
         {
             this.playerEntity.inventory.mainInventory[this.playerEntity.inventory.currentItem] = null;
-            var3 = null;
+            itemstack = null;
         }
 
-        if (var3 == null || var3.getMaxItemUseDuration() == 0)
+        if (itemstack == null || itemstack.getMaxItemUseDuration() == 0)
         {
             this.playerEntity.playerInventoryBeingManipulated = true;
             this.playerEntity.inventory.mainInventory[this.playerEntity.inventory.currentItem] = ItemStack.copyItemStack(this.playerEntity.inventory.mainInventory[this.playerEntity.inventory.currentItem]);
-            Slot var14 = this.playerEntity.openContainer.getSlotFromInventory(this.playerEntity.inventory, this.playerEntity.inventory.currentItem);
-            if (var14 == null) return; // MCPC+ - abort if no slot, fixes RP2 timer crash block place - see #181
+            Slot slot = this.playerEntity.openContainer.getSlotFromInventory(this.playerEntity.inventory, this.playerEntity.inventory.currentItem);
+            if (slot == null) return; // MCPC+ - abort if no slot, fixes RP2 timer crash block place - see #181
             this.playerEntity.openContainer.detectAndSendChanges();
             this.playerEntity.playerInventoryBeingManipulated = false;
 
             // CraftBukkit - TODO CHECK IF NEEDED -- new if structure might not need 'always'. Kept it in for now, but may be able to remove in future
             if (!ItemStack.areItemStacksEqual(this.playerEntity.inventory.getCurrentItem(), par1Packet15Place.getItemStack()) || always)
             {
-                this.sendPacketToPlayer(new Packet103SetSlot(this.playerEntity.openContainer.windowId, var14.slotNumber, this.playerEntity.inventory.getCurrentItem()));
+                this.sendPacketToPlayer(new Packet103SetSlot(this.playerEntity.openContainer.windowId, slot.slotNumber, this.playerEntity.inventory.getCurrentItem()));
             }
         }
     }
@@ -1019,21 +1019,21 @@ public class NetServerHandler extends NetHandler
     {
         if (par1Packet instanceof Packet3Chat)
         {
-            Packet3Chat var2 = (Packet3Chat)par1Packet;
-            int var3 = this.playerEntity.getChatVisibility();
+            Packet3Chat packet3chat = (Packet3Chat)par1Packet;
+            int i = this.playerEntity.getChatVisibility();
 
-            if (var3 == 2)
+            if (i == 2)
             {
                 return;
             }
 
-            if (var3 == 1 && !var2.getIsServer())
+            if (i == 1 && !packet3chat.getIsServer())
             {
                 return;
             }
 
             // CraftBukkit start
-            String message = var2.message;
+            String message = packet3chat.message;
 
             for (final String line : org.bukkit.craftbukkit.TextWrapper.wrapText(message))
             {
@@ -1132,9 +1132,9 @@ public class NetServerHandler extends NetHandler
             else
             {
                 s = s.trim();
-                for (int var3 = 0; var3 < s.length(); ++var3)
+                for (int i = 0; i < s.length(); ++i)
                 {
-                    if (!ChatAllowedCharacters.isAllowedCharacter(s.charAt(var3)))
+                    if (!ChatAllowedCharacters.isAllowedCharacter(s.charAt(i)))
                     {
                         // CraftBukkit start
                         if (par1Packet3Chat.canProcessAsync())
@@ -1530,27 +1530,27 @@ public class NetServerHandler extends NetHandler
             return;    // CraftBukkit
         }
 
-        WorldServer var2 = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
-        Entity var3 = var2.getEntityByID(par1Packet7UseEntity.targetEntity);
+        WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
+        Entity entity = worldserver.getEntityByID(par1Packet7UseEntity.targetEntity);
 
-        if (var3 != null)
+        if (entity != null)
         {
-            boolean var4 = this.playerEntity.canEntityBeSeen(var3);
-            double var5 = 36.0D;
+            boolean flag = this.playerEntity.canEntityBeSeen(entity);
+            double d0 = 36.0D;
 
-            if (!var4)
+            if (!flag)
             {
-                var5 = 9.0D;
+                d0 = 9.0D;
             }
 
-            if (this.playerEntity.getDistanceSqToEntity(var3) < var5)
+            if (this.playerEntity.getDistanceSqToEntity(entity) < d0)
             {
                 ItemStack itemInHand = this.playerEntity.inventory.getCurrentItem(); // CraftBukkit
 
                 if (par1Packet7UseEntity.isLeftClick == 0)
                 {
                     // CraftBukkit start
-                    PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) this.getPlayerB(), var3.getBukkitEntity());
+                    PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) this.getPlayerB(), entity.getBukkitEntity());
                     this.server.getPluginManager().callEvent(event);
 
                     if (event.isCancelled())
@@ -1559,7 +1559,7 @@ public class NetServerHandler extends NetHandler
                     }
 
                     // CraftBukkit end
-                    this.playerEntity.interactWith(var3);
+                    this.playerEntity.interactWith(entity);
 
                     // CraftBukkit start - update the client if the item is an infinite one
                     if (itemInHand != null && itemInHand.stackSize <= -1)
@@ -1569,15 +1569,15 @@ public class NetServerHandler extends NetHandler
                 }
                 else if (par1Packet7UseEntity.isLeftClick == 1)
                 {
-                    if ((var3 instanceof EntityItem) || (var3 instanceof EntityXPOrb) || (var3 instanceof EntityArrow))
+                    if ((entity instanceof EntityItem) || (entity instanceof EntityXPOrb) || (entity instanceof EntityArrow))
                     {
-                        String type = var3.getClass().getSimpleName();
+                        String type = entity.getClass().getSimpleName();
                         kickPlayerFromServer("Attacking an " + type + " is not permitted");
                         System.out.println("Player " + playerEntity.username + " tried to attack an " + type + ", so I have playerLoggedOuted them for exploiting.");
                         return;
                     }
 
-                    this.playerEntity.attackTargetEntityWithCurrentItem(var3);
+                    this.playerEntity.attackTargetEntityWithCurrentItem(entity);
 
                     if (itemInHand != null && itemInHand.stackSize <= -1)
                     {
@@ -1607,9 +1607,9 @@ public class NetServerHandler extends NetHandler
                 }
                 else
                 {
-                    BanEntry var2 = new BanEntry(this.playerEntity.username);
-                    var2.setBanReason("Death in Hardcore");
-                    this.mcServer.getConfigurationManager().getBannedPlayers().put(var2);
+                    BanEntry banentry = new BanEntry(this.playerEntity.username);
+                    banentry.setBanReason("Death in Hardcore");
+                    this.mcServer.getConfigurationManager().getBannedPlayers().put(banentry);
                     this.playerEntity.playerNetServerHandler.kickPlayerFromServer("You have died. Game over, man, it\'s game over!");
                 }
             }
@@ -1771,14 +1771,14 @@ public class NetServerHandler extends NetHandler
                 this.field_72586_s.addKey(this.playerEntity.openContainer.windowId, Short.valueOf(par1Packet102WindowClick.action));
                 this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet106Transaction(par1Packet102WindowClick.window_Id, par1Packet102WindowClick.action, false));
                 this.playerEntity.openContainer.setPlayerIsPresent(this.playerEntity, false);
-                ArrayList var2 = new ArrayList();
+                ArrayList arraylist = new ArrayList();
 
-                for (int var3 = 0; var3 < this.playerEntity.openContainer.inventorySlots.size(); ++var3)
+                for (int i = 0; i < this.playerEntity.openContainer.inventorySlots.size(); ++i)
                 {
-                    var2.add(((Slot) this.playerEntity.openContainer.inventorySlots.get(var3)).getStack());
+                    arraylist.add(((Slot) this.playerEntity.openContainer.inventorySlots.get(i)).getStack());
                 }
 
-                this.playerEntity.sendContainerAndContentsToPlayer(this.playerEntity.openContainer, var2);
+                this.playerEntity.sendContainerAndContentsToPlayer(this.playerEntity.openContainer, arraylist);
                 // CraftBukkit start - send a Set Slot to update the crafting result slot
                 if (type == SlotType.RESULT && itemstack != null)
                 {
@@ -1806,12 +1806,12 @@ public class NetServerHandler extends NetHandler
     {
         if (this.playerEntity.theItemInWorldManager.isCreative())
         {
-            boolean var2 = par1Packet107CreativeSetSlot.slot < 0;
-            ItemStack var3 = par1Packet107CreativeSetSlot.itemStack;
-            boolean var4 = par1Packet107CreativeSetSlot.slot >= 1 && par1Packet107CreativeSetSlot.slot < 36 + InventoryPlayer.getHotbarSize();
+            boolean flag = par1Packet107CreativeSetSlot.slot < 0;
+            ItemStack itemstack = par1Packet107CreativeSetSlot.itemStack;
+            boolean flag1 = par1Packet107CreativeSetSlot.slot >= 1 && par1Packet107CreativeSetSlot.slot < 36 + InventoryPlayer.getHotbarSize();
             // CraftBukkit
-            boolean var5 = var3 == null || var3.itemID < Item.itemsList.length && var3.itemID >= 0 && Item.itemsList[var3.itemID] != null && !invalidItems.contains(var3.itemID);
-            boolean var6 = var3 == null || var3.getItemDamage() >= 0 && var3.getItemDamage() >= 0 && var3.stackSize <= 64 && var3.stackSize > 0;
+            boolean flag2 = itemstack == null || itemstack.itemID < Item.itemsList.length && itemstack.itemID >= 0 && Item.itemsList[itemstack.itemID] != null && !invalidItems.contains(itemstack.itemID);
+            boolean flag3 = itemstack == null || itemstack.getItemDamage() >= 0 && itemstack.getItemDamage() >= 0 && itemstack.stackSize <= 64 && itemstack.stackSize > 0;
             // CraftBukkit start - Fire INVENTORY_CLICK event
             org.bukkit.entity.HumanEntity player = this.playerEntity.getBukkitEntity();
             InventoryView inventory = new CraftInventoryView(player, player.getInventory(), this.playerEntity.inventoryContainer);
@@ -1867,27 +1867,27 @@ public class NetServerHandler extends NetHandler
 
             // CraftBukkit end
 
-            if (var4 && var5 && var6)
+            if (flag1 && flag2 && flag3)
             {
-                if (var3 == null)
+                if (itemstack == null)
                 {
                     this.playerEntity.inventoryContainer.putStackInSlot(par1Packet107CreativeSetSlot.slot, (ItemStack)null);
                 }
                 else
                 {
-                    this.playerEntity.inventoryContainer.putStackInSlot(par1Packet107CreativeSetSlot.slot, var3);
+                    this.playerEntity.inventoryContainer.putStackInSlot(par1Packet107CreativeSetSlot.slot, itemstack);
                 }
 
                 this.playerEntity.inventoryContainer.setPlayerIsPresent(this.playerEntity, true);
             }
-            else if (var2 && var5 && var6 && this.creativeItemCreationSpamThresholdTally < 200)
+            else if (flag && flag2 && flag3 && this.creativeItemCreationSpamThresholdTally < 200)
             {
                 this.creativeItemCreationSpamThresholdTally += 20;
-                EntityItem var7 = this.playerEntity.dropPlayerItem(var3);
+                EntityItem entityitem = this.playerEntity.dropPlayerItem(itemstack);
 
-                if (var7 != null)
+                if (entityitem != null)
                 {
-                    var7.func_70288_d();
+                    entityitem.func_70288_d();
                 }
             }
         }
@@ -1900,9 +1900,9 @@ public class NetServerHandler extends NetHandler
             return;    // CraftBukkit
         }
 
-        Short var2 = (Short)this.field_72586_s.lookup(this.playerEntity.openContainer.windowId);
+        Short oshort = (Short)this.field_72586_s.lookup(this.playerEntity.openContainer.windowId);
 
-        if (var2 != null && par1Packet106Transaction.shortWindowId == var2.shortValue() && this.playerEntity.openContainer.windowId == par1Packet106Transaction.windowId && !this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
+        if (oshort != null && par1Packet106Transaction.shortWindowId == oshort.shortValue() && this.playerEntity.openContainer.windowId == par1Packet106Transaction.windowId && !this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
         {
             this.playerEntity.openContainer.setPlayerIsPresent(this.playerEntity, true);
         }
@@ -1918,82 +1918,82 @@ public class NetServerHandler extends NetHandler
             return;    // CraftBukkit
         }
 
-        WorldServer var2 = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
+        WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
 
-        if (var2.blockExists(par1Packet130UpdateSign.xPosition, par1Packet130UpdateSign.yPosition, par1Packet130UpdateSign.zPosition))
+        if (worldserver.blockExists(par1Packet130UpdateSign.xPosition, par1Packet130UpdateSign.yPosition, par1Packet130UpdateSign.zPosition))
         {
-            TileEntity var3 = var2.getBlockTileEntity(par1Packet130UpdateSign.xPosition, par1Packet130UpdateSign.yPosition, par1Packet130UpdateSign.zPosition);
+            TileEntity tileentity = worldserver.getBlockTileEntity(par1Packet130UpdateSign.xPosition, par1Packet130UpdateSign.yPosition, par1Packet130UpdateSign.zPosition);
 
-            if (var3 instanceof TileEntitySign)
+            if (tileentity instanceof TileEntitySign)
             {
-                TileEntitySign var4 = (TileEntitySign)var3;
+                TileEntitySign tileentitysign = (TileEntitySign)tileentity;
 
-                if (!var4.isEditable())
+                if (!tileentitysign.isEditable())
                 {
                     this.mcServer.logWarning("Player " + this.playerEntity.username + " just tried to change non-editable sign");
-                    this.sendPacketToPlayer(new Packet130UpdateSign(par1Packet130UpdateSign.xPosition, par1Packet130UpdateSign.yPosition, par1Packet130UpdateSign.zPosition, var4.signText)); // CraftBukkit
+                    this.sendPacketToPlayer(new Packet130UpdateSign(par1Packet130UpdateSign.xPosition, par1Packet130UpdateSign.yPosition, par1Packet130UpdateSign.zPosition, tileentitysign.signText)); // CraftBukkit
                     return;
                 }
             }
 
-            int var6;
-            int var8;
+            int i;
+            int j;
 
-            for (var8 = 0; var8 < 4; ++var8)
+            for (j = 0; j < 4; ++j)
             {
-                boolean var5 = true;
+                boolean flag = true;
 
-                if (par1Packet130UpdateSign.signLines[var8].length() > 15)
+                if (par1Packet130UpdateSign.signLines[j].length() > 15)
                 {
-                    var5 = false;
+                    flag = false;
                 }
                 else
                 {
-                    for (var6 = 0; var6 < par1Packet130UpdateSign.signLines[var8].length(); ++var6)
+                    for (i = 0; i < par1Packet130UpdateSign.signLines[j].length(); ++i)
                     {
-                        if (!ChatAllowedCharacters.isAllowedCharacter(par1Packet130UpdateSign.signLines[var8].charAt(var6))) // Spigot
+                        if (!ChatAllowedCharacters.isAllowedCharacter(par1Packet130UpdateSign.signLines[j].charAt(i))) // Spigot
                         {
-                            var5 = false;
+                            flag = false;
                             break;
                         }
                     }
                 }
 
-                if (!var5)
+                if (!flag)
                 {
-                    par1Packet130UpdateSign.signLines[var8] = "!?";
+                    par1Packet130UpdateSign.signLines[j] = "!?";
                 }
             }
 
-            if (var3 instanceof TileEntitySign)
+            if (tileentity instanceof TileEntitySign)
             {
-                var8 = par1Packet130UpdateSign.xPosition;
-                int var9 = par1Packet130UpdateSign.yPosition;
-                var6 = par1Packet130UpdateSign.zPosition;
-                TileEntitySign var7 = (TileEntitySign)var3;
+                j = par1Packet130UpdateSign.xPosition;
+                int k = par1Packet130UpdateSign.yPosition;
+                i = par1Packet130UpdateSign.zPosition;
+                TileEntitySign tileentitysign1 = (TileEntitySign)tileentity;
                 // CraftBukkit start
                 Player player = this.server.getPlayer(this.playerEntity);
-                SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.block.CraftBlock) player.getWorld().getBlockAt(var8, var9, var6), this.server.getPlayer(this.playerEntity), par1Packet130UpdateSign.signLines);
+                SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.block.CraftBlock) player.getWorld().getBlockAt(j, k, i), this.server.getPlayer(this.playerEntity), par1Packet130UpdateSign.signLines);
                 this.server.getPluginManager().callEvent(event);
 
                 if (!event.isCancelled())
                 {
                     for (int l = 0; l < 4; ++l)
                     {
-                        var7.signText[l] = event.getLine(l);
+                        tileentitysign1.signText[l] = event.getLine(l);
 
-                        if (var7.signText[l] == null)
+                        if (tileentitysign1.signText[l] == null)
                         {
-                            var7.signText[l] = "";
+                            tileentitysign1.signText[l] = "";
                         }
                     }
 
-                    var7.isEditable = false;
+                    tileentitysign1.isEditable = false;
                 }
 
                 // CraftBukkit end
-                var7.onInventoryChanged();
-                var2.markBlockForUpdate(var8, var9, var6);
+                tileentitysign1.onInventoryChanged();
+                worldserver.markBlockForUpdate(j, k, i);
             }
         }
     }
@@ -2005,8 +2005,8 @@ public class NetServerHandler extends NetHandler
     {
         if (par1Packet0KeepAlive.randomId == this.keepAliveRandomID)
         {
-            int var2 = (int)(System.nanoTime() / 1000000L - this.keepAliveTimeSent);
-            this.playerEntity.ping = (this.playerEntity.ping * 3 + var2) / 4;
+            int i = (int)(System.nanoTime() / 1000000L - this.keepAliveTimeSent);
+            this.playerEntity.ping = (this.playerEntity.ping * 3 + i) / 4;
         }
     }
 
@@ -2044,20 +2044,20 @@ public class NetServerHandler extends NetHandler
 
     public void handleAutoComplete(Packet203AutoComplete par1Packet203AutoComplete)
     {
-        StringBuilder var2 = new StringBuilder();
-        String var4;
+        StringBuilder stringbuilder = new StringBuilder();
+        String s;
 
-        for (Iterator var3 = this.mcServer.getPossibleCompletions(this.playerEntity, par1Packet203AutoComplete.getText()).iterator(); var3.hasNext(); var2.append(var4))
+        for (Iterator iterator = this.mcServer.getPossibleCompletions(this.playerEntity, par1Packet203AutoComplete.getText()).iterator(); iterator.hasNext(); stringbuilder.append(s))
         {
-            var4 = (String)var3.next();
+            s = (String)iterator.next();
 
-            if (var2.length() > 0)
+            if (stringbuilder.length() > 0)
             {
-                var2.append('\0'); // CraftBukkit - fix decompile issue
+                stringbuilder.append('\0'); // CraftBukkit - fix decompile issue
             }
         }
 
-        this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet203AutoComplete(var2.toString()));
+        this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet203AutoComplete(stringbuilder.toString()));
     }
 
     public void handleClientInfo(Packet204ClientInfo par1Packet204ClientInfo)

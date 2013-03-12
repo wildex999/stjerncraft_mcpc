@@ -52,19 +52,19 @@ public class EntityMoveHelper
         if (this.update)
         {
             this.update = false;
-            int var1 = MathHelper.floor_double(this.entity.boundingBox.minY + 0.5D);
-            double var2 = this.posX - this.entity.posX;
-            double var4 = this.posZ - this.entity.posZ;
-            double var6 = this.posY - (double)var1;
-            double var8 = var2 * var2 + var6 * var6 + var4 * var4;
+            int i = MathHelper.floor_double(this.entity.boundingBox.minY + 0.5D);
+            double d0 = this.posX - this.entity.posX;
+            double d1 = this.posZ - this.entity.posZ;
+            double d2 = this.posY - (double)i;
+            double d3 = d0 * d0 + d2 * d2 + d1 * d1;
 
-            if (var8 >= 2.500000277905201E-7D)
+            if (d3 >= 2.500000277905201E-7D)
             {
-                float var10 = (float)(org.bukkit.craftbukkit.TrigMath.atan2(var4, var2) * 180.0D / Math.PI) - 90.0F; // CraftBukkit - Math -> TrigMath
-                this.entity.rotationYaw = this.limitAngle(this.entity.rotationYaw, var10, 30.0F);
+                float f = (float)(org.bukkit.craftbukkit.TrigMath.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F; // CraftBukkit - Math -> TrigMath
+                this.entity.rotationYaw = this.limitAngle(this.entity.rotationYaw, f, 30.0F);
                 this.entity.setAIMoveSpeed(this.speed * this.entity.getSpeedModifier());
 
-                if (var6 > 0.0D && var2 * var2 + var4 * var4 < 1.0D)
+                if (d2 > 0.0D && d0 * d0 + d1 * d1 < 1.0D)
                 {
                     this.entity.getJumpHelper().setJumping();
                 }
@@ -77,18 +77,18 @@ public class EntityMoveHelper
      */
     private float limitAngle(float par1, float par2, float par3)
     {
-        float var4 = MathHelper.wrapAngleTo180_float(par2 - par1);
+        float f3 = MathHelper.wrapAngleTo180_float(par2 - par1);
 
-        if (var4 > par3)
+        if (f3 > par3)
         {
-            var4 = par3;
+            f3 = par3;
         }
 
-        if (var4 < -par3)
+        if (f3 < -par3)
         {
-            var4 = -par3;
+            f3 = -par3;
         }
 
-        return par1 + var4;
+        return par1 + f3;
     }
 }

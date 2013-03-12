@@ -49,7 +49,7 @@ public class FoodStats
      */
     public void onUpdate(EntityPlayer par1EntityPlayer)
     {
-        int var2 = par1EntityPlayer.worldObj.difficultySetting;
+        int i = par1EntityPlayer.worldObj.difficultySetting;
         this.prevFoodLevel = this.foodLevel;
 
         if (this.foodExhaustionLevel > 4.0F)
@@ -60,7 +60,7 @@ public class FoodStats
             {
                 this.foodSaturationLevel = Math.max(this.foodSaturationLevel - 1.0F, 0.0F);
             }
-            else if (var2 > 0)
+            else if (i > 0)
             {
                 // CraftBukkit start
                 org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(par1EntityPlayer, Math.max(this.foodLevel - 1, 0));
@@ -92,7 +92,7 @@ public class FoodStats
 
             if (this.foodTimer >= 80)
             {
-                if (par1EntityPlayer.getHealth() > 10 || var2 >= 3 || par1EntityPlayer.getHealth() > 1 && var2 >= 2)
+                if (par1EntityPlayer.getHealth() > 10 || i >= 3 || par1EntityPlayer.getHealth() > 1 && i >= 2)
                 {
                     // CraftBukkit start
                     EntityDamageEvent event = new EntityDamageEvent(par1EntityPlayer.getBukkitEntity(), EntityDamageEvent.DamageCause.STARVATION, 1);

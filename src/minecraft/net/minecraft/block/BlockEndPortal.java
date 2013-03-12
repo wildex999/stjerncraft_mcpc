@@ -40,8 +40,8 @@ public class BlockEndPortal extends BlockContainer
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        float var5 = 0.0625F;
-        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, var5, 1.0F);
+        float f = 0.0625F;
+        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, f, 1.0F);
     }
 
     @SideOnly(Side.CLIENT)
@@ -107,13 +107,13 @@ public class BlockEndPortal extends BlockContainer
      */
     public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
-        double var6 = (double)((float)par2 + par5Random.nextFloat());
-        double var8 = (double)((float)par3 + 0.8F);
-        double var10 = (double)((float)par4 + par5Random.nextFloat());
-        double var12 = 0.0D;
-        double var14 = 0.0D;
-        double var16 = 0.0D;
-        par1World.spawnParticle("smoke", var6, var8, var10, var12, var14, var16);
+        double d0 = (double)((float)par2 + par5Random.nextFloat());
+        double d1 = (double)((float)par3 + 0.8F);
+        double d2 = (double)((float)par4 + par5Random.nextFloat());
+        double d3 = 0.0D;
+        double d4 = 0.0D;
+        double d5 = 0.0D;
+        par1World.spawnParticle("smoke", d0, d1, d2, d3, d4, d5);
     }
 
     /**

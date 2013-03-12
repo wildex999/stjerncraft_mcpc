@@ -20,28 +20,28 @@ public class ItemEmptyMap extends ItemMapBase
      */
     public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
-        ItemStack var4 = new ItemStack(Item.map, 1, par2World.getUniqueDataId("map"));
-        String var5 = "map_" + var4.getItemDamage();
-        MapData var6 = new MapData(var5);
-        par2World.setItemData(var5, var6);
-        var6.scale = 0;
-        int var7 = 128 * (1 << var6.scale);
-        var6.xCenter = (int)(Math.round(par3EntityPlayer.posX / (double)var7) * (long)var7);
-        var6.zCenter = (int)(Math.round(par3EntityPlayer.posZ / (double)var7) * (long)var7);
-        var6.dimension = (byte)((WorldServer) par2World).dimension;  // CraftBukkit - use bukkit dimension
-        var6.markDirty();
-        org.bukkit.craftbukkit.event.CraftEventFactory.callEvent(new org.bukkit.event.server.MapInitializeEvent(var6.mapView)); // CraftBukkit
+        ItemStack itemstack1 = new ItemStack(Item.map, 1, par2World.getUniqueDataId("map"));
+        String s = "map_" + itemstack1.getItemDamage();
+        MapData mapdata = new MapData(s);
+        par2World.setItemData(s, mapdata);
+        mapdata.scale = 0;
+        int i = 128 * (1 << mapdata.scale);
+        mapdata.xCenter = (int)(Math.round(par3EntityPlayer.posX / (double)i) * (long)i);
+        mapdata.zCenter = (int)(Math.round(par3EntityPlayer.posZ / (double)i) * (long)i);
+        mapdata.dimension = (byte)((WorldServer) par2World).dimension;  // CraftBukkit - use bukkit dimension
+        mapdata.markDirty();
+        org.bukkit.craftbukkit.event.CraftEventFactory.callEvent(new org.bukkit.event.server.MapInitializeEvent(mapdata.mapView)); // CraftBukkit
         --par1ItemStack.stackSize;
 
         if (par1ItemStack.stackSize <= 0)
         {
-            return var4;
+            return itemstack1;
         }
         else
         {
-            if (!par3EntityPlayer.inventory.addItemStackToInventory(var4.copy()))
+            if (!par3EntityPlayer.inventory.addItemStackToInventory(itemstack1.copy()))
             {
-                par3EntityPlayer.dropPlayerItem(var4);
+                par3EntityPlayer.dropPlayerItem(itemstack1);
             }
 
             return par1ItemStack;

@@ -103,15 +103,15 @@ public class TileEntity
      */
     public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
-        String var2 = (String)classToNameMap.get(this.getClass());
+        String s = (String)classToNameMap.get(this.getClass());
 
-        if (var2 == null)
+        if (s == null)
         {
             throw new RuntimeException(this.getClass() + " is missing a mapping! This is a bug!");
         }
         else
         {
-            par1NBTTagCompound.setString("id", var2);
+            par1NBTTagCompound.setString("id", s);
             par1NBTTagCompound.setInteger("x", this.xCoord);
             par1NBTTagCompound.setInteger("y", this.yCoord);
             par1NBTTagCompound.setInteger("z", this.zCoord);
@@ -129,36 +129,36 @@ public class TileEntity
      */
     public static TileEntity createAndLoadEntity(NBTTagCompound par0NBTTagCompound)
     {
-        TileEntity var1 = null;
+        TileEntity tileentity = null;
 
-        Class var2 = null;
+        Class oclass = null;
 
         try
         {
-            var2 = (Class)nameToClassMap.get(par0NBTTagCompound.getString("id"));
+            oclass = (Class)nameToClassMap.get(par0NBTTagCompound.getString("id"));
 
-            if (var2 != null)
+            if (oclass != null)
             {
-                var1 = (TileEntity)var2.newInstance();
+                tileentity = (TileEntity)oclass.newInstance();
             }
         }
-        catch (Exception var3)
+        catch (Exception exception)
         {
-            var3.printStackTrace();
+            exception.printStackTrace();
         }
 
-        if (var1 != null)
+        if (tileentity != null)
         {
             try
             {
-                var1.readFromNBT(par0NBTTagCompound);
+                tileentity.readFromNBT(par0NBTTagCompound);
             }
             catch (Exception e)
             {
                 FMLLog.log(Level.SEVERE, e,
                         "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                        par0NBTTagCompound.getString("id"), var2.getName());
-                var1 = null;
+                        par0NBTTagCompound.getString("id"), oclass.getName());
+                tileentity = null;
             }
         }
         else
@@ -166,7 +166,7 @@ public class TileEntity
             System.out.println("Skipping TileEntity with id " + par0NBTTagCompound.getString("id"));
         }
 
-        return var1;
+        return tileentity;
     }
 
     /**
@@ -201,10 +201,10 @@ public class TileEntity
      */
     public double getDistanceFrom(double par1, double par3, double par5)
     {
-        double var7 = (double)this.xCoord + 0.5D - par1;
-        double var9 = (double)this.yCoord + 0.5D - par3;
-        double var11 = (double)this.zCoord + 0.5D - par5;
-        return var7 * var7 + var9 * var9 + var11 * var11;
+        double d3 = (double)this.xCoord + 0.5D - par1;
+        double d4 = (double)this.yCoord + 0.5D - par3;
+        double d5 = (double)this.zCoord + 0.5D - par5;
+        return d3 * d3 + d4 * d4 + d5 * d5;
     }
 
     @SideOnly(Side.CLIENT)

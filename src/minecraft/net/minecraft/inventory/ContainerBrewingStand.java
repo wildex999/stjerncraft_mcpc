@@ -31,19 +31,19 @@ public class ContainerBrewingStand extends Container
         this.addSlotToContainer(new SlotBrewingStandPotion(par1InventoryPlayer.player, par2TileEntityBrewingStand, 1, 79, 53));
         this.addSlotToContainer(new SlotBrewingStandPotion(par1InventoryPlayer.player, par2TileEntityBrewingStand, 2, 102, 46));
         this.theSlot = this.addSlotToContainer(new SlotBrewingStandIngredient(this, par2TileEntityBrewingStand, 3, 79, 17));
-        int var3;
+        int i;
 
-        for (var3 = 0; var3 < 3; ++var3)
+        for (i = 0; i < 3; ++i)
         {
-            for (int var4 = 0; var4 < 9; ++var4)
+            for (int j = 0; j < 9; ++j)
             {
-                this.addSlotToContainer(new Slot(par1InventoryPlayer, var4 + var3 * 9 + 9, 8 + var4 * 18, 84 + var3 * 18));
+                this.addSlotToContainer(new Slot(par1InventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
             }
         }
 
-        for (var3 = 0; var3 < 9; ++var3)
+        for (i = 0; i < 9; ++i)
         {
-            this.addSlotToContainer(new Slot(par1InventoryPlayer, var3, 8 + var3 * 18, 142));
+            this.addSlotToContainer(new Slot(par1InventoryPlayer, i, 8 + i * 18, 142));
         }
     }
 
@@ -60,13 +60,13 @@ public class ContainerBrewingStand extends Container
     {
         super.detectAndSendChanges();
 
-        for (int var1 = 0; var1 < this.crafters.size(); ++var1)
+        for (int i = 0; i < this.crafters.size(); ++i)
         {
-            ICrafting var2 = (ICrafting)this.crafters.get(var1);
+            ICrafting icrafting = (ICrafting)this.crafters.get(i);
 
             if (this.brewTime != this.tileBrewingStand.getBrewTime())
             {
-                var2.sendProgressBarUpdate(this, 0, this.tileBrewingStand.getBrewTime());
+                icrafting.sendProgressBarUpdate(this, 0, this.tileBrewingStand.getBrewTime());
             }
         }
 
@@ -97,77 +97,77 @@ public class ContainerBrewingStand extends Container
      */
     public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
     {
-        ItemStack var3 = null;
-        Slot var4 = (Slot)this.inventorySlots.get(par2);
+        ItemStack itemstack = null;
+        Slot slot = (Slot)this.inventorySlots.get(par2);
 
-        if (var4 != null && var4.getHasStack())
+        if (slot != null && slot.getHasStack())
         {
-            ItemStack var5 = var4.getStack();
-            var3 = var5.copy();
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
 
             if ((par2 < 0 || par2 > 2) && par2 != 3)
             {
-                if (!this.theSlot.getHasStack() && this.theSlot.isItemValid(var5))
+                if (!this.theSlot.getHasStack() && this.theSlot.isItemValid(itemstack1))
                 {
-                    if (!this.mergeItemStack(var5, 3, 4, false))
+                    if (!this.mergeItemStack(itemstack1, 3, 4, false))
                     {
                         return null;
                     }
                 }
-                else if (SlotBrewingStandPotion.canHoldPotion(var3))
+                else if (SlotBrewingStandPotion.canHoldPotion(itemstack))
                 {
-                    if (!this.mergeItemStack(var5, 0, 3, false))
+                    if (!this.mergeItemStack(itemstack1, 0, 3, false))
                     {
                         return null;
                     }
                 }
                 else if (par2 >= 4 && par2 < 31)
                 {
-                    if (!this.mergeItemStack(var5, 31, 40, false))
+                    if (!this.mergeItemStack(itemstack1, 31, 40, false))
                     {
                         return null;
                     }
                 }
                 else if (par2 >= 31 && par2 < 40)
                 {
-                    if (!this.mergeItemStack(var5, 4, 31, false))
+                    if (!this.mergeItemStack(itemstack1, 4, 31, false))
                     {
                         return null;
                     }
                 }
-                else if (!this.mergeItemStack(var5, 4, 40, false))
+                else if (!this.mergeItemStack(itemstack1, 4, 40, false))
                 {
                     return null;
                 }
             }
             else
             {
-                if (!this.mergeItemStack(var5, 4, 40, true))
+                if (!this.mergeItemStack(itemstack1, 4, 40, true))
                 {
                     return null;
                 }
 
-                var4.onSlotChange(var5, var3);
+                slot.onSlotChange(itemstack1, itemstack);
             }
 
-            if (var5.stackSize == 0)
+            if (itemstack1.stackSize == 0)
             {
-                var4.putStack((ItemStack)null);
+                slot.putStack((ItemStack)null);
             }
             else
             {
-                var4.onSlotChanged();
+                slot.onSlotChanged();
             }
 
-            if (var5.stackSize == var3.stackSize)
+            if (itemstack1.stackSize == itemstack.stackSize)
             {
                 return null;
             }
 
-            var4.onPickupFromSlot(par1EntityPlayer, var5);
+            slot.onPickupFromSlot(par1EntityPlayer, itemstack1);
         }
 
-        return var3;
+        return itemstack;
     }
 
     // CraftBukkit start

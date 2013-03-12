@@ -45,19 +45,19 @@ public class EntityAIAttackOnCollide extends EntityAIBase
      */
     public boolean shouldExecute()
     {
-        EntityLiving var1 = this.attacker.getAttackTarget();
+        EntityLiving entityliving = this.attacker.getAttackTarget();
 
-        if (var1 == null)
+        if (entityliving == null)
         {
             return false;
         }
-        else if (this.classTarget != null && !this.classTarget.isAssignableFrom(var1.getClass()))
+        else if (this.classTarget != null && !this.classTarget.isAssignableFrom(entityliving.getClass()))
         {
             return false;
         }
         else
         {
-            this.entityTarget = var1;
+            this.entityTarget = entityliving;
             this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(this.entityTarget);
             return this.entityPathEntity != null;
         }
@@ -68,8 +68,8 @@ public class EntityAIAttackOnCollide extends EntityAIBase
      */
     public boolean continueExecuting()
     {
-        EntityLiving var1 = this.attacker.getAttackTarget();
-        return var1 == null ? false : (!this.entityTarget.isEntityAlive() ? false : (!this.field_75437_f ? !this.attacker.getNavigator().noPath() : this.attacker.isWithinHomeDistance(MathHelper.floor_double(this.entityTarget.posX), MathHelper.floor_double(this.entityTarget.posY), MathHelper.floor_double(this.entityTarget.posZ))));
+        EntityLiving entityliving = this.attacker.getAttackTarget();
+        return entityliving == null ? false : (!this.entityTarget.isEntityAlive() ? false : (!this.field_75437_f ? !this.attacker.getNavigator().noPath() : this.attacker.isWithinHomeDistance(MathHelper.floor_double(this.entityTarget.posX), MathHelper.floor_double(this.entityTarget.posY), MathHelper.floor_double(this.entityTarget.posZ))));
     }
 
     /**
@@ -108,9 +108,9 @@ public class EntityAIAttackOnCollide extends EntityAIBase
         }
 
         this.attackTick = Math.max(this.attackTick - 1, 0);
-        double var1 = (double)(this.attacker.width * 2.0F * this.attacker.width * 2.0F);
+        double d0 = (double)(this.attacker.width * 2.0F * this.attacker.width * 2.0F);
 
-        if (this.attacker.getDistanceSq(this.entityTarget.posX, this.entityTarget.boundingBox.minY, this.entityTarget.posZ) <= var1)
+        if (this.attacker.getDistanceSq(this.entityTarget.posX, this.entityTarget.boundingBox.minY, this.entityTarget.posZ) <= d0)
         {
             if (this.attackTick <= 0)
             {

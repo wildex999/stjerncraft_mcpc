@@ -72,29 +72,29 @@ public class EntityXPOrb extends Entity
     @SideOnly(Side.CLIENT)
     public int getBrightnessForRender(float par1)
     {
-        float var2 = 0.5F;
+        float f1 = 0.5F;
 
-        if (var2 < 0.0F)
+        if (f1 < 0.0F)
         {
-            var2 = 0.0F;
+            f1 = 0.0F;
         }
 
-        if (var2 > 1.0F)
+        if (f1 > 1.0F)
         {
-            var2 = 1.0F;
+            f1 = 1.0F;
         }
 
-        int var3 = super.getBrightnessForRender(par1);
-        int var4 = var3 & 255;
-        int var5 = var3 >> 16 & 255;
-        var4 += (int)(var2 * 15.0F * 16.0F);
+        int i = super.getBrightnessForRender(par1);
+        int j = i & 255;
+        int k = i >> 16 & 255;
+        j += (int)(f1 * 15.0F * 16.0F);
 
-        if (var4 > 240)
+        if (j > 240)
         {
-            var4 = 240;
+            j = 240;
         }
 
-        return var4 | var5 << 16;
+        return j | k << 16;
     }
 
     /**
@@ -123,13 +123,13 @@ public class EntityXPOrb extends Entity
         }
 
         this.pushOutOfBlocks(this.posX, (this.boundingBox.minY + this.boundingBox.maxY) / 2.0D, this.posZ);
-        double var1 = 8.0D;
+        double d0 = 8.0D;
 
         if (this.xpTargetColor < this.xpColor - 20 + this.entityId % 100)
         {
-            if (this.closestPlayer == null || this.closestPlayer.getDistanceSqToEntity(this) > var1 * var1)
+            if (this.closestPlayer == null || this.closestPlayer.getDistanceSqToEntity(this) > d0 * d0)
             {
-                this.closestPlayer = this.worldObj.getClosestPlayerToEntity(this, var1);
+                this.closestPlayer = this.worldObj.getClosestPlayerToEntity(this, d0);
             }
 
             this.xpTargetColor = this.xpColor;
@@ -143,9 +143,9 @@ public class EntityXPOrb extends Entity
 
             if (!event.isCancelled() && target != null)
             {
-                double d1 = (target.posX - this.posX) / var1;
-                double d2 = (target.posY + (double) target.getEyeHeight() - this.posY) / var1;
-                double d3 = (target.posZ - this.posZ) / var1;
+                double d1 = (target.posX - this.posX) / d0;
+                double d2 = (target.posY + (double) target.getEyeHeight() - this.posY) / d0;
+                double d3 = (target.posZ - this.posZ) / d0;
                 double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
                 double d5 = 1.0D - d4;
 
@@ -162,22 +162,22 @@ public class EntityXPOrb extends Entity
         }
 
         this.moveEntity(this.motionX, this.motionY, this.motionZ);
-        float var3 = 0.98F;
+        float f = 0.98F;
 
         if (this.onGround)
         {
-            var3 = 0.58800006F;
-            int var5 = this.worldObj.getBlockId(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ));
+            f = 0.58800006F;
+            int i = this.worldObj.getBlockId(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ));
 
-            if (var5 > 0)
+            if (i > 0)
             {
-                var3 = Block.blocksList[var5].slipperiness * 0.98F;
+                f = Block.blocksList[i].slipperiness * 0.98F;
             }
         }
 
-        this.motionX *= (double) var3;
+        this.motionX *= (double) f;
         this.motionY *= 0.9800000190734863D;
-        this.motionZ *= (double) var3;
+        this.motionZ *= (double) f;
 
         if (this.onGround)
         {

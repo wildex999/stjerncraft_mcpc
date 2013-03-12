@@ -30,8 +30,8 @@ public class BlockSnow extends Block
      */
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
-        int var5 = par1World.getBlockMetadata(par2, par3, par4) & 7;
-        return var5 >= 3 ? AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)((float)par3 + 0.5F), (double)par4 + this.maxZ) : null;
+        int l = par1World.getBlockMetadata(par2, par3, par4) & 7;
+        return l >= 3 ? AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)((float)par3 + 0.5F), (double)par4 + this.maxZ) : null;
     }
 
     /**
@@ -56,9 +56,9 @@ public class BlockSnow extends Block
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        int var5 = par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 7;
-        float var6 = (float)(2 * (1 + var5)) / 16.0F;
-        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, var6, 1.0F);
+        int l = par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 7;
+        float f = (float)(2 * (1 + l)) / 16.0F;
+        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, f, 1.0F);
     }
 
     /**
@@ -66,9 +66,9 @@ public class BlockSnow extends Block
      */
     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
     {
-        int var5 = par1World.getBlockId(par2, par3 - 1, par4);
-        Block block = Block.blocksList[var5];
-        return block != null && (block.isLeaves(par1World, par2, par3 - 1, par4) || Block.blocksList[var5].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
+        int l = par1World.getBlockId(par2, par3 - 1, par4);
+        Block block = Block.blocksList[l];
+        return block != null && (block.isLeaves(par1World, par2, par3 - 1, par4) || Block.blocksList[l].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
     }
 
     /**

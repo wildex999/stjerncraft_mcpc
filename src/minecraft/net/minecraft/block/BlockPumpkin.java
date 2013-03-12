@@ -42,14 +42,14 @@ public class BlockPumpkin extends BlockDirectional
         }
         else
         {
-            int var3 = this.blockIndexInTexture + 1 + 16;
+            int k = this.blockIndexInTexture + 1 + 16;
 
             if (this.blockType)
             {
-                ++var3;
+                ++k;
             }
 
-            return par2 == 2 && par1 == 2 ? var3 : (par2 == 3 && par1 == 5 ? var3 : (par2 == 0 && par1 == 3 ? var3 : (par2 == 1 && par1 == 4 ? var3 : this.blockIndexInTexture + 16)));
+            return par2 == 2 && par1 == 2 ? k : (par2 == 3 && par1 == 5 ? k : (par2 == 0 && par1 == 3 ? k : (par2 == 1 && par1 == 4 ? k : this.blockIndexInTexture + 16)));
         }
     }
 
@@ -86,17 +86,17 @@ public class BlockPumpkin extends BlockDirectional
                 // CraftBukkit end
             }
 
-            for (int var9 = 0; var9 < 120; ++var9)
+            for (int l = 0; l < 120; ++l)
             {
                 par1World.spawnParticle("snowshovel", (double)par2 + par1World.rand.nextDouble(), (double)(par3 - 2) + par1World.rand.nextDouble() * 2.5D, (double)par4 + par1World.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
             }
         }
         else if (par1World.getBlockId(par2, par3 - 1, par4) == Block.blockSteel.blockID && par1World.getBlockId(par2, par3 - 2, par4) == Block.blockSteel.blockID)
         {
-            boolean var10 = par1World.getBlockId(par2 - 1, par3 - 1, par4) == Block.blockSteel.blockID && par1World.getBlockId(par2 + 1, par3 - 1, par4) == Block.blockSteel.blockID;
-            boolean var5 = par1World.getBlockId(par2, par3 - 1, par4 - 1) == Block.blockSteel.blockID && par1World.getBlockId(par2, par3 - 1, par4 + 1) == Block.blockSteel.blockID;
+            boolean flag = par1World.getBlockId(par2 - 1, par3 - 1, par4) == Block.blockSteel.blockID && par1World.getBlockId(par2 + 1, par3 - 1, par4) == Block.blockSteel.blockID;
+            boolean flag1 = par1World.getBlockId(par2, par3 - 1, par4 - 1) == Block.blockSteel.blockID && par1World.getBlockId(par2, par3 - 1, par4 + 1) == Block.blockSteel.blockID;
 
-            if (var10 || var5)
+            if (flag || flag1)
             {
                 // CraftBukkit start - use BlockStateListPopulator
                 BlockStateListPopulator blockList = new BlockStateListPopulator(par1World.getWorld());
@@ -104,7 +104,7 @@ public class BlockPumpkin extends BlockDirectional
                 blockList.setTypeId(par2, par3 - 1, par4, 0);
                 blockList.setTypeId(par2, par3 - 2, par4, 0);
 
-                if (var10)
+                if (flag)
                 {
                     blockList.setTypeId(par2 - 1, par3 - 1, par4, 0);
                     blockList.setTypeId(par2 + 1, par3 - 1, par4, 0);
@@ -138,8 +138,8 @@ public class BlockPumpkin extends BlockDirectional
      */
     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
     {
-        int var5 = par1World.getBlockId(par2, par3, par4);
-        return (var5 == 0 || Block.blocksList[var5].blockMaterial.isReplaceable()) && par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4);
+        int l = par1World.getBlockId(par2, par3, par4);
+        return (l == 0 || Block.blocksList[l].blockMaterial.isReplaceable()) && par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4);
     }
 
     /**
@@ -147,8 +147,8 @@ public class BlockPumpkin extends BlockDirectional
      */
     public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
     {
-        int var6 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 2.5D) & 3;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
+        int l = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 2.5D) & 3;
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, l);
     }
 
     // CraftBukkit start

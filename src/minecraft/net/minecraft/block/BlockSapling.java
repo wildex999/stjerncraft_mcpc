@@ -30,8 +30,8 @@ public class BlockSapling extends BlockFlower
     protected BlockSapling(int par1, int par2)
     {
         super(par1, par2);
-        float var3 = 0.4F;
-        this.setBlockBounds(0.5F - var3, 0.0F, 0.5F - var3, 0.5F + var3, var3 * 2.0F, 0.5F + var3);
+        float f = 0.4F;
+        this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, f * 2.0F, 0.5F + f);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
 
@@ -46,11 +46,11 @@ public class BlockSapling extends BlockFlower
 
             if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9 && par5Random.nextInt(7) == 0)
             {
-                int var6 = par1World.getBlockMetadata(par2, par3, par4);
+                int l = par1World.getBlockMetadata(par2, par3, par4);
 
                 if (par5Random.nextInt(Math.max(2, (int)((par1World.growthOdds / par1World.getWorld().treeGrowthModifier * 7) + 0.5F))) == 0)    // Spigot
                 {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 | 8);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, l | 8);
                 }
                 else
                 {
@@ -77,81 +77,81 @@ public class BlockSapling extends BlockFlower
     {
         if (!TerrainGen.saplingGrowTree(par1World, par5Random, par2, par3, par4)) return;
 
-        int var6 = par1World.getBlockMetadata(par2, par3, par4) & 3;
-        Object var7 = null;
-        int var8 = 0;
-        int var9 = 0;
-        boolean var10 = false;
+        int l = par1World.getBlockMetadata(par2, par3, par4) & 3;
+        Object object = null;
+        int i1 = 0;
+        int j1 = 0;
+        boolean flag = false;
 
-        if (var6 == 1)
+        if (l == 1)
         {
-            var7 = new WorldGenTaiga2(true);
+            object = new WorldGenTaiga2(true);
         }
-        else if (var6 == 2)
+        else if (l == 2)
         {
-            var7 = new WorldGenForest(true);
+            object = new WorldGenForest(true);
         }
-        else if (var6 == 3)
+        else if (l == 3)
         {
-            for (var8 = 0; var8 >= -1; --var8)
+            for (i1 = 0; i1 >= -1; --i1)
             {
-                for (var9 = 0; var9 >= -1; --var9)
+                for (j1 = 0; j1 >= -1; --j1)
                 {
-                    if (this.isSameSapling(par1World, par2 + var8, par3, par4 + var9, 3) && this.isSameSapling(par1World, par2 + var8 + 1, par3, par4 + var9, 3) && this.isSameSapling(par1World, par2 + var8, par3, par4 + var9 + 1, 3) && this.isSameSapling(par1World, par2 + var8 + 1, par3, par4 + var9 + 1, 3))
+                    if (this.isSameSapling(par1World, par2 + i1, par3, par4 + j1, 3) && this.isSameSapling(par1World, par2 + i1 + 1, par3, par4 + j1, 3) && this.isSameSapling(par1World, par2 + i1, par3, par4 + j1 + 1, 3) && this.isSameSapling(par1World, par2 + i1 + 1, par3, par4 + j1 + 1, 3))
                     {
-                        var7 = new WorldGenHugeTrees(true, 10 + par5Random.nextInt(20), 3, 3);
-                        var10 = true;
+                        object = new WorldGenHugeTrees(true, 10 + par5Random.nextInt(20), 3, 3);
+                        flag = true;
                         break;
                     }
                 }
 
-                if (var7 != null)
+                if (object != null)
                 {
                     break;
                 }
             }
 
-            if (var7 == null)
+            if (object == null)
             {
-                var9 = 0;
-                var8 = 0;
-                var7 = new WorldGenTrees(true, 4 + par5Random.nextInt(7), 3, 3, false);
+                j1 = 0;
+                i1 = 0;
+                object = new WorldGenTrees(true, 4 + par5Random.nextInt(7), 3, 3, false);
             }
         }
         else
         {
-            var7 = new WorldGenTrees(true);
+            object = new WorldGenTrees(true);
 
             if (par5Random.nextInt(10) == 0)
             {
-                var7 = new WorldGenBigTree(true);
+                object = new WorldGenBigTree(true);
             }
         }
 
-        if (var10)
+        if (flag)
         {
-            par1World.setBlock(par2 + var8, par3, par4 + var9, 0);
-            par1World.setBlock(par2 + var8 + 1, par3, par4 + var9, 0);
-            par1World.setBlock(par2 + var8, par3, par4 + var9 + 1, 0);
-            par1World.setBlock(par2 + var8 + 1, par3, par4 + var9 + 1, 0);
+            par1World.setBlock(par2 + i1, par3, par4 + j1, 0);
+            par1World.setBlock(par2 + i1 + 1, par3, par4 + j1, 0);
+            par1World.setBlock(par2 + i1, par3, par4 + j1 + 1, 0);
+            par1World.setBlock(par2 + i1 + 1, par3, par4 + j1 + 1, 0);
         }
         else
         {
             par1World.setBlock(par2, par3, par4, 0);
         }
 
-        if (!((WorldGenerator)var7).generate(par1World, par5Random, par2 + var8, par3, par4 + var9))
+        if (!((WorldGenerator)object).generate(par1World, par5Random, par2 + i1, par3, par4 + j1))
         {
-            if (var10)
+            if (flag)
             {
-                par1World.setBlockAndMetadata(par2 + var8, par3, par4 + var9, this.blockID, var6);
-                par1World.setBlockAndMetadata(par2 + var8 + 1, par3, par4 + var9, this.blockID, var6);
-                par1World.setBlockAndMetadata(par2 + var8, par3, par4 + var9 + 1, this.blockID, var6);
-                par1World.setBlockAndMetadata(par2 + var8 + 1, par3, par4 + var9 + 1, this.blockID, var6);
+                par1World.setBlockAndMetadata(par2 + i1, par3, par4 + j1, this.blockID, l);
+                par1World.setBlockAndMetadata(par2 + i1 + 1, par3, par4 + j1, this.blockID, l);
+                par1World.setBlockAndMetadata(par2 + i1, par3, par4 + j1 + 1, this.blockID, l);
+                par1World.setBlockAndMetadata(par2 + i1 + 1, par3, par4 + j1 + 1, this.blockID, l);
             }
             else
             {
-                par1World.setBlockAndMetadata(par2, par3, par4, this.blockID, var6);
+                par1World.setBlockAndMetadata(par2, par3, par4, this.blockID, l);
             }
         }
     }

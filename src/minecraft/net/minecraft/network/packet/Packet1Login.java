@@ -54,18 +54,18 @@ public class Packet1Login extends Packet
     public void readPacketData(DataInputStream par1DataInputStream) throws IOException
     {
         this.clientEntityId = par1DataInputStream.readInt();
-        String var2 = readString(par1DataInputStream, 16);
-        this.terrainType = WorldType.parseWorldType(var2);
+        String s = readString(par1DataInputStream, 16);
+        this.terrainType = WorldType.parseWorldType(s);
 
         if (this.terrainType == null)
         {
             this.terrainType = WorldType.DEFAULT;
         }
 
-        byte var3 = par1DataInputStream.readByte();
-        this.hardcoreMode = (var3 & 8) == 8;
-        int var4 = var3 & -9;
-        this.gameType = EnumGameType.getByID(var4);
+        byte b0 = par1DataInputStream.readByte();
+        this.hardcoreMode = (b0 & 8) == 8;
+        int i = b0 & -9;
+        this.gameType = EnumGameType.getByID(i);
 
         if (vanillaCompatible)
         {
@@ -88,14 +88,14 @@ public class Packet1Login extends Packet
     {
         par1DataOutputStream.writeInt(this.clientEntityId);
         writeString(this.terrainType == null ? "" : this.terrainType.getWorldTypeName(), par1DataOutputStream);
-        int var2 = this.gameType.getID();
+        int i = this.gameType.getID();
 
         if (this.hardcoreMode)
         {
-            var2 |= 8;
+            i |= 8;
         }
 
-        par1DataOutputStream.writeByte(var2);
+        par1DataOutputStream.writeByte(i);
 
         if (vanillaCompatible)
         {
@@ -124,13 +124,13 @@ public class Packet1Login extends Packet
      */
     public int getPacketSize()
     {
-        int var1 = 0;
+        int i = 0;
 
         if (this.terrainType != null)
         {
-            var1 = this.terrainType.getWorldTypeName().length();
+            i = this.terrainType.getWorldTypeName().length();
         }
 
-        return 6 + 2 * var1 + 4 + 4 + 1 + 1 + 1 + (vanillaCompatible ? 0 : 3);
+        return 6 + 2 * i + 4 + 4 + 1 + 1 + 1 + (vanillaCompatible ? 0 : 3);
     }
 }

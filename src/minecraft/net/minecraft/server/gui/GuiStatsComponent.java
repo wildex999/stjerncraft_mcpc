@@ -46,9 +46,9 @@ public class GuiStatsComponent extends JComponent
     private void updateStats()
     {
         this.displayStrings = new String[5 + DimensionManager.getIDs().length];
-        long var1 = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long i = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         System.gc();
-        this.displayStrings[0] = "Memory use: " + var1 / 1024L / 1024L + " mb (" + Runtime.getRuntime().freeMemory() * 100L / Runtime.getRuntime().maxMemory() + "% free)";
+        this.displayStrings[0] = "Memory use: " + i / 1024L / 1024L + " mb (" + Runtime.getRuntime().freeMemory() * 100L / Runtime.getRuntime().maxMemory() + "% free)";
         this.displayStrings[1] = "Threads: " + TcpConnection.field_74471_a.get() + " + " + TcpConnection.field_74469_b.get();
         this.displayStrings[2] = "Avg tick: " + field_79020_a.format(this.calcArrayAverage(this.field_79017_e.tickTimeArray) * 1.0E-6D) + " ms";
         this.displayStrings[3] = "Avg sent: " + (int)this.calcArrayAverage(this.field_79017_e.sentPacketCountArray) + ", Avg size: " + (int)this.calcArrayAverage(this.field_79017_e.sentPacketSizeArray);
@@ -56,18 +56,18 @@ public class GuiStatsComponent extends JComponent
 
         if (this.field_79017_e.worlds.size() > 0)
         {
-            int var3 = 0;
+            int j = 0;
             for (Integer id : DimensionManager.getIDs())
             {
-                this.displayStrings[5 + var3] = "Lvl " + id + " tick: " + field_79020_a.format(this.calcArrayAverage(this.field_79017_e.worldTickTimes.get(id)) * 1.0E-6D) + " ms";
+                this.displayStrings[5 + j] = "Lvl " + id + " tick: " + field_79020_a.format(this.calcArrayAverage(this.field_79017_e.worldTickTimes.get(id)) * 1.0E-6D) + " ms";
 
                 WorldServer world = DimensionManager.getWorld(id);
                 if (world != null && world.theChunkProviderServer != null)
                 {
-                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", " + world.theChunkProviderServer.makeString();
-                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", Vec3: " + world.getWorldVec3Pool().func_82590_d() + " / " + world.getWorldVec3Pool().getPoolSize();
+                    this.displayStrings[5 + j] = this.displayStrings[5 + j] + ", " + world.theChunkProviderServer.makeString();
+                    this.displayStrings[5 + j] = this.displayStrings[5 + j] + ", Vec3: " + world.getWorldVec3Pool().func_82590_d() + " / " + world.getWorldVec3Pool().getPoolSize();
                 }
-                var3++;
+                j++;
             }
         }
 
@@ -80,38 +80,38 @@ public class GuiStatsComponent extends JComponent
      */
     private double calcArrayAverage(long[] par1ArrayOfLong)
     {
-        long var2 = 0L;
+        long i = 0L;
 
-        for (int var4 = 0; var4 < par1ArrayOfLong.length; ++var4)
+        for (int j = 0; j < par1ArrayOfLong.length; ++j)
         {
-            var2 += par1ArrayOfLong[var4];
+            i += par1ArrayOfLong[j];
         }
 
-        return (double)var2 / (double)par1ArrayOfLong.length;
+        return (double)i / (double)par1ArrayOfLong.length;
     }
 
     public void paint(Graphics par1Graphics)
     {
         par1Graphics.setColor(new Color(16777215));
         par1Graphics.fillRect(0, 0, 456, 246);
-        int var2;
+        int i;
 
-        for (var2 = 0; var2 < 256; ++var2)
+        for (i = 0; i < 256; ++i)
         {
-            int var3 = this.memoryUse[var2 + this.updateCounter & 255];
-            par1Graphics.setColor(new Color(var3 + 28 << 16));
-            par1Graphics.fillRect(var2, 100 - var3, 1, var3);
+            int j = this.memoryUse[i + this.updateCounter & 255];
+            par1Graphics.setColor(new Color(j + 28 << 16));
+            par1Graphics.fillRect(i, 100 - j, 1, j);
         }
 
         par1Graphics.setColor(Color.BLACK);
 
-        for (var2 = 0; var2 < this.displayStrings.length; ++var2)
+        for (i = 0; i < this.displayStrings.length; ++i)
         {
-            String var4 = this.displayStrings[var2];
+            String s = this.displayStrings[i];
 
-            if (var4 != null)
+            if (s != null)
             {
-                par1Graphics.drawString(var4, 32, 116 + var2 * 16);
+                par1Graphics.drawString(s, 32, 116 + i * 16);
             }
         }
     }

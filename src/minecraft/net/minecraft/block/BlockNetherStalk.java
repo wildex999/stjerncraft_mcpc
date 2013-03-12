@@ -17,8 +17,8 @@ public class BlockNetherStalk extends BlockFlower
     {
         super(par1, 226);
         this.setTickRandomly(true);
-        float var2 = 0.5F;
-        this.setBlockBounds(0.5F - var2, 0.0F, 0.5F - var2, 0.5F + var2, 0.25F, 0.5F + var2);
+        float f = 0.5F;
+        this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, 0.25F, 0.5F + f);
         this.setCreativeTab((CreativeTabs)null);
     }
 
@@ -45,11 +45,11 @@ public class BlockNetherStalk extends BlockFlower
      */
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
-        int var6 = par1World.getBlockMetadata(par2, par3, par4);
+        int l = par1World.getBlockMetadata(par2, par3, par4);
 
-        if (var6 < 3 && par5Random.nextInt(10) == 0)
+        if (l < 3 && par5Random.nextInt(10) == 0)
         {
-            org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, ++var6); // CraftBukkit
+            org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, ++l); // CraftBukkit
         }
 
         super.updateTick(par1World, par2, par3, par4, par5Random);

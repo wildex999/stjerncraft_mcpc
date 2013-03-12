@@ -237,14 +237,14 @@ public class Potion
      */
     public boolean isReady(int par1, int par2)
     {
-        int var3;
+        int k;
 
         if (this.id != regeneration.id && this.id != poison.id)
         {
             if (this.id == wither.id)
             {
-                var3 = 40 >> par2;
-                return var3 > 0 ? par1 % var3 == 0 : true;
+                k = 40 >> par2;
+                return k > 0 ? par1 % k == 0 : true;
             }
             else
             {
@@ -253,8 +253,8 @@ public class Potion
         }
         else
         {
-            var3 = 25 >> par2;
-            return var3 > 0 ? par1 % var3 == 0 : true;
+            k = 25 >> par2;
+            return k > 0 ? par1 % k == 0 : true;
         }
     }
 
@@ -314,8 +314,8 @@ public class Potion
     @SideOnly(Side.CLIENT)
     public static String getDurationString(PotionEffect par0PotionEffect)
     {
-        int var1 = par0PotionEffect.getDuration();
-        return StringUtils.ticksToElapsedTime(var1);
+        int i = par0PotionEffect.getDuration();
+        return StringUtils.ticksToElapsedTime(i);
     }
 
     public double getEffectiveness()

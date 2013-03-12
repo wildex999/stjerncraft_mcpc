@@ -23,25 +23,25 @@ public class EntityPainting extends EntityHanging
     public EntityPainting(World par1World, int par2, int par3, int par4, int par5)
     {
         super(par1World, par2, par3, par4, par5);
-        ArrayList var6 = new ArrayList();
-        EnumArt[] var7 = EnumArt.values();
-        int var8 = var7.length;
+        ArrayList arraylist = new ArrayList();
+        EnumArt[] aenumart = EnumArt.values();
+        int i1 = aenumart.length;
 
-        for (int var9 = 0; var9 < var8; ++var9)
+        for (int j1 = 0; j1 < i1; ++j1)
         {
-            EnumArt var10 = var7[var9];
-            this.art = var10;
+            EnumArt enumart = aenumart[j1];
+            this.art = enumart;
             this.setDirection(par5);
 
             if (this.onValidSurface())
             {
-                var6.add(var10);
+                arraylist.add(enumart);
             }
         }
 
-        if (!var6.isEmpty())
+        if (!arraylist.isEmpty())
         {
-            this.art = (EnumArt)var6.get(this.rand.nextInt(var6.size()));
+            this.art = (EnumArt)arraylist.get(this.rand.nextInt(arraylist.size()));
         }
 
         this.setDirection(par5);
@@ -51,16 +51,16 @@ public class EntityPainting extends EntityHanging
     public EntityPainting(World par1World, int par2, int par3, int par4, int par5, String par6Str)
     {
         this(par1World, par2, par3, par4, par5);
-        EnumArt[] var7 = EnumArt.values();
-        int var8 = var7.length;
+        EnumArt[] aenumart = EnumArt.values();
+        int i1 = aenumart.length;
 
-        for (int var9 = 0; var9 < var8; ++var9)
+        for (int j1 = 0; j1 < i1; ++j1)
         {
-            EnumArt var10 = var7[var9];
+            EnumArt enumart = aenumart[j1];
 
-            if (var10.title.equals(par6Str))
+            if (enumart.title.equals(par6Str))
             {
-                this.art = var10;
+                this.art = enumart;
                 break;
             }
         }
@@ -82,17 +82,17 @@ public class EntityPainting extends EntityHanging
      */
     public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound)
     {
-        String var2 = par1NBTTagCompound.getString("Motive");
-        EnumArt[] var3 = EnumArt.values();
-        int var4 = var3.length;
+        String s = par1NBTTagCompound.getString("Motive");
+        EnumArt[] aenumart = EnumArt.values();
+        int i = aenumart.length;
 
-        for (int var5 = 0; var5 < var4; ++var5)
+        for (int j = 0; j < i; ++j)
         {
-            EnumArt var6 = var3[var5];
+            EnumArt enumart = aenumart[j];
 
-            if (var6.title.equals(var2))
+            if (enumart.title.equals(s))
             {
-                this.art = var6;
+                this.art = enumart;
             }
         }
 

@@ -27,22 +27,22 @@ public class ItemMonsterPlacer extends Item
 
     public String getItemDisplayName(ItemStack par1ItemStack)
     {
-        String var2 = ("" + StatCollector.translateToLocal(this.getItemName() + ".name")).trim();
-        String var3 = EntityList.getStringFromID(par1ItemStack.getItemDamage());
+        String s = ("" + StatCollector.translateToLocal(this.getItemName() + ".name")).trim();
+        String s1 = EntityList.getStringFromID(par1ItemStack.getItemDamage());
 
-        if (var3 != null)
+        if (s1 != null)
         {
-            var2 = var2 + " " + StatCollector.translateToLocal("entity." + var3 + ".name");
+            s = s + " " + StatCollector.translateToLocal("entity." + s1 + ".name");
         }
 
-        return var2;
+        return s;
     }
 
     @SideOnly(Side.CLIENT)
     public int getColorFromItemStack(ItemStack par1ItemStack, int par2)
     {
-        EntityEggInfo var3 = (EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(par1ItemStack.getItemDamage()));
-        return var3 != null ? (par2 == 0 ? var3.primaryColor : var3.secondaryColor) : 16777215;
+        EntityEggInfo entityegginfo = (EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(par1ItemStack.getItemDamage()));
+        return entityegginfo != null ? (par2 == 0 ? entityegginfo.primaryColor : entityegginfo.secondaryColor) : 16777215;
     }
 
     /**
@@ -57,18 +57,18 @@ public class ItemMonsterPlacer extends Item
         }
         else
         {
-            int var11 = par3World.getBlockId(par4, par5, par6);
+            int i1 = par3World.getBlockId(par4, par5, par6);
             par4 += Facing.offsetsXForSide[par7];
             par5 += Facing.offsetsYForSide[par7];
             par6 += Facing.offsetsZForSide[par7];
-            double var12 = 0.0D;
+            double d0 = 0.0D;
 
-            if (par7 == 1 && Block.blocksList[var11] != null && Block.blocksList[var11].getRenderType() == 11)
+            if (par7 == 1 && Block.blocksList[i1] != null && Block.blocksList[i1].getRenderType() == 11)
             {
-                var12 = 0.5D;
+                d0 = 0.5D;
             }
 
-            if (spawnCreature(par3World, par1ItemStack.getItemDamage(), (double)par4 + 0.5D, (double)par5 + var12, (double)par6 + 0.5D) != null && !par2EntityPlayer.capabilities.isCreativeMode)
+            if (spawnCreature(par3World, par1ItemStack.getItemDamage(), (double)par4 + 0.5D, (double)par5 + d0, (double)par6 + 0.5D) != null && !par2EntityPlayer.capabilities.isCreativeMode)
             {
                 --par1ItemStack.stackSize;
             }
@@ -89,25 +89,25 @@ public class ItemMonsterPlacer extends Item
         }
         else
         {
-            Entity var8 = null;
+            Entity entity = null;
 
-            for (int var9 = 0; var9 < 1; ++var9)
+            for (int j = 0; j < 1; ++j)
             {
-                var8 = EntityList.createEntityByID(par1, par0World);
+                entity = EntityList.createEntityByID(par1, par0World);
 
-                if (var8 != null && var8 instanceof EntityLiving)
+                if (entity != null && entity instanceof EntityLiving)
                 {
-                    EntityLiving var10 = (EntityLiving)var8;
-                    var8.setLocationAndAngles(par2, par4, par6, MathHelper.wrapAngleTo180_float(par0World.rand.nextFloat() * 360.0F), 0.0F);
-                    var10.rotationYawHead = var10.rotationYaw;
-                    var10.renderYawOffset = var10.rotationYaw;
-                    var10.initCreature();
-                    par0World.addEntity(var8, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
-                    var10.playLivingSound();
+                    EntityLiving entityliving = (EntityLiving)entity;
+                    entity.setLocationAndAngles(par2, par4, par6, MathHelper.wrapAngleTo180_float(par0World.rand.nextFloat() * 360.0F), 0.0F);
+                    entityliving.rotationYawHead = entityliving.rotationYaw;
+                    entityliving.renderYawOffset = entityliving.rotationYaw;
+                    entityliving.initCreature();
+                    par0World.addEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
+                    entityliving.playLivingSound();
                 }
             }
 
-            return var8;
+            return entity;
         }
     }
 
@@ -134,12 +134,12 @@ public class ItemMonsterPlacer extends Item
      */
     public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
     {
-        Iterator var4 = EntityList.entityEggs.values().iterator();
+        Iterator iterator = EntityList.entityEggs.values().iterator();
 
-        while (var4.hasNext())
+        while (iterator.hasNext())
         {
-            EntityEggInfo var5 = (EntityEggInfo)var4.next();
-            par3List.add(new ItemStack(par1, 1, var5.spawnedID));
+            EntityEggInfo entityegginfo = (EntityEggInfo)iterator.next();
+            par3List.add(new ItemStack(par1, 1, entityegginfo.spawnedID));
         }
     }
 }

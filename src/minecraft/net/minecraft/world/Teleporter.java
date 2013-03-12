@@ -48,8 +48,8 @@ public class Teleporter
         else
         {
             // CraftBukkit start - modularize end portal creation
-            ChunkCoordinates var9 = this.createEndPortal(par2, par4, par6);
-            par1Entity.setLocationAndAngles((double) var9.posX, (double) var9.posY, (double) var9.posZ, par1Entity.rotationYaw, 0.0F);
+            ChunkCoordinates chunkcoordinates = this.createEndPortal(par2, par4, par6);
+            par1Entity.setLocationAndAngles((double) chunkcoordinates.posX, (double) chunkcoordinates.posY, (double) chunkcoordinates.posZ, par1Entity.rotationYaw, 0.0F);
             par1Entity.motionX = par1Entity.motionY = par1Entity.motionZ = 0.0D;
         }
     }
@@ -121,21 +121,21 @@ public class Teleporter
     public boolean placeInExistingPortal(Entity par1Entity, double par2, double par4, double par6, float par8)
     {
         // CraftBukkit start - modularize portal search process and entity teleportation
-        ChunkCoordinates var9 = this.findPortal(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 128);
+        ChunkCoordinates chunkcoordinates = this.findPortal(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 128);
 
-        if (var9 == null)
+        if (chunkcoordinates == null)
         {
             return false;
         }
 
-        Location var10 = new Location(this.worldServerInstance.getWorld(), var9.posX, var9.posY, var9.posZ, par8, par1Entity.rotationPitch);
-        Vector var12 = par1Entity.getBukkitEntity().getVelocity();
-        this.adjustExit(par1Entity, var10, var12);
-        par1Entity.setLocationAndAngles(var10.getX(), var10.getY(), var10.getZ(), var10.getYaw(), var10.getPitch());
+        Location location = new Location(this.worldServerInstance.getWorld(), chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, par8, par1Entity.rotationPitch);
+        Vector vector = par1Entity.getBukkitEntity().getVelocity();
+        this.adjustExit(par1Entity, location, vector);
+        par1Entity.setLocationAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 
-        if (par1Entity.motionX != var12.getX() || par1Entity.motionY != var12.getY() || par1Entity.motionZ != var12.getZ())
+        if (par1Entity.motionX != vector.getX() || par1Entity.motionY != vector.getY() || par1Entity.motionZ != vector.getZ())
         {
-            par1Entity.getBukkitEntity().setVelocity(var12);
+            par1Entity.getBukkitEntity().setVelocity(vector);
         }
 
         return true;
@@ -639,18 +639,18 @@ public class Teleporter
     {
         if (par1 % 100L == 0L)
         {
-            Iterator var3 = this.field_85190_d.iterator();
-            long var4 = par1 - 600L;
+            Iterator iterator = this.field_85190_d.iterator();
+            long j = par1 - 600L;
 
-            while (var3.hasNext())
+            while (iterator.hasNext())
             {
-                Long var6 = (Long)var3.next();
-                PortalPosition var7 = (PortalPosition)this.field_85191_c.getValueByKey(var6.longValue());
+                Long olong = (Long)iterator.next();
+                PortalPosition portalposition = (PortalPosition)this.field_85191_c.getValueByKey(olong.longValue());
 
-                if (var7 == null || var7.field_85087_d < var4)
+                if (portalposition == null || portalposition.field_85087_d < j)
                 {
-                    var3.remove();
-                    this.field_85191_c.remove(var6.longValue());
+                    iterator.remove();
+                    this.field_85191_c.remove(olong.longValue());
                 }
             }
         }

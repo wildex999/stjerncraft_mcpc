@@ -57,31 +57,31 @@ public class TileEntityNote extends TileEntity
     {
         if (par1World.getBlockMaterial(par2, par3 + 1, par4) == Material.air)
         {
-            Material var5 = par1World.getBlockMaterial(par2, par3 - 1, par4);
-            byte var6 = 0;
+            Material material = par1World.getBlockMaterial(par2, par3 - 1, par4);
+            byte b0 = 0;
 
-            if (var5 == Material.rock)
+            if (material == Material.rock)
             {
-                var6 = 1;
+                b0 = 1;
             }
 
-            if (var5 == Material.sand)
+            if (material == Material.sand)
             {
-                var6 = 2;
+                b0 = 2;
             }
 
-            if (var5 == Material.glass)
+            if (material == Material.glass)
             {
-                var6 = 3;
+                b0 = 3;
             }
 
-            if (var5 == Material.wood)
+            if (material == Material.wood)
             {
-                var6 = 4;
+                b0 = 4;
             }
 
             // CraftBukkit start
-            org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callNotePlayEvent(this.worldObj, par2, par3, par4, var6, this.note);
+            org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callNotePlayEvent(this.worldObj, par2, par3, par4, b0, this.note);
 
             if (!event.isCancelled())
             {

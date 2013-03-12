@@ -134,19 +134,19 @@ public abstract class ServerConfigurationManager
         this.readPlayerDataFromFile(par2EntityPlayerMP);
         par2EntityPlayerMP.setWorld(this.mcServer.worldServerForDimension(par2EntityPlayerMP.dimension));
         par2EntityPlayerMP.theItemInWorldManager.setWorld((WorldServer)par2EntityPlayerMP.worldObj);
-        String var3 = "local";
+        String s = "local";
 
         if (par1INetworkManager.getSocketAddress() != null)
         {
-            var3 = par1INetworkManager.getSocketAddress().toString();
+            s = par1INetworkManager.getSocketAddress().toString();
         }
 
         // CraftBukkit - add world and location to 'logged in' message.
-        logger.info(par2EntityPlayerMP.username + "[" + var3 + "] logged in with entity id " + par2EntityPlayerMP.entityId + " at ([" + par2EntityPlayerMP.worldObj.worldInfo.getWorldName() + "] " + par2EntityPlayerMP.posX + ", " + par2EntityPlayerMP.posY + ", " + par2EntityPlayerMP.posZ + ")");
-        WorldServer var4 = this.mcServer.worldServerForDimension(par2EntityPlayerMP.dimension);
-        ChunkCoordinates var5 = var4.getSpawnPoint();
-        this.func_72381_a(par2EntityPlayerMP, (EntityPlayerMP)null, var4);
-        NetServerHandler var6 = new NetServerHandler(this.mcServer, par1INetworkManager, par2EntityPlayerMP);
+        logger.info(par2EntityPlayerMP.username + "[" + s + "] logged in with entity id " + par2EntityPlayerMP.entityId + " at ([" + par2EntityPlayerMP.worldObj.worldInfo.getWorldName() + "] " + par2EntityPlayerMP.posX + ", " + par2EntityPlayerMP.posY + ", " + par2EntityPlayerMP.posZ + ")");
+        WorldServer worldserver = this.mcServer.worldServerForDimension(par2EntityPlayerMP.dimension);
+        ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
+        this.func_72381_a(par2EntityPlayerMP, (EntityPlayerMP)null, worldserver);
+        NetServerHandler netserverhandler = new NetServerHandler(this.mcServer, par1INetworkManager, par2EntityPlayerMP);
         // CraftBukkit start -- Don't send a higher than 60 MaxPlayer size, otherwise the PlayerInfo window won't render correctly.
         int maxPlayers = this.getMaxPlayers();
 
@@ -155,34 +155,34 @@ public abstract class ServerConfigurationManager
             maxPlayers = 60;
         }
 
-        var6.sendPacketToPlayer(new Packet1Login(par2EntityPlayerMP.entityId, var4.getWorldInfo().getTerrainType(), par2EntityPlayerMP.theItemInWorldManager.getGameType(), var4.getWorldInfo().isHardcoreModeEnabled(), var4.provider.dimensionId, var4.difficultySetting, var4.getHeight(), maxPlayers));
+        netserverhandler.sendPacketToPlayer(new Packet1Login(par2EntityPlayerMP.entityId, worldserver.getWorldInfo().getTerrainType(), par2EntityPlayerMP.theItemInWorldManager.getGameType(), worldserver.getWorldInfo().isHardcoreModeEnabled(), worldserver.provider.dimensionId, worldserver.difficultySetting, worldserver.getHeight(), maxPlayers));
         par2EntityPlayerMP.getBukkitEntity().sendSupportedChannels();
         // CraftBukkit end
-        var6.sendPacketToPlayer(new Packet6SpawnPosition(var5.posX, var5.posY, var5.posZ));
-        var6.sendPacketToPlayer(new Packet202PlayerAbilities(par2EntityPlayerMP.capabilities));
-        var6.sendPacketToPlayer(new Packet16BlockItemSwitch(par2EntityPlayerMP.inventory.currentItem));
-        this.updateTimeAndWeatherForPlayer(par2EntityPlayerMP, var4);
+        netserverhandler.sendPacketToPlayer(new Packet6SpawnPosition(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ));
+        netserverhandler.sendPacketToPlayer(new Packet202PlayerAbilities(par2EntityPlayerMP.capabilities));
+        netserverhandler.sendPacketToPlayer(new Packet16BlockItemSwitch(par2EntityPlayerMP.inventory.currentItem));
+        this.updateTimeAndWeatherForPlayer(par2EntityPlayerMP, worldserver);
         // this.sendAll(new Packet3Chat("\u00A7e" + entityplayer.name + " joined the game.")); // CraftBukkit - handled in event
         this.playerLoggedIn(par2EntityPlayerMP);
-        var6.setPlayerLocation(par2EntityPlayerMP.posX, par2EntityPlayerMP.posY, par2EntityPlayerMP.posZ, par2EntityPlayerMP.rotationYaw, par2EntityPlayerMP.rotationPitch);
-        this.mcServer.getNetworkThread().addPlayer(var6);
-        var6.sendPacketToPlayer(new Packet4UpdateTime(var4.getTotalWorldTime(), var4.getWorldTime()));
+        netserverhandler.setPlayerLocation(par2EntityPlayerMP.posX, par2EntityPlayerMP.posY, par2EntityPlayerMP.posZ, par2EntityPlayerMP.rotationYaw, par2EntityPlayerMP.rotationPitch);
+        this.mcServer.getNetworkThread().addPlayer(netserverhandler);
+        netserverhandler.sendPacketToPlayer(new Packet4UpdateTime(worldserver.getTotalWorldTime(), worldserver.getWorldTime()));
 
         if (this.mcServer.getTexturePack().length() > 0)
         {
             par2EntityPlayerMP.requestTexturePackLoad(this.mcServer.getTexturePack(), this.mcServer.textureSize());
         }
 
-        Iterator var7 = par2EntityPlayerMP.getActivePotionEffects().iterator();
+        Iterator iterator = par2EntityPlayerMP.getActivePotionEffects().iterator();
 
-        while (var7.hasNext())
+        while (iterator.hasNext())
         {
-            PotionEffect var8 = (PotionEffect)var7.next();
-            var6.sendPacketToPlayer(new Packet41EntityEffect(par2EntityPlayerMP.entityId, var8));
+            PotionEffect potioneffect = (PotionEffect)iterator.next();
+            netserverhandler.sendPacketToPlayer(new Packet41EntityEffect(par2EntityPlayerMP.entityId, potioneffect));
         }
 
         par2EntityPlayerMP.addSelfToInternalCraftingInventory();
-        FMLNetworkHandler.handlePlayerLogin(par2EntityPlayerMP, var6, par1INetworkManager); // Forge
+        FMLNetworkHandler.handlePlayerLogin(par2EntityPlayerMP, netserverhandler, par1INetworkManager); // Forge
     }
 
     /**
@@ -200,15 +200,15 @@ public abstract class ServerConfigurationManager
 
     public void func_72375_a(EntityPlayerMP par1EntityPlayerMP, WorldServer par2WorldServer)
     {
-        WorldServer var3 = par1EntityPlayerMP.getServerForPlayer();
+        WorldServer worldserver1 = par1EntityPlayerMP.getServerForPlayer();
 
         if (par2WorldServer != null)
         {
             par2WorldServer.getPlayerManager().removePlayer(par1EntityPlayerMP);
         }
 
-        var3.getPlayerManager().addPlayer(par1EntityPlayerMP);
-        var3.theChunkProviderServer.loadChunk((int)par1EntityPlayerMP.posX >> 4, (int)par1EntityPlayerMP.posZ >> 4);
+        worldserver1.getPlayerManager().addPlayer(par1EntityPlayerMP);
+        worldserver1.theChunkProviderServer.loadChunk((int)par1EntityPlayerMP.posX >> 4, (int)par1EntityPlayerMP.posZ >> 4);
     }
 
     public int getEntityViewDistance()
@@ -221,11 +221,11 @@ public abstract class ServerConfigurationManager
      */
     public void readPlayerDataFromFile(EntityPlayerMP par1EntityPlayerMP)
     {
-        NBTTagCompound var2 = this.mcServer.worlds.get(0).getWorldInfo().getPlayerNBTTagCompound(); // CraftBukkit
+        NBTTagCompound nbttagcompound = this.mcServer.worlds.get(0).getWorldInfo().getPlayerNBTTagCompound(); // CraftBukkit
 
-        if (par1EntityPlayerMP.getCommandSenderName().equals(this.mcServer.getServerOwner()) && var2 != null)
+        if (par1EntityPlayerMP.getCommandSenderName().equals(this.mcServer.getServerOwner()) && nbttagcompound != null)
         {
-            par1EntityPlayerMP.readFromNBT(var2);
+            par1EntityPlayerMP.readFromNBT(nbttagcompound);
         }
         else
         {
@@ -249,7 +249,7 @@ public abstract class ServerConfigurationManager
         cserver.detectListNameConflict(par1EntityPlayerMP); // CraftBukkit
         // this.sendAll(new Packet201PlayerInfo(entityplayer.name, true, 1000)); // CraftBukkit - replaced with loop below
         this.playerEntityList.add(par1EntityPlayerMP);
-        WorldServer var2 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+        WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
         // CraftBukkit start
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this.cserver.getPlayer(par1EntityPlayerMP), "\u00A7e" + par1EntityPlayerMP.username + " joined the game.");
         this.cserver.getPluginManager().callEvent(playerJoinEvent);
@@ -265,9 +265,9 @@ public abstract class ServerConfigurationManager
         // CraftBukkit end
 
         // CraftBukkit start - only add if the player wasn't moved in the event
-        if (par1EntityPlayerMP.worldObj == var2 && !var2.playerEntities.contains(par1EntityPlayerMP))
+        if (par1EntityPlayerMP.worldObj == worldserver && !worldserver.playerEntities.contains(par1EntityPlayerMP))
         {
-            var2.spawnEntityInWorld(par1EntityPlayerMP);
+            worldserver.spawnEntityInWorld(par1EntityPlayerMP);
             this.func_72375_a(par1EntityPlayerMP, (WorldServer) null);
         }
 
@@ -287,14 +287,14 @@ public abstract class ServerConfigurationManager
 
         // CraftBukkit end
 
-        for (int var3 = 0; var3 < this.playerEntityList.size(); ++var3)
+        for (int i = 0; i < this.playerEntityList.size(); ++i)
         {
-            EntityPlayerMP var4 = (EntityPlayerMP)this.playerEntityList.get(var3);
+            EntityPlayerMP entityplayermp1 = (EntityPlayerMP)this.playerEntityList.get(i);
 
             // CraftBukkit start - .name -> .listName
-            if (par1EntityPlayerMP.getBukkitEntity().canSee(var4.getBukkitEntity()))
+            if (par1EntityPlayerMP.getBukkitEntity().canSee(entityplayermp1.getBukkitEntity()))
             {
-                par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet201PlayerInfo(var4.listName, true, var4.ping));
+                par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet201PlayerInfo(entityplayermp1.listName, true, entityplayermp1.ping));
             }
 
             // CraftBukkit end
@@ -362,15 +362,15 @@ public abstract class ServerConfigurationManager
     {
         if (this.bannedPlayers.isBanned(par2Str))
         {
-            BanEntry var6 = (BanEntry)this.bannedPlayers.getBannedList().get(par2Str);
-            String var7 = "You are banned from this server!\nReason: " + var6.getBanReason();
+            BanEntry banentry = (BanEntry)this.bannedPlayers.getBannedList().get(par2Str);
+            String s1 = "You are banned from this server!\nReason: " + banentry.getBanReason();
 
-            if (var6.getBanEndDate() != null)
+            if (banentry.getBanEndDate() != null)
             {
-                var7 = var7 + "\nYour ban will be removed on " + dateFormat.format(var6.getBanEndDate());
+                s1 = s1 + "\nYour ban will be removed on " + dateFormat.format(banentry.getBanEndDate());
             }
 
-            return var7;
+            return s1;
         }
         else if (!this.isAllowedToLogin(par2Str))
         {
@@ -378,21 +378,21 @@ public abstract class ServerConfigurationManager
         }
         else
         {
-            String var3 = par1SocketAddress.toString();
-            var3 = var3.substring(var3.indexOf("/") + 1);
-            var3 = var3.substring(0, var3.indexOf(":"));
+            String s2 = par1SocketAddress.toString();
+            s2 = s2.substring(s2.indexOf("/") + 1);
+            s2 = s2.substring(0, s2.indexOf(":"));
 
-            if (this.bannedIPs.isBanned(var3))
+            if (this.bannedIPs.isBanned(s2))
             {
-                BanEntry var4 = (BanEntry)this.bannedIPs.getBannedList().get(var3);
-                String var5 = "Your IP address is banned from this server!\nReason: " + var4.getBanReason();
+                BanEntry banentry1 = (BanEntry)this.bannedIPs.getBannedList().get(s2);
+                String s3 = "Your IP address is banned from this server!\nReason: " + banentry1.getBanReason();
 
-                if (var4.getBanEndDate() != null)
+                if (banentry1.getBanEndDate() != null)
                 {
-                    var5 = var5 + "\nYour ban will be removed on " + dateFormat.format(var4.getBanEndDate());
+                    s3 = s3 + "\nYour ban will be removed on " + dateFormat.format(banentry1.getBanEndDate());
                 }
 
-                return var5;
+                return s3;
             }
             else
             {
@@ -470,39 +470,39 @@ public abstract class ServerConfigurationManager
      */
     public EntityPlayerMP createPlayerForUser(String par1Str)
     {
-        ArrayList var2 = new ArrayList();
-        EntityPlayerMP var4;
+        ArrayList arraylist = new ArrayList();
+        EntityPlayerMP entityplayermp;
 
-        for (int var3 = 0; var3 < this.playerEntityList.size(); ++var3)
+        for (int i = 0; i < this.playerEntityList.size(); ++i)
         {
-            var4 = (EntityPlayerMP)this.playerEntityList.get(var3);
+            entityplayermp = (EntityPlayerMP)this.playerEntityList.get(i);
 
-            if (var4.username.equalsIgnoreCase(par1Str))
+            if (entityplayermp.username.equalsIgnoreCase(par1Str))
             {
-                var2.add(var4);
+                arraylist.add(entityplayermp);
             }
         }
 
-        Iterator var5 = var2.iterator();
+        Iterator iterator = arraylist.iterator();
 
-        while (var5.hasNext())
+        while (iterator.hasNext())
         {
-            var4 = (EntityPlayerMP)var5.next();
-            var4.playerNetServerHandler.kickPlayerFromServer("You logged in from another location");
+            entityplayermp = (EntityPlayerMP)iterator.next();
+            entityplayermp.playerNetServerHandler.kickPlayerFromServer("You logged in from another location");
         }
 
-        Object var6;
+        Object object;
 
         if (this.mcServer.isDemo())
         {
-            var6 = new DemoWorldManager(this.mcServer.worldServerForDimension(0));
+            object = new DemoWorldManager(this.mcServer.worldServerForDimension(0));
         }
         else
         {
-            var6 = new ItemInWorldManager(this.mcServer.worldServerForDimension(0));
+            object = new ItemInWorldManager(this.mcServer.worldServerForDimension(0));
         }
 
-        return new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), par1Str, (ItemInWorldManager)var6);
+        return new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), par1Str, (ItemInWorldManager)object);
     }
 
     // MCPC+ start - vanilla compatibility
@@ -689,26 +689,26 @@ public abstract class ServerConfigurationManager
 
     public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2, Teleporter teleporter)
     {
-        int var3 = par1EntityPlayerMP.dimension;
-        WorldServer var4 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+        int j = par1EntityPlayerMP.dimension;
+        WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
         par1EntityPlayerMP.dimension = par2;
-        WorldServer var5 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+        WorldServer worldserver1 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
 
-        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, var5.getWorldInfo().getTerrainType(), var5.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
-        var4.removePlayerEntityDangerously(par1EntityPlayerMP);
+        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, worldserver1.getWorldInfo().getTerrainType(), worldserver1.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
+        worldserver.removePlayerEntityDangerously(par1EntityPlayerMP);
         par1EntityPlayerMP.isDead = false;
-        this.transferEntityToWorld(par1EntityPlayerMP, var3, var4, var5, teleporter);
-        this.func_72375_a(par1EntityPlayerMP, var4);
+        this.transferEntityToWorld(par1EntityPlayerMP, j, worldserver, worldserver1, teleporter);
+        this.func_72375_a(par1EntityPlayerMP, worldserver);
         par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
-        par1EntityPlayerMP.theItemInWorldManager.setWorld(var5);
-        this.updateTimeAndWeatherForPlayer(par1EntityPlayerMP, var5);
+        par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
+        this.updateTimeAndWeatherForPlayer(par1EntityPlayerMP, worldserver1);
         this.syncPlayerInventory(par1EntityPlayerMP);
-        Iterator var6 = par1EntityPlayerMP.getActivePotionEffects().iterator();
+        Iterator iterator = par1EntityPlayerMP.getActivePotionEffects().iterator();
 
-        while (var6.hasNext())
+        while (iterator.hasNext())
         {
-            PotionEffect var7 = (PotionEffect)var6.next();
-            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet41EntityEffect(par1EntityPlayerMP.entityId, var7));
+            PotionEffect potioneffect = (PotionEffect)iterator.next();
+            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet41EntityEffect(par1EntityPlayerMP.entityId, potioneffect));
         }
 
         GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
@@ -860,31 +860,31 @@ public abstract class ServerConfigurationManager
         WorldProvider pOld = par3WorldServer.provider;
         WorldProvider pNew = par4WorldServer.provider;
         double moveFactor = pOld.getMovementFactor() / pNew.getMovementFactor();
-        double var5 = par1Entity.posX * moveFactor;
-        double var7 = par1Entity.posZ * moveFactor;
-        double var11 = par1Entity.posX;
-        double var13 = par1Entity.posY;
-        double var15 = par1Entity.posZ;
-        float var17 = par1Entity.rotationYaw;
+        double d0 = par1Entity.posX * moveFactor;
+        double d1 = par1Entity.posZ * moveFactor;
+        double d2 = par1Entity.posX;
+        double d3 = par1Entity.posY;
+        double d4 = par1Entity.posZ;
+        float f = par1Entity.rotationYaw;
         par3WorldServer.theProfiler.startSection("moving");
 
         if (par1Entity.dimension == 1)
         {
-            ChunkCoordinates var18;
+            ChunkCoordinates chunkcoordinates;
 
             if (par2 == 1)
             {
-                var18 = par4WorldServer.getSpawnPoint();
+                chunkcoordinates = par4WorldServer.getSpawnPoint();
             }
             else
             {
-                var18 = par4WorldServer.getEntrancePortalLocation();
+                chunkcoordinates = par4WorldServer.getEntrancePortalLocation();
             }
 
-            var5 = (double)var18.posX;
-            par1Entity.posY = (double)var18.posY;
-            var7 = (double)var18.posZ;
-            par1Entity.setLocationAndAngles(var5, par1Entity.posY, var7, 90.0F, 0.0F);
+            d0 = (double)chunkcoordinates.posX;
+            par1Entity.posY = (double)chunkcoordinates.posY;
+            d1 = (double)chunkcoordinates.posZ;
+            par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, 90.0F, 0.0F);
 
             if (par1Entity.isEntityAlive())
             {
@@ -897,15 +897,15 @@ public abstract class ServerConfigurationManager
         if (par2 != 1)
         {
             par3WorldServer.theProfiler.startSection("placing");
-            var5 = (double)MathHelper.clamp_int((int)var5, -29999872, 29999872);
-            var7 = (double)MathHelper.clamp_int((int)var7, -29999872, 29999872);
+            d0 = (double)MathHelper.clamp_int((int)d0, -29999872, 29999872);
+            d1 = (double)MathHelper.clamp_int((int)d1, -29999872, 29999872);
 
             if (par1Entity.isEntityAlive())
             {
                 par4WorldServer.spawnEntityInWorld(par1Entity);
-                par1Entity.setLocationAndAngles(var5, par1Entity.posY, var7, par1Entity.rotationYaw, par1Entity.rotationPitch);
+                par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
                 par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
-                teleporter.placeInPortal(par1Entity, var11, var13, var15, var17);
+                teleporter.placeInPortal(par1Entity, d2, d3, d4, f);
             }
 
             par3WorldServer.theProfiler.endSection();
@@ -919,19 +919,19 @@ public abstract class ServerConfigurationManager
      */
     public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
     {
-        double var5 = par1Entity.posX;
-        double var7 = par1Entity.posZ;
-        double var9 = 8.0D;
-        double var11 = par1Entity.posX;
-        double var13 = par1Entity.posY;
-        double var15 = par1Entity.posZ;
-        float var17 = par1Entity.rotationYaw;
+        double d0 = par1Entity.posX;
+        double d1 = par1Entity.posZ;
+        double d2 = 8.0D;
+        double d3 = par1Entity.posX;
+        double d4 = par1Entity.posY;
+        double d5 = par1Entity.posZ;
+        float f = par1Entity.rotationYaw;
         par3WorldServer.theProfiler.startSection("moving");
         if (par1Entity.dimension == -1)
         {
-            var5 /= var9;
-            var7 /= var9;
-            par1Entity.setLocationAndAngles(var5, par1Entity.posY, var7, par1Entity.rotationYaw, par1Entity.rotationPitch);
+            d0 /= d2;
+            d1 /= d2;
+            par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
             if (par1Entity.isEntityAlive())
             {
                 par3WorldServer.updateEntityWithOptionalForce(par1Entity, false);
@@ -939,9 +939,9 @@ public abstract class ServerConfigurationManager
         }
         else if (par1Entity.dimension == 0)
         {
-            var5 *= var9;
-            var7 *= var9;
-            par1Entity.setLocationAndAngles(var5, par1Entity.posY, var7, par1Entity.rotationYaw, par1Entity.rotationPitch);
+            d0 *= d2;
+            d1 *= d2;
+            par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
             if (par1Entity.isEntityAlive())
             {
                 par3WorldServer.updateEntityWithOptionalForce(par1Entity, false);
@@ -949,20 +949,20 @@ public abstract class ServerConfigurationManager
         }
         else
         {
-            ChunkCoordinates var18;
+            ChunkCoordinates chunkcoordinates;
             if (par2 == 1)
             {
-                var18 = par4WorldServer.getSpawnPoint();
+                chunkcoordinates = par4WorldServer.getSpawnPoint();
             }
             else
             {
-                var18 = par4WorldServer.getEntrancePortalLocation();
+                chunkcoordinates = par4WorldServer.getEntrancePortalLocation();
             }
 
-            var5 = (double)var18.posX;
-            par1Entity.posY = (double)var18.posY;
-            var7 = (double)var18.posZ;
-            par1Entity.setLocationAndAngles(var5, par1Entity.posY, var7, 90.0F, 0.0F);
+            d0 = (double)chunkcoordinates.posX;
+            par1Entity.posY = (double)chunkcoordinates.posY;
+            d1 = (double)chunkcoordinates.posZ;
+            par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, 90.0F, 0.0F);
 
             if (par1Entity.isEntityAlive())
             {
@@ -975,14 +975,14 @@ public abstract class ServerConfigurationManager
         if (par2 != 1)
         {
             par3WorldServer.theProfiler.startSection("placing");
-            var5 = (double)MathHelper.clamp_int((int)var5, -29999872, 29999872);
-            var7 = (double)MathHelper.clamp_int((int)var7, -29999872, 29999872);
+            d0 = (double)MathHelper.clamp_int((int)d0, -29999872, 29999872);
+            d1 = (double)MathHelper.clamp_int((int)d1, -29999872, 29999872);
             if (par1Entity.isEntityAlive())
             {
                 par4WorldServer.spawnEntityInWorld(par1Entity);
-                par1Entity.setLocationAndAngles(var5, par1Entity.posY, var7, par1Entity.rotationYaw, par1Entity.rotationPitch);
+                par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
                 par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
-                par4WorldServer.func_85176_s().placeInPortal(par1Entity, var11, var13, var15, var17);
+                par4WorldServer.func_85176_s().placeInPortal(par1Entity, d3, d4, d5, f);
             }
 
             par3WorldServer.theProfiler.endSection();
@@ -1014,9 +1014,9 @@ public abstract class ServerConfigurationManager
      */
     public void sendPacketToAllPlayers(Packet par1Packet)
     {
-        for (int var2 = 0; var2 < this.playerEntityList.size(); ++var2)
+        for (int i = 0; i < this.playerEntityList.size(); ++i)
         {
-            ((EntityPlayerMP)this.playerEntityList.get(var2)).playerNetServerHandler.sendPacketToPlayer(par1Packet);
+            ((EntityPlayerMP)this.playerEntityList.get(i)).playerNetServerHandler.sendPacketToPlayer(par1Packet);
         }
     }
 
@@ -1025,13 +1025,13 @@ public abstract class ServerConfigurationManager
      */
     public void sendPacketToAllPlayersInDimension(Packet par1Packet, int par2)
     {
-        for (int var3 = 0; var3 < this.playerEntityList.size(); ++var3)
+        for (int j = 0; j < this.playerEntityList.size(); ++j)
         {
-            EntityPlayerMP var4 = (EntityPlayerMP)this.playerEntityList.get(var3);
+            EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
 
-            if (var4.dimension == par2)
+            if (entityplayermp.dimension == par2)
             {
-                var4.playerNetServerHandler.sendPacketToPlayer(par1Packet);
+                entityplayermp.playerNetServerHandler.sendPacketToPlayer(par1Packet);
             }
         }
     }
@@ -1041,19 +1041,19 @@ public abstract class ServerConfigurationManager
      */
     public String getPlayerListAsString()
     {
-        String var1 = "";
+        String s = "";
 
-        for (int var2 = 0; var2 < this.playerEntityList.size(); ++var2)
+        for (int i = 0; i < this.playerEntityList.size(); ++i)
         {
-            if (var2 > 0)
+            if (i > 0)
             {
-                var1 = var1 + ", ";
+                s = s + ", ";
             }
 
-            var1 = var1 + ((EntityPlayerMP)this.playerEntityList.get(var2)).username;
+            s = s + ((EntityPlayerMP)this.playerEntityList.get(i)).username;
         }
 
-        return var1;
+        return s;
     }
 
     /**
@@ -1061,14 +1061,14 @@ public abstract class ServerConfigurationManager
      */
     public String[] getAllUsernames()
     {
-        String[] var1 = new String[this.playerEntityList.size()];
+        String[] astring = new String[this.playerEntityList.size()];
 
-        for (int var2 = 0; var2 < this.playerEntityList.size(); ++var2)
+        for (int i = 0; i < this.playerEntityList.size(); ++i)
         {
-            var1[var2] = ((EntityPlayerMP)this.playerEntityList.get(var2)).username;
+            astring[i] = ((EntityPlayerMP)this.playerEntityList.get(i)).username;
         }
 
-        return var1;
+        return astring;
     }
 
     public BanList getBannedPlayers()
@@ -1135,21 +1135,21 @@ public abstract class ServerConfigurationManager
 
     public EntityPlayerMP getPlayerForUsername(String par1Str)
     {
-        Iterator var2 = this.playerEntityList.iterator();
-        EntityPlayerMP var3;
+        Iterator iterator = this.playerEntityList.iterator();
+        EntityPlayerMP entityplayermp;
 
         do
         {
-            if (!var2.hasNext())
+            if (!iterator.hasNext())
             {
                 return null;
             }
 
-            var3 = (EntityPlayerMP)var2.next();
+            entityplayermp = (EntityPlayerMP)iterator.next();
         }
-        while (!var3.username.equalsIgnoreCase(par1Str));
+        while (!entityplayermp.username.equalsIgnoreCase(par1Str));
 
-        return var3;
+        return entityplayermp;
     }
 
     /**
@@ -1163,48 +1163,48 @@ public abstract class ServerConfigurationManager
         }
         else
         {
-            Object var8 = new ArrayList();
-            boolean var9 = par4 < 0;
-            int var10 = par2 * par2;
-            int var11 = par3 * par3;
+            Object object = new ArrayList();
+            boolean flag = par4 < 0;
+            int k1 = par2 * par2;
+            int l1 = par3 * par3;
             par4 = MathHelper.abs_int(par4);
 
-            for (int var12 = 0; var12 < this.playerEntityList.size(); ++var12)
+            for (int i2 = 0; i2 < this.playerEntityList.size(); ++i2)
             {
-                EntityPlayerMP var13 = (EntityPlayerMP)this.playerEntityList.get(var12);
+                EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(i2);
 
                 if (par1ChunkCoordinates != null && (par2 > 0 || par3 > 0))
                 {
-                    float var14 = par1ChunkCoordinates.getDistanceSquaredToChunkCoordinates(var13.getPlayerCoordinates());
+                    float f = par1ChunkCoordinates.getDistanceSquaredToChunkCoordinates(entityplayermp.getPlayerCoordinates());
 
-                    if (par2 > 0 && var14 < (float)var10 || par3 > 0 && var14 > (float)var11)
+                    if (par2 > 0 && f < (float)k1 || par3 > 0 && f > (float)l1)
                     {
                         continue;
                     }
                 }
 
-                if ((par5 == EnumGameType.NOT_SET.getID() || par5 == var13.theItemInWorldManager.getGameType().getID()) && (par6 <= 0 || var13.experienceLevel >= par6) && var13.experienceLevel <= par7)
+                if ((par5 == EnumGameType.NOT_SET.getID() || par5 == entityplayermp.theItemInWorldManager.getGameType().getID()) && (par6 <= 0 || entityplayermp.experienceLevel >= par6) && entityplayermp.experienceLevel <= par7)
                 {
-                    ((List)var8).add(var13);
+                    ((List)object).add(entityplayermp);
                 }
             }
 
             if (par1ChunkCoordinates != null)
             {
-                Collections.sort((List)var8, new PlayerPositionComparator(par1ChunkCoordinates));
+                Collections.sort((List)object, new PlayerPositionComparator(par1ChunkCoordinates));
             }
 
-            if (var9)
+            if (flag)
             {
-                Collections.reverse((List)var8);
+                Collections.reverse((List)object);
             }
 
             if (par4 > 0)
             {
-                var8 = ((List)var8).subList(0, Math.min(par4, ((List)var8).size()));
+                object = ((List)object).subList(0, Math.min(par4, ((List)object).size()));
             }
 
-            return (List)var8;
+            return (List)object;
         }
     }
 
@@ -1222,26 +1222,26 @@ public abstract class ServerConfigurationManager
      */
     public void sendToAllNearExcept(EntityPlayer par1EntityPlayer, double par2, double par4, double par6, double par8, int par10, Packet par11Packet)
     {
-        for (int var12 = 0; var12 < this.playerEntityList.size(); ++var12)
+        for (int j = 0; j < this.playerEntityList.size(); ++j)
         {
-            EntityPlayerMP var13 = (EntityPlayerMP)this.playerEntityList.get(var12);
+            EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
 
             // CraftBukkit start - Test if player receiving packet can see the source of the packet
-            if (par1EntityPlayer != null && par1EntityPlayer instanceof EntityPlayerMP && !var13.getBukkitEntity().canSee(((EntityPlayerMP) par1EntityPlayer).getBukkitEntity()))
+            if (par1EntityPlayer != null && par1EntityPlayer instanceof EntityPlayerMP && !entityplayermp.getBukkitEntity().canSee(((EntityPlayerMP) par1EntityPlayer).getBukkitEntity()))
             {
                 continue;
             }
 
             // CraftBukkit end
-            if (var13 != par1EntityPlayer && var13.dimension == par10)
+            if (entityplayermp != par1EntityPlayer && entityplayermp.dimension == par10)
             {
-                double var14 = par2 - var13.posX;
-                double var16 = par4 - var13.posY;
-                double var18 = par6 - var13.posZ;
+                double d4 = par2 - entityplayermp.posX;
+                double d5 = par4 - entityplayermp.posY;
+                double d6 = par6 - entityplayermp.posZ;
 
-                if (var14 * var14 + var16 * var16 + var18 * var18 < par8 * par8)
+                if (d4 * d4 + d5 * d5 + d6 * d6 < par8 * par8)
                 {
-                    var13.playerNetServerHandler.sendPacketToPlayer(par11Packet);
+                    entityplayermp.playerNetServerHandler.sendPacketToPlayer(par11Packet);
                 }
             }
         }
@@ -1252,9 +1252,9 @@ public abstract class ServerConfigurationManager
      */
     public void saveAllPlayerData()
     {
-        for (int var1 = 0; var1 < this.playerEntityList.size(); ++var1)
+        for (int i = 0; i < this.playerEntityList.size(); ++i)
         {
-            this.writePlayerData((EntityPlayerMP)this.playerEntityList.get(var1));
+            this.writePlayerData((EntityPlayerMP)this.playerEntityList.get(i));
         }
     }
 
@@ -1351,20 +1351,20 @@ public abstract class ServerConfigurationManager
 
     public List getPlayerList(String par1Str)
     {
-        ArrayList var2 = new ArrayList();
-        Iterator var3 = this.playerEntityList.iterator();
+        ArrayList arraylist = new ArrayList();
+        Iterator iterator = this.playerEntityList.iterator();
 
-        while (var3.hasNext())
+        while (iterator.hasNext())
         {
-            EntityPlayerMP var4 = (EntityPlayerMP)var3.next();
+            EntityPlayerMP entityplayermp = (EntityPlayerMP)iterator.next();
 
-            if (var4.func_71114_r().equals(par1Str))
+            if (entityplayermp.func_71114_r().equals(par1Str))
             {
-                var2.add(var4);
+                arraylist.add(entityplayermp);
             }
         }
 
-        return var2;
+        return arraylist;
     }
 
     /**

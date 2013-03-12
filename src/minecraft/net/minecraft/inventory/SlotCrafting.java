@@ -118,33 +118,33 @@ public class SlotCrafting extends Slot
         GameRegistry.onItemCrafted(par1EntityPlayer, par2ItemStack, craftMatrix);
         this.onCrafting(par2ItemStack);
 
-        for (int var3 = 0; var3 < this.craftMatrix.getSizeInventory(); ++var3)
+        for (int i = 0; i < this.craftMatrix.getSizeInventory(); ++i)
         {
-            ItemStack var4 = this.craftMatrix.getStackInSlot(var3);
+            ItemStack itemstack1 = this.craftMatrix.getStackInSlot(i);
 
-            if (var4 != null)
+            if (itemstack1 != null)
             {
-                this.craftMatrix.decrStackSize(var3, 1);
+                this.craftMatrix.decrStackSize(i, 1);
 
-                if (var4.getItem().hasContainerItem())
+                if (itemstack1.getItem().hasContainerItem())
                 {
-                    ItemStack var5 = var4.getItem().getContainerItemStack(var4);
+                    ItemStack itemstack2 = itemstack1.getItem().getContainerItemStack(itemstack1);
 
-                    if (var5.isItemStackDamageable() && var5.getItemDamage() > var5.getMaxDamage())
+                    if (itemstack2.isItemStackDamageable() && itemstack2.getItemDamage() > itemstack2.getMaxDamage())
                     {
-                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, var5));
-                        var5 = null;
+                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, itemstack2));
+                        itemstack2 = null;
                     }
 
-                    if (var5 != null && (!var4.getItem().doesContainerItemLeaveCraftingGrid(var4) || !this.thePlayer.inventory.addItemStackToInventory(var5)))
+                    if (itemstack2 != null && (!itemstack1.getItem().doesContainerItemLeaveCraftingGrid(itemstack1) || !this.thePlayer.inventory.addItemStackToInventory(itemstack2)))
                     {
-                        if (this.craftMatrix.getStackInSlot(var3) == null)
+                        if (this.craftMatrix.getStackInSlot(i) == null)
                         {
-                            this.craftMatrix.setInventorySlotContents(var3, var5);
+                            this.craftMatrix.setInventorySlotContents(i, itemstack2);
                         }
                         else
                         {
-                            this.thePlayer.dropPlayerItem(var5);
+                            this.thePlayer.dropPlayerItem(itemstack2);
                         }
                     }
                 }

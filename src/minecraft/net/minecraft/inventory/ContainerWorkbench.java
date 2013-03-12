@@ -39,28 +39,28 @@ public class ContainerWorkbench extends Container
         this.posY = par4;
         this.posZ = par5;
         this.addSlotToContainer(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35));
-        int var6;
-        int var7;
+        int l;
+        int i1;
 
-        for (var6 = 0; var6 < 3; ++var6)
+        for (l = 0; l < 3; ++l)
         {
-            for (var7 = 0; var7 < 3; ++var7)
+            for (i1 = 0; i1 < 3; ++i1)
             {
-                this.addSlotToContainer(new Slot(this.craftMatrix, var7 + var6 * 3, 30 + var7 * 18, 17 + var6 * 18));
+                this.addSlotToContainer(new Slot(this.craftMatrix, i1 + l * 3, 30 + i1 * 18, 17 + l * 18));
             }
         }
 
-        for (var6 = 0; var6 < 3; ++var6)
+        for (l = 0; l < 3; ++l)
         {
-            for (var7 = 0; var7 < 9; ++var7)
+            for (i1 = 0; i1 < 9; ++i1)
             {
-                this.addSlotToContainer(new Slot(par1InventoryPlayer, var7 + var6 * 9 + 9, 8 + var7 * 18, 84 + var6 * 18));
+                this.addSlotToContainer(new Slot(par1InventoryPlayer, i1 + l * 9 + 9, 8 + i1 * 18, 84 + l * 18));
             }
         }
 
-        for (var6 = 0; var6 < 9; ++var6)
+        for (l = 0; l < 9; ++l)
         {
-            this.addSlotToContainer(new Slot(par1InventoryPlayer, var6, 8 + var6 * 18, 142));
+            this.addSlotToContainer(new Slot(par1InventoryPlayer, l, 8 + l * 18, 142));
         }
 
         this.onCraftMatrixChanged((IInventory) this.craftMatrix);
@@ -95,13 +95,13 @@ public class ContainerWorkbench extends Container
 
         if (!this.worldObj.isRemote)
         {
-            for (int var2 = 0; var2 < 9; ++var2)
+            for (int i = 0; i < 9; ++i)
             {
-                ItemStack var3 = this.craftMatrix.getStackInSlotOnClosing(var2);
+                ItemStack itemstack = this.craftMatrix.getStackInSlotOnClosing(i);
 
-                if (var3 != null)
+                if (itemstack != null)
                 {
-                    par1EntityPlayer.dropPlayerItem(var3);
+                    par1EntityPlayer.dropPlayerItem(itemstack);
                 }
             }
         }
@@ -122,60 +122,60 @@ public class ContainerWorkbench extends Container
      */
     public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
     {
-        ItemStack var3 = null;
-        Slot var4 = (Slot)this.inventorySlots.get(par2);
+        ItemStack itemstack = null;
+        Slot slot = (Slot)this.inventorySlots.get(par2);
 
-        if (var4 != null && var4.getHasStack())
+        if (slot != null && slot.getHasStack())
         {
-            ItemStack var5 = var4.getStack();
-            var3 = var5.copy();
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
 
             if (par2 == 0)
             {
-                if (!this.mergeItemStack(var5, 10, 46, true))
+                if (!this.mergeItemStack(itemstack1, 10, 46, true))
                 {
                     return null;
                 }
 
-                var4.onSlotChange(var5, var3);
+                slot.onSlotChange(itemstack1, itemstack);
             }
             else if (par2 >= 10 && par2 < 37)
             {
-                if (!this.mergeItemStack(var5, 37, 46, false))
+                if (!this.mergeItemStack(itemstack1, 37, 46, false))
                 {
                     return null;
                 }
             }
             else if (par2 >= 37 && par2 < 46)
             {
-                if (!this.mergeItemStack(var5, 10, 37, false))
+                if (!this.mergeItemStack(itemstack1, 10, 37, false))
                 {
                     return null;
                 }
             }
-            else if (!this.mergeItemStack(var5, 10, 46, false))
+            else if (!this.mergeItemStack(itemstack1, 10, 46, false))
             {
                 return null;
             }
 
-            if (var5.stackSize == 0)
+            if (itemstack1.stackSize == 0)
             {
-                var4.putStack((ItemStack)null);
+                slot.putStack((ItemStack)null);
             }
             else
             {
-                var4.onSlotChanged();
+                slot.onSlotChanged();
             }
 
-            if (var5.stackSize == var3.stackSize)
+            if (itemstack1.stackSize == itemstack.stackSize)
             {
                 return null;
             }
 
-            var4.onPickupFromSlot(par1EntityPlayer, var5);
+            slot.onPickupFromSlot(par1EntityPlayer, itemstack1);
         }
 
-        return var3;
+        return itemstack;
     }
 
     // CraftBukkit start

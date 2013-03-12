@@ -37,10 +37,10 @@ public class MapInfo
         this.field_82570_i = false;
         this.entityplayerObj = par2EntityPlayer;
 
-        for (int var3 = 0; var3 < this.field_76209_b.length; ++var3)
+        for (int i = 0; i < this.field_76209_b.length; ++i)
         {
-            this.field_76209_b[var3] = 0;
-            this.field_76210_c[var3] = 127;
+            this.field_76209_b[i] = 0;
+            this.field_76210_c[i] = 127;
         }
     }
 
@@ -50,89 +50,89 @@ public class MapInfo
      */
     public byte[] getPlayersOnMap(ItemStack par1ItemStack)
     {
-        byte[] var2;
+        byte[] abyte;
 
         if (!this.field_82570_i)
         {
-            var2 = new byte[] {(byte)2, this.mapDataObj.scale};
+            abyte = new byte[] {(byte)2, this.mapDataObj.scale};
             this.field_82570_i = true;
-            return var2;
+            return abyte;
         }
         else
         {
-            int var3;
-            int var10;
-            org.bukkit.craftbukkit.map.RenderData var4 = this.mapDataObj.mapView.render((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayerObj.getBukkitEntity()); // CraftBukkit
+            int i;
+            int j;
+            org.bukkit.craftbukkit.map.RenderData renderdata = this.mapDataObj.mapView.render((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayerObj.getBukkitEntity()); // CraftBukkit
 
             if (--this.ticksUntilPlayerLocationMapUpdate < 0)
             {
                 this.ticksUntilPlayerLocationMapUpdate = 4;
-                var2 = new byte[var4.cursors.size() * 3 + 1]; // CraftBukkit
-                var2[0] = 1;
-                var3 = 0;
+                abyte = new byte[renderdata.cursors.size() * 3 + 1]; // CraftBukkit
+                abyte[0] = 1;
+                i = 0;
 
                 // CraftBukkit start
-                for (var3 = 0; var3 < var4.cursors.size(); ++var3)
+                for (i = 0; i < renderdata.cursors.size(); ++i)
                 {
-                    org.bukkit.map.MapCursor cursor = var4.cursors.get(var3);
+                    org.bukkit.map.MapCursor cursor = renderdata.cursors.get(i);
 
                     if (!cursor.isVisible())
                     {
                         continue;
                     }
 
-                    var2[var3 * 3 + 1] = (byte)(cursor.getRawType() << 4 | cursor.getDirection() & 15);
-                    var2[var3 * 3 + 2] = (byte) cursor.getX();
-                    var2[var3 * 3 + 3] = (byte) cursor.getY();
+                    abyte[i * 3 + 1] = (byte)(cursor.getRawType() << 4 | cursor.getDirection() & 15);
+                    abyte[i * 3 + 2] = (byte) cursor.getX();
+                    abyte[i * 3 + 3] = (byte) cursor.getY();
                 }
 
                 // CraftBukkit end
-                boolean var5 = !par1ItemStack.isOnItemFrame();
+                boolean flag = !par1ItemStack.isOnItemFrame();
 
-                if (this.lastPlayerLocationOnMap != null && this.lastPlayerLocationOnMap.length == var2.length)
+                if (this.lastPlayerLocationOnMap != null && this.lastPlayerLocationOnMap.length == abyte.length)
                 {
-                    for (var10 = 0; var10 < var2.length; ++var10)
+                    for (j = 0; j < abyte.length; ++j)
                     {
-                        if (var2[var10] != this.lastPlayerLocationOnMap[var10])
+                        if (abyte[j] != this.lastPlayerLocationOnMap[j])
                         {
-                            var5 = false;
+                            flag = false;
                             break;
                         }
                     }
                 }
                 else
                 {
-                    var5 = false;
+                    flag = false;
                 }
 
-                if (!var5)
+                if (!flag)
                 {
-                    this.lastPlayerLocationOnMap = var2;
-                    return var2;
+                    this.lastPlayerLocationOnMap = abyte;
+                    return abyte;
                 }
             }
 
-            for (int var9 = 0; var9 < 1; ++var9)
+            for (int k = 0; k < 1; ++k)
             {
-                var3 = this.currentRandomNumber++ * 11 % 128;
+                i = this.currentRandomNumber++ * 11 % 128;
 
-                if (this.field_76209_b[var3] >= 0)
+                if (this.field_76209_b[i] >= 0)
                 {
-                    int var8 = this.field_76210_c[var3] - this.field_76209_b[var3] + 1;
-                    var10 = this.field_76209_b[var3];
-                    byte[] var11 = new byte[var8 + 3];
-                    var11[0] = 0;
-                    var11[1] = (byte) var3;
-                    var11[2] = (byte) var10;
+                    int l = this.field_76210_c[i] - this.field_76209_b[i] + 1;
+                    j = this.field_76209_b[i];
+                    byte[] abyte1 = new byte[l + 3];
+                    abyte1[0] = 0;
+                    abyte1[1] = (byte) i;
+                    abyte1[2] = (byte) j;
 
-                    for (int var6 = 0; var6 < var11.length - 3; ++var6)
+                    for (int i1 = 0; i1 < abyte1.length - 3; ++i1)
                     {
-                        var11[var6 + 3] = var4.buffer[(var6 + var10) * 128 + var3]; // CraftBukkit
+                        abyte1[i1 + 3] = renderdata.buffer[(i1 + j) * 128 + i]; // CraftBukkit
                     }
 
-                    this.field_76210_c[var3] = -1;
-                    this.field_76209_b[var3] = -1;
-                    return var11;
+                    this.field_76210_c[i] = -1;
+                    this.field_76209_b[i] = -1;
+                    return abyte1;
                 }
             }
 

@@ -68,43 +68,43 @@ public class InventoryEnderChest extends InventoryBasic
 
     public void loadInventoryFromNBT(NBTTagList par1NBTTagList)
     {
-        int var2;
+        int i;
 
-        for (var2 = 0; var2 < this.getSizeInventory(); ++var2)
+        for (i = 0; i < this.getSizeInventory(); ++i)
         {
-            this.setInventorySlotContents(var2, (ItemStack)null);
+            this.setInventorySlotContents(i, (ItemStack)null);
         }
 
-        for (var2 = 0; var2 < par1NBTTagList.tagCount(); ++var2)
+        for (i = 0; i < par1NBTTagList.tagCount(); ++i)
         {
-            NBTTagCompound var3 = (NBTTagCompound)par1NBTTagList.tagAt(var2);
-            int var4 = var3.getByte("Slot") & 255;
+            NBTTagCompound nbttagcompound = (NBTTagCompound)par1NBTTagList.tagAt(i);
+            int j = nbttagcompound.getByte("Slot") & 255;
 
-            if (var4 >= 0 && var4 < this.getSizeInventory())
+            if (j >= 0 && j < this.getSizeInventory())
             {
-                this.setInventorySlotContents(var4, ItemStack.loadItemStackFromNBT(var3));
+                this.setInventorySlotContents(j, ItemStack.loadItemStackFromNBT(nbttagcompound));
             }
         }
     }
 
     public NBTTagList saveInventoryToNBT()
     {
-        NBTTagList var1 = new NBTTagList("EnderItems");
+        NBTTagList nbttaglist = new NBTTagList("EnderItems");
 
-        for (int var2 = 0; var2 < this.getSizeInventory(); ++var2)
+        for (int i = 0; i < this.getSizeInventory(); ++i)
         {
-            ItemStack var3 = this.getStackInSlot(var2);
+            ItemStack itemstack = this.getStackInSlot(i);
 
-            if (var3 != null)
+            if (itemstack != null)
             {
-                NBTTagCompound var4 = new NBTTagCompound();
-                var4.setByte("Slot", (byte)var2);
-                var3.writeToNBT(var4);
-                var1.appendTag(var4);
+                NBTTagCompound nbttagcompound = new NBTTagCompound();
+                nbttagcompound.setByte("Slot", (byte)i);
+                itemstack.writeToNBT(nbttagcompound);
+                nbttaglist.appendTag(nbttagcompound);
             }
         }
 
-        return var1;
+        return nbttaglist;
     }
 
     /**

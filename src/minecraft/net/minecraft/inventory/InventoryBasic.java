@@ -39,18 +39,18 @@ public class InventoryBasic implements IInventory
     {
         if (this.inventoryContents[par1] != null)
         {
-            ItemStack var3;
+            ItemStack itemstack;
 
             if (this.inventoryContents[par1].stackSize <= par2)
             {
-                var3 = this.inventoryContents[par1];
+                itemstack = this.inventoryContents[par1];
                 this.inventoryContents[par1] = null;
                 this.onInventoryChanged();
-                return var3;
+                return itemstack;
             }
             else
             {
-                var3 = this.inventoryContents[par1].splitStack(par2);
+                itemstack = this.inventoryContents[par1].splitStack(par2);
 
                 if (this.inventoryContents[par1].stackSize == 0)
                 {
@@ -58,7 +58,7 @@ public class InventoryBasic implements IInventory
                 }
 
                 this.onInventoryChanged();
-                return var3;
+                return itemstack;
             }
         }
         else
@@ -75,9 +75,9 @@ public class InventoryBasic implements IInventory
     {
         if (this.inventoryContents[par1] != null)
         {
-            ItemStack var2 = this.inventoryContents[par1];
+            ItemStack itemstack = this.inventoryContents[par1];
             this.inventoryContents[par1] = null;
-            return var2;
+            return itemstack;
         }
         else
         {
@@ -132,9 +132,9 @@ public class InventoryBasic implements IInventory
     {
         if (this.field_70480_d != null)
         {
-            for (int var1 = 0; var1 < this.field_70480_d.size(); ++var1)
+            for (int i = 0; i < this.field_70480_d.size(); ++i)
             {
-                ((IInvBasic)this.field_70480_d.get(var1)).onInventoryChanged(this);
+                ((IInvBasic)this.field_70480_d.get(i)).onInventoryChanged(this);
             }
         }
     }

@@ -92,14 +92,14 @@ public class EntityZombie extends EntityMob
      */
     public int getTotalArmorValue()
     {
-        int var1 = super.getTotalArmorValue() + 2;
+        int i = super.getTotalArmorValue() + 2;
 
-        if (var1 > 20)
+        if (i > 20)
         {
-            var1 = 20;
+            i = 20;
         }
 
-        return var1;
+        return i;
     }
 
     /**
@@ -150,30 +150,30 @@ public class EntityZombie extends EntityMob
     {
         if (this.worldObj.isDaytime() && !this.worldObj.isRemote && !this.isChild())
         {
-            float var1 = this.getBrightness(1.0F);
+            float f = this.getBrightness(1.0F);
 
-            if (var1 > 0.5F && this.rand.nextFloat() * 30.0F < (var1 - 0.4F) * 2.0F && this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)))
+            if (f > 0.5F && this.rand.nextFloat() * 30.0F < (f - 0.4F) * 2.0F && this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)))
             {
-                boolean var2 = true;
-                ItemStack var3 = this.getCurrentItemOrArmor(4);
+                boolean flag = true;
+                ItemStack itemstack = this.getCurrentItemOrArmor(4);
 
-                if (var3 != null)
+                if (itemstack != null)
                 {
-                    if (var3.isItemStackDamageable())
+                    if (itemstack.isItemStackDamageable())
                     {
-                        var3.setItemDamage(var3.getItemDamageForDisplay() + this.rand.nextInt(2));
+                        itemstack.setItemDamage(itemstack.getItemDamageForDisplay() + this.rand.nextInt(2));
 
-                        if (var3.getItemDamageForDisplay() >= var3.getMaxDamage())
+                        if (itemstack.getItemDamageForDisplay() >= itemstack.getMaxDamage())
                         {
-                            this.renderBrokenItemStack(var3);
+                            this.renderBrokenItemStack(itemstack);
                             this.setCurrentItemOrArmor(4, (ItemStack)null);
                         }
                     }
 
-                    var2 = false;
+                    flag = false;
                 }
 
-                if (var2)
+                if (flag)
                 {
                     // CraftBukkit start
                     EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), 8);
@@ -199,8 +199,8 @@ public class EntityZombie extends EntityMob
     {
         if (!this.worldObj.isRemote && this.isConverting())
         {
-            int var1 = this.getConversionTimeBoost();
-            this.conversionTime -= var1;
+            int i = this.getConversionTimeBoost();
+            this.conversionTime -= i;
 
             if (this.conversionTime <= 0)
             {
@@ -216,15 +216,15 @@ public class EntityZombie extends EntityMob
      */
     public int getAttackStrength(Entity par1Entity)
     {
-        ItemStack var2 = this.getHeldItem();
-        int var3 = 4;
+        ItemStack itemstack = this.getHeldItem();
+        int i = 4;
 
-        if (var2 != null)
+        if (itemstack != null)
         {
-            var3 += var2.getDamageVsEntity(this);
+            i += itemstack.getDamageVsEntity(this);
         }
 
-        return var3;
+        return i;
     }
 
     /**
@@ -306,9 +306,9 @@ public class EntityZombie extends EntityMob
 
         if (this.rand.nextFloat() < (this.worldObj.difficultySetting == 3 ? 0.05F : 0.01F))
         {
-            int var1 = this.rand.nextInt(3);
+            int i = this.rand.nextInt(3);
 
-            if (var1 == 0)
+            if (i == 0)
             {
                 this.setCurrentItemOrArmor(0, new ItemStack(Item.swordSteel));
             }
@@ -376,18 +376,18 @@ public class EntityZombie extends EntityMob
                 return;
             }
 
-            EntityZombie var2 = new EntityZombie(this.worldObj);
-            var2.func_82149_j(par1EntityLiving);
+            EntityZombie entityzombie = new EntityZombie(this.worldObj);
+            entityzombie.func_82149_j(par1EntityLiving);
             this.worldObj.removeEntity(par1EntityLiving);
-            var2.initCreature();
-            var2.setVillager(true);
+            entityzombie.initCreature();
+            entityzombie.setVillager(true);
 
             if (par1EntityLiving.isChild())
             {
-                var2.setChild(true);
+                entityzombie.setChild(true);
             }
 
-            this.worldObj.spawnEntityInWorld(var2);
+            this.worldObj.spawnEntityInWorld(entityzombie);
             this.worldObj.playAuxSFXAtEntity((EntityPlayer)null, 1016, (int)this.posX, (int)this.posY, (int)this.posZ, 0);
         }
     }
@@ -409,9 +409,9 @@ public class EntityZombie extends EntityMob
 
         if (this.getCurrentItemOrArmor(4) == null)
         {
-            Calendar var1 = this.worldObj.getCurrentDate();
+            Calendar calendar = this.worldObj.getCurrentDate();
 
-            if (var1.get(2) + 1 == 10 && var1.get(5) == 31 && this.rand.nextFloat() < 0.25F)
+            if (calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.rand.nextFloat() < 0.25F)
             {
                 this.setCurrentItemOrArmor(4, new ItemStack(this.rand.nextFloat() < 0.1F ? Block.pumpkinLantern : Block.pumpkin));
                 this.equipmentDropChances[4] = 0.0F;
@@ -424,16 +424,16 @@ public class EntityZombie extends EntityMob
      */
     public boolean interact(EntityPlayer par1EntityPlayer)
     {
-        ItemStack var2 = par1EntityPlayer.getCurrentEquippedItem();
+        ItemStack itemstack = par1EntityPlayer.getCurrentEquippedItem();
 
-        if (var2 != null && var2.getItem() == Item.appleGold && var2.getItemDamage() == 0 && this.isVillager() && this.isPotionActive(Potion.weakness))
+        if (itemstack != null && itemstack.getItem() == Item.appleGold && itemstack.getItemDamage() == 0 && this.isVillager() && this.isPotionActive(Potion.weakness))
         {
             if (!par1EntityPlayer.capabilities.isCreativeMode)
             {
-                --var2.stackSize;
+                --itemstack.stackSize;
             }
 
-            if (var2.stackSize <= 0)
+            if (itemstack.stackSize <= 0)
             {
                 par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
             }
@@ -490,19 +490,19 @@ public class EntityZombie extends EntityMob
      */
     protected void convertToVillager()
     {
-        EntityVillager var1 = new EntityVillager(this.worldObj);
-        var1.func_82149_j(this);
-        var1.initCreature();
-        var1.func_82187_q();
+        EntityVillager entityvillager = new EntityVillager(this.worldObj);
+        entityvillager.func_82149_j(this);
+        entityvillager.initCreature();
+        entityvillager.func_82187_q();
 
         if (this.isChild())
         {
-            var1.setGrowingAge(-24000);
+            entityvillager.setGrowingAge(-24000);
         }
 
         this.worldObj.removeEntity(this);
-        this.worldObj.spawnEntityInWorld(var1);
-        var1.addPotionEffect(new PotionEffect(Potion.confusion.id, 200, 0));
+        this.worldObj.spawnEntityInWorld(entityvillager);
+        entityvillager.addPotionEffect(new PotionEffect(Potion.confusion.id, 200, 0));
         this.worldObj.playAuxSFXAtEntity((EntityPlayer)null, 1017, (int)this.posX, (int)this.posY, (int)this.posZ, 0);
     }
 
@@ -511,34 +511,34 @@ public class EntityZombie extends EntityMob
      */
     protected int getConversionTimeBoost()
     {
-        int var1 = 1;
+        int i = 1;
 
         if (this.rand.nextFloat() < 0.01F)
         {
-            int var2 = 0;
+            int j = 0;
 
-            for (int var3 = (int)this.posX - 4; var3 < (int)this.posX + 4 && var2 < 14; ++var3)
+            for (int k = (int)this.posX - 4; k < (int)this.posX + 4 && j < 14; ++k)
             {
-                for (int var4 = (int)this.posY - 4; var4 < (int)this.posY + 4 && var2 < 14; ++var4)
+                for (int l = (int)this.posY - 4; l < (int)this.posY + 4 && j < 14; ++l)
                 {
-                    for (int var5 = (int)this.posZ - 4; var5 < (int)this.posZ + 4 && var2 < 14; ++var5)
+                    for (int i1 = (int)this.posZ - 4; i1 < (int)this.posZ + 4 && j < 14; ++i1)
                     {
-                        int var6 = this.worldObj.getBlockId(var3, var4, var5);
+                        int j1 = this.worldObj.getBlockId(k, l, i1);
 
-                        if (var6 == Block.fenceIron.blockID || var6 == Block.bed.blockID)
+                        if (j1 == Block.fenceIron.blockID || j1 == Block.bed.blockID)
                         {
                             if (this.rand.nextFloat() < 0.3F)
                             {
-                                ++var1;
+                                ++i;
                             }
 
-                            ++var2;
+                            ++j;
                         }
                     }
                 }
             }
         }
 
-        return var1;
+        return i;
     }
 }

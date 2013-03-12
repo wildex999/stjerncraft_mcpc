@@ -91,29 +91,29 @@ public class BlockTripWireSource extends Block
      */
     public int onBlockPlaced(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
     {
-        byte var10 = 0;
+        byte b0 = 0;
 
         if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST, true))
         {
-            var10 = 2;
+            b0 = 2;
         }
 
         if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, EAST, true))
         {
-            var10 = 0;
+            b0 = 0;
         }
 
         if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, NORTH, true))
         {
-            var10 = 1;
+            b0 = 1;
         }
 
         if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, SOUTH, true))
         {
-            var10 = 3;
+            b0 = 3;
         }
 
-        return var10;
+        return b0;
     }
 
     /**
@@ -134,33 +134,33 @@ public class BlockTripWireSource extends Block
         {
             if (this.func_72144_l(par1World, par2, par3, par4))
             {
-                int var6 = par1World.getBlockMetadata(par2, par3, par4);
-                int var7 = var6 & 3;
-                boolean var8 = false;
+                int i1 = par1World.getBlockMetadata(par2, par3, par4);
+                int j1 = i1 & 3;
+                boolean flag = false;
 
-                if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, SOUTH) && var7 == 3)
+                if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, SOUTH) && j1 == 3)
                 {
-                    var8 = true;
+                    flag = true;
                 }
 
-                if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, NORTH) && var7 == 1)
+                if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, NORTH) && j1 == 1)
                 {
-                    var8 = true;
+                    flag = true;
                 }
 
-                if (!par1World.isBlockSolidOnSide(par2, par3, par4 - 1, EAST) && var7 == 0)
+                if (!par1World.isBlockSolidOnSide(par2, par3, par4 - 1, EAST) && j1 == 0)
                 {
-                    var8 = true;
+                    flag = true;
                 }
 
-                if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST) && var7 == 2)
+                if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST) && j1 == 2)
                 {
-                    var8 = true;
+                    flag = true;
                 }
 
-                if (var8)
+                if (flag)
                 {
-                    this.dropBlockAsItem(par1World, par2, par3, par4, var6, 0);
+                    this.dropBlockAsItem(par1World, par2, par3, par4, i1, 0);
                     par1World.setBlockWithNotify(par2, par3, par4, 0);
                 }
             }
@@ -169,76 +169,76 @@ public class BlockTripWireSource extends Block
 
     public void func_72143_a(World par1World, int par2, int par3, int par4, int par5, int par6, boolean par7, int par8, int par9)
     {
-        int var10 = par6 & 3;
-        boolean var11 = (par6 & 4) == 4;
-        boolean var12 = (par6 & 8) == 8;
-        boolean var13 = par5 == Block.tripWireSource.blockID;
-        boolean var14 = false;
-        boolean var15 = !par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP);
-        int var16 = Direction.offsetX[var10];
-        int var17 = Direction.offsetZ[var10];
-        int var18 = 0;
-        int[] var19 = new int[42];
-        int var21;
-        int var20;
-        int var23;
-        int var22;
-        int var24;
+        int l1 = par6 & 3;
+        boolean flag1 = (par6 & 4) == 4;
+        boolean flag2 = (par6 & 8) == 8;
+        boolean flag3 = par5 == Block.tripWireSource.blockID;
+        boolean flag4 = false;
+        boolean flag5 = !par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP);
+        int i2 = Direction.offsetX[l1];
+        int j2 = Direction.offsetZ[l1];
+        int k2 = 0;
+        int[] aint = new int[42];
+        int l2;
+        int i3;
+        int j3;
+        int k3;
+        int l3;
 
-        for (var20 = 1; var20 < 42; ++var20)
+        for (i3 = 1; i3 < 42; ++i3)
         {
-            var21 = par2 + var16 * var20;
-            var22 = par4 + var17 * var20;
-            var23 = par1World.getBlockId(var21, par3, var22);
+            l2 = par2 + i2 * i3;
+            k3 = par4 + j2 * i3;
+            j3 = par1World.getBlockId(l2, par3, k3);
 
-            if (var23 == Block.tripWireSource.blockID)
+            if (j3 == Block.tripWireSource.blockID)
             {
-                var24 = par1World.getBlockMetadata(var21, par3, var22);
+                l3 = par1World.getBlockMetadata(l2, par3, k3);
 
-                if ((var24 & 3) == Direction.footInvisibleFaceRemap[var10])
+                if ((l3 & 3) == Direction.footInvisibleFaceRemap[l1])
                 {
-                    var18 = var20;
+                    k2 = i3;
                 }
 
                 break;
             }
 
-            if (var23 != Block.tripWire.blockID && var20 != par8)
+            if (j3 != Block.tripWire.blockID && i3 != par8)
             {
-                var19[var20] = -1;
-                var13 = false;
+                aint[i3] = -1;
+                flag3 = false;
             }
             else
             {
-                var24 = var20 == par8 ? par9 : par1World.getBlockMetadata(var21, par3, var22);
-                boolean var25 = (var24 & 8) != 8;
-                boolean var26 = (var24 & 1) == 1;
-                boolean var27 = (var24 & 2) == 2;
-                var13 &= var27 == var15;
-                var14 |= var25 && var26;
-                var19[var20] = var24;
+                l3 = i3 == par8 ? par9 : par1World.getBlockMetadata(l2, par3, k3);
+                boolean flag6 = (l3 & 8) != 8;
+                boolean flag7 = (l3 & 1) == 1;
+                boolean flag8 = (l3 & 2) == 2;
+                flag3 &= flag8 == flag5;
+                flag4 |= flag6 && flag7;
+                aint[i3] = l3;
 
-                if (var20 == par8)
+                if (i3 == par8)
                 {
                     par1World.scheduleBlockUpdate(par2, par3, par4, par5, this.tickRate());
-                    var13 &= var25;
+                    flag3 &= flag6;
                 }
             }
         }
 
-        var13 &= var18 > 1;
-        var14 &= var13;
-        var20 = (var13 ? 4 : 0) | (var14 ? 8 : 0);
-        par6 = var10 | var20;
+        flag3 &= k2 > 1;
+        flag4 &= flag3;
+        i3 = (flag3 ? 4 : 0) | (flag4 ? 8 : 0);
+        par6 = l1 | i3;
 
-        if (var18 > 0)
+        if (k2 > 0)
         {
-            var21 = par2 + var16 * var18;
-            var22 = par4 + var17 * var18;
-            var23 = Direction.footInvisibleFaceRemap[var10];
-            par1World.setBlockMetadataWithNotify(var21, par3, var22, var23 | var20);
-            this.notifyNeighborOfChange(par1World, var21, par3, var22, var23);
-            this.playSoundEffect(par1World, var21, par3, var22, var13, var14, var11, var12);
+            l2 = par2 + i2 * k2;
+            k3 = par4 + j2 * k2;
+            j3 = Direction.footInvisibleFaceRemap[l1];
+            par1World.setBlockMetadataWithNotify(l2, par3, k3, j3 | i3);
+            this.notifyNeighborOfChange(par1World, l2, par3, k3, j3);
+            this.playSoundEffect(par1World, l2, par3, k3, flag3, flag4, flag1, flag2);
         }
 
         // CraftBukkit start
@@ -252,7 +252,7 @@ public class BlockTripWireSource extends Block
         }
 
         // CraftBukkit end
-        this.playSoundEffect(par1World, par2, par3, par4, var13, var14, var11, var12);
+        this.playSoundEffect(par1World, par2, par3, par4, flag3, flag4, flag1, flag2);
 
         if (par5 > 0)
         {
@@ -260,30 +260,30 @@ public class BlockTripWireSource extends Block
 
             if (par7)
             {
-                this.notifyNeighborOfChange(par1World, par2, par3, par4, var10);
+                this.notifyNeighborOfChange(par1World, par2, par3, par4, l1);
             }
         }
 
-        if (var11 != var13)
+        if (flag1 != flag3)
         {
-            for (var21 = 1; var21 < var18; ++var21)
+            for (l2 = 1; l2 < k2; ++l2)
             {
-                var22 = par2 + var16 * var21;
-                var23 = par4 + var17 * var21;
-                var24 = var19[var21];
+                k3 = par2 + i2 * l2;
+                j3 = par4 + j2 * l2;
+                l3 = aint[l2];
 
-                if (var24 >= 0)
+                if (l3 >= 0)
                 {
-                    if (var13)
+                    if (flag3)
                     {
-                        var24 |= 4;
+                        l3 |= 4;
                     }
                     else
                     {
-                        var24 &= -5;
+                        l3 &= -5;
                     }
 
-                    par1World.setBlockMetadataWithNotify(var22, par3, var23, var24);
+                    par1World.setBlockMetadataWithNotify(k3, par3, j3, l3);
                 }
             }
         }
@@ -361,24 +361,24 @@ public class BlockTripWireSource extends Block
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        int var5 = par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 3;
-        float var6 = 0.1875F;
+        int l = par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 3;
+        float f = 0.1875F;
 
-        if (var5 == 3)
+        if (l == 3)
         {
-            this.setBlockBounds(0.0F, 0.2F, 0.5F - var6, var6 * 2.0F, 0.8F, 0.5F + var6);
+            this.setBlockBounds(0.0F, 0.2F, 0.5F - f, f * 2.0F, 0.8F, 0.5F + f);
         }
-        else if (var5 == 1)
+        else if (l == 1)
         {
-            this.setBlockBounds(1.0F - var6 * 2.0F, 0.2F, 0.5F - var6, 1.0F, 0.8F, 0.5F + var6);
+            this.setBlockBounds(1.0F - f * 2.0F, 0.2F, 0.5F - f, 1.0F, 0.8F, 0.5F + f);
         }
-        else if (var5 == 0)
+        else if (l == 0)
         {
-            this.setBlockBounds(0.5F - var6, 0.2F, 0.0F, 0.5F + var6, 0.8F, var6 * 2.0F);
+            this.setBlockBounds(0.5F - f, 0.2F, 0.0F, 0.5F + f, 0.8F, f * 2.0F);
         }
-        else if (var5 == 2)
+        else if (l == 2)
         {
-            this.setBlockBounds(0.5F - var6, 0.2F, 1.0F - var6 * 2.0F, 0.5F + var6, 0.8F, 1.0F);
+            this.setBlockBounds(0.5F - f, 0.2F, 1.0F - f * 2.0F, 0.5F + f, 0.8F, 1.0F);
         }
     }
 
@@ -387,32 +387,32 @@ public class BlockTripWireSource extends Block
      */
     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
     {
-        boolean var7 = (par6 & 4) == 4;
-        boolean var8 = (par6 & 8) == 8;
+        boolean flag = (par6 & 4) == 4;
+        boolean flag1 = (par6 & 8) == 8;
 
-        if (var7 || var8)
+        if (flag || flag1)
         {
             this.func_72143_a(par1World, par2, par3, par4, 0, par6, false, -1, 0);
         }
 
-        if (var8)
+        if (flag1)
         {
             par1World.notifyBlocksOfNeighborChange(par2, par3, par4, this.blockID);
-            int var9 = par6 & 3;
+            int j1 = par6 & 3;
 
-            if (var9 == 3)
+            if (j1 == 3)
             {
                 par1World.notifyBlocksOfNeighborChange(par2 - 1, par3, par4, this.blockID);
             }
-            else if (var9 == 1)
+            else if (j1 == 1)
             {
                 par1World.notifyBlocksOfNeighborChange(par2 + 1, par3, par4, this.blockID);
             }
-            else if (var9 == 0)
+            else if (j1 == 0)
             {
                 par1World.notifyBlocksOfNeighborChange(par2, par3, par4 - 1, this.blockID);
             }
-            else if (var9 == 2)
+            else if (j1 == 2)
             {
                 par1World.notifyBlocksOfNeighborChange(par2, par3, par4 + 1, this.blockID);
             }
@@ -437,16 +437,16 @@ public class BlockTripWireSource extends Block
      */
     public boolean isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        int var6 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
+        int i1 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 
-        if ((var6 & 8) != 8)
+        if ((i1 & 8) != 8)
         {
             return false;
         }
         else
         {
-            int var7 = var6 & 3;
-            return var7 == 2 && par5 == 2 ? true : (var7 == 0 && par5 == 3 ? true : (var7 == 1 && par5 == 4 ? true : var7 == 3 && par5 == 5));
+            int j1 = i1 & 3;
+            return j1 == 2 && par5 == 2 ? true : (j1 == 0 && par5 == 3 ? true : (j1 == 1 && par5 == 4 ? true : j1 == 3 && par5 == 5));
         }
     }
 

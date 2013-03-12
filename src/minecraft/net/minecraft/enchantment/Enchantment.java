@@ -201,8 +201,8 @@ public abstract class Enchantment
      */
     public String getTranslatedName(int par1)
     {
-        String var2 = StatCollector.translateToLocal(this.getName());
-        return var2 + " " + StatCollector.translateToLocal("enchantment.level." + par1);
+        String s = StatCollector.translateToLocal(this.getName());
+        return s + " " + StatCollector.translateToLocal("enchantment.level." + par1);
     }
 
     public boolean func_92089_a(ItemStack par1ItemStack)
@@ -233,20 +233,20 @@ public abstract class Enchantment
 
     static
     {
-        ArrayList var0 = new ArrayList();
-        Enchantment[] var1 = enchantmentsList;
-        int var2 = var1.length;
+        ArrayList arraylist = new ArrayList();
+        Enchantment[] aenchantment = enchantmentsList;
+        int i = aenchantment.length;
 
-        for (int var3 = 0; var3 < var2; ++var3)
+        for (int j = 0; j < i; ++j)
         {
-            Enchantment var4 = var1[var3];
+            Enchantment enchantment = aenchantment[j];
 
-            if (var4 != null)
+            if (enchantment != null)
             {
-                var0.add(var4);
+                arraylist.add(enchantment);
             }
         }
 
-        field_92090_c = (Enchantment[])var0.toArray(new Enchantment[0]);
+        field_92090_c = (Enchantment[])arraylist.toArray(new Enchantment[0]);
     }
 }

@@ -24,28 +24,28 @@ public class ContainerDispenser extends Container
         // TODO: Should we check to make sure it really is an InventoryPlayer?
         this.player = (InventoryPlayer)par1IInventory;
         // CraftBukkit end
-        int var3;
-        int var4;
+        int i;
+        int j;
 
-        for (var3 = 0; var3 < 3; ++var3)
+        for (i = 0; i < 3; ++i)
         {
-            for (var4 = 0; var4 < 3; ++var4)
+            for (j = 0; j < 3; ++j)
             {
-                this.addSlotToContainer(new Slot(par2TileEntityDispenser, var4 + var3 * 3, 62 + var4 * 18, 17 + var3 * 18));
+                this.addSlotToContainer(new Slot(par2TileEntityDispenser, j + i * 3, 62 + j * 18, 17 + i * 18));
             }
         }
 
-        for (var3 = 0; var3 < 3; ++var3)
+        for (i = 0; i < 3; ++i)
         {
-            for (var4 = 0; var4 < 9; ++var4)
+            for (j = 0; j < 9; ++j)
             {
-                this.addSlotToContainer(new Slot(par1IInventory, var4 + var3 * 9 + 9, 8 + var4 * 18, 84 + var3 * 18));
+                this.addSlotToContainer(new Slot(par1IInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
             }
         }
 
-        for (var3 = 0; var3 < 9; ++var3)
+        for (i = 0; i < 9; ++i)
         {
-            this.addSlotToContainer(new Slot(par1IInventory, var3, 8 + var3 * 18, 142));
+            this.addSlotToContainer(new Slot(par1IInventory, i, 8 + i * 18, 142));
         }
     }
 
@@ -64,44 +64,44 @@ public class ContainerDispenser extends Container
      */
     public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
     {
-        ItemStack var3 = null;
-        Slot var4 = (Slot)this.inventorySlots.get(par2);
+        ItemStack itemstack = null;
+        Slot slot = (Slot)this.inventorySlots.get(par2);
 
-        if (var4 != null && var4.getHasStack())
+        if (slot != null && slot.getHasStack())
         {
-            ItemStack var5 = var4.getStack();
-            var3 = var5.copy();
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
 
             if (par2 < 9)
             {
-                if (!this.mergeItemStack(var5, 9, 45, true))
+                if (!this.mergeItemStack(itemstack1, 9, 45, true))
                 {
                     return null;
                 }
             }
-            else if (!this.mergeItemStack(var5, 0, 9, false))
+            else if (!this.mergeItemStack(itemstack1, 0, 9, false))
             {
                 return null;
             }
 
-            if (var5.stackSize == 0)
+            if (itemstack1.stackSize == 0)
             {
-                var4.putStack((ItemStack)null);
+                slot.putStack((ItemStack)null);
             }
             else
             {
-                var4.onSlotChanged();
+                slot.onSlotChanged();
             }
 
-            if (var5.stackSize == var3.stackSize)
+            if (itemstack1.stackSize == itemstack.stackSize)
             {
                 return null;
             }
 
-            var4.onPickupFromSlot(par1EntityPlayer, var5);
+            slot.onPickupFromSlot(par1EntityPlayer, itemstack1);
         }
 
-        return var3;
+        return itemstack;
     }
 
     // CraftBukkit start

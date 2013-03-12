@@ -42,7 +42,7 @@ public class EntityEnderPearl extends EntityThrowable
             par1MovingObjectPosition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), 0);
         }
 
-        for (int var2 = 0; var2 < 32; ++var2)
+        for (int i = 0; i < 32; ++i)
         {
             this.worldObj.spawnParticle("portal", this.posX, this.posY + this.rand.nextDouble() * 2.0D, this.posZ, this.rand.nextGaussian(), 0.0D, this.rand.nextGaussian());
         }
@@ -51,30 +51,30 @@ public class EntityEnderPearl extends EntityThrowable
         {
             if (this.getThrower() != null && this.getThrower() instanceof EntityPlayerMP)
             {
-                EntityPlayerMP var3 = (EntityPlayerMP)this.getThrower();
+                EntityPlayerMP entityplayermp = (EntityPlayerMP)this.getThrower();
 
-                if (!var3.playerNetServerHandler.connectionClosed && var3.worldObj == this.worldObj)
+                if (!entityplayermp.playerNetServerHandler.connectionClosed && entityplayermp.worldObj == this.worldObj)
                 {
                     // CraftBukkit start
-                    org.bukkit.craftbukkit.entity.CraftPlayer player = var3.getBukkitEntity();
+                    org.bukkit.craftbukkit.entity.CraftPlayer player = entityplayermp.getBukkitEntity();
                     org.bukkit.Location location = getBukkitEntity().getLocation();
                     location.setPitch(player.getLocation().getPitch());
                     location.setYaw(player.getLocation().getYaw());
                     PlayerTeleportEvent teleEvent = new PlayerTeleportEvent(player, player.getLocation(), location, PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
                     Bukkit.getPluginManager().callEvent(teleEvent);
 
-                    if (!teleEvent.isCancelled() && !var3.playerNetServerHandler.connectionClosed)
+                    if (!teleEvent.isCancelled() && !entityplayermp.playerNetServerHandler.connectionClosed)
                     {
-                        var3.playerNetServerHandler.teleport(teleEvent.getTo());
+                        entityplayermp.playerNetServerHandler.teleport(teleEvent.getTo());
                         this.getThrower().fallDistance = 0.0F;
                         EntityDamageByEntityEvent damageEvent = new EntityDamageByEntityEvent(this.getBukkitEntity(), player, EntityDamageByEntityEvent.DamageCause.FALL, 5);
                         Bukkit.getPluginManager().callEvent(damageEvent);
 
-                        if (!damageEvent.isCancelled() && !var3.playerNetServerHandler.connectionClosed)
+                        if (!damageEvent.isCancelled() && !entityplayermp.playerNetServerHandler.connectionClosed)
                         {
-                            var3.initialInvulnerability = -1; // Remove spawning invulnerability
+                            entityplayermp.initialInvulnerability = -1; // Remove spawning invulnerability
                             player.setLastDamageCause(damageEvent);
-                            var3.attackEntityFrom(DamageSource.fall, damageEvent.getDamage());
+                            entityplayermp.attackEntityFrom(DamageSource.fall, damageEvent.getDamage());
                         }
                     }
                     // CraftBukkit end

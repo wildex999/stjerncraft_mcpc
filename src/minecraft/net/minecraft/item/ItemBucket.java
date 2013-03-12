@@ -37,20 +37,20 @@ public class ItemBucket extends Item
      */
     public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
-        float var4 = 1.0F;
-        double var5 = par3EntityPlayer.prevPosX + (par3EntityPlayer.posX - par3EntityPlayer.prevPosX) * (double)var4;
-        double var7 = par3EntityPlayer.prevPosY + (par3EntityPlayer.posY - par3EntityPlayer.prevPosY) * (double)var4 + 1.62D - (double)par3EntityPlayer.yOffset;
-        double var9 = par3EntityPlayer.prevPosZ + (par3EntityPlayer.posZ - par3EntityPlayer.prevPosZ) * (double)var4;
-        boolean var11 = this.isFull == 0;
-        MovingObjectPosition var12 = this.getMovingObjectPositionFromPlayer(par2World, par3EntityPlayer, var11);
+        float f = 1.0F;
+        double d0 = par3EntityPlayer.prevPosX + (par3EntityPlayer.posX - par3EntityPlayer.prevPosX) * (double)f;
+        double d1 = par3EntityPlayer.prevPosY + (par3EntityPlayer.posY - par3EntityPlayer.prevPosY) * (double)f + 1.62D - (double)par3EntityPlayer.yOffset;
+        double d2 = par3EntityPlayer.prevPosZ + (par3EntityPlayer.posZ - par3EntityPlayer.prevPosZ) * (double)f;
+        boolean flag = this.isFull == 0;
+        MovingObjectPosition movingobjectposition = this.getMovingObjectPositionFromPlayer(par2World, par3EntityPlayer, flag);
 
-        if (var12 == null)
+        if (movingobjectposition == null)
         {
             return par1ItemStack;
         }
         else
         {
-            FillBucketEvent event = new FillBucketEvent(par3EntityPlayer, par1ItemStack, par2World, var12);
+            FillBucketEvent event = new FillBucketEvent(par3EntityPlayer, par1ItemStack, par2World, movingobjectposition);
             if (MinecraftForge.EVENT_BUS.post(event))
             {
                 return par1ItemStack;
@@ -76,28 +76,28 @@ public class ItemBucket extends Item
                     return par1ItemStack;
                 }
 
-            if (var12.typeOfHit == EnumMovingObjectType.TILE)
+            if (movingobjectposition.typeOfHit == EnumMovingObjectType.TILE)
             {
-                int var13 = var12.blockX;
-                int var14 = var12.blockY;
-                int var15 = var12.blockZ;
+                int i = movingobjectposition.blockX;
+                int j = movingobjectposition.blockY;
+                int k = movingobjectposition.blockZ;
 
-                if (!par2World.canMineBlock(par3EntityPlayer, var13, var14, var15))
+                if (!par2World.canMineBlock(par3EntityPlayer, i, j, k))
                 {
                     return par1ItemStack;
                 }
 
                 if (this.isFull == 0)
                 {
-                    if (!par3EntityPlayer.canPlayerEdit(var13, var14, var15, var12.sideHit, par1ItemStack))
+                    if (!par3EntityPlayer.canPlayerEdit(i, j, k, movingobjectposition.sideHit, par1ItemStack))
                     {
                         return par1ItemStack;
                     }
 
-                    if (par2World.getBlockMaterial(var13, var14, var15) == Material.water && par2World.getBlockMetadata(var13, var14, var15) == 0)
+                    if (par2World.getBlockMaterial(i, j, k) == Material.water && par2World.getBlockMetadata(i, j, k) == 0)
                     {
                         // CraftBukkit start
-                        PlayerBucketFillEvent cbEvent = CraftEventFactory.callPlayerBucketFillEvent(par3EntityPlayer, var13, var14, var15, -1, par1ItemStack, Item.bucketWater);
+                        PlayerBucketFillEvent cbEvent = CraftEventFactory.callPlayerBucketFillEvent(par3EntityPlayer, i, j, k, -1, par1ItemStack, Item.bucketWater);
 
                         if (cbEvent.isCancelled())
                         {
@@ -105,7 +105,7 @@ public class ItemBucket extends Item
                         }
 
                         // CraftBukkit end
-                        par2World.setBlockWithNotify(var13, var14, var15, 0);
+                        par2World.setBlockWithNotify(i, j, k, 0);
 
                         if (par3EntityPlayer.capabilities.isCreativeMode)
                         {
@@ -127,10 +127,10 @@ public class ItemBucket extends Item
                         return par1ItemStack;
                     }
 
-                    if (par2World.getBlockMaterial(var13, var14, var15) == Material.lava && par2World.getBlockMetadata(var13, var14, var15) == 0)
+                    if (par2World.getBlockMaterial(i, j, k) == Material.lava && par2World.getBlockMetadata(i, j, k) == 0)
                     {
                         // CraftBukkit start
-                        PlayerBucketFillEvent cbEvent = CraftEventFactory.callPlayerBucketFillEvent(par3EntityPlayer, var13, var14, var15, -1, par1ItemStack, Item.bucketLava);
+                        PlayerBucketFillEvent cbEvent = CraftEventFactory.callPlayerBucketFillEvent(par3EntityPlayer, i, j, k, -1, par1ItemStack, Item.bucketLava);
 
                         if (cbEvent.isCancelled())
                         {
@@ -138,7 +138,7 @@ public class ItemBucket extends Item
                         }
 
                         // CraftBukkit end
-                        par2World.setBlockWithNotify(var13, var14, var15, 0);
+                        par2World.setBlockWithNotify(i, j, k, 0);
 
                         if (par3EntityPlayer.capabilities.isCreativeMode)
                         {
@@ -165,7 +165,7 @@ public class ItemBucket extends Item
                     if (this.isFull < 0)
                     {
                         // CraftBukkit start
-                        PlayerBucketEmptyEvent cbEvent = CraftEventFactory.callPlayerBucketEmptyEvent(par3EntityPlayer, var13, var14, var15, var12.sideHit, par1ItemStack);
+                        PlayerBucketEmptyEvent cbEvent = CraftEventFactory.callPlayerBucketEmptyEvent(par3EntityPlayer, i, j, k, movingobjectposition.sideHit, par1ItemStack);
 
                         if (cbEvent.isCancelled())
                         {
@@ -175,46 +175,46 @@ public class ItemBucket extends Item
                         return CraftItemStack.asNMSCopy(cbEvent.getItemStack());
                     }
 
-                    int clickedX = var13, clickedY = var14, clickedZ = var15;
+                    int clickedX = i, clickedY = j, clickedZ = k;
                     // CraftBukkit end
 
-                    if (var12.sideHit == 0)
+                    if (movingobjectposition.sideHit == 0)
                     {
-                        --var14;
+                        --j;
                     }
 
-                    if (var12.sideHit == 1)
+                    if (movingobjectposition.sideHit == 1)
                     {
-                        ++var14;
+                        ++j;
                     }
 
-                    if (var12.sideHit == 2)
+                    if (movingobjectposition.sideHit == 2)
                     {
-                        --var15;
+                        --k;
                     }
 
-                    if (var12.sideHit == 3)
+                    if (movingobjectposition.sideHit == 3)
                     {
-                        ++var15;
+                        ++k;
                     }
 
-                    if (var12.sideHit == 4)
+                    if (movingobjectposition.sideHit == 4)
                     {
-                        --var13;
+                        --i;
                     }
 
-                    if (var12.sideHit == 5)
+                    if (movingobjectposition.sideHit == 5)
                     {
-                        ++var13;
+                        ++i;
                     }
 
-                    if (!par3EntityPlayer.canPlayerEdit(var13, var14, var15, var12.sideHit, par1ItemStack))
+                    if (!par3EntityPlayer.canPlayerEdit(i, j, k, movingobjectposition.sideHit, par1ItemStack))
                     {
                         return par1ItemStack;
                     }
 
                     // CraftBukkit start
-                    PlayerBucketEmptyEvent cbEvent = CraftEventFactory.callPlayerBucketEmptyEvent(par3EntityPlayer, clickedX, clickedY, clickedZ, var12.sideHit, par1ItemStack);
+                    PlayerBucketEmptyEvent cbEvent = CraftEventFactory.callPlayerBucketEmptyEvent(par3EntityPlayer, clickedX, clickedY, clickedZ, movingobjectposition.sideHit, par1ItemStack);
 
                     if (cbEvent.isCancelled())
                     {
@@ -223,16 +223,16 @@ public class ItemBucket extends Item
 
                     // CraftBukkit end
 
-                    if (this.tryPlaceContainedLiquid(par2World, var5, var7, var9, var13, var14, var15) && !par3EntityPlayer.capabilities.isCreativeMode)
+                    if (this.tryPlaceContainedLiquid(par2World, d0, d1, d2, i, j, k) && !par3EntityPlayer.capabilities.isCreativeMode)
                     {
                         return CraftItemStack.asNMSCopy(cbEvent.getItemStack()); // CraftBukkit
                     }
                 }
             }
-            else if (this.isFull == 0 && var12.entityHit instanceof EntityCow)
+            else if (this.isFull == 0 && movingobjectposition.entityHit instanceof EntityCow)
             {
                 // CraftBukkit start - This codepath seems to be *NEVER* called
-                org.bukkit.Location loc = var12.entityHit.getBukkitEntity().getLocation();
+                org.bukkit.Location loc = movingobjectposition.entityHit.getBukkitEntity().getLocation();
                 PlayerBucketFillEvent cbEvent = CraftEventFactory.callPlayerBucketFillEvent(par3EntityPlayer, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), -1, par1ItemStack, Item.bucketMilk);
 
                 if (cbEvent.isCancelled())
@@ -267,7 +267,7 @@ public class ItemBucket extends Item
             {
                 par1World.playSoundEffect(par2 + 0.5D, par4 + 0.5D, par6 + 0.5D, "random.fizz", 0.5F, 2.6F + (par1World.rand.nextFloat() - par1World.rand.nextFloat()) * 0.8F);
 
-                for (int var11 = 0; var11 < 8; ++var11)
+                for (int l = 0; l < 8; ++l)
                 {
                     par1World.spawnParticle("largesmoke", (double)par8 + Math.random(), (double)par9 + Math.random(), (double)par10 + Math.random(), 0.0D, 0.0D, 0.0D);
                 }

@@ -21,36 +21,36 @@ public class ItemLilyPad extends ItemColored
      */
     public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
-        MovingObjectPosition var4 = this.getMovingObjectPositionFromPlayer(par2World, par3EntityPlayer, true);
+        MovingObjectPosition movingobjectposition = this.getMovingObjectPositionFromPlayer(par2World, par3EntityPlayer, true);
 
-        if (var4 == null)
+        if (movingobjectposition == null)
         {
             return par1ItemStack;
         }
         else
         {
-            if (var4.typeOfHit == EnumMovingObjectType.TILE)
+            if (movingobjectposition.typeOfHit == EnumMovingObjectType.TILE)
             {
-                int var5 = var4.blockX;
-                int var6 = var4.blockY;
-                int var7 = var4.blockZ;
-                final int clickedX = var5, clickedY = var6, clickedZ = var7; // CraftBukkit
+                int i = movingobjectposition.blockX;
+                int j = movingobjectposition.blockY;
+                int k = movingobjectposition.blockZ;
+                final int clickedX = i, clickedY = j, clickedZ = k; // CraftBukkit
 
-                if (!par2World.canMineBlock(par3EntityPlayer, var5, var6, var7))
+                if (!par2World.canMineBlock(par3EntityPlayer, i, j, k))
                 {
                     return par1ItemStack;
                 }
 
-                if (!par3EntityPlayer.canPlayerEdit(var5, var6, var7, var4.sideHit, par1ItemStack))
+                if (!par3EntityPlayer.canPlayerEdit(i, j, k, movingobjectposition.sideHit, par1ItemStack))
                 {
                     return par1ItemStack;
                 }
 
-                if (par2World.getBlockMaterial(var5, var6, var7) == Material.water && par2World.getBlockMetadata(var5, var6, var7) == 0 && par2World.isAirBlock(var5, var6 + 1, var7))
+                if (par2World.getBlockMaterial(i, j, k) == Material.water && par2World.getBlockMetadata(i, j, k) == 0 && par2World.isAirBlock(i, j + 1, k))
                 {
                     // CraftBukkit start - waterlily
-                    // par2World.setBlockWithNotify(var5, var6 + 1, var7, Block.waterlily.blockID);
-                    if (!processBlockPlace(par2World, par3EntityPlayer, null, var5, var6 + 1, var7, Block.waterlily.blockID, 0, clickedX, clickedY, clickedZ))
+                    // par2World.setBlockWithNotify(i, j + 1, k, Block.waterlily.blockID);
+                    if (!processBlockPlace(par2World, par3EntityPlayer, null, i, j + 1, k, Block.waterlily.blockID, 0, clickedX, clickedY, clickedZ))
                     {
                         return par1ItemStack;
                     }

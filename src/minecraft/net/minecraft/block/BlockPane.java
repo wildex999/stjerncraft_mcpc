@@ -74,8 +74,8 @@ public class BlockPane extends Block
      */
     public boolean shouldSideBeRendered(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        int var6 = par1IBlockAccess.getBlockId(par2, par3, par4);
-        return var6 == this.blockID ? false : super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5);
+        int i1 = par1IBlockAccess.getBlockId(par2, par3, par4);
+        return i1 == this.blockID ? false : super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5);
     }
 
     /**
@@ -83,19 +83,19 @@ public class BlockPane extends Block
      */
     public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
     {
-        boolean var8 = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2, par3, par4 - 1));
-        boolean var9 = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2, par3, par4 + 1));
-        boolean var10 = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2 - 1, par3, par4));
-        boolean var11 = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2 + 1, par3, par4));
+        boolean flag = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2, par3, par4 - 1));
+        boolean flag1 = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2, par3, par4 + 1));
+        boolean flag2 = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2 - 1, par3, par4));
+        boolean flag3 = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2 + 1, par3, par4));
 
-        if ((!var10 || !var11) && (var10 || var11 || var8 || var9))
+        if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
         {
-            if (var10 && !var11)
+            if (flag2 && !flag3)
             {
                 this.setBlockBounds(0.0F, 0.0F, 0.4375F, 0.5F, 1.0F, 0.5625F);
                 super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
             }
-            else if (!var10 && var11)
+            else if (!flag2 && flag3)
             {
                 this.setBlockBounds(0.5F, 0.0F, 0.4375F, 1.0F, 1.0F, 0.5625F);
                 super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
@@ -107,14 +107,14 @@ public class BlockPane extends Block
             super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
         }
 
-        if ((!var8 || !var9) && (var10 || var11 || var8 || var9))
+        if ((!flag || !flag1) && (flag2 || flag3 || flag || flag1))
         {
-            if (var8 && !var9)
+            if (flag && !flag1)
             {
                 this.setBlockBounds(0.4375F, 0.0F, 0.0F, 0.5625F, 1.0F, 0.5F);
                 super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
             }
-            else if (!var8 && var9)
+            else if (!flag && flag1)
             {
                 this.setBlockBounds(0.4375F, 0.0F, 0.5F, 0.5625F, 1.0F, 1.0F);
                 super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
@@ -140,50 +140,50 @@ public class BlockPane extends Block
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        float var5 = 0.4375F;
-        float var6 = 0.5625F;
-        float var7 = 0.4375F;
-        float var8 = 0.5625F;
-        boolean var9 = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2, par3, par4 - 1));
-        boolean var10 = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2, par3, par4 + 1));
-        boolean var11 = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2 - 1, par3, par4));
-        boolean var12 = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2 + 1, par3, par4));
+        float f = 0.4375F;
+        float f1 = 0.5625F;
+        float f2 = 0.4375F;
+        float f3 = 0.5625F;
+        boolean flag = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2, par3, par4 - 1));
+        boolean flag1 = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2, par3, par4 + 1));
+        boolean flag2 = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2 - 1, par3, par4));
+        boolean flag3 = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2 + 1, par3, par4));
 
-        if ((!var11 || !var12) && (var11 || var12 || var9 || var10))
+        if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
         {
-            if (var11 && !var12)
+            if (flag2 && !flag3)
             {
-                var5 = 0.0F;
+                f = 0.0F;
             }
-            else if (!var11 && var12)
+            else if (!flag2 && flag3)
             {
-                var6 = 1.0F;
+                f1 = 1.0F;
             }
         }
         else
         {
-            var5 = 0.0F;
-            var6 = 1.0F;
+            f = 0.0F;
+            f1 = 1.0F;
         }
 
-        if ((!var9 || !var10) && (var11 || var12 || var9 || var10))
+        if ((!flag || !flag1) && (flag2 || flag3 || flag || flag1))
         {
-            if (var9 && !var10)
+            if (flag && !flag1)
             {
-                var7 = 0.0F;
+                f2 = 0.0F;
             }
-            else if (!var9 && var10)
+            else if (!flag && flag1)
             {
-                var8 = 1.0F;
+                f3 = 1.0F;
             }
         }
         else
         {
-            var7 = 0.0F;
-            var8 = 1.0F;
+            f2 = 0.0F;
+            f3 = 1.0F;
         }
 
-        this.setBlockBounds(var5, 0.0F, var7, var6, 1.0F, var8);
+        this.setBlockBounds(f, 0.0F, f2, f1, 1.0F, f3);
     }
 
     @SideOnly(Side.CLIENT)

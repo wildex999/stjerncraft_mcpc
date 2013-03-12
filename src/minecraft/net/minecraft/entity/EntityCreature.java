@@ -47,7 +47,7 @@ public abstract class EntityCreature extends EntityLiving
         }
 
         this.hasAttacked = this.isMovementCeased();
-        float var1 = 16.0F;
+        float f = 16.0F;
 
         if (this.entityToAttack == null)
         {
@@ -76,16 +76,16 @@ public abstract class EntityCreature extends EntityLiving
 
             if (this.entityToAttack != null)
             {
-                this.pathToEntity = this.worldObj.getPathEntityToEntity(this, this.entityToAttack, var1, true, false, false, true);
+                this.pathToEntity = this.worldObj.getPathEntityToEntity(this, this.entityToAttack, f, true, false, false, true);
             }
         }
         else if (this.entityToAttack.isEntityAlive())
         {
-            float var2 = this.entityToAttack.getDistanceToEntity(this);
+            float f1 = this.entityToAttack.getDistanceToEntity(this);
 
             if (this.canEntityBeSeen(this.entityToAttack))
             {
-                this.attackEntity(this.entityToAttack, var2);
+                this.attackEntity(this.entityToAttack, f1);
             }
         }
         else
@@ -113,74 +113,74 @@ public abstract class EntityCreature extends EntityLiving
 
         if (!this.hasAttacked && this.entityToAttack != null && (this.pathToEntity == null || this.rand.nextInt(20) == 0))
         {
-            this.pathToEntity = this.worldObj.getPathEntityToEntity(this, this.entityToAttack, var1, true, false, false, true);
+            this.pathToEntity = this.worldObj.getPathEntityToEntity(this, this.entityToAttack, f, true, false, false, true);
         }
         else if (!this.hasAttacked && (this.pathToEntity == null && this.rand.nextInt(180) == 0 || this.rand.nextInt(120) == 0 || this.fleeingTick > 0) && this.entityAge < 100)
         {
             this.updateWanderPath();
         }
 
-        int var21 = MathHelper.floor_double(this.boundingBox.minY + 0.5D);
-        boolean var3 = this.isInWater();
-        boolean var4 = this.handleLavaMovement();
+        int i = MathHelper.floor_double(this.boundingBox.minY + 0.5D);
+        boolean flag = this.isInWater();
+        boolean flag1 = this.handleLavaMovement();
         this.rotationPitch = 0.0F;
 
         if (this.pathToEntity != null && this.rand.nextInt(100) != 0)
         {
             this.worldObj.theProfiler.startSection("followpath");
-            Vec3 var5 = this.pathToEntity.getPosition(this);
-            double var6 = (double)(this.width * 2.0F);
+            Vec3 vec3 = this.pathToEntity.getPosition(this);
+            double d0 = (double)(this.width * 2.0F);
 
-            while (var5 != null && var5.squareDistanceTo(this.posX, var5.yCoord, this.posZ) < var6 * var6)
+            while (vec3 != null && vec3.squareDistanceTo(this.posX, vec3.yCoord, this.posZ) < d0 * d0)
             {
                 this.pathToEntity.incrementPathIndex();
 
                 if (this.pathToEntity.isFinished())
                 {
-                    var5 = null;
+                    vec3 = null;
                     this.pathToEntity = null;
                 }
                 else
                 {
-                    var5 = this.pathToEntity.getPosition(this);
+                    vec3 = this.pathToEntity.getPosition(this);
                 }
             }
 
             this.isJumping = false;
 
-            if (var5 != null)
+            if (vec3 != null)
             {
-                double var8 = var5.xCoord - this.posX;
-                double var10 = var5.zCoord - this.posZ;
-                double var12 = var5.yCoord - (double)var21;
-                float var14 = (float)(org.bukkit.craftbukkit.TrigMath.atan2(var10, var8) * 180.0D / Math.PI) - 90.0F;                 // CraftBukkit - Math -> TrigMath
-                float var15 = MathHelper.wrapAngleTo180_float(var14 - this.rotationYaw);
+                double d1 = vec3.xCoord - this.posX;
+                double d2 = vec3.zCoord - this.posZ;
+                double d3 = vec3.yCoord - (double)i;
+                float f2 = (float)(org.bukkit.craftbukkit.TrigMath.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;                 // CraftBukkit - Math -> TrigMath
+                float f3 = MathHelper.wrapAngleTo180_float(f2 - this.rotationYaw);
                 this.moveForward = this.moveSpeed;
 
-                if (var15 > 30.0F)
+                if (f3 > 30.0F)
                 {
-                    var15 = 30.0F;
+                    f3 = 30.0F;
                 }
 
-                if (var15 < -30.0F)
+                if (f3 < -30.0F)
                 {
-                    var15 = -30.0F;
+                    f3 = -30.0F;
                 }
 
-                this.rotationYaw += var15;
+                this.rotationYaw += f3;
 
                 if (this.hasAttacked && this.entityToAttack != null)
                 {
-                    double var16 = this.entityToAttack.posX - this.posX;
-                    double var18 = this.entityToAttack.posZ - this.posZ;
-                    float var20 = this.rotationYaw;
-                    this.rotationYaw = (float)(Math.atan2(var18, var16) * 180.0D / Math.PI) - 90.0F;
-                    var15 = (var20 - this.rotationYaw + 90.0F) * (float)Math.PI / 180.0F;
-                    this.moveStrafing = -MathHelper.sin(var15) * this.moveForward * 1.0F;
-                    this.moveForward = MathHelper.cos(var15) * this.moveForward * 1.0F;
+                    double d4 = this.entityToAttack.posX - this.posX;
+                    double d5 = this.entityToAttack.posZ - this.posZ;
+                    float f4 = this.rotationYaw;
+                    this.rotationYaw = (float)(Math.atan2(d5, d4) * 180.0D / Math.PI) - 90.0F;
+                    f3 = (f4 - this.rotationYaw + 90.0F) * (float)Math.PI / 180.0F;
+                    this.moveStrafing = -MathHelper.sin(f3) * this.moveForward * 1.0F;
+                    this.moveForward = MathHelper.cos(f3) * this.moveForward * 1.0F;
                 }
 
-                if (var12 > 0.0D)
+                if (d3 > 0.0D)
                 {
                     this.isJumping = true;
                 }
@@ -196,7 +196,7 @@ public abstract class EntityCreature extends EntityLiving
                 this.isJumping = true;
             }
 
-            if (this.rand.nextFloat() < 0.8F && (var3 || var4))
+            if (this.rand.nextFloat() < 0.8F && (flag || flag1))
             {
                 this.isJumping = true;
             }
@@ -216,32 +216,32 @@ public abstract class EntityCreature extends EntityLiving
     protected void updateWanderPath()
     {
         this.worldObj.theProfiler.startSection("stroll");
-        boolean var1 = false;
-        int var2 = -1;
-        int var3 = -1;
-        int var4 = -1;
-        float var5 = -99999.0F;
+        boolean flag = false;
+        int i = -1;
+        int j = -1;
+        int k = -1;
+        float f = -99999.0F;
 
-        for (int var6 = 0; var6 < 10; ++var6)
+        for (int l = 0; l < 10; ++l)
         {
-            int var7 = MathHelper.floor_double(this.posX + (double)this.rand.nextInt(13) - 6.0D);
-            int var8 = MathHelper.floor_double(this.posY + (double)this.rand.nextInt(7) - 3.0D);
-            int var9 = MathHelper.floor_double(this.posZ + (double)this.rand.nextInt(13) - 6.0D);
-            float var10 = this.getBlockPathWeight(var7, var8, var9);
+            int i1 = MathHelper.floor_double(this.posX + (double)this.rand.nextInt(13) - 6.0D);
+            int j1 = MathHelper.floor_double(this.posY + (double)this.rand.nextInt(7) - 3.0D);
+            int k1 = MathHelper.floor_double(this.posZ + (double)this.rand.nextInt(13) - 6.0D);
+            float f1 = this.getBlockPathWeight(i1, j1, k1);
 
-            if (var10 > var5)
+            if (f1 > f)
             {
-                var5 = var10;
-                var2 = var7;
-                var3 = var8;
-                var4 = var9;
-                var1 = true;
+                f = f1;
+                i = i1;
+                j = j1;
+                k = k1;
+                flag = true;
             }
         }
 
-        if (var1)
+        if (flag)
         {
-            this.pathToEntity = this.worldObj.getEntityPathToXYZ(this, var2, var3, var4, 10.0F, true, false, false, true);
+            this.pathToEntity = this.worldObj.getEntityPathToXYZ(this, i, j, k, 10.0F, true, false, false, true);
         }
 
         this.worldObj.theProfiler.endSection();
@@ -275,10 +275,10 @@ public abstract class EntityCreature extends EntityLiving
      */
     public boolean getCanSpawnHere()
     {
-        int var1 = MathHelper.floor_double(this.posX);
-        int var2 = MathHelper.floor_double(this.boundingBox.minY);
-        int var3 = MathHelper.floor_double(this.posZ);
-        return super.getCanSpawnHere() && this.getBlockPathWeight(var1, var2, var3) >= 0.0F;
+        int i = MathHelper.floor_double(this.posX);
+        int j = MathHelper.floor_double(this.boundingBox.minY);
+        int k = MathHelper.floor_double(this.posZ);
+        return super.getCanSpawnHere() && this.getBlockPathWeight(i, j, k) >= 0.0F;
     }
 
     /**
@@ -319,13 +319,13 @@ public abstract class EntityCreature extends EntityLiving
      */
     public float getSpeedModifier()
     {
-        float var1 = super.getSpeedModifier();
+        float f = super.getSpeedModifier();
 
         if (this.fleeingTick > 0 && !this.isAIEnabled())
         {
-            var1 *= 2.0F;
+            f *= 2.0F;
         }
 
-        return var1;
+        return f;
     }
 }

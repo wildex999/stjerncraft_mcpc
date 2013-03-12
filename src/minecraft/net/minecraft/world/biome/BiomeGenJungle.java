@@ -43,14 +43,14 @@ public class BiomeGenJungle extends BiomeGenBase
     public void decorate(World par1World, Random par2Random, int par3, int par4)
     {
         super.decorate(par1World, par2Random, par3, par4);
-        WorldGenVines var5 = new WorldGenVines();
+        WorldGenVines worldgenvines = new WorldGenVines();
 
-        for (int var6 = 0; var6 < 50; ++var6)
+        for (int k = 0; k < 50; ++k)
         {
-            int var7 = par3 + par2Random.nextInt(16) + 8;
-            byte var8 = 64;
-            int var9 = par4 + par2Random.nextInt(16) + 8;
-            var5.generate(par1World, par2Random, var7, var8, var9);
+            int l = par3 + par2Random.nextInt(16) + 8;
+            byte b0 = 64;
+            int i1 = par4 + par2Random.nextInt(16) + 8;
+            worldgenvines.generate(par1World, par2Random, l, b0, i1);
         }
     }
 }

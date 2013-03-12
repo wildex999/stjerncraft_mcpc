@@ -43,19 +43,19 @@ public class ContainerMerchant extends Container
         this.addSlotToContainer(new Slot(this.merchantInventory, 1, 62, 53));
         this.addSlotToContainer(new SlotMerchantResult(par1InventoryPlayer.player, par2IMerchant, this.merchantInventory, 2, 120, 53));
         this.player = par1InventoryPlayer; // CraftBukkit - save player
-        int var4;
+        int i;
 
-        for (var4 = 0; var4 < 3; ++var4)
+        for (i = 0; i < 3; ++i)
         {
-            for (int var5 = 0; var5 < 9; ++var5)
+            for (int j = 0; j < 9; ++j)
             {
-                this.addSlotToContainer(new Slot(par1InventoryPlayer, var5 + var4 * 9 + 9, 8 + var5 * 18, 84 + var4 * 18));
+                this.addSlotToContainer(new Slot(par1InventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
             }
         }
 
-        for (var4 = 0; var4 < 9; ++var4)
+        for (i = 0; i < 9; ++i)
         {
-            this.addSlotToContainer(new Slot(par1InventoryPlayer, var4, 8 + var4 * 18, 142));
+            this.addSlotToContainer(new Slot(par1InventoryPlayer, i, 8 + i * 18, 142));
         }
     }
 
@@ -104,60 +104,60 @@ public class ContainerMerchant extends Container
      */
     public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
     {
-        ItemStack var3 = null;
-        Slot var4 = (Slot)this.inventorySlots.get(par2);
+        ItemStack itemstack = null;
+        Slot slot = (Slot)this.inventorySlots.get(par2);
 
-        if (var4 != null && var4.getHasStack())
+        if (slot != null && slot.getHasStack())
         {
-            ItemStack var5 = var4.getStack();
-            var3 = var5.copy();
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
 
             if (par2 == 2)
             {
-                if (!this.mergeItemStack(var5, 3, 39, true))
+                if (!this.mergeItemStack(itemstack1, 3, 39, true))
                 {
                     return null;
                 }
 
-                var4.onSlotChange(var5, var3);
+                slot.onSlotChange(itemstack1, itemstack);
             }
             else if (par2 != 0 && par2 != 1)
             {
                 if (par2 >= 3 && par2 < 30)
                 {
-                    if (!this.mergeItemStack(var5, 30, 39, false))
+                    if (!this.mergeItemStack(itemstack1, 30, 39, false))
                     {
                         return null;
                     }
                 }
-                else if (par2 >= 30 && par2 < 39 && !this.mergeItemStack(var5, 3, 30, false))
+                else if (par2 >= 30 && par2 < 39 && !this.mergeItemStack(itemstack1, 3, 30, false))
                 {
                     return null;
                 }
             }
-            else if (!this.mergeItemStack(var5, 3, 39, false))
+            else if (!this.mergeItemStack(itemstack1, 3, 39, false))
             {
                 return null;
             }
 
-            if (var5.stackSize == 0)
+            if (itemstack1.stackSize == 0)
             {
-                var4.putStack((ItemStack)null);
+                slot.putStack((ItemStack)null);
             }
             else
             {
-                var4.onSlotChanged();
+                slot.onSlotChanged();
             }
 
-            if (var5.stackSize == var3.stackSize)
+            if (itemstack1.stackSize == itemstack.stackSize)
             {
                 return null;
             }
 
-            var4.onPickupFromSlot(par1EntityPlayer, var5);
+            slot.onPickupFromSlot(par1EntityPlayer, itemstack1);
         }
 
-        return var3;
+        return itemstack;
     }
 
     /**
@@ -171,18 +171,18 @@ public class ContainerMerchant extends Container
 
         if (!this.theWorld.isRemote)
         {
-            ItemStack var2 = this.merchantInventory.getStackInSlotOnClosing(0);
+            ItemStack itemstack = this.merchantInventory.getStackInSlotOnClosing(0);
 
-            if (var2 != null)
+            if (itemstack != null)
             {
-                par1EntityPlayer.dropPlayerItem(var2);
+                par1EntityPlayer.dropPlayerItem(itemstack);
             }
 
-            var2 = this.merchantInventory.getStackInSlotOnClosing(1);
+            itemstack = this.merchantInventory.getStackInSlotOnClosing(1);
 
-            if (var2 != null)
+            if (itemstack != null)
             {
-                par1EntityPlayer.dropPlayerItem(var2);
+                par1EntityPlayer.dropPlayerItem(itemstack);
             }
         }
     }

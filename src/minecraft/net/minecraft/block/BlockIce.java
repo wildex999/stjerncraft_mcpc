@@ -55,11 +55,11 @@ public class BlockIce extends BlockBreakable
 
         if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
         {
-            ItemStack var9 = this.createStackedBlock(par6);
+            ItemStack itemstack = this.createStackedBlock(par6);
 
-            if (var9 != null)
+            if (itemstack != null)
             {
-                this.dropBlockAsItem_do(par1World, par3, par4, par5, var9);
+                this.dropBlockAsItem_do(par1World, par3, par4, par5, itemstack);
             }
         }
         else
@@ -70,11 +70,11 @@ public class BlockIce extends BlockBreakable
                 return;
             }
 
-            int var7 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
-            this.dropBlockAsItem(par1World, par3, par4, par5, par6, var7);
-            Material var8 = par1World.getBlockMaterial(par3, par4 - 1, par5);
+            int i1 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
+            this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1);
+            Material material = par1World.getBlockMaterial(par3, par4 - 1, par5);
 
-            if (var8.blocksMovement() || var8.isLiquid())
+            if (material.blocksMovement() || material.isLiquid())
             {
                 par1World.setBlockWithNotify(par3, par4, par5, Block.waterMoving.blockID);
             }

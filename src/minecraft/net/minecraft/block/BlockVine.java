@@ -67,70 +67,70 @@ public class BlockVine extends Block implements IShearable
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        int var6 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
-        float var7 = 1.0F;
-        float var8 = 1.0F;
-        float var9 = 1.0F;
-        float var10 = 0.0F;
-        float var11 = 0.0F;
-        float var12 = 0.0F;
-        boolean var13 = var6 > 0;
+        int l = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
+        float f = 1.0F;
+        float f1 = 1.0F;
+        float f2 = 1.0F;
+        float f3 = 0.0F;
+        float f4 = 0.0F;
+        float f5 = 0.0F;
+        boolean flag = l > 0;
 
-        if ((var6 & 2) != 0)
+        if ((l & 2) != 0)
         {
-            var10 = Math.max(var10, 0.0625F);
-            var7 = 0.0F;
-            var8 = 0.0F;
-            var11 = 1.0F;
-            var9 = 0.0F;
-            var12 = 1.0F;
-            var13 = true;
+            f3 = Math.max(f3, 0.0625F);
+            f = 0.0F;
+            f1 = 0.0F;
+            f4 = 1.0F;
+            f2 = 0.0F;
+            f5 = 1.0F;
+            flag = true;
         }
 
-        if ((var6 & 8) != 0)
+        if ((l & 8) != 0)
         {
-            var7 = Math.min(var7, 0.9375F);
-            var10 = 1.0F;
-            var8 = 0.0F;
-            var11 = 1.0F;
-            var9 = 0.0F;
-            var12 = 1.0F;
-            var13 = true;
+            f = Math.min(f, 0.9375F);
+            f3 = 1.0F;
+            f1 = 0.0F;
+            f4 = 1.0F;
+            f2 = 0.0F;
+            f5 = 1.0F;
+            flag = true;
         }
 
-        if ((var6 & 4) != 0)
+        if ((l & 4) != 0)
         {
-            var12 = Math.max(var12, 0.0625F);
-            var9 = 0.0F;
-            var7 = 0.0F;
-            var10 = 1.0F;
-            var8 = 0.0F;
-            var11 = 1.0F;
-            var13 = true;
+            f5 = Math.max(f5, 0.0625F);
+            f2 = 0.0F;
+            f = 0.0F;
+            f3 = 1.0F;
+            f1 = 0.0F;
+            f4 = 1.0F;
+            flag = true;
         }
 
-        if ((var6 & 1) != 0)
+        if ((l & 1) != 0)
         {
-            var9 = Math.min(var9, 0.9375F);
-            var12 = 1.0F;
-            var7 = 0.0F;
-            var10 = 1.0F;
-            var8 = 0.0F;
-            var11 = 1.0F;
-            var13 = true;
+            f2 = Math.min(f2, 0.9375F);
+            f5 = 1.0F;
+            f = 0.0F;
+            f3 = 1.0F;
+            f1 = 0.0F;
+            f4 = 1.0F;
+            flag = true;
         }
 
-        if (!var13 && this.canBePlacedOn(par1IBlockAccess.getBlockId(par2, par3 + 1, par4)))
+        if (!flag && this.canBePlacedOn(par1IBlockAccess.getBlockId(par2, par3 + 1, par4)))
         {
-            var8 = Math.min(var8, 0.9375F);
-            var11 = 1.0F;
-            var7 = 0.0F;
-            var10 = 1.0F;
-            var9 = 0.0F;
-            var12 = 1.0F;
+            f1 = Math.min(f1, 0.9375F);
+            f4 = 1.0F;
+            f = 0.0F;
+            f3 = 1.0F;
+            f2 = 0.0F;
+            f5 = 1.0F;
         }
 
-        this.setBlockBounds(var7, var8, var9, var10, var11, var12);
+        this.setBlockBounds(f, f1, f2, f3, f4, f5);
     }
 
     /**
@@ -175,8 +175,8 @@ public class BlockVine extends Block implements IShearable
         }
         else
         {
-            Block var2 = Block.blocksList[par1];
-            return var2.renderAsNormalBlock() && var2.blockMaterial.blocksMovement();
+            Block block = Block.blocksList[par1];
+            return block.renderAsNormalBlock() && block.blockMaterial.blocksMovement();
         }
     }
 
@@ -185,31 +185,31 @@ public class BlockVine extends Block implements IShearable
      */
     private boolean canVineStay(World par1World, int par2, int par3, int par4)
     {
-        int var5 = par1World.getBlockMetadata(par2, par3, par4);
-        int var6 = var5;
+        int l = par1World.getBlockMetadata(par2, par3, par4);
+        int i1 = l;
 
-        if (var5 > 0)
+        if (l > 0)
         {
-            for (int var7 = 0; var7 <= 3; ++var7)
+            for (int j1 = 0; j1 <= 3; ++j1)
             {
-                int var8 = 1 << var7;
+                int k1 = 1 << j1;
 
-                if ((var5 & var8) != 0 && !this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var7], par3, par4 + Direction.offsetZ[var7])) && (par1World.getBlockId(par2, par3 + 1, par4) != this.blockID || (par1World.getBlockMetadata(par2, par3 + 1, par4) & var8) == 0))
+                if ((l & k1) != 0 && !this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[j1], par3, par4 + Direction.offsetZ[j1])) && (par1World.getBlockId(par2, par3 + 1, par4) != this.blockID || (par1World.getBlockMetadata(par2, par3 + 1, par4) & k1) == 0))
                 {
-                    var6 &= ~var8;
+                    i1 &= ~k1;
                 }
             }
         }
 
-        if (var6 == 0 && !this.canBePlacedOn(par1World.getBlockId(par2, par3 + 1, par4)))
+        if (i1 == 0 && !this.canBePlacedOn(par1World.getBlockId(par2, par3 + 1, par4)))
         {
             return false;
         }
         else
         {
-            if (var6 != var5)
+            if (i1 != l)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, i1);
             }
 
             return true;
@@ -263,27 +263,27 @@ public class BlockVine extends Block implements IShearable
     {
         if (!par1World.isRemote && par1World.rand.nextInt(4) == 0)
         {
-            byte var6 = 4;
-            int var7 = 5;
-            boolean var8 = false;
-            int var9;
-            int var10;
-            int var11;
+            byte b0 = 4;
+            int l = 5;
+            boolean flag = false;
+            int i1;
+            int j1;
+            int k1;
             label138:
 
-            for (var9 = par2 - var6; var9 <= par2 + var6; ++var9)
+            for (i1 = par2 - b0; i1 <= par2 + b0; ++i1)
             {
-                for (var10 = par4 - var6; var10 <= par4 + var6; ++var10)
+                for (j1 = par4 - b0; j1 <= par4 + b0; ++j1)
                 {
-                    for (var11 = par3 - 1; var11 <= par3 + 1; ++var11)
+                    for (k1 = par3 - 1; k1 <= par3 + 1; ++k1)
                     {
-                        if (par1World.getBlockId(var9, var11, var10) == this.blockID)
+                        if (par1World.getBlockId(i1, k1, j1) == this.blockID)
                         {
-                            --var7;
+                            --l;
 
-                            if (var7 <= 0)
+                            if (l <= 0)
                             {
-                                var8 = true;
+                                flag = true;
                                 break label138;
                             }
                         }
@@ -291,88 +291,88 @@ public class BlockVine extends Block implements IShearable
                 }
             }
 
-            var9 = par1World.getBlockMetadata(par2, par3, par4);
-            var10 = par1World.rand.nextInt(6);
-            var11 = Direction.vineGrowth[var10];
-            int var12;
-            int var13;
+            i1 = par1World.getBlockMetadata(par2, par3, par4);
+            j1 = par1World.rand.nextInt(6);
+            k1 = Direction.vineGrowth[j1];
+            int l1;
+            int i2;
 
-            if (var10 == 1 && par3 < 255 && par1World.isAirBlock(par2, par3 + 1, par4))
+            if (j1 == 1 && par3 < 255 && par1World.isAirBlock(par2, par3 + 1, par4))
             {
-                if (var8)
+                if (flag)
                 {
                     return;
                 }
 
-                var12 = par1World.rand.nextInt(16) & var9;
+                l1 = par1World.rand.nextInt(16) & i1;
 
-                if (var12 > 0)
+                if (l1 > 0)
                 {
-                    for (var13 = 0; var13 <= 3; ++var13)
+                    for (i2 = 0; i2 <= 3; ++i2)
                     {
-                        if (!this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var13], par3 + 1, par4 + Direction.offsetZ[var13])))
+                        if (!this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[i2], par3 + 1, par4 + Direction.offsetZ[i2])))
                         {
-                            var12 &= ~(1 << var13);
+                            l1 &= ~(1 << i2);
                         }
                     }
 
-                    if (var12 > 0)
+                    if (l1 > 0)
                     {
                         // CraftBukkit start - fire BlockSpreadEvent
                         org.bukkit.block.Block source = par1World.getWorld().getBlockAt(par2, par3, par4);
                         org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3 + 1, par4);
-                        CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, var13);
+                        CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, i2);
                         // CraftBukkit end
                     }
                 }
             }
             else
             {
-                int var14;
+                int j2;
 
-                if (var10 >= 2 && var10 <= 5 && (var9 & 1 << var11) == 0)
+                if (j1 >= 2 && j1 <= 5 && (i1 & 1 << k1) == 0)
                 {
-                    if (var8)
+                    if (flag)
                     {
                         return;
                     }
 
-                    var12 = par1World.getBlockId(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11]);
+                    l1 = par1World.getBlockId(par2 + Direction.offsetX[k1], par3, par4 + Direction.offsetZ[k1]);
 
-                    if (var12 != 0 && Block.blocksList[var12] != null)
+                    if (l1 != 0 && Block.blocksList[l1] != null)
                     {
-                        if (Block.blocksList[var12].blockMaterial.isOpaque() && Block.blocksList[var12].renderAsNormalBlock())
+                        if (Block.blocksList[l1].blockMaterial.isOpaque() && Block.blocksList[l1].renderAsNormalBlock())
                         {
-                            par1World.setBlockMetadataWithNotify(par2, par3, par4, var9 | 1 << var11);
+                            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 | 1 << k1);
                         }
                     }
                     else
                     {
-                        var13 = var11 + 1 & 3;
-                        var14 = var11 + 3 & 3;
+                        i2 = k1 + 1 & 3;
+                        j2 = k1 + 3 & 3;
                         // CraftBukkit start - fire BlockSpreadEvent
                         org.bukkit.block.Block source = par1World.getWorld().getBlockAt(par2, par3, par4);
-                        org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11]);
+                        org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2 + Direction.offsetX[k1], par3, par4 + Direction.offsetZ[k1]);
 
-                        if ((var9 & 1 << var13) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13])))
+                        if ((i1 & 1 << i2) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[k1] + Direction.offsetX[i2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[i2])))
                         {
-                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << var13);
+                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << i2);
                         }
-                        else if ((var9 & 1 << var14) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14])))
+                        else if ((i1 & 1 << j2) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[k1] + Direction.offsetX[j2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[j2])))
                         {
-                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << var14);
+                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << j2);
                         }
-                        else if ((var9 & 1 << var13) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var13])))
+                        else if ((i1 & 1 << i2) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[k1] + Direction.offsetX[i2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[i2]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[i2], par3, par4 + Direction.offsetZ[i2])))
                         {
-                            block = par1World.getWorld().getBlockAt(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13]);
-                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << (var11 + 2 & 3));
+                            block = par1World.getWorld().getBlockAt(par2 + Direction.offsetX[k1] + Direction.offsetX[i2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[i2]);
+                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << (k1 + 2 & 3));
                         }
-                        else if ((var9 & 1 << var14) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var14])))
+                        else if ((i1 & 1 << j2) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[k1] + Direction.offsetX[j2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[j2]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[j2], par3, par4 + Direction.offsetZ[j2])))
                         {
-                            block = par1World.getWorld().getBlockAt(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14]);
-                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << (var11 + 2 & 3));
+                            block = par1World.getWorld().getBlockAt(par2 + Direction.offsetX[k1] + Direction.offsetX[j2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[j2]);
+                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << (k1 + 2 & 3));
                         }
-                        else if (this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11], par3 + 1, par4 + Direction.offsetZ[var11])))
+                        else if (this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[k1], par3 + 1, par4 + Direction.offsetZ[k1])))
                         {
                             CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 0);
                         }
@@ -382,29 +382,29 @@ public class BlockVine extends Block implements IShearable
                 }
                 else if (par3 > 1)
                 {
-                    var12 = par1World.getBlockId(par2, par3 - 1, par4);
+                    l1 = par1World.getBlockId(par2, par3 - 1, par4);
 
-                    if (var12 == 0)
+                    if (l1 == 0)
                     {
-                        var13 = par1World.rand.nextInt(16) & var9;
+                        i2 = par1World.rand.nextInt(16) & i1;
 
-                        if (var13 > 0)
+                        if (i2 > 0)
                         {
                             // CraftBukkit start - fire BlockSpreadEvent
                             org.bukkit.block.Block source = par1World.getWorld().getBlockAt(par2, par3, par4);
                             org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3 - 1, par4);
-                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, var13);
+                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, i2);
                             // CraftBukkit end
                         }
                     }
-                    else if (var12 == this.blockID)
+                    else if (l1 == this.blockID)
                     {
-                        var13 = par1World.rand.nextInt(16) & var9;
-                        var14 = par1World.getBlockMetadata(par2, par3 - 1, par4);
+                        i2 = par1World.rand.nextInt(16) & i1;
+                        j2 = par1World.getBlockMetadata(par2, par3 - 1, par4);
 
-                        if (var14 != (var14 | var13))
+                        if (j2 != (j2 | i2))
                         {
-                            par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, var14 | var13);
+                            par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, j2 | i2);
                         }
                     }
                 }
@@ -417,24 +417,24 @@ public class BlockVine extends Block implements IShearable
      */
     public int onBlockPlaced(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
     {
-        byte var10 = 0;
+        byte b0 = 0;
 
         switch (par5)
         {
             case 2:
-                var10 = 1;
+                b0 = 1;
                 break;
             case 3:
-                var10 = 4;
+                b0 = 4;
                 break;
             case 4:
-                var10 = 8;
+                b0 = 8;
                 break;
             case 5:
-                var10 = 2;
+                b0 = 2;
         }
 
-        return var10 != 0 ? var10 : par9;
+        return b0 != 0 ? b0 : par9;
     }
 
     /**

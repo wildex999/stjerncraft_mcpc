@@ -47,19 +47,19 @@ public class BlockPistonExtension extends Block
             return;    // CraftBukkit - fix a piston AIOOBE issue
         }
 
-        int var7 = Facing.faceToSide[getDirectionMeta(par6)];
-        par2 += Facing.offsetsXForSide[var7];
-        par3 += Facing.offsetsYForSide[var7];
-        par4 += Facing.offsetsZForSide[var7];
-        int var8 = par1World.getBlockId(par2, par3, par4);
+        int j1 = Facing.faceToSide[getDirectionMeta(par6)];
+        par2 += Facing.offsetsXForSide[j1];
+        par3 += Facing.offsetsYForSide[j1];
+        par4 += Facing.offsetsZForSide[j1];
+        int k1 = par1World.getBlockId(par2, par3, par4);
 
-        if (var8 == Block.pistonBase.blockID || var8 == Block.pistonStickyBase.blockID)
+        if (k1 == Block.pistonBase.blockID || k1 == Block.pistonStickyBase.blockID)
         {
             par6 = par1World.getBlockMetadata(par2, par3, par4);
 
             if (BlockPistonBase.isExtended(par6))
             {
-                Block.blocksList[var8].dropBlockAsItem(par1World, par2, par3, par4, par6, 0);
+                Block.blocksList[k1].dropBlockAsItem(par1World, par2, par3, par4, par6, 0);
                 par1World.setBlockWithNotify(par2, par3, par4, 0);
             }
         }
@@ -70,8 +70,8 @@ public class BlockPistonExtension extends Block
      */
     public int getBlockTextureFromSideAndMetadata(int par1, int par2)
     {
-        int var3 = getDirectionMeta(par2);
-        return par1 == var3 ? (this.headTexture >= 0 ? this.headTexture : ((par2 & 8) != 0 ? this.blockIndexInTexture - 1 : this.blockIndexInTexture)) : (var3 < 6 && par1 == Facing.faceToSide[var3] ? 107 : 108);
+        int k = getDirectionMeta(par2);
+        return par1 == k ? (this.headTexture >= 0 ? this.headTexture : ((par2 & 8) != 0 ? this.blockIndexInTexture - 1 : this.blockIndexInTexture)) : (k < 6 && par1 == Facing.faceToSide[k] ? 107 : 108);
     }
 
     /**
@@ -128,9 +128,9 @@ public class BlockPistonExtension extends Block
      */
     public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
     {
-        int var8 = par1World.getBlockMetadata(par2, par3, par4);
+        int l = par1World.getBlockMetadata(par2, par3, par4);
 
-        switch (getDirectionMeta(var8))
+        switch (getDirectionMeta(l))
         {
             case 0:
                 this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.25F, 1.0F);
@@ -177,9 +177,9 @@ public class BlockPistonExtension extends Block
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        int var5 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
+        int l = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 
-        switch (getDirectionMeta(var5))
+        switch (getDirectionMeta(l))
         {
             case 0:
                 this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.25F, 1.0F);
@@ -207,22 +207,22 @@ public class BlockPistonExtension extends Block
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        int var6 = getDirectionMeta(par1World.getBlockMetadata(par2, par3, par4));
+        int i1 = getDirectionMeta(par1World.getBlockMetadata(par2, par3, par4));
 
-        if ((var6 & 7) >= Facing.faceToSide.length)
+        if ((i1 & 7) >= Facing.faceToSide.length)
         {
             return;    // CraftBukkit - fix a piston AIOOBE issue
         }
 
-        int var7 = par1World.getBlockId(par2 - Facing.offsetsXForSide[var6], par3 - Facing.offsetsYForSide[var6], par4 - Facing.offsetsZForSide[var6]);
+        int j1 = par1World.getBlockId(par2 - Facing.offsetsXForSide[i1], par3 - Facing.offsetsYForSide[i1], par4 - Facing.offsetsZForSide[i1]);
 
-        if (var7 != Block.pistonBase.blockID && var7 != Block.pistonStickyBase.blockID)
+        if (j1 != Block.pistonBase.blockID && j1 != Block.pistonStickyBase.blockID)
         {
             par1World.setBlockWithNotify(par2, par3, par4, 0);
         }
         else
         {
-            Block.blocksList[var7].onNeighborBlockChange(par1World, par2 - Facing.offsetsXForSide[var6], par3 - Facing.offsetsYForSide[var6], par4 - Facing.offsetsZForSide[var6], par5);
+            Block.blocksList[j1].onNeighborBlockChange(par1World, par2 - Facing.offsetsXForSide[i1], par3 - Facing.offsetsYForSide[i1], par4 - Facing.offsetsZForSide[i1], par5);
         }
     }
 

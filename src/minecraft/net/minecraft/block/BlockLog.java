@@ -50,22 +50,22 @@ public class BlockLog extends Block
      */
     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
     {
-        byte var7 = 4;
-        int var8 = var7 + 1;
+        byte b0 = 4;
+        int j1 = b0 + 1;
 
-        if (par1World.checkChunksExist(par2 - var8, par3 - var8, par4 - var8, par2 + var8, par3 + var8, par4 + var8))
+        if (par1World.checkChunksExist(par2 - j1, par3 - j1, par4 - j1, par2 + j1, par3 + j1, par4 + j1))
         {
-            for (int var9 = -var7; var9 <= var7; ++var9)
+            for (int k1 = -b0; k1 <= b0; ++k1)
             {
-                for (int var10 = -var7; var10 <= var7; ++var10)
+                for (int l1 = -b0; l1 <= b0; ++l1)
                 {
-                    for (int var11 = -var7; var11 <= var7; ++var11)
+                    for (int i2 = -b0; i2 <= b0; ++i2)
                     {
-                        int var12 = par1World.getBlockId(par2 + var9, par3 + var10, par4 + var11);
+                        int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
 
-                        if (Block.blocksList[var12] != null)
+                        if (Block.blocksList[j2] != null)
                         {
-                            Block.blocksList[var12].beginLeavesDecay(par1World, par2 + var9, par3 + var10, par4 + var11);
+                            Block.blocksList[j2].beginLeavesDecay(par1World, par2 + k1, par3 + l1, par4 + i2);
                     }
                 }
             }
@@ -78,25 +78,25 @@ public class BlockLog extends Block
      */
     public int onBlockPlaced(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
     {
-        int var10 = par9 & 3;
-        byte var11 = 0;
+        int j1 = par9 & 3;
+        byte b0 = 0;
 
         switch (par5)
         {
             case 0:
             case 1:
-                var11 = 0;
+                b0 = 0;
                 break;
             case 2:
             case 3:
-                var11 = 8;
+                b0 = 8;
                 break;
             case 4:
             case 5:
-                var11 = 4;
+                b0 = 4;
         }
 
-        return var10 | var11;
+        return j1 | b0;
     }
 
     /**
@@ -104,9 +104,9 @@ public class BlockLog extends Block
      */
     public int getBlockTextureFromSideAndMetadata(int par1, int par2)
     {
-        int var3 = par2 & 12;
-        int var4 = par2 & 3;
-        return var3 == 0 && (par1 == 1 || par1 == 0) ? 21 : (var3 == 4 && (par1 == 5 || par1 == 4) ? 21 : (var3 == 8 && (par1 == 2 || par1 == 3) ? 21 : (var4 == 1 ? 116 : (var4 == 2 ? 117 : (var4 == 3 ? 153 : 20)))));
+        int k = par2 & 12;
+        int l = par2 & 3;
+        return k == 0 && (par1 == 1 || par1 == 0) ? 21 : (k == 4 && (par1 == 5 || par1 == 4) ? 21 : (k == 8 && (par1 == 2 || par1 == 3) ? 21 : (l == 1 ? 116 : (l == 2 ? 117 : (l == 3 ? 153 : 20)))));
     }
 
     /**

@@ -37,29 +37,29 @@ public class ItemDoor extends Item
         else
         {
             ++par5;
-            Block var11;
+            Block block;
 
             if (this.doorMaterial == Material.wood)
             {
-                var11 = Block.doorWood;
+                block = Block.doorWood;
             }
             else
             {
-                var11 = Block.doorSteel;
+                block = Block.doorSteel;
             }
 
             if (par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack) && par2EntityPlayer.canPlayerEdit(par4, par5 + 1, par6, par7, par1ItemStack))
             {
-                if (!var11.canPlaceBlockAt(par3World, par4, par5, par6))
+                if (!block.canPlaceBlockAt(par3World, par4, par5, par6))
                 {
                     return false;
                 }
                 else
                 {
-                    int var12 = MathHelper.floor_double((double)((par2EntityPlayer.rotationYaw + 180.0F) * 4.0F / 360.0F) - 0.5D) & 3;
+                    int i1 = MathHelper.floor_double((double)((par2EntityPlayer.rotationYaw + 180.0F) * 4.0F / 360.0F) - 0.5D) & 3;
 
                     // CraftBukkit start
-                    if (!place(par3World, par4, par5, par6, var12, var11, par2EntityPlayer, clickedX, clickedY, clickedZ))
+                    if (!place(par3World, par4, par5, par6, i1, block, par2EntityPlayer, clickedX, clickedY, clickedZ))
                     {
                         return false;
                     }

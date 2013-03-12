@@ -73,9 +73,9 @@ public class InventoryCraftResult implements IInventory
     {
         if (this.stackResult[0] != null)
         {
-            ItemStack var3 = this.stackResult[0];
+            ItemStack itemstack = this.stackResult[0];
             this.stackResult[0] = null;
-            return var3;
+            return itemstack;
         }
         else
         {
@@ -91,9 +91,9 @@ public class InventoryCraftResult implements IInventory
     {
         if (this.stackResult[0] != null)
         {
-            ItemStack var2 = this.stackResult[0];
+            ItemStack itemstack = this.stackResult[0];
             this.stackResult[0] = null;
-            return var2;
+            return itemstack;
         }
         else
         {

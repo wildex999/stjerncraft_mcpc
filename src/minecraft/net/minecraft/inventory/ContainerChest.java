@@ -48,33 +48,33 @@ public class ContainerChest extends Container
         this.lowerChestInventory = par2IInventory;
         this.numRows = par2IInventory.getSizeInventory() / 9;
         par2IInventory.openChest();
-        int var3 = (this.numRows - 4) * 18;
+        int i = (this.numRows - 4) * 18;
         // CraftBukkit start - save player
         // TODO: Should we check to make sure it really is an InventoryPlayer?
         this.player = (InventoryPlayer)par1IInventory;
         // CraftBukkit end
-        int var4;
-        int var5;
+        int j;
+        int k;
 
-        for (var4 = 0; var4 < this.numRows; ++var4)
+        for (j = 0; j < this.numRows; ++j)
         {
-            for (var5 = 0; var5 < 9; ++var5)
+            for (k = 0; k < 9; ++k)
             {
-                this.addSlotToContainer(new Slot(par2IInventory, var5 + var4 * 9, 8 + var5 * 18, 18 + var4 * 18));
+                this.addSlotToContainer(new Slot(par2IInventory, k + j * 9, 8 + k * 18, 18 + j * 18));
             }
         }
 
-        for (var4 = 0; var4 < 3; ++var4)
+        for (j = 0; j < 3; ++j)
         {
-            for (var5 = 0; var5 < 9; ++var5)
+            for (k = 0; k < 9; ++k)
             {
-                this.addSlotToContainer(new Slot(par1IInventory, var5 + var4 * 9 + 9, 8 + var5 * 18, 103 + var4 * 18 + var3));
+                this.addSlotToContainer(new Slot(par1IInventory, k + j * 9 + 9, 8 + k * 18, 103 + j * 18 + i));
             }
         }
 
-        for (var4 = 0; var4 < 9; ++var4)
+        for (j = 0; j < 9; ++j)
         {
-            this.addSlotToContainer(new Slot(par1IInventory, var4, 8 + var4 * 18, 161 + var3));
+            this.addSlotToContainer(new Slot(par1IInventory, j, 8 + j * 18, 161 + i));
         }
     }
 
@@ -93,37 +93,37 @@ public class ContainerChest extends Container
      */
     public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
     {
-        ItemStack var3 = null;
-        Slot var4 = (Slot)this.inventorySlots.get(par2);
+        ItemStack itemstack = null;
+        Slot slot = (Slot)this.inventorySlots.get(par2);
 
-        if (var4 != null && var4.getHasStack())
+        if (slot != null && slot.getHasStack())
         {
-            ItemStack var5 = var4.getStack();
-            var3 = var5.copy();
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
 
             if (par2 < this.numRows * 9)
             {
-                if (!this.mergeItemStack(var5, this.numRows * 9, this.inventorySlots.size(), true))
+                if (!this.mergeItemStack(itemstack1, this.numRows * 9, this.inventorySlots.size(), true))
                 {
                     return null;
                 }
             }
-            else if (!this.mergeItemStack(var5, 0, this.numRows * 9, false))
+            else if (!this.mergeItemStack(itemstack1, 0, this.numRows * 9, false))
             {
                 return null;
             }
 
-            if (var5.stackSize == 0)
+            if (itemstack1.stackSize == 0)
             {
-                var4.putStack((ItemStack)null);
+                slot.putStack((ItemStack)null);
             }
             else
             {
-                var4.onSlotChanged();
+                slot.onSlotChanged();
             }
         }
 
-        return var3;
+        return itemstack;
     }
 
     /**

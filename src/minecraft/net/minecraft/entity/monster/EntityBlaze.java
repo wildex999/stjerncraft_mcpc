@@ -113,7 +113,7 @@ public class EntityBlaze extends EntityMob
             this.motionY *= 0.6D;
         }
 
-        for (int var1 = 0; var1 < 2; ++var1)
+        for (int i = 0; i < 2; ++i)
         {
             this.worldObj.spawnParticle("largesmoke", this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width, this.posY + this.rand.nextDouble() * (double)this.height, this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, 0.0D, 0.0D, 0.0D);
         }
@@ -133,9 +133,9 @@ public class EntityBlaze extends EntityMob
         }
         else if (par2 < 30.0F)
         {
-            double var3 = par1Entity.posX - this.posX;
-            double var5 = par1Entity.boundingBox.minY + (double)(par1Entity.height / 2.0F) - (this.posY + (double)(this.height / 2.0F));
-            double var7 = par1Entity.posZ - this.posZ;
+            double d0 = par1Entity.posX - this.posX;
+            double d1 = par1Entity.boundingBox.minY + (double)(par1Entity.height / 2.0F) - (this.posY + (double)(this.height / 2.0F));
+            double d2 = par1Entity.posZ - this.posZ;
 
             if (this.attackTime == 0)
             {
@@ -159,19 +159,19 @@ public class EntityBlaze extends EntityMob
 
                 if (this.field_70846_g > 1)
                 {
-                    float var9 = MathHelper.sqrt_float(par2) * 0.5F;
+                    float f1 = MathHelper.sqrt_float(par2) * 0.5F;
                     this.worldObj.playAuxSFXAtEntity((EntityPlayer)null, 1009, (int)this.posX, (int)this.posY, (int)this.posZ, 0);
 
-                    for (int var10 = 0; var10 < 1; ++var10)
+                    for (int i = 0; i < 1; ++i)
                     {
-                        EntitySmallFireball var11 = new EntitySmallFireball(this.worldObj, this, var3 + this.rand.nextGaussian() * (double)var9, var5, var7 + this.rand.nextGaussian() * (double)var9);
-                        var11.posY = this.posY + (double)(this.height / 2.0F) + 0.5D;
-                        this.worldObj.spawnEntityInWorld(var11);
+                        EntitySmallFireball entitysmallfireball = new EntitySmallFireball(this.worldObj, this, d0 + this.rand.nextGaussian() * (double)f1, d1, d2 + this.rand.nextGaussian() * (double)f1);
+                        entitysmallfireball.posY = this.posY + (double)(this.height / 2.0F) + 0.5D;
+                        this.worldObj.spawnEntityInWorld(entitysmallfireball);
                     }
                 }
             }
 
-            this.rotationYaw = (float)(Math.atan2(var7, var3) * 180.0D / Math.PI) - 90.0F;
+            this.rotationYaw = (float)(Math.atan2(d2, d0) * 180.0D / Math.PI) - 90.0F;
             this.hasAttacked = true;
         }
     }
@@ -226,18 +226,18 @@ public class EntityBlaze extends EntityMob
 
     public void func_70844_e(boolean par1)
     {
-        byte var2 = this.dataWatcher.getWatchableObjectByte(16);
+        byte b0 = this.dataWatcher.getWatchableObjectByte(16);
 
         if (par1)
         {
-            var2 = (byte)(var2 | 1);
+            b0 = (byte)(b0 | 1);
         }
         else
         {
-            var2 &= -2;
+            b0 &= -2;
         }
 
-        this.dataWatcher.updateObject(16, Byte.valueOf(var2));
+        this.dataWatcher.updateObject(16, Byte.valueOf(b0));
     }
 
     /**

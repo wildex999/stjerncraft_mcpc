@@ -72,24 +72,24 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
      */
     public void notifyAdmins(ICommandSender par1ICommandSender, int par2, String par3Str, Object ... par4ArrayOfObj)
     {
-        boolean var5 = true;
+        boolean flag = true;
 
         if (par1ICommandSender instanceof TileEntityCommandBlock && !MinecraftServer.getServer().worldServers[0].getGameRules().getGameRuleBooleanValue("commandBlockOutput"))
         {
-            var5 = false;
+            flag = false;
         }
 
-        if (var5)
+        if (flag)
         {
-            Iterator var6 = MinecraftServer.getServer().getConfigurationManager().playerEntityList.iterator();
+            Iterator iterator = MinecraftServer.getServer().getConfigurationManager().playerEntityList.iterator();
 
-            while (var6.hasNext())
+            while (iterator.hasNext())
             {
-                EntityPlayerMP var7 = (EntityPlayerMP)var6.next();
+                EntityPlayerMP entityplayermp = (EntityPlayerMP)iterator.next();
 
-                if (var7 != par1ICommandSender && MinecraftServer.getServer().getConfigurationManager().areCommandsAllowed(var7.username))
+                if (entityplayermp != par1ICommandSender && MinecraftServer.getServer().getConfigurationManager().areCommandsAllowed(entityplayermp.username))
                 {
-                    var7.sendChatToPlayer("\u00a77\u00a7o[" + par1ICommandSender.getCommandSenderName() + ": " + var7.translateString(par3Str, par4ArrayOfObj) + "]");
+                    entityplayermp.sendChatToPlayer("\u00a77\u00a7o[" + par1ICommandSender.getCommandSenderName() + ": " + entityplayermp.translateString(par3Str, par4ArrayOfObj) + "]");
                 }
             }
         }

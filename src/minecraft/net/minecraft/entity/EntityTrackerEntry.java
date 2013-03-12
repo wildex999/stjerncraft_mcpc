@@ -143,95 +143,95 @@ public class EntityTrackerEntry
 
         if (this.myEntity instanceof EntityItemFrame && this.ticks % 10 == 0)
         {
-            EntityItemFrame var23 = (EntityItemFrame)this.myEntity;
-            ItemStack var24 = var23.getDisplayedItem();
+            EntityItemFrame entityitemframe = (EntityItemFrame)this.myEntity;
+            ItemStack itemstack = entityitemframe.getDisplayedItem();
 
-            if (var24 != null && var24.getItem() instanceof ItemMap)
+            if (itemstack != null && itemstack.getItem() instanceof ItemMap)
             {
-                MapData var26 = Item.map.getMapData(var24, this.myEntity.worldObj);
-                Iterator var29 = par1List.iterator();
+                MapData mapdata = Item.map.getMapData(itemstack, this.myEntity.worldObj);
+                Iterator iterator = par1List.iterator();
 
-                while (var29.hasNext())
+                while (iterator.hasNext())
                 {
-                    EntityPlayer var30 = (EntityPlayer)var29.next();
-                    EntityPlayerMP var31 = (EntityPlayerMP)var30;
+                    EntityPlayer entityplayer = (EntityPlayer)iterator.next();
+                    EntityPlayerMP entityplayermp = (EntityPlayerMP)entityplayer;
 
-                    if (var31.sentFrames.contains(var23.persistentID))
+                    if (entityplayermp.sentFrames.contains(entityitemframe.persistentID))
                     {
                         continue;    // Spigot
                     }
 
-                    var26.updateVisiblePlayers(var31, var24);
+                    mapdata.updateVisiblePlayers(entityplayermp, itemstack);
 
-                    if (var31.playerNetServerHandler.packetSize() <= 5)
+                    if (entityplayermp.playerNetServerHandler.packetSize() <= 5)
                     {
-                        Packet var32 = Item.map.createMapDataPacket(var24, this.myEntity.worldObj, var31);
+                        Packet packet = Item.map.createMapDataPacket(itemstack, this.myEntity.worldObj, entityplayermp);
 
-                        if (var32 != null)
+                        if (packet != null)
                         {
-                            var31.playerNetServerHandler.sendPacketToPlayer(var32);
-                            var31.sentFrames.add(var23.persistentID); // Spigot
+                            entityplayermp.playerNetServerHandler.sendPacketToPlayer(packet);
+                            entityplayermp.sentFrames.add(entityitemframe.persistentID); // Spigot
                         }
                     }
                 }
             }
 
-            DataWatcher var28 = this.myEntity.getDataWatcher();
+            DataWatcher datawatcher = this.myEntity.getDataWatcher();
 
-            if (var28.hasChanges())
+            if (datawatcher.hasChanges())
             {
-                this.sendPacketToAllAssociatedPlayers(new Packet40EntityMetadata(this.myEntity.entityId, var28, false));
+                this.sendPacketToAllAssociatedPlayers(new Packet40EntityMetadata(this.myEntity.entityId, datawatcher, false));
             }
         }
         else if (this.ticks++ % this.updateFrequency == 0 || this.myEntity.isAirBorne)
         {
-            int var2;
-            int var3;
+            int i;
+            int j;
 
             if (this.myEntity.ridingEntity == null)
             {
                 ++this.ticksSinceLastForcedTeleport;
-                var2 = this.myEntity.myEntitySize.multiplyBy32AndRound(this.myEntity.posX);
-                var3 = MathHelper.floor_double(this.myEntity.posY * 32.0D);
-                int var4 = this.myEntity.myEntitySize.multiplyBy32AndRound(this.myEntity.posZ);
-                int var5 = MathHelper.floor_float(this.myEntity.rotationYaw * 256.0F / 360.0F);
-                int var6 = MathHelper.floor_float(this.myEntity.rotationPitch * 256.0F / 360.0F);
-                int var7 = var2 - this.lastScaledXPosition;
-                int var8 = var3 - this.lastScaledYPosition;
-                int var9 = var4 - this.lastScaledZPosition;
-                Object var10 = null;
-                boolean var11 = Math.abs(var7) >= 4 || Math.abs(var8) >= 4 || Math.abs(var9) >= 4 || this.ticks % 60 == 0;
-                boolean var12 = Math.abs(var5 - this.lastYaw) >= 4 || Math.abs(var6 - this.lastPitch) >= 4;
+                i = this.myEntity.myEntitySize.multiplyBy32AndRound(this.myEntity.posX);
+                j = MathHelper.floor_double(this.myEntity.posY * 32.0D);
+                int k = this.myEntity.myEntitySize.multiplyBy32AndRound(this.myEntity.posZ);
+                int l = MathHelper.floor_float(this.myEntity.rotationYaw * 256.0F / 360.0F);
+                int i1 = MathHelper.floor_float(this.myEntity.rotationPitch * 256.0F / 360.0F);
+                int j1 = i - this.lastScaledXPosition;
+                int k1 = j - this.lastScaledYPosition;
+                int l1 = k - this.lastScaledZPosition;
+                Object object = null;
+                boolean flag = Math.abs(j1) >= 4 || Math.abs(k1) >= 4 || Math.abs(l1) >= 4 || this.ticks % 60 == 0;
+                boolean flag1 = Math.abs(l - this.lastYaw) >= 4 || Math.abs(i1 - this.lastPitch) >= 4;
 
                 // CraftBukkit start - code moved from below
-                if (var11)
+                if (flag)
                 {
-                    this.lastScaledXPosition = var2;
-                    this.lastScaledYPosition = var3;
-                    this.lastScaledZPosition = var4;
+                    this.lastScaledXPosition = i;
+                    this.lastScaledYPosition = j;
+                    this.lastScaledZPosition = k;
                 }
 
-                if (var12)
+                if (flag1)
                 {
-                    this.lastYaw = var5;
-                    this.lastPitch = var6;
+                    this.lastYaw = l;
+                    this.lastPitch = i1;
                 }
 
                 // CraftBukkit end
 
-                if (var7 >= -128 && var7 < 128 && var8 >= -128 && var8 < 128 && var9 >= -128 && var9 < 128 && this.ticksSinceLastForcedTeleport <= 400 && !this.ridingEntity)
+                if (j1 >= -128 && j1 < 128 && k1 >= -128 && k1 < 128 && l1 >= -128 && l1 < 128 && this.ticksSinceLastForcedTeleport <= 400 && !this.ridingEntity)
                 {
-                    if (var11 && var12)
+                    if (flag && flag1)
                     {
-                        var10 = new Packet33RelEntityMoveLook(this.myEntity.entityId, (byte)var7, (byte)var8, (byte)var9, (byte)var5, (byte)var6);
+                        object = new Packet33RelEntityMoveLook(this.myEntity.entityId, (byte)j1, (byte)k1, (byte)l1, (byte)l, (byte)i1);
                     }
-                    else if (var11)
+                    else if (flag)
                     {
-                        var10 = new Packet31RelEntityMove(this.myEntity.entityId, (byte)var7, (byte)var8, (byte)var9);
+                        object = new Packet31RelEntityMove(this.myEntity.entityId, (byte)j1, (byte)k1, (byte)l1);
                     }
-                    else if (var12)
+                    else if (flag1)
                     {
-                        var10 = new Packet32EntityLook(this.myEntity.entityId, (byte)var5, (byte)var6);
+                        object = new Packet32EntityLook(this.myEntity.entityId, (byte)l, (byte)i1);
                     }
                 }
                 else
@@ -245,18 +245,18 @@ public class EntityTrackerEntry
                     }
 
                     // CraftBukkit end
-                    var10 = new Packet34EntityTeleport(this.myEntity.entityId, var2, var3, var4, (byte)var5, (byte)var6);
+                    object = new Packet34EntityTeleport(this.myEntity.entityId, i, j, k, (byte)l, (byte)i1);
                 }
 
                 if (this.sendVelocityUpdates)
                 {
-                    double var13 = this.myEntity.motionX - this.motionX;
-                    double var15 = this.myEntity.motionY - this.motionY;
-                    double var17 = this.myEntity.motionZ - this.motionZ;
-                    double var19 = 0.02D;
-                    double var21 = var13 * var13 + var15 * var15 + var17 * var17;
+                    double d0 = this.myEntity.motionX - this.motionX;
+                    double d1 = this.myEntity.motionY - this.motionY;
+                    double d2 = this.myEntity.motionZ - this.motionZ;
+                    double d3 = 0.02D;
+                    double d4 = d0 * d0 + d1 * d1 + d2 * d2;
 
-                    if (var21 > var19 * var19 || var21 > 0.0D && this.myEntity.motionX == 0.0D && this.myEntity.motionY == 0.0D && this.myEntity.motionZ == 0.0D)
+                    if (d4 > d3 * d3 || d4 > 0.0D && this.myEntity.motionX == 0.0D && this.myEntity.motionY == 0.0D && this.myEntity.motionZ == 0.0D)
                     {
                         this.motionX = this.myEntity.motionX;
                         this.motionY = this.myEntity.motionY;
@@ -265,16 +265,16 @@ public class EntityTrackerEntry
                     }
                 }
 
-                if (var10 != null)
+                if (object != null)
                 {
-                    this.sendPacketToAllTrackingPlayers((Packet)var10);
+                    this.sendPacketToAllTrackingPlayers((Packet)object);
                 }
 
-                DataWatcher var33 = this.myEntity.getDataWatcher();
+                DataWatcher datawatcher1 = this.myEntity.getDataWatcher();
 
-                if (var33.hasChanges())
+                if (datawatcher1.hasChanges())
                 {
-                    this.sendPacketToAllAssociatedPlayers(new Packet40EntityMetadata(this.myEntity.entityId, var33, false));
+                    this.sendPacketToAllAssociatedPlayers(new Packet40EntityMetadata(this.myEntity.entityId, datawatcher1, false));
                 }
 
                 /* CraftBukkit start - code moved up
@@ -293,36 +293,36 @@ public class EntityTrackerEntry
             }
             else
             {
-                var2 = MathHelper.floor_float(this.myEntity.rotationYaw * 256.0F / 360.0F);
-                var3 = MathHelper.floor_float(this.myEntity.rotationPitch * 256.0F / 360.0F);
-                boolean var25 = Math.abs(var2 - this.lastYaw) >= 4 || Math.abs(var3 - this.lastPitch) >= 4;
+                i = MathHelper.floor_float(this.myEntity.rotationYaw * 256.0F / 360.0F);
+                j = MathHelper.floor_float(this.myEntity.rotationPitch * 256.0F / 360.0F);
+                boolean flag2 = Math.abs(i - this.lastYaw) >= 4 || Math.abs(j - this.lastPitch) >= 4;
 
-                if (var25)
+                if (flag2)
                 {
-                    this.sendPacketToAllTrackingPlayers(new Packet32EntityLook(this.myEntity.entityId, (byte)var2, (byte)var3));
-                    this.lastYaw = var2;
-                    this.lastPitch = var3;
+                    this.sendPacketToAllTrackingPlayers(new Packet32EntityLook(this.myEntity.entityId, (byte)i, (byte)j));
+                    this.lastYaw = i;
+                    this.lastPitch = j;
                 }
 
                 this.lastScaledXPosition = this.myEntity.myEntitySize.multiplyBy32AndRound(this.myEntity.posX);
                 this.lastScaledYPosition = MathHelper.floor_double(this.myEntity.posY * 32.0D);
                 this.lastScaledZPosition = this.myEntity.myEntitySize.multiplyBy32AndRound(this.myEntity.posZ);
-                DataWatcher var27 = this.myEntity.getDataWatcher();
+                DataWatcher datawatcher2 = this.myEntity.getDataWatcher();
 
-                if (var27.hasChanges())
+                if (datawatcher2.hasChanges())
                 {
-                    this.sendPacketToAllAssociatedPlayers(new Packet40EntityMetadata(this.myEntity.entityId, var27, false));
+                    this.sendPacketToAllAssociatedPlayers(new Packet40EntityMetadata(this.myEntity.entityId, datawatcher2, false));
                 }
 
                 this.ridingEntity = true;
             }
 
-            var2 = MathHelper.floor_float(this.myEntity.setRotationYawHead() * 256.0F / 360.0F);
+            i = MathHelper.floor_float(this.myEntity.setRotationYawHead() * 256.0F / 360.0F);
 
-            if (Math.abs(var2 - this.lastHeadMotion) >= 4)
+            if (Math.abs(i - this.lastHeadMotion) >= 4)
             {
-                this.sendPacketToAllTrackingPlayers(new Packet35EntityHeadRotation(this.myEntity.entityId, (byte)var2));
-                this.lastHeadMotion = var2;
+                this.sendPacketToAllTrackingPlayers(new Packet35EntityHeadRotation(this.myEntity.entityId, (byte)i));
+                this.lastHeadMotion = i;
             }
 
             this.myEntity.isAirBorne = false;
@@ -365,12 +365,12 @@ public class EntityTrackerEntry
      */
     public void sendPacketToAllTrackingPlayers(Packet par1Packet)
     {
-        Iterator var2 = this.trackedPlayers.iterator();
+        Iterator iterator = this.trackedPlayers.iterator();
 
-        while (var2.hasNext())
+        while (iterator.hasNext())
         {
-            EntityPlayerMP var3 = (EntityPlayerMP)var2.next();
-            var3.playerNetServerHandler.sendPacketToPlayer(par1Packet);
+            EntityPlayerMP entityplayermp = (EntityPlayerMP)iterator.next();
+            entityplayermp.playerNetServerHandler.sendPacketToPlayer(par1Packet);
         }
     }
 
@@ -389,12 +389,12 @@ public class EntityTrackerEntry
 
     public void informAllAssociatedPlayersOfItemDestruction()
     {
-        Iterator var1 = this.trackedPlayers.iterator();
+        Iterator iterator = this.trackedPlayers.iterator();
 
-        while (var1.hasNext())
+        while (iterator.hasNext())
         {
-            EntityPlayerMP var2 = (EntityPlayerMP)var1.next();
-            var2.destroyedItemsNetCache.add(Integer.valueOf(this.myEntity.entityId));
+            EntityPlayerMP entityplayermp = (EntityPlayerMP)iterator.next();
+            entityplayermp.destroyedItemsNetCache.add(Integer.valueOf(this.myEntity.entityId));
         }
     }
 
@@ -414,10 +414,10 @@ public class EntityTrackerEntry
     {
         if (par1EntityPlayerMP != this.myEntity)
         {
-            double var2 = par1EntityPlayerMP.posX - (double)(this.lastScaledXPosition / 32);
-            double var4 = par1EntityPlayerMP.posZ - (double)(this.lastScaledZPosition / 32);
+            double d0 = par1EntityPlayerMP.posX - (double)(this.lastScaledXPosition / 32);
+            double d1 = par1EntityPlayerMP.posZ - (double)(this.lastScaledZPosition / 32);
 
-            if (var2 >= (double)(-this.blocksDistanceThreshold) && var2 <= (double)this.blocksDistanceThreshold && var4 >= (double)(-this.blocksDistanceThreshold) && var4 <= (double)this.blocksDistanceThreshold)
+            if (d0 >= (double)(-this.blocksDistanceThreshold) && d0 <= (double)this.blocksDistanceThreshold && d1 >= (double)(-this.blocksDistanceThreshold) && d1 <= (double)this.blocksDistanceThreshold)
             {
                 if (!this.trackedPlayers.contains(par1EntityPlayerMP) && this.isPlayerWatchingThisChunk(par1EntityPlayerMP))
                 {
@@ -435,8 +435,8 @@ public class EntityTrackerEntry
                     par1EntityPlayerMP.destroyedItemsNetCache.remove(Integer.valueOf(this.myEntity.entityId));
                     // CraftBukkit end
                     this.trackedPlayers.add(par1EntityPlayerMP);
-                    Packet var6 = this.getPacketForThisEntity();
-                    par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(var6);
+                    Packet packet = this.getPacketForThisEntity();
+                    par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(packet);
 
                     if (!this.myEntity.getDataWatcher().func_92085_d())
                     {
@@ -455,7 +455,7 @@ public class EntityTrackerEntry
                         FMLNetworkHandler.makeEntitySpawnAdjustment(this.myEntity.entityId, par1EntityPlayerMP, this.lastScaledXPosition, this.lastScaledYPosition, this.lastScaledZPosition);
                     }
 
-                    if (this.sendVelocityUpdates && !(var6 instanceof Packet24MobSpawn))
+                    if (this.sendVelocityUpdates && !(packet instanceof Packet24MobSpawn))
                     {
                         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet28EntityVelocity(this.myEntity.entityId, this.myEntity.motionX, this.myEntity.motionY, this.myEntity.motionZ));
                     }
@@ -467,22 +467,22 @@ public class EntityTrackerEntry
 
                     if (this.myEntity instanceof EntityLiving)
                     {
-                        for (int var7 = 0; var7 < 5; ++var7)
+                        for (int i = 0; i < 5; ++i)
                         {
-                            ItemStack var8 = ((EntityLiving)this.myEntity).getCurrentItemOrArmor(var7);
+                            ItemStack itemstack = ((EntityLiving)this.myEntity).getCurrentItemOrArmor(i);
 
-                            if (var8 != null)
+                            if (itemstack != null)
                             {
-                                par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet5PlayerInventory(this.myEntity.entityId, var7, var8));
+                                par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet5PlayerInventory(this.myEntity.entityId, i, itemstack));
                             }
                         }
                     }
 
                     if (this.myEntity instanceof EntityPlayer)
                     {
-                        EntityPlayer var11 = (EntityPlayer)this.myEntity;
+                        EntityPlayer entityplayer = (EntityPlayer)this.myEntity;
 
-                        if (var11.isPlayerSleeping())
+                        if (entityplayer.isPlayerSleeping())
                         {
                             par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet17Sleep(this.myEntity, 0, MathHelper.floor_double(this.myEntity.posX), MathHelper.floor_double(this.myEntity.posY), MathHelper.floor_double(this.myEntity.posZ)));
                         }
@@ -493,13 +493,13 @@ public class EntityTrackerEntry
                     // CraftBukkit end
                     if (this.myEntity instanceof EntityLiving)
                     {
-                        EntityLiving var10 = (EntityLiving)this.myEntity;
-                        Iterator var12 = var10.getActivePotionEffects().iterator();
+                        EntityLiving entityliving = (EntityLiving)this.myEntity;
+                        Iterator iterator = entityliving.getActivePotionEffects().iterator();
 
-                        while (var12.hasNext())
+                        while (iterator.hasNext())
                         {
-                            PotionEffect var9 = (PotionEffect)var12.next();
-                            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet41EntityEffect(this.myEntity.entityId, var9));
+                            PotionEffect potioneffect = (PotionEffect)iterator.next();
+                            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet41EntityEffect(this.myEntity.entityId, potioneffect));
                         }
                     }
                 }
@@ -519,9 +519,9 @@ public class EntityTrackerEntry
 
     public void sendEventsToPlayers(List par1List)
     {
-        for (int var2 = 0; var2 < par1List.size(); ++var2)
+        for (int i = 0; i < par1List.size(); ++i)
         {
-            this.tryStartWachingThis((EntityPlayerMP)par1List.get(var2));
+            this.tryStartWachingThis((EntityPlayerMP)par1List.get(i));
         }
     }
 
@@ -554,19 +554,19 @@ public class EntityTrackerEntry
         {
             if (this.myEntity instanceof EntityMinecart)
             {
-                EntityMinecart var1 = (EntityMinecart)this.myEntity;
+                EntityMinecart entityminecart = (EntityMinecart)this.myEntity;
 
-                if (var1.minecartType == 0)
+                if (entityminecart.minecartType == 0)
                 {
                     return new Packet23VehicleSpawn(this.myEntity, 10);
                 }
 
-                if (var1.minecartType == 1)
+                if (entityminecart.minecartType == 1)
                 {
                     return new Packet23VehicleSpawn(this.myEntity, 11);
                 }
 
-                if (var1.minecartType == 2)
+                if (entityminecart.minecartType == 2)
                 {
                     return new Packet23VehicleSpawn(this.myEntity, 12);
                 }
@@ -580,13 +580,13 @@ public class EntityTrackerEntry
             {
                 if (this.myEntity instanceof EntityFishHook)
                 {
-                    EntityPlayer var8 = ((EntityFishHook)this.myEntity).angler;
-                    return new Packet23VehicleSpawn(this.myEntity, 90, var8 != null ? var8.entityId : this.myEntity.entityId);
+                    EntityPlayer entityplayer = ((EntityFishHook)this.myEntity).angler;
+                    return new Packet23VehicleSpawn(this.myEntity, 90, entityplayer != null ? entityplayer.entityId : this.myEntity.entityId);
                 }
                 else if (this.myEntity instanceof EntityArrow)
                 {
-                    Entity var7 = ((EntityArrow)this.myEntity).shootingEntity;
-                    return new Packet23VehicleSpawn(this.myEntity, 60, var7 != null ? var7.entityId : this.myEntity.entityId);
+                    Entity entity = ((EntityArrow)this.myEntity).shootingEntity;
+                    return new Packet23VehicleSpawn(this.myEntity, 60, entity != null ? entity.entityId : this.myEntity.entityId);
                 }
                 else if (this.myEntity instanceof EntitySnowball)
                 {
@@ -614,36 +614,36 @@ public class EntityTrackerEntry
                 }
                 else
                 {
-                    Packet23VehicleSpawn var2;
+                    Packet23VehicleSpawn packet23vehiclespawn;
 
                     if (this.myEntity instanceof EntityFireball)
                     {
-                        EntityFireball var6 = (EntityFireball)this.myEntity;
-                        var2 = null;
-                        byte var3 = 63;
+                        EntityFireball entityfireball = (EntityFireball)this.myEntity;
+                        packet23vehiclespawn = null;
+                        byte b0 = 63;
 
                         if (this.myEntity instanceof EntitySmallFireball)
                         {
-                            var3 = 64;
+                            b0 = 64;
                         }
                         else if (this.myEntity instanceof EntityWitherSkull)
                         {
-                            var3 = 66;
+                            b0 = 66;
                         }
 
-                        if (var6.shootingEntity != null)
+                        if (entityfireball.shootingEntity != null)
                         {
-                            var2 = new Packet23VehicleSpawn(this.myEntity, var3, ((EntityFireball)this.myEntity).shootingEntity.entityId);
+                            packet23vehiclespawn = new Packet23VehicleSpawn(this.myEntity, b0, ((EntityFireball)this.myEntity).shootingEntity.entityId);
                         }
                         else
                         {
-                            var2 = new Packet23VehicleSpawn(this.myEntity, var3, 0);
+                            packet23vehiclespawn = new Packet23VehicleSpawn(this.myEntity, b0, 0);
                         }
 
-                        var2.speedX = (int)(var6.accelerationX * 8000.0D);
-                        var2.speedY = (int)(var6.accelerationY * 8000.0D);
-                        var2.speedZ = (int)(var6.accelerationZ * 8000.0D);
-                        return var2;
+                        packet23vehiclespawn.speedX = (int)(entityfireball.accelerationX * 8000.0D);
+                        packet23vehiclespawn.speedY = (int)(entityfireball.accelerationY * 8000.0D);
+                        packet23vehiclespawn.speedZ = (int)(entityfireball.accelerationZ * 8000.0D);
+                        return packet23vehiclespawn;
                     }
                     else if (this.myEntity instanceof EntityEgg)
                     {
@@ -659,8 +659,8 @@ public class EntityTrackerEntry
                     }
                     else if (this.myEntity instanceof EntityFallingSand)
                     {
-                        EntityFallingSand var5 = (EntityFallingSand)this.myEntity;
-                        return new Packet23VehicleSpawn(this.myEntity, 70, var5.blockID | var5.metadata << 16);
+                        EntityFallingSand entityfallingsand = (EntityFallingSand)this.myEntity;
+                        return new Packet23VehicleSpawn(this.myEntity, 70, entityfallingsand.blockID | entityfallingsand.metadata << 16);
                     }
                     else if (this.myEntity instanceof EntityPainting)
                     {
@@ -668,12 +668,12 @@ public class EntityTrackerEntry
                     }
                     else if (this.myEntity instanceof EntityItemFrame)
                     {
-                        EntityItemFrame var4 = (EntityItemFrame)this.myEntity;
-                        var2 = new Packet23VehicleSpawn(this.myEntity, 71, var4.hangingDirection);
-                        var2.xPosition = MathHelper.floor_float((float)(var4.xPosition * 32));
-                        var2.yPosition = MathHelper.floor_float((float)(var4.yPosition * 32));
-                        var2.zPosition = MathHelper.floor_float((float)(var4.zPosition * 32));
-                        return var2;
+                        EntityItemFrame entityitemframe = (EntityItemFrame)this.myEntity;
+                        packet23vehiclespawn = new Packet23VehicleSpawn(this.myEntity, 71, entityitemframe.hangingDirection);
+                        packet23vehiclespawn.xPosition = MathHelper.floor_float((float)(entityitemframe.xPosition * 32));
+                        packet23vehiclespawn.yPosition = MathHelper.floor_float((float)(entityitemframe.yPosition * 32));
+                        packet23vehiclespawn.zPosition = MathHelper.floor_float((float)(entityitemframe.zPosition * 32));
+                        return packet23vehiclespawn;
                     }
                     else if (this.myEntity instanceof EntityXPOrb)
                     {

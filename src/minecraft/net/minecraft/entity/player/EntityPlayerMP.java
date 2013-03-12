@@ -171,20 +171,20 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         par4ItemInWorldManager.thisPlayerMP = this;
         this.theItemInWorldManager = par4ItemInWorldManager;
         this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
-        ChunkCoordinates var5 = par2World.provider.getRandomizedSpawnPoint();
-        int var6 = var5.posX;
-        int var7 = var5.posZ;
-        int var8 = var5.posY;
+        ChunkCoordinates chunkcoordinates = par2World.provider.getRandomizedSpawnPoint();
+        int i = chunkcoordinates.posX;
+        int j = chunkcoordinates.posZ;
+        int k = chunkcoordinates.posY;
 
         if (!par2World.provider.hasNoSky && par2World.getWorldInfo().getGameType() != EnumGameType.ADVENTURE)
         {
-            int var9 = Math.max(5, par1MinecraftServer.getSpawnProtectionSize() - 6);
-            var6 += this.rand.nextInt(var9 * 2) - var9;
-            var7 += this.rand.nextInt(var9 * 2) - var9;
-            var8 = par2World.getTopSolidOrLiquidBlock(var6, var7);
+            int l = Math.max(5, par1MinecraftServer.getSpawnProtectionSize() - 6);
+            i += this.rand.nextInt(l * 2) - l;
+            j += this.rand.nextInt(l * 2) - l;
+            k = par2World.getTopSolidOrLiquidBlock(i, j);
         }
 
-        this.setLocationAndAngles((double)var6 + 0.5D, (double)var8, (double)var7 + 0.5D, 0.0F, 0.0F);
+        this.setLocationAndAngles((double)i + 0.5D, (double)k, (double)j + 0.5D, 0.0F, 0.0F);
         this.mcServer = par1MinecraftServer;
         this.stepHeight = 0.0F;
         this.username = par3Str;
@@ -292,60 +292,60 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
         while (!this.destroyedItemsNetCache.isEmpty())
         {
-            int var1 = Math.min(this.destroyedItemsNetCache.size(), 127);
-            int[] var2 = new int[var1];
-            Iterator var3 = this.destroyedItemsNetCache.iterator();
-            int var4 = 0;
+            int i = Math.min(this.destroyedItemsNetCache.size(), 127);
+            int[] aint = new int[i];
+            Iterator iterator = this.destroyedItemsNetCache.iterator();
+            int j = 0;
 
-            while (var3.hasNext() && var4 < var1)
+            while (iterator.hasNext() && j < i)
             {
-                var2[var4++] = ((Integer)var3.next()).intValue();
-                var3.remove();
+                aint[j++] = ((Integer)iterator.next()).intValue();
+                iterator.remove();
             }
 
-            this.playerNetServerHandler.sendPacketToPlayer(new Packet29DestroyEntity(var2));
+            this.playerNetServerHandler.sendPacketToPlayer(new Packet29DestroyEntity(aint));
         }
 
         if (!this.loadedChunks.isEmpty())
         {
-            ArrayList var6 = new ArrayList();
-            Iterator var7 = this.loadedChunks.iterator();
-            ArrayList var8 = new ArrayList();
+            ArrayList arraylist = new ArrayList();
+            Iterator iterator1 = this.loadedChunks.iterator();
+            ArrayList arraylist1 = new ArrayList();
 
-            while (var7.hasNext() && var6.size() < 5)
+            while (iterator1.hasNext() && arraylist.size() < 5)
             {
-                ChunkCoordIntPair var9 = (ChunkCoordIntPair)var7.next();
-                var7.remove();
+                ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair)iterator1.next();
+                iterator1.remove();
 
-                if (var9 != null && this.worldObj.blockExists(var9.chunkXPos << 4, 0, var9.chunkZPos << 4))
+                if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                 {
-                    var6.add(this.worldObj.getChunkFromChunkCoords(var9.chunkXPos, var9.chunkZPos));
+                    arraylist.add(this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos));
                     // MCPC - fixes unable to locate sign bug, do not remove
                     //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
                     //ToDo: Find a way to efficiently clean abandoned chunks.
-                    //var8.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(var9.chunkXPos * 16, 0, var9.chunkZPos * 16, var9.chunkXPos * 16 + 16, 256, var9.chunkZPos * 16 + 16));
-                    var8.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(var9.chunkXPos * 16, 0, var9.chunkZPos * 16, var9.chunkXPos * 16 + 15, 256, var9.chunkZPos * 16 + 15));
+                    //arraylist1.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 16));
+                    arraylist1.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 15, 256, chunkcoordintpair.chunkZPos * 16 + 15));
                 }
             }
 
-            if (!var6.isEmpty())
+            if (!arraylist.isEmpty())
             {
-                this.playerNetServerHandler.sendPacketToPlayer(new Packet56MapChunks(var6));
-                Iterator var11 = var8.iterator();
+                this.playerNetServerHandler.sendPacketToPlayer(new Packet56MapChunks(arraylist));
+                Iterator iterator2 = arraylist1.iterator();
 
-                while (var11.hasNext())
+                while (iterator2.hasNext())
                 {
-                    TileEntity var5 = (TileEntity)var11.next();
-                    this.sendTileEntityToPlayer(var5);
+                    TileEntity tileentity = (TileEntity)iterator2.next();
+                    this.sendTileEntityToPlayer(tileentity);
                 }
 
-                var11 = var6.iterator();
+                iterator2 = arraylist.iterator();
 
-                while (var11.hasNext())
+                while (iterator2.hasNext())
                 {
-                    Chunk var10 = (Chunk)var11.next();
-                    this.getServerForPlayer().getEntityTracker().func_85172_a(this, var10);
-                    MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(var10.getChunkCoordIntPair(), this));
+                    Chunk chunk = (Chunk)iterator2.next();
+                    this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
+                    MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(chunk.getChunkCoordIntPair(), this));
                 }
             }
         }
@@ -355,17 +355,17 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
     {
         super.onUpdate();
 
-        for (int var1 = 0; var1 < this.inventory.getSizeInventory(); ++var1)
+        for (int i = 0; i < this.inventory.getSizeInventory(); ++i)
         {
-            ItemStack var2 = this.inventory.getStackInSlot(var1);
+            ItemStack itemstack = this.inventory.getStackInSlot(i);
 
-            if (var2 != null && Item.itemsList[var2.itemID].isMap() && this.playerNetServerHandler.packetSize() <= 5)
+            if (itemstack != null && Item.itemsList[itemstack.itemID].isMap() && this.playerNetServerHandler.packetSize() <= 5)
             {
-                Packet var3 = ((ItemMapBase)Item.itemsList[var2.itemID]).createMapDataPacket(var2, this.worldObj, this);
+                Packet packet = ((ItemMapBase)Item.itemsList[itemstack.itemID]).createMapDataPacket(itemstack, this.worldObj, this);
 
-                if (var3 != null)
+                if (packet != null)
                 {
-                    this.playerNetServerHandler.sendPacketToPlayer(var3);
+                    this.playerNetServerHandler.sendPacketToPlayer(packet);
                 }
             }
         }
@@ -486,9 +486,9 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         else
         {
             // CraftBukkit - this.server.getPvP() -> this.world.pvpMode
-            boolean var3 = this.mcServer.isDedicatedServer() && this.worldObj.pvpMode && "fall".equals(par1DamageSource.damageType);
+            boolean flag = this.mcServer.isDedicatedServer() && this.worldObj.pvpMode && "fall".equals(par1DamageSource.damageType);
 
-            if (!var3 && this.initialInvulnerability > 0 && par1DamageSource != DamageSource.outOfWorld)
+            if (!flag && this.initialInvulnerability > 0 && par1DamageSource != DamageSource.outOfWorld)
             {
                 return false;
             }
@@ -497,18 +497,18 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
                 // CraftBukkit - this.server.getPvP() -> this.world.pvpMode
                 if (!this.worldObj.pvpMode && par1DamageSource instanceof EntityDamageSource)
                 {
-                    Entity var4 = par1DamageSource.getEntity();
+                    Entity entity = par1DamageSource.getEntity();
 
-                    if (var4 instanceof EntityPlayer)
+                    if (entity instanceof EntityPlayer)
                     {
                         return false;
                     }
 
-                    if (var4 instanceof EntityArrow)
+                    if (entity instanceof EntityArrow)
                     {
-                        EntityArrow var5 = (EntityArrow)var4;
+                        EntityArrow entityarrow = (EntityArrow)entity;
 
-                        if (var5.shootingEntity instanceof EntityPlayer)
+                        if (entityarrow.shootingEntity instanceof EntityPlayer)
                         {
                             return false;
                         }
@@ -564,11 +564,11 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
     {
         if (par1TileEntity != null)
         {
-            Packet var2 = par1TileEntity.getDescriptionPacket();
+            Packet packet = par1TileEntity.getDescriptionPacket();
 
-            if (var2 != null)
+            if (packet != null)
             {
-                this.playerNetServerHandler.sendPacketToPlayer(var2);
+                this.playerNetServerHandler.sendPacketToPlayer(packet);
             }
         }
     }
@@ -587,17 +587,17 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public EnumStatus sleepInBedAt(int par1, int par2, int par3)
     {
-        EnumStatus var4 = super.sleepInBedAt(par1, par2, par3);
+        EnumStatus enumstatus = super.sleepInBedAt(par1, par2, par3);
 
-        if (var4 == EnumStatus.OK)
+        if (enumstatus == EnumStatus.OK)
         {
-            Packet17Sleep var5 = new Packet17Sleep(this, 0, par1, par2, par3);
-            this.getServerForPlayer().getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, var5);
+            Packet17Sleep packet17sleep = new Packet17Sleep(this, 0, par1, par2, par3);
+            this.getServerForPlayer().getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, packet17sleep);
             this.playerNetServerHandler.setPlayerLocation(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
-            this.playerNetServerHandler.sendPacketToPlayer(var5);
+            this.playerNetServerHandler.sendPacketToPlayer(packet17sleep);
         }
 
-        return var4;
+        return enumstatus;
     }
 
     /**
@@ -854,23 +854,23 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         this.openContainer = container; // CraftBukkit - Use container passed to event
         this.openContainer.windowId = this.currentWindowId;
         this.openContainer.addCraftingToCrafters(this);
-        InventoryMerchant var2 = ((ContainerMerchant)this.openContainer).getMerchantInventory();
-        this.playerNetServerHandler.sendPacketToPlayer(new Packet100OpenWindow(this.currentWindowId, 6, var2.getInvName(), var2.getSizeInventory()));
-        MerchantRecipeList var3 = par1IMerchant.getRecipes(this);
+        InventoryMerchant inventorymerchant = ((ContainerMerchant)this.openContainer).getMerchantInventory();
+        this.playerNetServerHandler.sendPacketToPlayer(new Packet100OpenWindow(this.currentWindowId, 6, inventorymerchant.getInvName(), inventorymerchant.getSizeInventory()));
+        MerchantRecipeList merchantrecipelist = par1IMerchant.getRecipes(this);
 
-        if (var3 != null)
+        if (merchantrecipelist != null)
         {
             try
             {
-                ByteArrayOutputStream var4 = new ByteArrayOutputStream();
-                DataOutputStream var5 = new DataOutputStream(var4);
-                var5.writeInt(this.currentWindowId);
-                var3.writeRecipiesToStream(var5);
-                this.playerNetServerHandler.sendPacketToPlayer(new Packet250CustomPayload("MC|TrList", var4.toByteArray()));
+                ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+                DataOutputStream dataoutputstream = new DataOutputStream(bytearrayoutputstream);
+                dataoutputstream.writeInt(this.currentWindowId);
+                merchantrecipelist.writeRecipiesToStream(dataoutputstream);
+                this.playerNetServerHandler.sendPacketToPlayer(new Packet250CustomPayload("MC|TrList", bytearrayoutputstream.toByteArray()));
             }
-            catch (IOException var6)
+            catch (IOException ioexception)
             {
-                var6.printStackTrace();
+                ioexception.printStackTrace();
             }
         }
     }
@@ -1001,9 +1001,9 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public void addChatMessage(String par1Str)
     {
-        StringTranslate var2 = StringTranslate.getInstance();
-        String var3 = var2.translateKey(par1Str);
-        this.playerNetServerHandler.sendPacketToPlayer(new Packet3Chat(var3));
+        StringTranslate stringtranslate = StringTranslate.getInstance();
+        String s1 = stringtranslate.translateKey(par1Str);
+        this.playerNetServerHandler.sendPacketToPlayer(new Packet3Chat(s1));
     }
 
     /**
@@ -1120,10 +1120,10 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
     public String func_71114_r()
     {
-        String var1 = this.playerNetServerHandler.netManager.getSocketAddress().toString();
-        var1 = var1.substring(var1.indexOf("/") + 1);
-        var1 = var1.substring(0, var1.indexOf(":"));
-        return var1;
+        String s = this.playerNetServerHandler.netManager.getSocketAddress().toString();
+        s = s.substring(s.indexOf("/") + 1);
+        s = s.substring(0, s.indexOf(":"));
+        return s;
     }
 
     public void updateClientInfo(Packet204ClientInfo par1Packet204ClientInfo)
@@ -1133,11 +1133,11 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
             this.translator.setLanguage(par1Packet204ClientInfo.getLanguage());
         }
 
-        int var2 = 256 >> par1Packet204ClientInfo.getRenderDistance();
+        int i = 256 >> par1Packet204ClientInfo.getRenderDistance();
 
-        if (var2 > 3 && var2 < 15)
+        if (i > 3 && i < 15)
         {
-            this.renderDistance = var2;
+            this.renderDistance = i;
         }
 
         this.chatVisibility = par1Packet204ClientInfo.getChatVisibility();
@@ -1166,8 +1166,8 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public void requestTexturePackLoad(String par1Str, int par2)
     {
-        String var3 = par1Str + "\0" + par2; // CraftBukkit - fix decompile error
-        this.playerNetServerHandler.sendPacketToPlayer(new Packet250CustomPayload("MC|TPack", var3.getBytes()));
+        String s1 = par1Str + "\0" + par2; // CraftBukkit - fix decompile error
+        this.playerNetServerHandler.sendPacketToPlayer(new Packet250CustomPayload("MC|TPack", s1.getBytes()));
     }
 
     /**

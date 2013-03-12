@@ -27,8 +27,8 @@ public class BlockPressurePlate extends Block
         this.triggerMobType = par3EnumMobType;
         this.setCreativeTab(CreativeTabs.tabRedstone);
         this.setTickRandomly(true);
-        float var5 = 0.0625F;
-        this.setBlockBounds(var5, 0.0F, var5, 1.0F - var5, 0.03125F, 1.0F - var5);
+        float f = 0.0625F;
+        this.setBlockBounds(f, 0.0F, f, 1.0F - f, 0.03125F, 1.0F - f);
     }
 
     /**
@@ -84,14 +84,14 @@ public class BlockPressurePlate extends Block
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        boolean var6 = false;
+        boolean flag = false;
 
         if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !BlockFence.isIdAFence(par1World.getBlockId(par2, par3 - 1, par4)))
         {
-            var6 = true;
+            flag = true;
         }
 
-        if (var6)
+        if (flag)
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
             par1World.setBlockWithNotify(par2, par3, par4, 0);
@@ -131,37 +131,37 @@ public class BlockPressurePlate extends Block
      */
     private void setStateIfMobInteractsWithPlate(World par1World, int par2, int par3, int par4)
     {
-        boolean var5 = par1World.getBlockMetadata(par2, par3, par4) == 1;
-        boolean var6 = false;
-        float var7 = 0.125F;
-        List var8 = null;
+        boolean flag = par1World.getBlockMetadata(par2, par3, par4) == 1;
+        boolean flag1 = false;
+        float f = 0.125F;
+        List list = null;
 
         if (this.triggerMobType == EnumMobType.everything)
         {
-            var8 = par1World.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + var7), (double)par3, (double)((float)par4 + var7), (double)((float)(par2 + 1) - var7), (double)par3 + 0.25D, (double)((float)(par4 + 1) - var7)));
+            list = par1World.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + f), (double)par3, (double)((float)par4 + f), (double)((float)(par2 + 1) - f), (double)par3 + 0.25D, (double)((float)(par4 + 1) - f)));
         }
 
         if (this.triggerMobType == EnumMobType.mobs)
         {
-            var8 = par1World.getEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + var7), (double)par3, (double)((float)par4 + var7), (double)((float)(par2 + 1) - var7), (double)par3 + 0.25D, (double)((float)(par4 + 1) - var7)));
+            list = par1World.getEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + f), (double)par3, (double)((float)par4 + f), (double)((float)(par2 + 1) - f), (double)par3 + 0.25D, (double)((float)(par4 + 1) - f)));
         }
 
         if (this.triggerMobType == EnumMobType.players)
         {
-            var8 = par1World.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + var7), (double)par3, (double)((float)par4 + var7), (double)((float)(par2 + 1) - var7), (double)par3 + 0.25D, (double)((float)(par4 + 1) - var7)));
+            list = par1World.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + f), (double)par3, (double)((float)par4 + f), (double)((float)(par2 + 1) - f), (double)par3 + 0.25D, (double)((float)(par4 + 1) - f)));
         }
 
-        if (!var8.isEmpty())
+        if (!list.isEmpty())
         {
-            Iterator var9 = var8.iterator();
+            Iterator iterator = list.iterator();
 
-            while (var9.hasNext())
+            while (iterator.hasNext())
             {
-                Entity var10 = (Entity)var9.next();
+                Entity entity = (Entity)iterator.next();
 
-                if (!var10.doesEntityNotTriggerPressurePlate())
+                if (!entity.doesEntityNotTriggerPressurePlate())
                 {
-                    var6 = true;
+                    flag1 = true;
                     break;
                 }
             }
@@ -171,11 +171,11 @@ public class BlockPressurePlate extends Block
         org.bukkit.World bworld = par1World.getWorld();
         org.bukkit.plugin.PluginManager manager = par1World.getServer().getPluginManager();
 
-        if (var5 != var6)
+        if (flag != flag1)
         {
-            if (var6)
+            if (flag1)
             {
-                for (Object object : var8)
+                for (Object object : list)
                 {
                     if (object != null)
                     {
@@ -203,12 +203,12 @@ public class BlockPressurePlate extends Block
                 }
             }
 
-            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bworld.getBlockAt(par2, par3, par4), var5 ? 1 : 0, var6 ? 1 : 0);
+            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bworld.getBlockAt(par2, par3, par4), flag ? 1 : 0, flag1 ? 1 : 0);
             manager.callEvent(eventRedstone);
-            var6 = eventRedstone.getNewCurrent() > 0;
+            flag1 = eventRedstone.getNewCurrent() > 0;
         }
         // CraftBukkit end
-        if (var6 && !var5)
+        if (flag1 && !flag)
         {
             par1World.setBlockMetadataWithNotify(par2, par3, par4, 1);
             par1World.notifyBlocksOfNeighborChange(par2, par3, par4, this.blockID);
@@ -217,7 +217,7 @@ public class BlockPressurePlate extends Block
             par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.1D, (double)par4 + 0.5D, "random.click", 0.3F, 0.6F);
         }
 
-        if (!var6 && var5)
+        if (!flag1 && flag)
         {
             par1World.setBlockMetadataWithNotify(par2, par3, par4, 0);
             par1World.notifyBlocksOfNeighborChange(par2, par3, par4, this.blockID);
@@ -226,7 +226,7 @@ public class BlockPressurePlate extends Block
             par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.1D, (double)par4 + 0.5D, "random.click", 0.3F, 0.5F);
         }
 
-        if (var6)
+        if (flag1)
         {
             par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
         }
@@ -251,16 +251,16 @@ public class BlockPressurePlate extends Block
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        boolean var5 = par1IBlockAccess.getBlockMetadata(par2, par3, par4) == 1;
-        float var6 = 0.0625F;
+        boolean flag = par1IBlockAccess.getBlockMetadata(par2, par3, par4) == 1;
+        float f = 0.0625F;
 
-        if (var5)
+        if (flag)
         {
-            this.setBlockBounds(var6, 0.0F, var6, 1.0F - var6, 0.03125F, 1.0F - var6);
+            this.setBlockBounds(f, 0.0F, f, 1.0F - f, 0.03125F, 1.0F - f);
         }
         else
         {
-            this.setBlockBounds(var6, 0.0F, var6, 1.0F - var6, 0.0625F, 1.0F - var6);
+            this.setBlockBounds(f, 0.0F, f, 1.0F - f, 0.0625F, 1.0F - f);
         }
     }
 
@@ -296,10 +296,10 @@ public class BlockPressurePlate extends Block
      */
     public void setBlockBoundsForItemRender()
     {
-        float var1 = 0.5F;
-        float var2 = 0.125F;
-        float var3 = 0.5F;
-        this.setBlockBounds(0.5F - var1, 0.5F - var2, 0.5F - var3, 0.5F + var1, 0.5F + var2, 0.5F + var3);
+        float f = 0.5F;
+        float f1 = 0.125F;
+        float f2 = 0.5F;
+        this.setBlockBounds(0.5F - f, 0.5F - f1, 0.5F - f2, 0.5F + f, 0.5F + f1, 0.5F + f2);
     }
 
     /**

@@ -75,28 +75,28 @@ public class Packet51MapChunk extends Packet
         this.xCh = par1Chunk.xPosition;
         this.zCh = par1Chunk.zPosition;
         this.includeInitialize = par2;
-        Packet51MapChunkData var4 = getMapChunkData(par1Chunk, par2, par3);
-        this.yChMax = var4.chunkHasAddSectionFlag;
-        this.yChMin = var4.chunkExistFlag;
-        org.bukkit.craftbukkit.OrebfuscatorManager.obfuscate(par1Chunk.xPosition, par1Chunk.zPosition, par3, var4.compressedData, par1Chunk.worldObj); // Spigot (Orebfuscator)
-        this.compressedChunkData = var4.compressedData;
+        Packet51MapChunkData packet51mapchunkdata = getMapChunkData(par1Chunk, par2, par3);
+        this.yChMax = packet51mapchunkdata.chunkHasAddSectionFlag;
+        this.yChMin = packet51mapchunkdata.chunkExistFlag;
+        org.bukkit.craftbukkit.OrebfuscatorManager.obfuscate(par1Chunk.xPosition, par1Chunk.zPosition, par3, packet51mapchunkdata.compressedData, par1Chunk.worldObj); // Spigot (Orebfuscator)
+        this.compressedChunkData = packet51mapchunkdata.compressedData;
         this.deflateGate = new Semaphore(1);
     }
 
     private void deflate()
     {
-        Deflater var5 = new Deflater(-1);
+        Deflater deflater = new Deflater(-1);
         try
         {
-            var5.setInput(compressedChunkData, 0, compressedChunkData.length);
-            var5.finish();
+            deflater.setInput(compressedChunkData, 0, compressedChunkData.length);
+            deflater.finish();
             byte[] deflated = new byte[compressedChunkData.length];
-            this.tempLength = var5.deflate(deflated);
+            this.tempLength = deflater.deflate(deflated);
             this.chunkData = deflated;
         }
         finally
         {
-            var5.end();
+            deflater.end();
         }
     }
 
@@ -118,39 +118,39 @@ public class Packet51MapChunk extends Packet
         }
 
         par1DataInputStream.readFully(temp, 0, this.tempLength);
-        int var2 = 0;
-        int var3;
+        int i = 0;
+        int j;
         int msb = 0; //BugFix: MC does not read the MSB array from the packet properly, causing issues for servers that use blocks > 256
 
-        for (var3 = 0; var3 < 16; ++var3)
+        for (j = 0; j < 16; ++j)
         {
-            var2 += this.yChMin >> var3 & 1;
-            msb  += this.yChMax >> var3 & 1;
+            i += this.yChMin >> j & 1;
+            msb  += this.yChMax >> j & 1;
         }
 
-        var3 = 12288 * var2;
-        var3 += 2048 * msb;
+        j = 12288 * i;
+        j += 2048 * msb;
 
         if (this.includeInitialize)
         {
-            var3 += 256;
+            j += 256;
         }
 
-        this.compressedChunkData = new byte[var3];
-        Inflater var4 = new Inflater();
-        var4.setInput(temp, 0, this.tempLength);
+        this.compressedChunkData = new byte[j];
+        Inflater inflater = new Inflater();
+        inflater.setInput(temp, 0, this.tempLength);
 
         try
         {
-            var4.inflate(this.compressedChunkData);
+            inflater.inflate(this.compressedChunkData);
         }
-        catch (DataFormatException var9)
+        catch (DataFormatException dataformatexception)
         {
             throw new IOException("Bad compressed data format");
         }
         finally
         {
-            var4.end();
+            inflater.end();
         }
     }
 
@@ -196,98 +196,98 @@ public class Packet51MapChunk extends Packet
 
     public static Packet51MapChunkData getMapChunkData(Chunk par0Chunk, boolean par1, int par2)
     {
-        int var3 = 0;
-        ExtendedBlockStorage[] var4 = par0Chunk.getBlockStorageArray();
-        int var5 = 0;
-        Packet51MapChunkData var6 = new Packet51MapChunkData();
-        byte[] var7 = temp;
+        int j = 0;
+        ExtendedBlockStorage[] aextendedblockstorage = par0Chunk.getBlockStorageArray();
+        int k = 0;
+        Packet51MapChunkData packet51mapchunkdata = new Packet51MapChunkData();
+        byte[] abyte = temp;
 
         if (par1)
         {
             par0Chunk.deferRender = true;
         }
 
-        int var8;
+        int l;
 
-        for (var8 = 0; var8 < var4.length; ++var8)
+        for (l = 0; l < aextendedblockstorage.length; ++l)
         {
-            if (var4[var8] != null && (!par1 || !var4[var8].isEmpty()) && (par2 & 1 << var8) != 0)
+            if (aextendedblockstorage[l] != null && (!par1 || !aextendedblockstorage[l].isEmpty()) && (par2 & 1 << l) != 0)
             {
-                var6.chunkExistFlag |= 1 << var8;
+                packet51mapchunkdata.chunkExistFlag |= 1 << l;
 
-                if (var4[var8].getBlockMSBArray() != null)
+                if (aextendedblockstorage[l].getBlockMSBArray() != null)
                 {
-                    var6.chunkHasAddSectionFlag |= 1 << var8;
-                    ++var5;
+                    packet51mapchunkdata.chunkHasAddSectionFlag |= 1 << l;
+                    ++k;
                 }
             }
         }
 
-        for (var8 = 0; var8 < var4.length; ++var8)
+        for (l = 0; l < aextendedblockstorage.length; ++l)
         {
-            if (var4[var8] != null && (!par1 || !var4[var8].isEmpty()) && (par2 & 1 << var8) != 0)
+            if (aextendedblockstorage[l] != null && (!par1 || !aextendedblockstorage[l].isEmpty()) && (par2 & 1 << l) != 0)
             {
-                byte[] var9 = var4[var8].getBlockLSBArray();
-                System.arraycopy(var9, 0, var7, var3, var9.length);
-                var3 += var9.length;
+                byte[] abyte1 = aextendedblockstorage[l].getBlockLSBArray();
+                System.arraycopy(abyte1, 0, abyte, j, abyte1.length);
+                j += abyte1.length;
             }
         }
 
-        NibbleArray var10;
+        NibbleArray nibblearray;
 
-        for (var8 = 0; var8 < var4.length; ++var8)
+        for (l = 0; l < aextendedblockstorage.length; ++l)
         {
-            if (var4[var8] != null && (!par1 || !var4[var8].isEmpty()) && (par2 & 1 << var8) != 0)
+            if (aextendedblockstorage[l] != null && (!par1 || !aextendedblockstorage[l].isEmpty()) && (par2 & 1 << l) != 0)
             {
-                var10 = var4[var8].getMetadataArray();
+                nibblearray = aextendedblockstorage[l].getMetadataArray();
                 // Spigot start
-                //System.arraycopy(var10.data, 0, var7, var3, var10.data.length);
-                //var3 += var10.data.length;
-                var3 = var10.copyToByteArray(var7, var3);
+                //System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
+                //j += nibblearray.data.length;
+                j = nibblearray.copyToByteArray(abyte, j);
                 // Spigot end
             }
         }
 
-        for (var8 = 0; var8 < var4.length; ++var8)
+        for (l = 0; l < aextendedblockstorage.length; ++l)
         {
-            if (var4[var8] != null && (!par1 || !var4[var8].isEmpty()) && (par2 & 1 << var8) != 0)
+            if (aextendedblockstorage[l] != null && (!par1 || !aextendedblockstorage[l].isEmpty()) && (par2 & 1 << l) != 0)
             {
-                var10 = var4[var8].getBlocklightArray();
+                nibblearray = aextendedblockstorage[l].getBlocklightArray();
                 // Spigot start
-                //System.arraycopy(var10.data, 0, var7, var3, var10.data.length);
-                //var3 += var10.data.length;
-                var3 = var10.copyToByteArray(var7, var3);
+                //System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
+                //j += nibblearray.data.length;
+                j = nibblearray.copyToByteArray(abyte, j);
                 // Spigot end
             }
         }
 
         if (!par0Chunk.worldObj.provider.hasNoSky)
         {
-            for (var8 = 0; var8 < var4.length; ++var8)
+            for (l = 0; l < aextendedblockstorage.length; ++l)
             {
-                if (var4[var8] != null && (!par1 || !var4[var8].isEmpty()) && (par2 & 1 << var8) != 0)
+                if (aextendedblockstorage[l] != null && (!par1 || !aextendedblockstorage[l].isEmpty()) && (par2 & 1 << l) != 0)
                 {
-                    var10 = var4[var8].getSkylightArray();
+                    nibblearray = aextendedblockstorage[l].getSkylightArray();
                     // Spigot start
-                    //System.arraycopy(var10.data, 0, var7, var3, var10.data.length);
-                    //var3 += var10.data.length;
-                    var3 = var10.copyToByteArray(var7, var3);
+                    //System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
+                    //j += nibblearray.data.length;
+                    j = nibblearray.copyToByteArray(abyte, j);
                     // Spigot end
                 }
             }
         }
 
-        if (var5 > 0)
+        if (k > 0)
         {
-            for (var8 = 0; var8 < var4.length; ++var8)
+            for (l = 0; l < aextendedblockstorage.length; ++l)
             {
-                if (var4[var8] != null && (!par1 || !var4[var8].isEmpty()) && var4[var8].getBlockMSBArray() != null && (par2 & 1 << var8) != 0)
+                if (aextendedblockstorage[l] != null && (!par1 || !aextendedblockstorage[l].isEmpty()) && aextendedblockstorage[l].getBlockMSBArray() != null && (par2 & 1 << l) != 0)
                 {
-                    var10 = var4[var8].getBlockMSBArray();
+                    nibblearray = aextendedblockstorage[l].getBlockMSBArray();
                     // Spigot start
-                    //System.arraycopy(var10.data, 0, var7, var3, var10.data.length);
-                    //var3 += var10.data.length;
-                    var3 = var10.copyToByteArray(var7, var3);
+                    //System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
+                    //j += nibblearray.data.length;
+                    j = nibblearray.copyToByteArray(abyte, j);
                     // Spigot end
                 }
             }
@@ -295,14 +295,14 @@ public class Packet51MapChunk extends Packet
 
         if (par1)
         {
-            byte[] var11 = par0Chunk.getBiomeArray();
-            System.arraycopy(var11, 0, var7, var3, var11.length);
-            var3 += var11.length;
+            byte[] abyte2 = par0Chunk.getBiomeArray();
+            System.arraycopy(abyte2, 0, abyte, j, abyte2.length);
+            j += abyte2.length;
         }
 
-        var6.compressedData = new byte[var3];
-        System.arraycopy(var7, 0, var6.compressedData, 0, var3);
-        return var6;
+        packet51mapchunkdata.compressedData = new byte[j];
+        System.arraycopy(abyte, 0, packet51mapchunkdata.compressedData, 0, j);
+        return packet51mapchunkdata;
     }
 
     @SideOnly(Side.CLIENT)

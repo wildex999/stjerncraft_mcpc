@@ -17,37 +17,37 @@ public class RecipesMapCloning extends ShapelessRecipes implements IRecipe   // 
      */
     public boolean matches(InventoryCrafting par1InventoryCrafting, World par2World)
     {
-        int var3 = 0;
-        ItemStack var4 = null;
+        int i = 0;
+        ItemStack itemstack = null;
 
-        for (int var5 = 0; var5 < par1InventoryCrafting.getSizeInventory(); ++var5)
+        for (int j = 0; j < par1InventoryCrafting.getSizeInventory(); ++j)
         {
-            ItemStack var6 = par1InventoryCrafting.getStackInSlot(var5);
+            ItemStack itemstack1 = par1InventoryCrafting.getStackInSlot(j);
 
-            if (var6 != null)
+            if (itemstack1 != null)
             {
-                if (var6.itemID == Item.map.itemID)
+                if (itemstack1.itemID == Item.map.itemID)
                 {
-                    if (var4 != null)
+                    if (itemstack != null)
                     {
                         return false;
                     }
 
-                    var4 = var6;
+                    itemstack = itemstack1;
                 }
                 else
                 {
-                    if (var6.itemID != Item.emptyMap.itemID)
+                    if (itemstack1.itemID != Item.emptyMap.itemID)
                     {
                         return false;
                     }
 
-                    ++var3;
+                    ++i;
                 }
             }
         }
 
-        return var4 != null && var3 > 0;
+        return itemstack != null && i > 0;
     }
 
     /**
@@ -55,46 +55,46 @@ public class RecipesMapCloning extends ShapelessRecipes implements IRecipe   // 
      */
     public ItemStack getCraftingResult(InventoryCrafting par1InventoryCrafting)
     {
-        int var2 = 0;
-        ItemStack var3 = null;
+        int i = 0;
+        ItemStack itemstack = null;
 
-        for (int var4 = 0; var4 < par1InventoryCrafting.getSizeInventory(); ++var4)
+        for (int j = 0; j < par1InventoryCrafting.getSizeInventory(); ++j)
         {
-            ItemStack var5 = par1InventoryCrafting.getStackInSlot(var4);
+            ItemStack itemstack1 = par1InventoryCrafting.getStackInSlot(j);
 
-            if (var5 != null)
+            if (itemstack1 != null)
             {
-                if (var5.itemID == Item.map.itemID)
+                if (itemstack1.itemID == Item.map.itemID)
                 {
-                    if (var3 != null)
+                    if (itemstack != null)
                     {
                         return null;
                     }
 
-                    var3 = var5;
+                    itemstack = itemstack1;
                 }
                 else
                 {
-                    if (var5.itemID != Item.emptyMap.itemID)
+                    if (itemstack1.itemID != Item.emptyMap.itemID)
                     {
                         return null;
                     }
 
-                    ++var2;
+                    ++i;
                 }
             }
         }
 
-        if (var3 != null && var2 >= 1)
+        if (itemstack != null && i >= 1)
         {
-            ItemStack var6 = new ItemStack(Item.map, var2 + 1, var3.getItemDamage());
+            ItemStack itemstack2 = new ItemStack(Item.map, i + 1, itemstack.getItemDamage());
 
-            if (var3.hasDisplayName())
+            if (itemstack.hasDisplayName())
             {
-                var6.setItemName(var3.getDisplayName());
+                itemstack2.setItemName(itemstack.getDisplayName());
             }
 
-            return var6;
+            return itemstack2;
         }
         else
         {

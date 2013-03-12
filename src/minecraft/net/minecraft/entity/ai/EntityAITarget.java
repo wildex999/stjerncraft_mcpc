@@ -45,17 +45,17 @@ public abstract class EntityAITarget extends EntityAIBase
      */
     public boolean continueExecuting()
     {
-        EntityLiving var1 = this.taskOwner.getAttackTarget();
+        EntityLiving entityliving = this.taskOwner.getAttackTarget();
 
-        if (var1 == null)
+        if (entityliving == null)
         {
             return false;
         }
-        else if (!var1.isEntityAlive())
+        else if (!entityliving.isEntityAlive())
         {
             return false;
         }
-        else if (this.taskOwner.getDistanceSqToEntity(var1) > (double)(this.targetDistance * this.targetDistance))
+        else if (this.taskOwner.getDistanceSqToEntity(entityliving) > (double)(this.targetDistance * this.targetDistance))
         {
             return false;
         }
@@ -63,7 +63,7 @@ public abstract class EntityAITarget extends EntityAIBase
         {
             if (this.shouldCheckSight)
             {
-                if (this.taskOwner.getEntitySenses().canSee(var1))
+                if (this.taskOwner.getEntitySenses().canSee(entityliving))
                 {
                     this.field_75298_g = 0;
                 }
@@ -216,25 +216,25 @@ public abstract class EntityAITarget extends EntityAIBase
     private boolean func_75295_a(EntityLiving par1EntityLiving)
     {
         this.field_75302_c = 10 + this.taskOwner.getRNG().nextInt(5);
-        PathEntity var2 = this.taskOwner.getNavigator().getPathToEntityLiving(par1EntityLiving);
+        PathEntity pathentity = this.taskOwner.getNavigator().getPathToEntityLiving(par1EntityLiving);
 
-        if (var2 == null)
+        if (pathentity == null)
         {
             return false;
         }
         else
         {
-            PathPoint var3 = var2.getFinalPathPoint();
+            PathPoint pathpoint = pathentity.getFinalPathPoint();
 
-            if (var3 == null)
+            if (pathpoint == null)
             {
                 return false;
             }
             else
             {
-                int var4 = var3.xCoord - MathHelper.floor_double(par1EntityLiving.posX);
-                int var5 = var3.zCoord - MathHelper.floor_double(par1EntityLiving.posZ);
-                return (double)(var4 * var4 + var5 * var5) <= 2.25D;
+                int i = pathpoint.xCoord - MathHelper.floor_double(par1EntityLiving.posX);
+                int j = pathpoint.zCoord - MathHelper.floor_double(par1EntityLiving.posZ);
+                return (double)(i * i + j * j) <= 2.25D;
             }
         }
     }

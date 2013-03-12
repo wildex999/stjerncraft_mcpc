@@ -85,41 +85,41 @@ public class BlockLever extends Block
      */
     public int onBlockPlaced(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
     {
-        int var11 = par9 & 8;
-        int var10 = par9 & 7;
-        var10 = -1;
+        int j1 = par9 & 8;
+        int k1 = par9 & 7;
+        k1 = -1;
 
         if (par5 == 0 && par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN))
         {
-            var10 = par1World.rand.nextBoolean() ? 0 : 7;
+            k1 = par1World.rand.nextBoolean() ? 0 : 7;
         }
 
         if (par5 == 1 && par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP))
         {
-            var10 = 5 + par1World.rand.nextInt(2);
+            k1 = 5 + par1World.rand.nextInt(2);
         }
 
         if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH))
         {
-            var10 = 4;
+            k1 = 4;
         }
 
         if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH))
         {
-            var10 = 3;
+            k1 = 3;
         }
 
         if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
         {
-            var10 = 2;
+            k1 = 2;
         }
 
         if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
         {
-            var10 = 1;
+            k1 = 1;
         }
 
-        return var10 + var11;
+        return k1 + j1;
     }
 
     /**
@@ -154,50 +154,50 @@ public class BlockLever extends Block
     {
         if (this.checkIfAttachedToBlock(par1World, par2, par3, par4))
         {
-            int var6 = par1World.getBlockMetadata(par2, par3, par4) & 7;
-            boolean var7 = false;
+            int i1 = par1World.getBlockMetadata(par2, par3, par4) & 7;
+            boolean flag = false;
 
-            if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST) && var6 == 1)
+            if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST) && i1 == 1)
             {
-                var7 = true;
+                flag = true;
             }
 
-            if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST) && var6 == 2)
+            if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST) && i1 == 2)
             {
-                var7 = true;
+                flag = true;
             }
 
-            if (!par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH) && var6 == 3)
+            if (!par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH) && i1 == 3)
             {
-                var7 = true;
+                flag = true;
             }
 
-            if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH) && var6 == 4)
+            if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH) && i1 == 4)
             {
-                var7 = true;
+                flag = true;
             }
 
-            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP) && var6 == 5)
+            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP) && i1 == 5)
             {
-                var7 = true;
+                flag = true;
             }
 
-            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP) && var6 == 6)
+            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP) && i1 == 6)
             {
-                var7 = true;
+                flag = true;
             }
 
-            if (!par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN) && var6 == 0)
+            if (!par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN) && i1 == 0)
             {
-                var7 = true;
+                flag = true;
             }
 
-            if (!par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN) && var6 == 7)
+            if (!par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN) && i1 == 7)
             {
-                var7 = true;
+                flag = true;
             }
 
-            if (var7)
+            if (flag)
             {
                 this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
                 par1World.setBlockWithNotify(par2, par3, par4, 0);
@@ -228,37 +228,37 @@ public class BlockLever extends Block
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        int var5 = par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 7;
-        float var6 = 0.1875F;
+        int l = par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 7;
+        float f = 0.1875F;
 
-        if (var5 == 1)
+        if (l == 1)
         {
-            this.setBlockBounds(0.0F, 0.2F, 0.5F - var6, var6 * 2.0F, 0.8F, 0.5F + var6);
+            this.setBlockBounds(0.0F, 0.2F, 0.5F - f, f * 2.0F, 0.8F, 0.5F + f);
         }
-        else if (var5 == 2)
+        else if (l == 2)
         {
-            this.setBlockBounds(1.0F - var6 * 2.0F, 0.2F, 0.5F - var6, 1.0F, 0.8F, 0.5F + var6);
+            this.setBlockBounds(1.0F - f * 2.0F, 0.2F, 0.5F - f, 1.0F, 0.8F, 0.5F + f);
         }
-        else if (var5 == 3)
+        else if (l == 3)
         {
-            this.setBlockBounds(0.5F - var6, 0.2F, 0.0F, 0.5F + var6, 0.8F, var6 * 2.0F);
+            this.setBlockBounds(0.5F - f, 0.2F, 0.0F, 0.5F + f, 0.8F, f * 2.0F);
         }
-        else if (var5 == 4)
+        else if (l == 4)
         {
-            this.setBlockBounds(0.5F - var6, 0.2F, 1.0F - var6 * 2.0F, 0.5F + var6, 0.8F, 1.0F);
+            this.setBlockBounds(0.5F - f, 0.2F, 1.0F - f * 2.0F, 0.5F + f, 0.8F, 1.0F);
         }
-        else if (var5 != 5 && var5 != 6)
+        else if (l != 5 && l != 6)
         {
-            if (var5 == 0 || var5 == 7)
+            if (l == 0 || l == 7)
             {
-                var6 = 0.25F;
-                this.setBlockBounds(0.5F - var6, 0.4F, 0.5F - var6, 0.5F + var6, 1.0F, 0.5F + var6);
+                f = 0.25F;
+                this.setBlockBounds(0.5F - f, 0.4F, 0.5F - f, 0.5F + f, 1.0F, 0.5F + f);
             }
         }
         else
         {
-            var6 = 0.25F;
-            this.setBlockBounds(0.5F - var6, 0.0F, 0.5F - var6, 0.5F + var6, 0.6F, 0.5F + var6);
+            f = 0.25F;
+            this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, 0.6F, 0.5F + f);
         }
     }
 
@@ -278,46 +278,46 @@ public class BlockLever extends Block
         }
         else
         {
-            int var10 = par1World.getBlockMetadata(par2, par3, par4);
-            int var11 = var10 & 7;
-            int var12 = 8 - (var10 & 8);
+            int i1 = par1World.getBlockMetadata(par2, par3, par4);
+            int j1 = i1 & 7;
+            int k1 = 8 - (i1 & 8);
             // CraftBukkit start - Interact Lever
             org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
-            int old = (var12 != 8) ? 1 : 0;
-            int current = (var12 == 8) ? 1 : 0;
+            int old = (k1 != 8) ? 1 : 0;
+            int current = (k1 == 8) ? 1 : 0;
             BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
             par1World.getServer().getPluginManager().callEvent(eventRedstone);
 
-            if ((eventRedstone.getNewCurrent() > 0) != (var12 == 8))
+            if ((eventRedstone.getNewCurrent() > 0) != (k1 == 8))
             {
                 return true;
             }
 
             // CraftBukkit end
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var11 + var12);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, j1 + k1);
             par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
-            par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, var12 > 0 ? 0.6F : 0.5F);
+            par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, k1 > 0 ? 0.6F : 0.5F);
             par1World.notifyBlocksOfNeighborChange(par2, par3, par4, this.blockID);
 
-            if (var11 == 1)
+            if (j1 == 1)
             {
                 par1World.notifyBlocksOfNeighborChange(par2 - 1, par3, par4, this.blockID);
             }
-            else if (var11 == 2)
+            else if (j1 == 2)
             {
                 par1World.notifyBlocksOfNeighborChange(par2 + 1, par3, par4, this.blockID);
             }
-            else if (var11 == 3)
+            else if (j1 == 3)
             {
                 par1World.notifyBlocksOfNeighborChange(par2, par3, par4 - 1, this.blockID);
             }
-            else if (var11 == 4)
+            else if (j1 == 4)
             {
                 par1World.notifyBlocksOfNeighborChange(par2, par3, par4 + 1, this.blockID);
             }
-            else if (var11 != 5 && var11 != 6)
+            else if (j1 != 5 && j1 != 6)
             {
-                if (var11 == 0 || var11 == 7)
+                if (j1 == 0 || j1 == 7)
                 {
                     par1World.notifyBlocksOfNeighborChange(par2, par3 + 1, par4, this.blockID);
                 }
@@ -339,27 +339,27 @@ public class BlockLever extends Block
         if ((par6 & 8) > 0)
         {
             par1World.notifyBlocksOfNeighborChange(par2, par3, par4, this.blockID);
-            int var7 = par6 & 7;
+            int j1 = par6 & 7;
 
-            if (var7 == 1)
+            if (j1 == 1)
             {
                 par1World.notifyBlocksOfNeighborChange(par2 - 1, par3, par4, this.blockID);
             }
-            else if (var7 == 2)
+            else if (j1 == 2)
             {
                 par1World.notifyBlocksOfNeighborChange(par2 + 1, par3, par4, this.blockID);
             }
-            else if (var7 == 3)
+            else if (j1 == 3)
             {
                 par1World.notifyBlocksOfNeighborChange(par2, par3, par4 - 1, this.blockID);
             }
-            else if (var7 == 4)
+            else if (j1 == 4)
             {
                 par1World.notifyBlocksOfNeighborChange(par2, par3, par4 + 1, this.blockID);
             }
-            else if (var7 != 5 && var7 != 6)
+            else if (j1 != 5 && j1 != 6)
             {
-                if (var7 == 0 || var7 == 7)
+                if (j1 == 0 || j1 == 7)
                 {
                     par1World.notifyBlocksOfNeighborChange(par2, par3 + 1, par4, this.blockID);
                 }
@@ -389,16 +389,16 @@ public class BlockLever extends Block
      */
     public boolean isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        int var6 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
+        int i1 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 
-        if ((var6 & 8) == 0)
+        if ((i1 & 8) == 0)
         {
             return false;
         }
         else
         {
-            int var7 = var6 & 7;
-            return var7 == 0 && par5 == 0 ? true : (var7 == 7 && par5 == 0 ? true : (var7 == 6 && par5 == 1 ? true : (var7 == 5 && par5 == 1 ? true : (var7 == 4 && par5 == 2 ? true : (var7 == 3 && par5 == 3 ? true : (var7 == 2 && par5 == 4 ? true : var7 == 1 && par5 == 5))))));
+            int j1 = i1 & 7;
+            return j1 == 0 && par5 == 0 ? true : (j1 == 7 && par5 == 0 ? true : (j1 == 6 && par5 == 1 ? true : (j1 == 5 && par5 == 1 ? true : (j1 == 4 && par5 == 2 ? true : (j1 == 3 && par5 == 3 ? true : (j1 == 2 && par5 == 4 ? true : j1 == 1 && par5 == 5))))));
         }
     }
 

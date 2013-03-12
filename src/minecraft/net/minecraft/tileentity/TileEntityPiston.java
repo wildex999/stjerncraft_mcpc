@@ -99,21 +99,21 @@ public class TileEntityPiston extends TileEntity
             --par1;
         }
 
-        AxisAlignedBB var3 = Block.pistonMoving.getAxisAlignedBB(this.worldObj, this.xCoord, this.yCoord, this.zCoord, this.storedBlockID, par1, this.storedOrientation);
+        AxisAlignedBB axisalignedbb = Block.pistonMoving.getAxisAlignedBB(this.worldObj, this.xCoord, this.yCoord, this.zCoord, this.storedBlockID, par1, this.storedOrientation);
 
-        if (var3 != null)
+        if (axisalignedbb != null)
         {
-            List var4 = this.worldObj.getEntitiesWithinAABBExcludingEntity((Entity)null, var3);
+            List list = this.worldObj.getEntitiesWithinAABBExcludingEntity((Entity)null, axisalignedbb);
 
-            if (!var4.isEmpty())
+            if (!list.isEmpty())
             {
-                this.pushedObjects.addAll(var4);
-                Iterator var5 = this.pushedObjects.iterator();
+                this.pushedObjects.addAll(list);
+                Iterator iterator = this.pushedObjects.iterator();
 
-                while (var5.hasNext())
+                while (iterator.hasNext())
                 {
-                    Entity var6 = (Entity)var5.next();
-                    var6.moveEntity((double)(par2 * (float)Facing.offsetsXForSide[this.storedOrientation]), (double)(par2 * (float)Facing.offsetsYForSide[this.storedOrientation]), (double)(par2 * (float)Facing.offsetsZForSide[this.storedOrientation]));
+                    Entity entity = (Entity)iterator.next();
+                    entity.moveEntity((double)(par2 * (float)Facing.offsetsXForSide[this.storedOrientation]), (double)(par2 * (float)Facing.offsetsYForSide[this.storedOrientation]), (double)(par2 * (float)Facing.offsetsZForSide[this.storedOrientation]));
                 }
 
                 this.pushedObjects.clear();

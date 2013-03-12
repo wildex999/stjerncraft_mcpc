@@ -34,7 +34,7 @@ public class ItemBed extends Item
         else
         {
             ++par5;
-            BlockBed var14 = (BlockBed) Block.bed;
+            BlockBed blockbed = (BlockBed) Block.bed;
             int i1 = MathHelper.floor_double((double)(par2EntityPlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
             byte b0 = 0;
             byte b1 = 0;
@@ -65,16 +65,16 @@ public class ItemBed extends Item
                 {
                     // CraftBukkit start
                     // world.setTypeIdAndData(i, j, k, blockbed.id, i1);
-                    if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, var14.blockID, i1, clickedX, clickedY, clickedZ))
+                    if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, blockbed.blockID, i1, clickedX, clickedY, clickedZ))
                     {
                         return false;
                     }
 
                     // CraftBukkit end
 
-                    if (par3World.getBlockId(par4, par5, par6) == var14.blockID)
+                    if (par3World.getBlockId(par4, par5, par6) == blockbed.blockID)
                     {
-                        par3World.setBlockAndMetadataWithNotify(par4 + b0, par5, par6 + b1, var14.blockID, i1 + 8);
+                        par3World.setBlockAndMetadataWithNotify(par4 + b0, par5, par6 + b1, blockbed.blockID, i1 + 8);
                     }
 
                     --par1ItemStack.stackSize;

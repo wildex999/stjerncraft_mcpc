@@ -32,15 +32,15 @@ public class EntityPig extends EntityAnimal
         this.texture = "/mob/pig.png";
         this.setSize(0.9F, 0.9F);
         this.getNavigator().setAvoidsWater(true);
-        float var2 = 0.25F;
+        float f = 0.25F;
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(1, new EntityAIPanic(this, 0.38F));
         this.tasks.addTask(2, this.aiControlledByPlayer = new EntityAIControlledByPlayer(this, 0.34F));
-        this.tasks.addTask(3, new EntityAIMate(this, var2));
+        this.tasks.addTask(3, new EntityAIMate(this, f));
         this.tasks.addTask(4, new EntityAITempt(this, 0.3F, Item.carrotOnAStick.itemID, false));
         this.tasks.addTask(4, new EntityAITempt(this, 0.3F, Item.carrot.itemID, false));
         this.tasks.addTask(5, new EntityAIFollowParent(this, 0.28F));
-        this.tasks.addTask(6, new EntityAIWander(this, var2));
+        this.tasks.addTask(6, new EntityAIWander(this, f));
         this.tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
     }
@@ -69,8 +69,8 @@ public class EntityPig extends EntityAnimal
      */
     public boolean canBeSteered()
     {
-        ItemStack var1 = ((EntityPlayer)this.riddenByEntity).getHeldItem();
-        return var1 != null && var1.itemID == Item.carrotOnAStick.itemID;
+        ItemStack itemstack = ((EntityPlayer)this.riddenByEntity).getHeldItem();
+        return itemstack != null && itemstack.itemID == Item.carrotOnAStick.itemID;
     }
 
     protected void entityInit()
@@ -218,18 +218,18 @@ public class EntityPig extends EntityAnimal
     {
         if (!this.worldObj.isRemote)
         {
-            EntityPigZombie var2 = new EntityPigZombie(this.worldObj);
+            EntityPigZombie entitypigzombie = new EntityPigZombie(this.worldObj);
 
             // CraftBukkit start
-            if (CraftEventFactory.callPigZapEvent(this, par1EntityLightningBolt, var2).isCancelled())
+            if (CraftEventFactory.callPigZapEvent(this, par1EntityLightningBolt, entitypigzombie).isCancelled())
             {
                 return;
             }
 
             // CraftBukkit end
-            var2.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
+            entitypigzombie.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
             // CraftBukkit - added a reason for spawning this creature
-            this.worldObj.addEntity(var2, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
+            this.worldObj.addEntity(entitypigzombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
             this.setDead();
         }
     }

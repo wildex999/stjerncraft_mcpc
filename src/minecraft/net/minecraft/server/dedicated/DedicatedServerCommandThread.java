@@ -24,8 +24,8 @@ class DedicatedServerCommandThread extends Thread
         }
 
         // CraftBukkit end
-        jline.console.ConsoleReader var1 = this.server.reader; // CraftBukkit
-        String var2;
+        jline.console.ConsoleReader consolereader = this.server.reader; // CraftBukkit
+        String s;
 
         try
         {
@@ -34,25 +34,25 @@ class DedicatedServerCommandThread extends Thread
             {
                 if (useJline)
                 {
-                    var2 = var1.readLine(">", null);
+                    s = consolereader.readLine(">", null);
                 }
                 else
                 {
-                    var2 = var1.readLine();
+                    s = consolereader.readLine();
                 }
 
-                if (var2 != null)
+                if (s != null)
                 {
-                    this.server.addPendingCommand(var2, this.server);
+                    this.server.addPendingCommand(s, this.server);
                 }
 
                 // CraftBukkit end
             }
         }
-        catch (IOException var4)
+        catch (IOException ioexception)
         {
             // CraftBukkit
-            MinecraftServer.logger.log(java.util.logging.Level.SEVERE, null, var4);
+            MinecraftServer.logger.log(java.util.logging.Level.SEVERE, null, ioexception);
         }
     }
 }

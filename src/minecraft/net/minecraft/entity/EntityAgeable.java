@@ -15,34 +15,34 @@ public abstract class EntityAgeable extends EntityCreature
         super(par1World);
     }
 
-    public abstract EntityAgeable createChild(EntityAgeable var1);
+    public abstract EntityAgeable createChild(EntityAgeable entityageable);
 
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
     public boolean interact(EntityPlayer par1EntityPlayer)
     {
-        ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
+        ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
 
-        if (var2 != null && var2.itemID == Item.monsterPlacer.itemID && !this.worldObj.isRemote)
+        if (itemstack != null && itemstack.itemID == Item.monsterPlacer.itemID && !this.worldObj.isRemote)
         {
-            Class var3 = EntityList.getClassFromID(var2.getItemDamage());
+            Class oclass = EntityList.getClassFromID(itemstack.getItemDamage());
 
-            if (var3 != null && var3.isAssignableFrom(this.getClass()))
+            if (oclass != null && oclass.isAssignableFrom(this.getClass()))
             {
-                EntityAgeable var4 = this.createChild(this);
+                EntityAgeable entityageable = this.createChild(this);
 
-                if (var4 != null)
+                if (entityageable != null)
                 {
-                    var4.setGrowingAge(-24000);
-                    var4.setLocationAndAngles(this.posX, this.posY, this.posZ, 0.0F, 0.0F);
-                    this.worldObj.addEntity(var4, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
+                    entityageable.setGrowingAge(-24000);
+                    entityageable.setLocationAndAngles(this.posX, this.posY, this.posZ, 0.0F, 0.0F);
+                    this.worldObj.addEntity(entityageable, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
 
                     if (!par1EntityPlayer.capabilities.isCreativeMode)
                     {
-                        --var2.stackSize;
+                        --itemstack.stackSize;
 
-                        if (var2.stackSize == 0)   // CraftBukkit - allow less than 0 stacks as "infinit"
+                        if (itemstack.stackSize == 0)   // CraftBukkit - allow less than 0 stacks as "infinit"
                         {
                             par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
                         }
@@ -106,22 +106,22 @@ public abstract class EntityAgeable extends EntityCreature
     public void onLivingUpdate()
     {
         super.onLivingUpdate();
-        int var1 = this.getGrowingAge();
+        int i = this.getGrowingAge();
 
         if (ageLocked)
         {
             return;    // CraftBukkit
         }
 
-        if (var1 < 0)
+        if (i < 0)
         {
-            ++var1;
-            this.setGrowingAge(var1);
+            ++i;
+            this.setGrowingAge(i);
         }
-        else if (var1 > 0)
+        else if (i > 0)
         {
-            --var1;
-            this.setGrowingAge(var1);
+            --i;
+            this.setGrowingAge(i);
         }
     }
 

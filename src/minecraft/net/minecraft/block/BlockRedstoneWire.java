@@ -98,163 +98,163 @@ public class BlockRedstoneWire extends Block
     private void updateAndPropagateCurrentStrength(World par1World, int par2, int par3, int par4)
     {
         this.calculateCurrentChanges(par1World, par2, par3, par4, par2, par3, par4);
-        ArrayList var5 = new ArrayList(this.blocksNeedingUpdate);
+        ArrayList arraylist = new ArrayList(this.blocksNeedingUpdate);
         this.blocksNeedingUpdate.clear();
 
-        for (int var6 = 0; var6 < var5.size(); ++var6)
+        for (int l = 0; l < arraylist.size(); ++l)
         {
-            ChunkPosition var7 = (ChunkPosition)var5.get(var6);
-            par1World.notifyBlocksOfNeighborChange(var7.x, var7.y, var7.z, this.blockID);
+            ChunkPosition chunkposition = (ChunkPosition)arraylist.get(l);
+            par1World.notifyBlocksOfNeighborChange(chunkposition.x, chunkposition.y, chunkposition.z, this.blockID);
         }
     }
 
     private void calculateCurrentChanges(World par1World, int par2, int par3, int par4, int par5, int par6, int par7)
     {
-        int var8 = par1World.getBlockMetadata(par2, par3, par4);
-        int var9 = 0;
+        int k1 = par1World.getBlockMetadata(par2, par3, par4);
+        int l1 = 0;
         this.wiresProvidePower = false;
-        boolean var10 = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
+        boolean flag = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
         this.wiresProvidePower = true;
-        int var11;
-        int var12;
-        int var13;
+        int i2;
+        int j2;
+        int k2;
 
-        if (var10)
+        if (flag)
         {
-            var9 = 15;
+            l1 = 15;
         }
         else
         {
-            for (var11 = 0; var11 < 4; ++var11)
+            for (i2 = 0; i2 < 4; ++i2)
             {
-                var12 = par2;
-                var13 = par4;
+                j2 = par2;
+                k2 = par4;
 
-                if (var11 == 0)
+                if (i2 == 0)
                 {
-                    var12 = par2 - 1;
+                    j2 = par2 - 1;
                 }
 
-                if (var11 == 1)
+                if (i2 == 1)
                 {
-                    ++var12;
+                    ++j2;
                 }
 
-                if (var11 == 2)
+                if (i2 == 2)
                 {
-                    var13 = par4 - 1;
+                    k2 = par4 - 1;
                 }
 
-                if (var11 == 3)
+                if (i2 == 3)
                 {
-                    ++var13;
+                    ++k2;
                 }
 
-                if (var12 != par5 || par3 != par6 || var13 != par7)
+                if (j2 != par5 || par3 != par6 || k2 != par7)
                 {
-                    var9 = this.getMaxCurrentStrength(par1World, var12, par3, var13, var9);
+                    l1 = this.getMaxCurrentStrength(par1World, j2, par3, k2, l1);
                 }
 
-                if (par1World.isBlockNormalCube(var12, par3, var13) && !par1World.isBlockNormalCube(par2, par3 + 1, par4))
+                if (par1World.isBlockNormalCube(j2, par3, k2) && !par1World.isBlockNormalCube(par2, par3 + 1, par4))
                 {
-                    if (var12 != par5 || par3 + 1 != par6 || var13 != par7)
+                    if (j2 != par5 || par3 + 1 != par6 || k2 != par7)
                     {
-                        var9 = this.getMaxCurrentStrength(par1World, var12, par3 + 1, var13, var9);
+                        l1 = this.getMaxCurrentStrength(par1World, j2, par3 + 1, k2, l1);
                     }
                 }
-                else if (!par1World.isBlockNormalCube(var12, par3, var13) && (var12 != par5 || par3 - 1 != par6 || var13 != par7))
+                else if (!par1World.isBlockNormalCube(j2, par3, k2) && (j2 != par5 || par3 - 1 != par6 || k2 != par7))
                 {
-                    var9 = this.getMaxCurrentStrength(par1World, var12, par3 - 1, var13, var9);
+                    l1 = this.getMaxCurrentStrength(par1World, j2, par3 - 1, k2, l1);
                 }
             }
 
-            if (var9 > 0)
+            if (l1 > 0)
             {
-                --var9;
+                --l1;
             }
             else
             {
-                var9 = 0;
+                l1 = 0;
             }
         }
 
         // CraftBukkit start
-        if (var8 != var9)
+        if (k1 != l1)
         {
-            BlockRedstoneEvent event = new BlockRedstoneEvent(par1World.getWorld().getBlockAt(par2, par3, par4), var8, var9);
+            BlockRedstoneEvent event = new BlockRedstoneEvent(par1World.getWorld().getBlockAt(par2, par3, par4), k1, l1);
             par1World.getServer().getPluginManager().callEvent(event);
-            var9 = event.getNewCurrent();
+            l1 = event.getNewCurrent();
         }
 
         // CraftBukkit end
 
-        if (var8 != var9)
+        if (k1 != l1)
         {
             par1World.editingBlocks = true;
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var9);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, l1);
             par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
             par1World.editingBlocks = false;
 
-            for (var11 = 0; var11 < 4; ++var11)
+            for (i2 = 0; i2 < 4; ++i2)
             {
-                var12 = par2;
-                var13 = par4;
-                int var14 = par3 - 1;
+                j2 = par2;
+                k2 = par4;
+                int l2 = par3 - 1;
 
-                if (var11 == 0)
+                if (i2 == 0)
                 {
-                    var12 = par2 - 1;
+                    j2 = par2 - 1;
                 }
 
-                if (var11 == 1)
+                if (i2 == 1)
                 {
-                    ++var12;
+                    ++j2;
                 }
 
-                if (var11 == 2)
+                if (i2 == 2)
                 {
-                    var13 = par4 - 1;
+                    k2 = par4 - 1;
                 }
 
-                if (var11 == 3)
+                if (i2 == 3)
                 {
-                    ++var13;
+                    ++k2;
                 }
 
-                if (par1World.isBlockNormalCube(var12, par3, var13))
+                if (par1World.isBlockNormalCube(j2, par3, k2))
                 {
-                    var14 += 2;
+                    l2 += 2;
                 }
 
-                boolean var15 = false;
-                int var16 = this.getMaxCurrentStrength(par1World, var12, par3, var13, -1);
-                var9 = par1World.getBlockMetadata(par2, par3, par4);
+                boolean flag1 = false;
+                int i3 = this.getMaxCurrentStrength(par1World, j2, par3, k2, -1);
+                l1 = par1World.getBlockMetadata(par2, par3, par4);
 
-                if (var9 > 0)
+                if (l1 > 0)
                 {
-                    --var9;
+                    --l1;
                 }
 
-                if (var16 >= 0 && var16 != var9)
+                if (i3 >= 0 && i3 != l1)
                 {
-                    this.calculateCurrentChanges(par1World, var12, par3, var13, par2, par3, par4);
+                    this.calculateCurrentChanges(par1World, j2, par3, k2, par2, par3, par4);
                 }
 
-                var16 = this.getMaxCurrentStrength(par1World, var12, var14, var13, -1);
-                var9 = par1World.getBlockMetadata(par2, par3, par4);
+                i3 = this.getMaxCurrentStrength(par1World, j2, l2, k2, -1);
+                l1 = par1World.getBlockMetadata(par2, par3, par4);
 
-                if (var9 > 0)
+                if (l1 > 0)
                 {
-                    --var9;
+                    --l1;
                 }
 
-                if (var16 >= 0 && var16 != var9)
+                if (i3 >= 0 && i3 != l1)
                 {
-                    this.calculateCurrentChanges(par1World, var12, var14, var13, par2, par3, par4);
+                    this.calculateCurrentChanges(par1World, j2, l2, k2, par2, par3, par4);
                 }
             }
 
-            if (var8 < var9 || var9 == 0)
+            if (k1 < l1 || l1 == 0)
             {
                 this.blocksNeedingUpdate.add(new ChunkPosition(par2, par3, par4));
                 this.blocksNeedingUpdate.add(new ChunkPosition(par2 - 1, par3, par4));
@@ -411,8 +411,8 @@ public class BlockRedstoneWire extends Block
         }
         else
         {
-            int var6 = par1World.getBlockMetadata(par2, par3, par4);
-            return var6 > par5 ? var6 : par5;
+            int i1 = par1World.getBlockMetadata(par2, par3, par4);
+            return i1 > par5 ? i1 : par5;
         }
     }
 
@@ -424,16 +424,16 @@ public class BlockRedstoneWire extends Block
     {
         if (!par1World.isRemote)
         {
-            int var6 = par1World.getBlockMetadata(par2, par3, par4);
-            boolean var7 = this.canPlaceBlockAt(par1World, par2, par3, par4);
+            int i1 = par1World.getBlockMetadata(par2, par3, par4);
+            boolean flag = this.canPlaceBlockAt(par1World, par2, par3, par4);
 
-            if (var7)
+            if (flag)
             {
                 this.updateAndPropagateCurrentStrength(par1World, par2, par3, par4);
             }
             else
             {
-                this.dropBlockAsItem(par1World, par2, par3, par4, var6, 0);
+                this.dropBlockAsItem(par1World, par2, par3, par4, i1, 0);
                 par1World.setBlockWithNotify(par2, par3, par4, 0);
             }
 
@@ -479,35 +479,35 @@ public class BlockRedstoneWire extends Block
         }
         else
         {
-            boolean var6 = isPoweredOrRepeater(par1IBlockAccess, par2 - 1, par3, par4, 1) || !par1IBlockAccess.isBlockNormalCube(par2 - 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 - 1, par3 - 1, par4, -1);
-            boolean var7 = isPoweredOrRepeater(par1IBlockAccess, par2 + 1, par3, par4, 3) || !par1IBlockAccess.isBlockNormalCube(par2 + 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 + 1, par3 - 1, par4, -1);
-            boolean var8 = isPoweredOrRepeater(par1IBlockAccess, par2, par3, par4 - 1, 2) || !par1IBlockAccess.isBlockNormalCube(par2, par3, par4 - 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 - 1, par4 - 1, -1);
-            boolean var9 = isPoweredOrRepeater(par1IBlockAccess, par2, par3, par4 + 1, 0) || !par1IBlockAccess.isBlockNormalCube(par2, par3, par4 + 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 - 1, par4 + 1, -1);
+            boolean flag = isPoweredOrRepeater(par1IBlockAccess, par2 - 1, par3, par4, 1) || !par1IBlockAccess.isBlockNormalCube(par2 - 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 - 1, par3 - 1, par4, -1);
+            boolean flag1 = isPoweredOrRepeater(par1IBlockAccess, par2 + 1, par3, par4, 3) || !par1IBlockAccess.isBlockNormalCube(par2 + 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 + 1, par3 - 1, par4, -1);
+            boolean flag2 = isPoweredOrRepeater(par1IBlockAccess, par2, par3, par4 - 1, 2) || !par1IBlockAccess.isBlockNormalCube(par2, par3, par4 - 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 - 1, par4 - 1, -1);
+            boolean flag3 = isPoweredOrRepeater(par1IBlockAccess, par2, par3, par4 + 1, 0) || !par1IBlockAccess.isBlockNormalCube(par2, par3, par4 + 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 - 1, par4 + 1, -1);
 
             if (!par1IBlockAccess.isBlockNormalCube(par2, par3 + 1, par4))
             {
                 if (par1IBlockAccess.isBlockNormalCube(par2 - 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 - 1, par3 + 1, par4, -1))
                 {
-                    var6 = true;
+                    flag = true;
                 }
 
                 if (par1IBlockAccess.isBlockNormalCube(par2 + 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 + 1, par3 + 1, par4, -1))
                 {
-                    var7 = true;
+                    flag1 = true;
                 }
 
                 if (par1IBlockAccess.isBlockNormalCube(par2, par3, par4 - 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 + 1, par4 - 1, -1))
                 {
-                    var8 = true;
+                    flag2 = true;
                 }
 
                 if (par1IBlockAccess.isBlockNormalCube(par2, par3, par4 + 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 + 1, par4 + 1, -1))
                 {
-                    var9 = true;
+                    flag3 = true;
                 }
             }
 
-            return !var8 && !var7 && !var6 && !var9 && par5 >= 2 && par5 <= 5 ? true : (par5 == 2 && var8 && !var6 && !var7 ? true : (par5 == 3 && var9 && !var6 && !var7 ? true : (par5 == 4 && var6 && !var8 && !var9 ? true : par5 == 5 && var7 && !var8 && !var9)));
+            return !flag2 && !flag1 && !flag && !flag3 && par5 >= 2 && par5 <= 5 ? true : (par5 == 2 && flag2 && !flag && !flag1 ? true : (par5 == 3 && flag3 && !flag && !flag1 ? true : (par5 == 4 && flag && !flag2 && !flag3 ? true : par5 == 5 && flag1 && !flag2 && !flag3)));
         }
     }
 
@@ -526,35 +526,35 @@ public class BlockRedstoneWire extends Block
      */
     public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
-        int var6 = par1World.getBlockMetadata(par2, par3, par4);
+        int l = par1World.getBlockMetadata(par2, par3, par4);
 
-        if (var6 > 0)
+        if (l > 0)
         {
-            double var7 = (double)par2 + 0.5D + ((double)par5Random.nextFloat() - 0.5D) * 0.2D;
-            double var9 = (double)((float)par3 + 0.0625F);
-            double var11 = (double)par4 + 0.5D + ((double)par5Random.nextFloat() - 0.5D) * 0.2D;
-            float var13 = (float)var6 / 15.0F;
-            float var14 = var13 * 0.6F + 0.4F;
+            double d0 = (double)par2 + 0.5D + ((double)par5Random.nextFloat() - 0.5D) * 0.2D;
+            double d1 = (double)((float)par3 + 0.0625F);
+            double d2 = (double)par4 + 0.5D + ((double)par5Random.nextFloat() - 0.5D) * 0.2D;
+            float f = (float)l / 15.0F;
+            float f1 = f * 0.6F + 0.4F;
 
-            if (var6 == 0)
+            if (l == 0)
             {
-                var14 = 0.0F;
+                f1 = 0.0F;
             }
 
-            float var15 = var13 * var13 * 0.7F - 0.5F;
-            float var16 = var13 * var13 * 0.6F - 0.7F;
+            float f2 = f * f * 0.7F - 0.5F;
+            float f3 = f * f * 0.6F - 0.7F;
 
-            if (var15 < 0.0F)
+            if (f2 < 0.0F)
             {
-                var15 = 0.0F;
+                f2 = 0.0F;
             }
 
-            if (var16 < 0.0F)
+            if (f3 < 0.0F)
             {
-                var16 = 0.0F;
+                f3 = 0.0F;
             }
 
-            par1World.spawnParticle("reddust", var7, var9, var11, (double)var14, (double)var15, (double)var16);
+            par1World.spawnParticle("reddust", d0, d1, d2, (double)f1, (double)f2, (double)f3);
         }
     }
 
@@ -564,24 +564,24 @@ public class BlockRedstoneWire extends Block
      */
     public static boolean isPowerProviderOrWire(IBlockAccess par0IBlockAccess, int par1, int par2, int par3, int par4)
     {
-        int var5 = par0IBlockAccess.getBlockId(par1, par2, par3);
+        int i1 = par0IBlockAccess.getBlockId(par1, par2, par3);
 
-        if (var5 == Block.redstoneWire.blockID)
+        if (i1 == Block.redstoneWire.blockID)
         {
             return true;
         }
-        else if (var5 == 0)
+        else if (i1 == 0)
         {
             return false;
         }
-        else if (var5 != Block.redstoneRepeaterIdle.blockID && var5 != Block.redstoneRepeaterActive.blockID)
+        else if (i1 != Block.redstoneRepeaterIdle.blockID && i1 != Block.redstoneRepeaterActive.blockID)
         {
-            return (Block.blocksList[var5] != null && Block.blocksList[var5].canConnectRedstone(par0IBlockAccess, par1, par2, par3, par4));
+            return (Block.blocksList[i1] != null && Block.blocksList[i1].canConnectRedstone(par0IBlockAccess, par1, par2, par3, par4));
         }
         else
         {
-            int var6 = par0IBlockAccess.getBlockMetadata(par1, par2, par3);
-            return par4 == (var6 & 3) || par4 == Direction.footInvisibleFaceRemap[var6 & 3];
+            int j1 = par0IBlockAccess.getBlockMetadata(par1, par2, par3);
+            return par4 == (j1 & 3) || par4 == Direction.footInvisibleFaceRemap[j1 & 3];
         }
     }
 
@@ -597,12 +597,12 @@ public class BlockRedstoneWire extends Block
         }
         else
         {
-            int var5 = par0IBlockAccess.getBlockId(par1, par2, par3);
+            int i1 = par0IBlockAccess.getBlockId(par1, par2, par3);
 
-            if (var5 == Block.redstoneRepeaterActive.blockID)
+            if (i1 == Block.redstoneRepeaterActive.blockID)
             {
-                int var6 = par0IBlockAccess.getBlockMetadata(par1, par2, par3);
-                return par4 == (var6 & 3);
+                int j1 = par0IBlockAccess.getBlockMetadata(par1, par2, par3);
+                return par4 == (j1 & 3);
             }
             else
             {

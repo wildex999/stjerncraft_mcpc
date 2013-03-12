@@ -136,15 +136,15 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
     {
         if (this.getSkeletonType() == 1)
         {
-            ItemStack var2 = this.getHeldItem();
-            int var3 = 4;
+            ItemStack itemstack = this.getHeldItem();
+            int i = 4;
 
-            if (var2 != null)
+            if (itemstack != null)
             {
-                var3 += var2.getDamageVsEntity(this);
+                i += itemstack.getDamageVsEntity(this);
             }
 
-            return var3;
+            return i;
         }
         else
         {
@@ -168,30 +168,30 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
     {
         if (this.worldObj.isDaytime() && !this.worldObj.isRemote)
         {
-            float var1 = this.getBrightness(1.0F);
+            float f = this.getBrightness(1.0F);
 
-            if (var1 > 0.5F && this.rand.nextFloat() * 30.0F < (var1 - 0.4F) * 2.0F && this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)))
+            if (f > 0.5F && this.rand.nextFloat() * 30.0F < (f - 0.4F) * 2.0F && this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)))
             {
-                boolean var2 = true;
-                ItemStack var3 = this.getCurrentItemOrArmor(4);
+                boolean flag = true;
+                ItemStack itemstack = this.getCurrentItemOrArmor(4);
 
-                if (var3 != null)
+                if (itemstack != null)
                 {
-                    if (var3.isItemStackDamageable())
+                    if (itemstack.isItemStackDamageable())
                     {
-                        var3.setItemDamage(var3.getItemDamageForDisplay() + this.rand.nextInt(2));
+                        itemstack.setItemDamage(itemstack.getItemDamageForDisplay() + this.rand.nextInt(2));
 
-                        if (var3.getItemDamageForDisplay() >= var3.getMaxDamage())
+                        if (itemstack.getItemDamageForDisplay() >= itemstack.getMaxDamage())
                         {
-                            this.renderBrokenItemStack(var3);
+                            this.renderBrokenItemStack(itemstack);
                             this.setCurrentItemOrArmor(4, (ItemStack)null);
                         }
                     }
 
-                    var2 = false;
+                    flag = false;
                 }
 
-                if (var2)
+                if (flag)
                 {
                     // CraftBukkit start
                     EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), 8);
@@ -219,13 +219,13 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
 
         if (par1DamageSource.getSourceOfDamage() instanceof EntityArrow && par1DamageSource.getEntity() instanceof EntityPlayer)
         {
-            EntityPlayer var2 = (EntityPlayer)par1DamageSource.getEntity();
-            double var3 = var2.posX - this.posX;
-            double var5 = var2.posZ - this.posZ;
+            EntityPlayer entityplayer = (EntityPlayer)par1DamageSource.getEntity();
+            double d0 = entityplayer.posX - this.posX;
+            double d1 = entityplayer.posZ - this.posZ;
 
-            if (var3 * var3 + var5 * var5 >= 2500.0D)
+            if (d0 * d0 + d1 * d1 >= 2500.0D)
             {
-                var2.triggerAchievement(AchievementList.snipeSkeleton);
+                entityplayer.triggerAchievement(AchievementList.snipeSkeleton);
             }
         }
     }
@@ -350,9 +350,9 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
 
         if (this.getCurrentItemOrArmor(4) == null)
         {
-            Calendar var1 = this.worldObj.getCurrentDate();
+            Calendar calendar = this.worldObj.getCurrentDate();
 
-            if (var1.get(2) + 1 == 10 && var1.get(5) == 31 && this.rand.nextFloat() < 0.25F)
+            if (calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.rand.nextFloat() < 0.25F)
             {
                 this.setCurrentItemOrArmor(4, new ItemStack(this.rand.nextFloat() < 0.1F ? Block.pumpkinLantern : Block.pumpkin));
                 this.equipmentDropChances[4] = 0.0F;
@@ -364,9 +364,9 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
     {
         this.tasks.func_85156_a(this.aiAttackOnCollide);
         this.tasks.func_85156_a(this.aiArrowAttack);
-        ItemStack var1 = this.getHeldItem();
+        ItemStack itemstack = this.getHeldItem();
 
-        if (var1 != null && var1.itemID == Item.bow.itemID)
+        if (itemstack != null && itemstack.itemID == Item.bow.itemID)
         {
             this.tasks.addTask(4, this.aiArrowAttack);
         }
@@ -381,27 +381,27 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
      */
     public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving)
     {
-        EntityArrow var2 = new EntityArrow(this.worldObj, this, par1EntityLiving, 1.6F, 12.0F);
-        int var3 = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, this.getHeldItem());
-        int var4 = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, this.getHeldItem());
+        EntityArrow entityarrow = new EntityArrow(this.worldObj, this, par1EntityLiving, 1.6F, 12.0F);
+        int i = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, this.getHeldItem());
+        int j = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, this.getHeldItem());
 
-        if (var3 > 0)
+        if (i > 0)
         {
-            var2.setDamage(var2.getDamage() + (double)var3 * 0.5D + 0.5D);
+            entityarrow.setDamage(entityarrow.getDamage() + (double)i * 0.5D + 0.5D);
         }
 
-        if (var4 > 0)
+        if (j > 0)
         {
-            var2.setKnockbackStrength(var4);
+            entityarrow.setKnockbackStrength(j);
         }
 
         if (EnchantmentHelper.getEnchantmentLevel(Enchantment.flame.effectId, this.getHeldItem()) > 0 || this.getSkeletonType() == 1)
         {
-            var2.setFire(100);
+            entityarrow.setFire(100);
         }
 
         this.playSound("random.bow", 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
-        this.worldObj.spawnEntityInWorld(var2);
+        this.worldObj.spawnEntityInWorld(entityarrow);
     }
 
     /**
@@ -439,8 +439,8 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
 
         if (par1NBTTagCompound.hasKey("SkeletonType"))
         {
-            byte var2 = par1NBTTagCompound.getByte("SkeletonType");
-            this.setSkeletonType(var2);
+            byte b0 = par1NBTTagCompound.getByte("SkeletonType");
+            this.setSkeletonType(b0);
         }
 
         this.func_85036_m();

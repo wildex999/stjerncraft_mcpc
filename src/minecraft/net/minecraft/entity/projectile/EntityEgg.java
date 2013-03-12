@@ -77,7 +77,7 @@ public class EntityEgg extends EntityThrowable
         }
         // CraftBukkit end
 
-        for (int var5 = 0; var5 < 8; ++var5)
+        for (int i = 0; i < 8; ++i)
         {
             this.worldObj.spawnParticle("snowballpoof", this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D);
         }

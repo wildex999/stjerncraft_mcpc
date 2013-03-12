@@ -18,8 +18,8 @@ public class BlockReed extends Block implements IPlantable
     {
         super(par1, Material.plants);
         this.blockIndexInTexture = par2;
-        float var3 = 0.375F;
-        this.setBlockBounds(0.5F - var3, 0.0F, 0.5F - var3, 0.5F + var3, 1.0F, 0.5F + var3);
+        float f = 0.375F;
+        this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, 1.0F, 0.5F + f);
         this.setTickRandomly(true);
     }
 
@@ -30,25 +30,25 @@ public class BlockReed extends Block implements IPlantable
     {
         if (par1World.isAirBlock(par2, par3 + 1, par4))
         {
-            int var6;
+            int l;
 
-            for (var6 = 1; par1World.getBlockId(par2, par3 - var6, par4) == this.blockID; ++var6)
+            for (l = 1; par1World.getBlockId(par2, par3 - l, par4) == this.blockID; ++l)
             {
                 ;
             }
 
-            if (var6 < 3)
+            if (l < 3)
             {
-                int var7 = par1World.getBlockMetadata(par2, par3, par4);
+                int i1 = par1World.getBlockMetadata(par2, par3, par4);
 
-                if (var7 >= (byte) range(3, (par1World.growthOdds / par1World.getWorld().sugarGrowthModifier * 15) + 0.5F, 15))   // Spigot
+                if (i1 >= (byte) range(3, (par1World.growthOdds / par1World.getWorld().sugarGrowthModifier * 15) + 0.5F, 15))   // Spigot
                 {
                     org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3 + 1, par4, this.blockID, 0); // CraftBukkit
                     par1World.setBlockMetadataWithNotify(par2, par3, par4, 0);
                 }
                 else
                 {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 + 1);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 + 1);
                 }
             }
         }

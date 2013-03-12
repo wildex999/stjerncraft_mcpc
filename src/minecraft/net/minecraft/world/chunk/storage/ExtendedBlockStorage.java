@@ -86,8 +86,8 @@ public class ExtendedBlockStorage
      */
     public int getExtBlockID(int par1, int par2, int par3)
     {
-        int var4 = this.blockLSBArray[par2 << 8 | par3 << 4 | par1] & 255;
-        return this.blockMSBArray != null ? this.blockMSBArray.get(par1, par2, par3) << 8 | var4 : var4;
+        int l = this.blockLSBArray[par2 << 8 | par3 << 4 | par1] & 255;
+        return this.blockMSBArray != null ? this.blockMSBArray.get(par1, par2, par3) << 8 | l : l;
     }
 
     /**
@@ -97,14 +97,14 @@ public class ExtendedBlockStorage
      */
     public void setExtBlockID(int par1, int par2, int par3, int par4)
     {
-        int var5 = this.blockLSBArray[par2 << 8 | par3 << 4 | par1] & 255;
+        int i1 = this.blockLSBArray[par2 << 8 | par3 << 4 | par1] & 255;
 
         if (this.blockMSBArray != null)
         {
-            var5 |= this.blockMSBArray.get(par1, par2, par3) << 8;
+            i1 |= this.blockMSBArray.get(par1, par2, par3) << 8;
         }
 
-        if (var5 == 0 && par4 != 0)
+        if (i1 == 0 && par4 != 0)
         {
             ++this.blockRefCount;
 
@@ -113,20 +113,20 @@ public class ExtendedBlockStorage
                 ++this.tickRefCount;
             }
         }
-        else if (var5 != 0 && par4 == 0)
+        else if (i1 != 0 && par4 == 0)
         {
             --this.blockRefCount;
 
-            if (Block.blocksList[var5] != null && Block.blocksList[var5].getTickRandomly())
+            if (Block.blocksList[i1] != null && Block.blocksList[i1].getTickRandomly())
             {
                 --this.tickRefCount;
             }
         }
-        else if (Block.blocksList[var5] != null && Block.blocksList[var5].getTickRandomly() && (Block.blocksList[par4] == null || !Block.blocksList[par4].getTickRandomly()))
+        else if (Block.blocksList[i1] != null && Block.blocksList[i1].getTickRandomly() && (Block.blocksList[par4] == null || !Block.blocksList[par4].getTickRandomly()))
         {
             --this.tickRefCount;
         }
-        else if ((Block.blocksList[var5] == null || !Block.blocksList[var5].getTickRandomly()) && Block.blocksList[par4] != null && Block.blocksList[par4].getTickRandomly())
+        else if ((Block.blocksList[i1] == null || !Block.blocksList[i1].getTickRandomly()) && Block.blocksList[par4] != null && Block.blocksList[par4].getTickRandomly())
         {
             ++this.tickRefCount;
         }
@@ -323,30 +323,30 @@ public class ExtendedBlockStorage
         this.blockRefCount = 0;
         this.tickRefCount = 0;
 
-        for (int var1 = 0; var1 < 16; ++var1)
+        for (int i = 0; i < 16; ++i)
         {
-            for (int var2 = 0; var2 < 16; ++var2)
+            for (int j = 0; j < 16; ++j)
             {
-                for (int var3 = 0; var3 < 16; ++var3)
+                for (int k = 0; k < 16; ++k)
                 {
-                    int var4 = this.getExtBlockID(var1, var2, var3);
+                    int l = this.getExtBlockID(i, j, k);
 
-                    if (var4 > 0)
+                    if (l > 0)
                     {
-                        if (Block.blocksList[var4] == null)
+                        if (Block.blocksList[l] == null)
                         {
-                            this.blockLSBArray[var2 << 8 | var3 << 4 | var1] = 0;
+                            this.blockLSBArray[j << 8 | k << 4 | i] = 0;
 
                             if (this.blockMSBArray != null)
                             {
-                                this.blockMSBArray.set(var1, var2, var3, 0);
+                                this.blockMSBArray.set(i, j, k, 0);
                             }
                         }
                         else
                         {
                             ++this.blockRefCount;
 
-                            if (Block.blocksList[var4].getTickRandomly())
+                            if (Block.blocksList[l].getTickRandomly())
                             {
                                 ++this.tickRefCount;
                             }

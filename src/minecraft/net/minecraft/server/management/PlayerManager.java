@@ -88,9 +88,9 @@ public class PlayerManager
                 return;    // CraftBukkit - only do unload when we go from non-empty to empty
             }
 
-            WorldProvider var1 = this.theWorldServer.provider;
+            WorldProvider worldprovider = this.theWorldServer.provider;
 
-            if (!var1.canRespawnHere())
+            if (!worldprovider.canRespawnHere())
             {
                 this.theWorldServer.theChunkProviderServer.unloadAllChunks();
             }
@@ -108,16 +108,16 @@ public class PlayerManager
 
     private PlayerInstance getOrCreateChunkWatcher(int par1, int par2, boolean par3)
     {
-        long var4 = (long)par1 + 2147483647L | (long)par2 + 2147483647L << 32;
-        PlayerInstance var6 = (PlayerInstance)this.playerInstances.getValueByKey(var4);
+        long k = (long)par1 + 2147483647L | (long)par2 + 2147483647L << 32;
+        PlayerInstance playerinstance = (PlayerInstance)this.playerInstances.getValueByKey(k);
 
-        if (var6 == null && par3)
+        if (playerinstance == null && par3)
         {
-            var6 = new PlayerInstance(this, par1, par2);
-            this.playerInstances.add(var4, var6);
+            playerinstance = new PlayerInstance(this, par1, par2);
+            this.playerInstances.add(k, playerinstance);
         }
 
-        return var6;
+        return playerinstance;
     }
     // CraftBukkit start
     public final boolean isChunkInUse(int x, int z)
@@ -138,13 +138,13 @@ public class PlayerManager
      */
     public void flagChunkForUpdate(int par1, int par2, int par3)
     {
-        int var4 = par1 >> 4;
-        int var5 = par3 >> 4;
-        PlayerInstance var6 = this.getOrCreateChunkWatcher(var4, var5, false);
+        int l = par1 >> 4;
+        int i1 = par3 >> 4;
+        PlayerInstance playerinstance = this.getOrCreateChunkWatcher(l, i1, false);
 
-        if (var6 != null)
+        if (playerinstance != null)
         {
-            var6.flagChunkForUpdate(par1 & 15, par2, par3 & 15);
+            playerinstance.flagChunkForUpdate(par1 & 15, par2, par3 & 15);
         }
     }
 
@@ -153,16 +153,16 @@ public class PlayerManager
      */
     public void addPlayer(EntityPlayerMP par1EntityPlayerMP)
     {
-        int var2 = (int)par1EntityPlayerMP.posX >> 4;
-        int var3 = (int)par1EntityPlayerMP.posZ >> 4;
+        int i = (int)par1EntityPlayerMP.posX >> 4;
+        int j = (int)par1EntityPlayerMP.posZ >> 4;
         par1EntityPlayerMP.managedPosX = par1EntityPlayerMP.posX;
         par1EntityPlayerMP.managedPosZ = par1EntityPlayerMP.posZ;
         // CraftBukkit start - load nearby chunks first
         List<ChunkCoordIntPair> chunkList = new LinkedList<ChunkCoordIntPair>();
 
-        for (int k = var2 - this.playerViewRadius; k <= var2 + this.playerViewRadius; ++k)
+        for (int k = i - this.playerViewRadius; k <= i + this.playerViewRadius; ++k)
         {
-            for (int l = var3 - this.playerViewRadius; l <= var3 + this.playerViewRadius; ++l)
+            for (int l = j - this.playerViewRadius; l <= j + this.playerViewRadius; ++l)
             {
                 chunkList.add(new ChunkCoordIntPair(k, l));
             }
@@ -185,54 +185,54 @@ public class PlayerManager
      */
     public void filterChunkLoadQueue(EntityPlayerMP par1EntityPlayerMP)
     {
-        ArrayList var2 = new ArrayList(par1EntityPlayerMP.loadedChunks);
-        int var3 = 0;
-        int var4 = this.playerViewRadius;
-        int var5 = (int)par1EntityPlayerMP.posX >> 4;
-        int var6 = (int)par1EntityPlayerMP.posZ >> 4;
-        int var7 = 0;
-        int var8 = 0;
-        ChunkCoordIntPair var9 = PlayerInstance.getChunkLocation(this.getOrCreateChunkWatcher(var5, var6, true));
+        ArrayList arraylist = new ArrayList(par1EntityPlayerMP.loadedChunks);
+        int i = 0;
+        int j = this.playerViewRadius;
+        int k = (int)par1EntityPlayerMP.posX >> 4;
+        int l = (int)par1EntityPlayerMP.posZ >> 4;
+        int i1 = 0;
+        int j1 = 0;
+        ChunkCoordIntPair chunkcoordintpair = PlayerInstance.getChunkLocation(this.getOrCreateChunkWatcher(k, l, true));
         par1EntityPlayerMP.loadedChunks.clear();
 
-        if (var2.contains(var9))
+        if (arraylist.contains(chunkcoordintpair))
         {
-            par1EntityPlayerMP.loadedChunks.add(var9);
+            par1EntityPlayerMP.loadedChunks.add(chunkcoordintpair);
         }
 
-        int var10;
+        int k1;
 
-        for (var10 = 1; var10 <= var4 * 2; ++var10)
+        for (k1 = 1; k1 <= j * 2; ++k1)
         {
-            for (int var11 = 0; var11 < 2; ++var11)
+            for (int l1 = 0; l1 < 2; ++l1)
             {
-                int[] var12 = this.xzDirectionsConst[var3++ % 4];
+                int[] aint = this.xzDirectionsConst[i++ % 4];
 
-                for (int var13 = 0; var13 < var10; ++var13)
+                for (int i2 = 0; i2 < k1; ++i2)
                 {
-                    var7 += var12[0];
-                    var8 += var12[1];
-                    var9 = PlayerInstance.getChunkLocation(this.getOrCreateChunkWatcher(var5 + var7, var6 + var8, true));
+                    i1 += aint[0];
+                    j1 += aint[1];
+                    chunkcoordintpair = PlayerInstance.getChunkLocation(this.getOrCreateChunkWatcher(k + i1, l + j1, true));
 
-                    if (var2.contains(var9))
+                    if (arraylist.contains(chunkcoordintpair))
                     {
-                        par1EntityPlayerMP.loadedChunks.add(var9);
+                        par1EntityPlayerMP.loadedChunks.add(chunkcoordintpair);
                     }
                 }
             }
         }
 
-        var3 %= 4;
+        i %= 4;
 
-        for (var10 = 0; var10 < var4 * 2; ++var10)
+        for (k1 = 0; k1 < j * 2; ++k1)
         {
-            var7 += this.xzDirectionsConst[var3][0];
-            var8 += this.xzDirectionsConst[var3][1];
-            var9 = PlayerInstance.getChunkLocation(this.getOrCreateChunkWatcher(var5 + var7, var6 + var8, true));
+            i1 += this.xzDirectionsConst[i][0];
+            j1 += this.xzDirectionsConst[i][1];
+            chunkcoordintpair = PlayerInstance.getChunkLocation(this.getOrCreateChunkWatcher(k + i1, l + j1, true));
 
-            if (var2.contains(var9))
+            if (arraylist.contains(chunkcoordintpair))
             {
-                par1EntityPlayerMP.loadedChunks.add(var9);
+                par1EntityPlayerMP.loadedChunks.add(chunkcoordintpair);
             }
         }
     }
@@ -242,18 +242,18 @@ public class PlayerManager
      */
     public void removePlayer(EntityPlayerMP par1EntityPlayerMP)
     {
-        int var2 = (int)par1EntityPlayerMP.managedPosX >> 4;
-        int var3 = (int)par1EntityPlayerMP.managedPosZ >> 4;
+        int i = (int)par1EntityPlayerMP.managedPosX >> 4;
+        int j = (int)par1EntityPlayerMP.managedPosZ >> 4;
 
-        for (int var4 = var2 - this.playerViewRadius; var4 <= var2 + this.playerViewRadius; ++var4)
+        for (int k = i - this.playerViewRadius; k <= i + this.playerViewRadius; ++k)
         {
-            for (int var5 = var3 - this.playerViewRadius; var5 <= var3 + this.playerViewRadius; ++var5)
+            for (int l = j - this.playerViewRadius; l <= j + this.playerViewRadius; ++l)
             {
-                PlayerInstance var6 = this.getOrCreateChunkWatcher(var4, var5, false);
+                PlayerInstance playerinstance = this.getOrCreateChunkWatcher(k, l, false);
 
-                if (var6 != null)
+                if (playerinstance != null)
                 {
-                    var6.sendThisChunkToPlayer(par1EntityPlayerMP);
+                    playerinstance.sendThisChunkToPlayer(par1EntityPlayerMP);
                 }
             }
         }
@@ -263,9 +263,9 @@ public class PlayerManager
 
     private boolean func_72684_a(int par1, int par2, int par3, int par4, int par5)
     {
-        int var6 = par1 - par3;
-        int var7 = par2 - par4;
-        return var6 >= -par5 && var6 <= par5 ? var7 >= -par5 && var7 <= par5 : false;
+        int j1 = par1 - par3;
+        int k1 = par2 - par4;
+        return j1 >= -par5 && j1 <= par5 ? k1 >= -par5 && k1 <= par5 : false;
     }
 
     /**
@@ -273,35 +273,35 @@ public class PlayerManager
      */
     public void updateMountedMovingPlayer(EntityPlayerMP par1EntityPlayerMP)
     {
-        int var2 = (int)par1EntityPlayerMP.posX >> 4;
-        int var3 = (int)par1EntityPlayerMP.posZ >> 4;
-        double var4 = par1EntityPlayerMP.managedPosX - par1EntityPlayerMP.posX;
-        double var6 = par1EntityPlayerMP.managedPosZ - par1EntityPlayerMP.posZ;
-        double var8 = var4 * var4 + var6 * var6;
+        int i = (int)par1EntityPlayerMP.posX >> 4;
+        int j = (int)par1EntityPlayerMP.posZ >> 4;
+        double d0 = par1EntityPlayerMP.managedPosX - par1EntityPlayerMP.posX;
+        double d1 = par1EntityPlayerMP.managedPosZ - par1EntityPlayerMP.posZ;
+        double d2 = d0 * d0 + d1 * d1;
 
-        if (var8 >= 64.0D)
+        if (d2 >= 64.0D)
         {
-            int var10 = (int)par1EntityPlayerMP.managedPosX >> 4;
-            int var11 = (int)par1EntityPlayerMP.managedPosZ >> 4;
-            int var12 = this.playerViewRadius;
-            int var13 = var2 - var10;
-            int var14 = var3 - var11;
+            int k = (int)par1EntityPlayerMP.managedPosX >> 4;
+            int l = (int)par1EntityPlayerMP.managedPosZ >> 4;
+            int i1 = this.playerViewRadius;
+            int j1 = i - k;
+            int k1 = j - l;
             List<ChunkCoordIntPair> var15 = new LinkedList<ChunkCoordIntPair>(); // CraftBukkit
 
-            if (var13 != 0 || var14 != 0)
+            if (j1 != 0 || k1 != 0)
             {
-                for (int var16 = var2 - var12; var16 <= var2 + var12; ++var16)
+                for (int l1 = i - i1; l1 <= i + i1; ++l1)
                 {
-                    for (int var17 = var3 - var12; var17 <= var3 + var12; ++var17)
+                    for (int i2 = j - i1; i2 <= j + i1; ++i2)
                     {
-                        if (!this.func_72684_a(var16, var17, var10, var11, var12))
+                        if (!this.func_72684_a(l1, i2, k, l, i1))
                         {
-                            var15.add(new ChunkCoordIntPair(var16, var17)); // CraftBukkit
+                            var15.add(new ChunkCoordIntPair(l1, i2)); // CraftBukkit
                         }
 
-                        if (!this.func_72684_a(var16 - var13, var17 - var14, var2, var3, var12))
+                        if (!this.func_72684_a(l1 - j1, i2 - k1, i, j, i1))
                         {
-                            PlayerInstance playerchunk = this.getOrCreateChunkWatcher(var16 - var13, var17 - var14, false);
+                            PlayerInstance playerchunk = this.getOrCreateChunkWatcher(l1 - j1, i2 - k1, false);
 
                             if (playerchunk != null)
                             {
@@ -322,7 +322,7 @@ public class PlayerManager
                     this.getOrCreateChunkWatcher(pair.chunkXPos, pair.chunkZPos, true).addPlayerToChunkWatchingList(par1EntityPlayerMP);
                 }
 
-                if (var12 > 1 || var12 < -1 || var13 > 1 || var13 < -1)
+                if (i1 > 1 || i1 < -1 || j1 > 1 || j1 < -1)
                 {
                     Collections.sort(par1EntityPlayerMP.loadedChunks, new ChunkCoordComparator(par1EntityPlayerMP));
                 }
@@ -334,8 +334,8 @@ public class PlayerManager
 
     public boolean isPlayerWatchingChunk(EntityPlayerMP par1EntityPlayerMP, int par2, int par3)
     {
-        PlayerInstance var4 = this.getOrCreateChunkWatcher(par2, par3, false);
-        return var4 == null ? false : PlayerInstance.getPlayersInChunk(var4).contains(par1EntityPlayerMP) && !par1EntityPlayerMP.loadedChunks.contains(PlayerInstance.getChunkLocation(var4));
+        PlayerInstance playerinstance = this.getOrCreateChunkWatcher(par2, par3, false);
+        return playerinstance == null ? false : PlayerInstance.getPlayersInChunk(playerinstance).contains(par1EntityPlayerMP) && !par1EntityPlayerMP.loadedChunks.contains(PlayerInstance.getChunkLocation(playerinstance));
     }
 
     /**

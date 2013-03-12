@@ -34,8 +34,8 @@ public class EntityAIBreakDoor extends EntityAIDoorInteract
      */
     public boolean continueExecuting()
     {
-        double var1 = this.theEntity.getDistanceSq((double)this.entityPosX, (double)this.entityPosY, (double)this.entityPosZ);
-        return this.breakingTime <= 240 && !this.targetDoor.isDoorOpen(this.theEntity.worldObj, this.entityPosX, this.entityPosY, this.entityPosZ) && var1 < 4.0D;
+        double d0 = this.theEntity.getDistanceSq((double)this.entityPosX, (double)this.entityPosY, (double)this.entityPosZ);
+        return this.breakingTime <= 240 && !this.targetDoor.isDoorOpen(this.theEntity.worldObj, this.entityPosX, this.entityPosY, this.entityPosZ) && d0 < 4.0D;
     }
 
     /**
@@ -60,12 +60,12 @@ public class EntityAIBreakDoor extends EntityAIDoorInteract
         }
 
         ++this.breakingTime;
-        int var1 = (int)((float)this.breakingTime / 240.0F * 10.0F);
+        int i = (int)((float)this.breakingTime / 240.0F * 10.0F);
 
-        if (var1 != this.field_75358_j)
+        if (i != this.field_75358_j)
         {
-            this.theEntity.worldObj.destroyBlockInWorldPartially(this.theEntity.entityId, this.entityPosX, this.entityPosY, this.entityPosZ, var1);
-            this.field_75358_j = var1;
+            this.theEntity.worldObj.destroyBlockInWorldPartially(this.theEntity.entityId, this.entityPosX, this.entityPosY, this.entityPosZ, i);
+            this.field_75358_j = i;
         }
 
         if (this.breakingTime == 240 && this.theEntity.worldObj.difficultySetting == 3)

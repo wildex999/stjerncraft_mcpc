@@ -286,14 +286,14 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         BlockDispenser.dispenseBehaviorRegistry.putObject(Item.monsterPlacer, new BehaviorMobEggDispense(this));
         BlockDispenser.dispenseBehaviorRegistry.putObject(Item.firework, new BehaviorDispenseFirework(this));
         BlockDispenser.dispenseBehaviorRegistry.putObject(Item.fireballCharge, new BehaviorDispenseFireball(this));
-        BehaviorDispenseMinecart var1 = new BehaviorDispenseMinecart(this);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.minecartEmpty, var1);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.minecartCrate, var1);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.minecartPowered, var1);
+        BehaviorDispenseMinecart behaviordispenseminecart = new BehaviorDispenseMinecart(this);
+        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.minecartEmpty, behaviordispenseminecart);
+        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.minecartCrate, behaviordispenseminecart);
+        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.minecartPowered, behaviordispenseminecart);
         BlockDispenser.dispenseBehaviorRegistry.putObject(Item.boat, new BehaviorDispenseBoat(this));
-        BehaviorBucketFullDispense var2 = new BehaviorBucketFullDispense(this);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.bucketLava, var2);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.bucketWater, var2);
+        BehaviorBucketFullDispense behaviorbucketfulldispense = new BehaviorBucketFullDispense(this);
+        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.bucketLava, behaviorbucketfulldispense);
+        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.bucketWater, behaviorbucketfulldispense);
         BlockDispenser.dispenseBehaviorRegistry.putObject(Item.bucketEmpty, new BehaviorBucketEmptyDispense(this));
     }
 
@@ -336,8 +336,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         this.convertMapIfNeeded(par1Str);
         this.setUserMessage("menu.loadingLevel");
         // CraftBukkit - removed world and ticktime arrays
-        ISaveHandler var7 = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
-        WorldInfo var9 = var7.loadWorldInfo();
+        ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
+        WorldInfo worldinfo = isavehandler.loadWorldInfo();
         // CraftBukkit start - removed worldsettings
         
         WorldSettings worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
@@ -522,10 +522,10 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
     protected void initialWorldChunkLoad()
     {
-        short var5 = 196;
-        long var6 = System.currentTimeMillis();
+        short short1 = 196;
+        long i = System.currentTimeMillis();
         this.setUserMessage("menu.generatingTerrain");
-        byte var7 = 0;
+        byte b0 = 0;
 
         // CraftBukkit start
         for (int j = 0; j < this.worlds.size(); ++j)
@@ -539,28 +539,28 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             }
 
             // CraftBukkit end
-            ChunkCoordinates var8 = worldserver.getSpawnPoint();
+            ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
 
-            for (int var9 = -var5; var9 <= var5 && this.isServerRunning(); var9 += 16)
+            for (int j = -short1; j <= short1 && this.isServerRunning(); j += 16)
             {
-                for (int var11 = -var5; var11 <= var5 && this.isServerRunning(); var11 += 16)
+                for (int k = -short1; k <= short1 && this.isServerRunning(); k += 16)
                 {
-                    long var12 = System.currentTimeMillis();
+                    long l = System.currentTimeMillis();
 
-                    if (var12 < var6)
+                    if (l < i)
                     {
-                        var6 = var12;
+                        i = l;
                     }
 
-                    if (var12 > var6 + 1000L)
+                    if (l > i + 1000L)
                     {
-                        int var13 = (var5 * 2 + 1) * (var5 * 2 + 1);
-                        int k1 = (var9 + var5) * (var5 * 2 + 1) + var11 + 1;
-                        this.outputPercentRemaining("Preparing spawn area", k1 * 100 / var13);
-                        var6 = var12;
+                        int i1 = (short1 * 2 + 1) * (short1 * 2 + 1);
+                        int k1 = (j + short1) * (short1 * 2 + 1) + k + 1;
+                        this.outputPercentRemaining("Preparing spawn area", k1 * 100 / i1);
+                        i = l;
                     }
 
-                    worldserver.theChunkProviderServer.loadChunk(var8.posX + var9 >> 4, var8.posZ + var11 >> 4);
+                    worldserver.theChunkProviderServer.loadChunk(chunkcoordinates.posX + j >> 4, chunkcoordinates.posZ + k >> 4);
                 }
             }
         }
@@ -670,10 +670,10 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 worldserver.saveLevel();
             }
             // CraftBukkit end */
-            for (int var1 = 0; var1 < this.worlds.size(); ++var1)
+            for (int i = 0; i < this.worlds.size(); ++i)
             {
-                WorldServer var2 = this.worlds.get(var1);
-                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(var2)); // Forge
+                WorldServer worldserver = this.worlds.get(i);
+                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver)); // Forge
             }
 
             List<WorldServer> tmp = this.worlds;
@@ -752,38 +752,38 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 this.finalTick((CrashReport)null);
             }
         }
-        catch (Throwable var1)
+        catch (Throwable throwable)
         {
             if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
             {
                 return;    // Forge
             }
 
-            var1.printStackTrace();
-            logger.log(Level.SEVERE, "Encountered an unexpected exception " + var1.getClass().getSimpleName(), var1);
-            CrashReport var50 = null;
+            throwable.printStackTrace();
+            logger.log(Level.SEVERE, "Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
+            CrashReport crashreport = null;
 
-            if (var1 instanceof ReportedException)
+            if (throwable instanceof ReportedException)
             {
-                var50 = this.addServerInfoToCrashReport(((ReportedException) var1).getCrashReport());
+                crashreport = this.addServerInfoToCrashReport(((ReportedException) throwable).getCrashReport());
             }
             else
             {
-                var50 = this.addServerInfoToCrashReport(new CrashReport("Exception in server tick loop", var1));
+                crashreport = this.addServerInfoToCrashReport(new CrashReport("Exception in server tick loop", throwable));
             }
 
-            File var5 = new File(new File(this.getDataDirectory(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
+            File file1 = new File(new File(this.getDataDirectory(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
 
-            if (var50.saveToFile(var5))
+            if (crashreport.saveToFile(file1))
             {
-                logger.severe("This crash report has been saved to: " + var5.getAbsolutePath());
+                logger.severe("This crash report has been saved to: " + file1.getAbsolutePath());
             }
             else
             {
                 logger.severe("We were unable to save this crash report to disk.");
             }
 
-            this.finalTick(var50);
+            this.finalTick(crashreport);
         }
         finally
         {
@@ -799,9 +799,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 this.stopServer();
                 this.serverStopped = true;
             }
-            catch (Throwable var7)
+            catch (Throwable throwable1)
             {
-                var7.printStackTrace();
+                throwable1.printStackTrace();
             }
             finally
             {
@@ -841,7 +841,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     protected void tick() throws MinecraftException   // CraftBukkit - added throws
     {
         FMLCommonHandler.instance().rescheduleTicks(Side.SERVER); // Forge
-        long var1 = System.nanoTime();
+        long i = System.nanoTime();
         AxisAlignedBB.getAABBPool().cleanPool();
         FMLCommonHandler.instance().onPreServerTick(); // Forge
         ++this.tickCounter;
@@ -865,7 +865,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         }
 
         this.theProfiler.startSection("tallying");
-        this.tickTimeArray[this.tickCounter % 100] = System.nanoTime() - var1;
+        this.tickTimeArray[this.tickCounter % 100] = System.nanoTime() - i;
         this.sentPacketCountArray[this.tickCounter % 100] = Packet.sentID - this.lastSentPacketID;
         this.lastSentPacketID = Packet.sentID;
         this.sentPacketSizeArray[this.tickCounter % 100] = Packet.sentSize - this.lastSentPacketSize;
@@ -1506,7 +1506,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         par1PlayerUsageSnooper.addData("avg_sent_packet_size", Integer.valueOf((int)MathHelper.average(this.sentPacketSizeArray)));
         par1PlayerUsageSnooper.addData("avg_rec_packet_count", Integer.valueOf((int)MathHelper.average(this.receivedPacketCountArray)));
         par1PlayerUsageSnooper.addData("avg_rec_packet_size", Integer.valueOf((int)MathHelper.average(this.receivedPacketSizeArray)));
-        int var2 = 0;
+        int i = 0;
 
         // CraftBukkit start
         for (int j = 0; j < this.worlds.size(); ++j)
@@ -1514,20 +1514,20 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             // if (this.worldServer[j] != null) {
             WorldServer worldserver = this.worlds.get(j);
             // CraftBukkit end
-            WorldInfo var3 = worldserver.getWorldInfo();
-            par1PlayerUsageSnooper.addData("world[" + var2 + "][dimension]", Integer.valueOf(worldserver.provider.dimensionId));
-            par1PlayerUsageSnooper.addData("world[" + var2 + "][mode]", var3.getGameType());
-            par1PlayerUsageSnooper.addData("world[" + var2 + "][difficulty]", Integer.valueOf(worldserver.difficultySetting));
-            par1PlayerUsageSnooper.addData("world[" + var2 + "][hardcore]", Boolean.valueOf(var3.isHardcoreModeEnabled()));
-            par1PlayerUsageSnooper.addData("world[" + var2 + "][generator_name]", var3.getTerrainType().getWorldTypeName());
-            par1PlayerUsageSnooper.addData("world[" + var2 + "][generator_version]", Integer.valueOf(var3.getTerrainType().getGeneratorVersion()));
-            par1PlayerUsageSnooper.addData("world[" + var2 + "][height]", Integer.valueOf(this.buildLimit));
-            par1PlayerUsageSnooper.addData("world[" + var2 + "][chunks_loaded]", Integer.valueOf(worldserver.getChunkProvider().getLoadedChunkCount()));
-            ++var2;
+            WorldInfo worldinfo = worldserver.getWorldInfo();
+            par1PlayerUsageSnooper.addData("world[" + i + "][dimension]", Integer.valueOf(worldserver.provider.dimensionId));
+            par1PlayerUsageSnooper.addData("world[" + i + "][mode]", worldinfo.getGameType());
+            par1PlayerUsageSnooper.addData("world[" + i + "][difficulty]", Integer.valueOf(worldserver.difficultySetting));
+            par1PlayerUsageSnooper.addData("world[" + i + "][hardcore]", Boolean.valueOf(worldinfo.isHardcoreModeEnabled()));
+            par1PlayerUsageSnooper.addData("world[" + i + "][generator_name]", worldinfo.getTerrainType().getWorldTypeName());
+            par1PlayerUsageSnooper.addData("world[" + i + "][generator_version]", Integer.valueOf(worldinfo.getTerrainType().getGeneratorVersion()));
+            par1PlayerUsageSnooper.addData("world[" + i + "][height]", Integer.valueOf(this.buildLimit));
+            par1PlayerUsageSnooper.addData("world[" + i + "][chunks_loaded]", Integer.valueOf(worldserver.getChunkProvider().getLoadedChunkCount()));
+            ++i;
             // } // CraftBukkit
         }
 
-        par1PlayerUsageSnooper.addData("worlds", Integer.valueOf(var2));
+        par1PlayerUsageSnooper.addData("worlds", Integer.valueOf(i));
     }
 
     public void addServerTypeToSnooper(PlayerUsageSnooper par1PlayerUsageSnooper)
@@ -1675,7 +1675,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     /**
      * On dedicated does nothing. On integrated, sets commandsAllowedForAll, gameType and allows external connections.
      */
-    public abstract String shareToLAN(EnumGameType var1, boolean var2);
+    public abstract String shareToLAN(EnumGameType enumgametype, boolean flag);
 
     public int getTickCounter()
     {

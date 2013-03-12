@@ -67,96 +67,96 @@ public class Explosion
         }
 
         // CraftBukkit end
-        float var1 = this.explosionSize;
-        HashSet var2 = new HashSet();
-        int var3;
-        int var4;
-        int var5;
-        double var15;
-        double var17;
-        double var19;
+        float f = this.explosionSize;
+        HashSet hashset = new HashSet();
+        int i;
+        int j;
+        int k;
+        double d0;
+        double d1;
+        double d2;
 
-        for (var3 = 0; var3 < this.field_77289_h; ++var3)
+        for (i = 0; i < this.field_77289_h; ++i)
         {
-            for (var4 = 0; var4 < this.field_77289_h; ++var4)
+            for (j = 0; j < this.field_77289_h; ++j)
             {
-                for (var5 = 0; var5 < this.field_77289_h; ++var5)
+                for (k = 0; k < this.field_77289_h; ++k)
                 {
-                    if (var3 == 0 || var3 == this.field_77289_h - 1 || var4 == 0 || var4 == this.field_77289_h - 1 || var5 == 0 || var5 == this.field_77289_h - 1)
+                    if (i == 0 || i == this.field_77289_h - 1 || j == 0 || j == this.field_77289_h - 1 || k == 0 || k == this.field_77289_h - 1)
                     {
-                        double var6 = (double)((float)var3 / ((float)this.field_77289_h - 1.0F) * 2.0F - 1.0F);
-                        double var8 = (double)((float)var4 / ((float)this.field_77289_h - 1.0F) * 2.0F - 1.0F);
-                        double var10 = (double)((float)var5 / ((float)this.field_77289_h - 1.0F) * 2.0F - 1.0F);
-                        double var12 = Math.sqrt(var6 * var6 + var8 * var8 + var10 * var10);
-                        var6 /= var12;
-                        var8 /= var12;
-                        var10 /= var12;
-                        float var14 = this.explosionSize * (0.7F + this.worldObj.rand.nextFloat() * 0.6F);
-                        var15 = this.explosionX;
-                        var17 = this.explosionY;
-                        var19 = this.explosionZ;
+                        double d3 = (double)((float)i / ((float)this.field_77289_h - 1.0F) * 2.0F - 1.0F);
+                        double d4 = (double)((float)j / ((float)this.field_77289_h - 1.0F) * 2.0F - 1.0F);
+                        double d5 = (double)((float)k / ((float)this.field_77289_h - 1.0F) * 2.0F - 1.0F);
+                        double d6 = Math.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
+                        d3 /= d6;
+                        d4 /= d6;
+                        d5 /= d6;
+                        float f1 = this.explosionSize * (0.7F + this.worldObj.rand.nextFloat() * 0.6F);
+                        d0 = this.explosionX;
+                        d1 = this.explosionY;
+                        d2 = this.explosionZ;
 
-                        for (float var21 = 0.3F; var14 > 0.0F; var14 -= var21 * 0.75F)
+                        for (float f2 = 0.3F; f1 > 0.0F; f1 -= f2 * 0.75F)
                         {
-                            int var22 = MathHelper.floor_double(var15);
-                            int var23 = MathHelper.floor_double(var17);
-                            int var24 = MathHelper.floor_double(var19);
-                            int var25 = this.worldObj.getBlockId(var22, var23, var24);
+                            int l = MathHelper.floor_double(d0);
+                            int i1 = MathHelper.floor_double(d1);
+                            int j1 = MathHelper.floor_double(d2);
+                            int k1 = this.worldObj.getBlockId(l, i1, j1);
 
-                            if (var25 > 0)
+                            if (k1 > 0)
                             {
-                                Block var26 = Block.blocksList[var25];
-                                float var27 = this.exploder != null ? this.exploder.func_82146_a(this, var26, var22, var23, var24) : var26.getExplosionResistance(this.exploder);
-                                var14 -= (var27 + 0.3F) * var21;
+                                Block block = Block.blocksList[k1];
+                                float f3 = this.exploder != null ? this.exploder.func_82146_a(this, block, l, i1, j1) : block.getExplosionResistance(this.exploder);
+                                f1 -= (f3 + 0.3F) * f2;
                             }
 
-                            if (var14 > 0.0F && var23 < 256 && var23 >= 0)   // CraftBukkit - don't wrap explosions
+                            if (f1 > 0.0F && i1 < 256 && i1 >= 0)   // CraftBukkit - don't wrap explosions
                             {
-                                var2.add(new ChunkPosition(var22, var23, var24));
+                                hashset.add(new ChunkPosition(l, i1, j1));
                             }
 
-                            var15 += var6 * (double)var21;
-                            var17 += var8 * (double)var21;
-                            var19 += var10 * (double)var21;
+                            d0 += d3 * (double)f2;
+                            d1 += d4 * (double)f2;
+                            d2 += d5 * (double)f2;
                         }
                     }
                 }
             }
         }
 
-        this.affectedBlockPositions.addAll(var2);
+        this.affectedBlockPositions.addAll(hashset);
         this.explosionSize *= 2.0F;
-        var3 = MathHelper.floor_double(this.explosionX - (double)this.explosionSize - 1.0D);
-        var4 = MathHelper.floor_double(this.explosionX + (double)this.explosionSize + 1.0D);
-        var5 = MathHelper.floor_double(this.explosionY - (double)this.explosionSize - 1.0D);
-        int var29 = MathHelper.floor_double(this.explosionY + (double)this.explosionSize + 1.0D);
-        int var7 = MathHelper.floor_double(this.explosionZ - (double)this.explosionSize - 1.0D);
-        int var30 = MathHelper.floor_double(this.explosionZ + (double)this.explosionSize + 1.0D);
-        List var9 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)var3, (double)var5, (double)var7, (double)var4, (double)var29, (double)var30));
-        Vec3 var31 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.explosionX, this.explosionY, this.explosionZ);
+        i = MathHelper.floor_double(this.explosionX - (double)this.explosionSize - 1.0D);
+        j = MathHelper.floor_double(this.explosionX + (double)this.explosionSize + 1.0D);
+        k = MathHelper.floor_double(this.explosionY - (double)this.explosionSize - 1.0D);
+        int l1 = MathHelper.floor_double(this.explosionY + (double)this.explosionSize + 1.0D);
+        int i2 = MathHelper.floor_double(this.explosionZ - (double)this.explosionSize - 1.0D);
+        int j2 = MathHelper.floor_double(this.explosionZ + (double)this.explosionSize + 1.0D);
+        List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)i, (double)k, (double)i2, (double)j, (double)l1, (double)j2));
+        Vec3 vec3 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.explosionX, this.explosionY, this.explosionZ);
 
-        for (int var11 = 0; var11 < var9.size(); ++var11)
+        for (int k2 = 0; k2 < list.size(); ++k2)
         {
-            Entity var32 = (Entity)var9.get(var11);
-            double var13 = var32.getDistance(this.explosionX, this.explosionY, this.explosionZ) / (double)this.explosionSize;
+            Entity entity = (Entity)list.get(k2);
+            double d7 = entity.getDistance(this.explosionX, this.explosionY, this.explosionZ) / (double)this.explosionSize;
 
-            if (var13 <= 1.0D)
+            if (d7 <= 1.0D)
             {
-                var15 = var32.posX - this.explosionX;
-                var17 = var32.posY + (double)var32.getEyeHeight() - this.explosionY;
-                var19 = var32.posZ - this.explosionZ;
-                double var34 = (double)MathHelper.sqrt_double(var15 * var15 + var17 * var17 + var19 * var19);
+                d0 = entity.posX - this.explosionX;
+                d1 = entity.posY + (double)entity.getEyeHeight() - this.explosionY;
+                d2 = entity.posZ - this.explosionZ;
+                double d8 = (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1 + d2 * d2);
 
-                if (var34 != 0.0D)
+                if (d8 != 0.0D)
                 {
-                    var15 /= var34;
-                    var17 /= var34;
-                    var19 /= var34;
-                    double var33 = (double)this.worldObj.getBlockDensity(var31, var32.boundingBox);
-                    double var35 = (1.0D - var13) * var33;
+                    d0 /= d8;
+                    d1 /= d8;
+                    d2 /= d8;
+                    double d9 = (double)this.worldObj.getBlockDensity(vec3, entity.boundingBox);
+                    double d10 = (1.0D - d7) * d9;
                     // CraftBukkit start - explosion damage hook
-                    org.bukkit.entity.Entity damagee = (var32 == null) ? null : var32.getBukkitEntity();
-                    int damageDone = (int)((var35 * var35 + var35) / 2.0D * 8.0D * (double) this.explosionSize + 1.0D);
+                    org.bukkit.entity.Entity damagee = (entity == null) ? null : entity.getBukkitEntity();
+                    int damageDone = (int)((d10 * d10 + d10) / 2.0D * 8.0D * (double) this.explosionSize + 1.0D);
 
                     if (damagee == null)
                     {
@@ -170,15 +170,15 @@ public class Explosion
                         if (!event.isCancelled())
                         {
                             damagee.setLastDamageCause(event);
-                            var32.attackEntityFrom(DamageSource.explosion, event.getDamage());
-                            double d11 = EnchantmentProtection.func_92092_a(var32, var35);
-                            var32.motionX += var15 * d11;
-                            var32.motionY += var17 * d11;
-                            var32.motionZ += var19 * d11;
+                            entity.attackEntityFrom(DamageSource.explosion, event.getDamage());
+                            double d11 = EnchantmentProtection.func_92092_a(entity, d10);
+                            entity.motionX += d0 * d11;
+                            entity.motionY += d1 * d11;
+                            entity.motionZ += d2 * d11;
 
-                            if (var32 instanceof EntityPlayer)
+                            if (entity instanceof EntityPlayer)
                             {
-                                this.field_77288_k.put((EntityPlayer) var32, this.worldObj.getWorldVec3Pool().getVecFromPool(var15 * var35, var17 * var35, var19 * var35));
+                                this.field_77288_k.put((EntityPlayer) entity, this.worldObj.getWorldVec3Pool().getVecFromPool(d0 * d10, d1 * d10, d2 * d10));
                             }
                         }
                     }
@@ -201,15 +201,15 @@ public class Explosion
 
                         if (!event.isCancelled())
                         {
-                            var32.getBukkitEntity().setLastDamageCause(event);
-                            var32.attackEntityFrom(DamageSource.explosion, event.getDamage());
-                            var32.motionX += var15 * var35;
-                            var32.motionY += var17 * var35;
-                            var32.motionZ += var19 * var35;
+                            entity.getBukkitEntity().setLastDamageCause(event);
+                            entity.attackEntityFrom(DamageSource.explosion, event.getDamage());
+                            entity.motionX += d0 * d10;
+                            entity.motionY += d1 * d10;
+                            entity.motionZ += d2 * d10;
 
-                            if (var32 instanceof EntityPlayer)
+                            if (entity instanceof EntityPlayer)
                             {
-                                this.field_77288_k.put((EntityPlayer) var32, this.worldObj.getWorldVec3Pool().getVecFromPool(var15 * var35, var17 * var35, var19 * var35));
+                                this.field_77288_k.put((EntityPlayer) entity, this.worldObj.getWorldVec3Pool().getVecFromPool(d0 * d10, d1 * d10, d2 * d10));
                             }
                         }
                     }
@@ -219,7 +219,7 @@ public class Explosion
             }
         }
 
-        this.explosionSize = var1;
+        this.explosionSize = f;
     }
 
     /**
@@ -238,12 +238,12 @@ public class Explosion
             this.worldObj.spawnParticle("largeexplode", this.explosionX, this.explosionY, this.explosionZ, 1.0D, 0.0D, 0.0D);
         }
 
-        Iterator var2;
-        ChunkPosition var3;
-        int var4;
-        int var5;
-        int var6;
-        int var7;
+        Iterator iterator;
+        ChunkPosition chunkposition;
+        int i;
+        int j;
+        int k;
+        int l;
 
         if (this.isSmoking)
         {
@@ -281,75 +281,75 @@ public class Explosion
             }
 
             // CraftBukkit end
-            var2 = this.affectedBlockPositions.iterator();
+            iterator = this.affectedBlockPositions.iterator();
 
-            while (var2.hasNext())
+            while (iterator.hasNext())
             {
-                var3 = (ChunkPosition)var2.next();
-                var4 = var3.x;
-                var5 = var3.y;
-                var6 = var3.z;
-                var7 = this.worldObj.getBlockId(var4, var5, var6);
-                org.bukkit.craftbukkit.OrebfuscatorManager.updateNearbyBlocks(worldObj, var4, var5, var6); // Spigot (Orebfuscator)
+                chunkposition = (ChunkPosition)iterator.next();
+                i = chunkposition.x;
+                j = chunkposition.y;
+                k = chunkposition.z;
+                l = this.worldObj.getBlockId(i, j, k);
+                org.bukkit.craftbukkit.OrebfuscatorManager.updateNearbyBlocks(worldObj, i, j, k); // Spigot (Orebfuscator)
 
                 if (par1)
                 {
-                    double var8 = (double)((float)var4 + this.worldObj.rand.nextFloat());
-                    double var10 = (double)((float)var5 + this.worldObj.rand.nextFloat());
-                    double var12 = (double)((float)var6 + this.worldObj.rand.nextFloat());
-                    double var14 = var8 - this.explosionX;
-                    double var16 = var10 - this.explosionY;
-                    double var18 = var12 - this.explosionZ;
-                    double var20 = (double)MathHelper.sqrt_double(var14 * var14 + var16 * var16 + var18 * var18);
-                    var14 /= var20;
-                    var16 /= var20;
-                    var18 /= var20;
-                    double var22 = 0.5D / (var20 / (double)this.explosionSize + 0.1D);
-                    var22 *= (double)(this.worldObj.rand.nextFloat() * this.worldObj.rand.nextFloat() + 0.3F);
-                    var14 *= var22;
-                    var16 *= var22;
-                    var18 *= var22;
-                    this.worldObj.spawnParticle("explode", (var8 + this.explosionX * 1.0D) / 2.0D, (var10 + this.explosionY * 1.0D) / 2.0D, (var12 + this.explosionZ * 1.0D) / 2.0D, var14, var16, var18);
-                    this.worldObj.spawnParticle("smoke", var8, var10, var12, var14, var16, var18);
+                    double d0 = (double)((float)i + this.worldObj.rand.nextFloat());
+                    double d1 = (double)((float)j + this.worldObj.rand.nextFloat());
+                    double d2 = (double)((float)k + this.worldObj.rand.nextFloat());
+                    double d3 = d0 - this.explosionX;
+                    double d4 = d1 - this.explosionY;
+                    double d5 = d2 - this.explosionZ;
+                    double d6 = (double)MathHelper.sqrt_double(d3 * d3 + d4 * d4 + d5 * d5);
+                    d3 /= d6;
+                    d4 /= d6;
+                    d5 /= d6;
+                    double d7 = 0.5D / (d6 / (double)this.explosionSize + 0.1D);
+                    d7 *= (double)(this.worldObj.rand.nextFloat() * this.worldObj.rand.nextFloat() + 0.3F);
+                    d3 *= d7;
+                    d4 *= d7;
+                    d5 *= d7;
+                    this.worldObj.spawnParticle("explode", (d0 + this.explosionX * 1.0D) / 2.0D, (d1 + this.explosionY * 1.0D) / 2.0D, (d2 + this.explosionZ * 1.0D) / 2.0D, d3, d4, d5);
+                    this.worldObj.spawnParticle("smoke", d0, d1, d2, d3, d4, d5);
                 }
 
                 // CraftBukkit - stop explosions from putting out fire
-                if (var7 > 0 && var7 != Block.fire.blockID)
+                if (l > 0 && l != Block.fire.blockID)
                 {
-                    Block var25 = Block.blocksList[var7];
+                    Block block = Block.blocksList[l];
 
-                    if (var25.canDropFromExplosion(this))
+                    if (block.canDropFromExplosion(this))
                     {
                         // CraftBukkit
-                        var25.dropBlockAsItemWithChance(this.worldObj, var4, var5, var6, this.worldObj.getBlockMetadata(var4, var5, var6), event.getYield(), 0);
+                        block.dropBlockAsItemWithChance(this.worldObj, i, j, k, this.worldObj.getBlockMetadata(i, j, k), event.getYield(), 0);
                     }
 
-                    if (this.worldObj.setBlockAndMetadataWithUpdate(var4, var5, var6, 0, 0, this.worldObj.isRemote))
+                    if (this.worldObj.setBlockAndMetadataWithUpdate(i, j, k, 0, 0, this.worldObj.isRemote))
                     {
-                        this.worldObj.notifyBlocksOfNeighborChange(var4, var5, var6, 0);
+                        this.worldObj.notifyBlocksOfNeighborChange(i, j, k, 0);
                     }
 
-                    var25.onBlockDestroyedByExplosion(this.worldObj, var4, var5, var6);
+                    block.onBlockDestroyedByExplosion(this.worldObj, i, j, k);
                 }
             }
         }
 
         if (this.isFlaming)
         {
-            var2 = this.affectedBlockPositions.iterator();
+            iterator = this.affectedBlockPositions.iterator();
 
-            while (var2.hasNext())
+            while (iterator.hasNext())
             {
-                var3 = (ChunkPosition)var2.next();
-                var4 = var3.x;
-                var5 = var3.y;
-                var6 = var3.z;
-                var7 = this.worldObj.getBlockId(var4, var5, var6);
-                int var24 = this.worldObj.getBlockId(var4, var5 - 1, var6);
+                chunkposition = (ChunkPosition)iterator.next();
+                i = chunkposition.x;
+                j = chunkposition.y;
+                k = chunkposition.z;
+                l = this.worldObj.getBlockId(i, j, k);
+                int i1 = this.worldObj.getBlockId(i, j - 1, k);
 
-                if (var7 == 0 && Block.opaqueCubeLookup[var24] && this.explosionRNG.nextInt(3) == 0)
+                if (l == 0 && Block.opaqueCubeLookup[i1] && this.explosionRNG.nextInt(3) == 0)
                 {
-                    this.worldObj.setBlockWithNotify(var4, var5, var6, Block.fire.blockID);
+                    this.worldObj.setBlockWithNotify(i, j, k, Block.fire.blockID);
                 }
             }
         }

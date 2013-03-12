@@ -35,33 +35,33 @@ public class ContainerPlayer extends Container
         this.craftMatrix.resultInventory = this.craftResult; // CraftBukkit - let InventoryCrafting know about its result slot
         this.player = par1InventoryPlayer; // CraftBukkit - save player
         this.addSlotToContainer(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 144, 36));
-        int var4;
-        int var5;
+        int i;
+        int j;
 
-        for (var4 = 0; var4 < 2; ++var4)
+        for (i = 0; i < 2; ++i)
         {
-            for (var5 = 0; var5 < 2; ++var5)
+            for (j = 0; j < 2; ++j)
             {
-                this.addSlotToContainer(new Slot(this.craftMatrix, var5 + var4 * 2, 88 + var5 * 18, 26 + var4 * 18));
+                this.addSlotToContainer(new Slot(this.craftMatrix, j + i * 2, 88 + j * 18, 26 + i * 18));
             }
         }
 
-        for (var4 = 0; var4 < 4; ++var4)
+        for (i = 0; i < 4; ++i)
         {
-            this.addSlotToContainer(new SlotArmor(this, par1InventoryPlayer, par1InventoryPlayer.getSizeInventory() - 1 - var4, 8, 8 + var4 * 18, var4));
+            this.addSlotToContainer(new SlotArmor(this, par1InventoryPlayer, par1InventoryPlayer.getSizeInventory() - 1 - i, 8, 8 + i * 18, i));
         }
 
-        for (var4 = 0; var4 < 3; ++var4)
+        for (i = 0; i < 3; ++i)
         {
-            for (var5 = 0; var5 < 9; ++var5)
+            for (j = 0; j < 9; ++j)
             {
-                this.addSlotToContainer(new Slot(par1InventoryPlayer, var5 + (var4 + 1) * 9, 8 + var5 * 18, 84 + var4 * 18));
+                this.addSlotToContainer(new Slot(par1InventoryPlayer, j + (i + 1) * 9, 8 + j * 18, 84 + i * 18));
             }
         }
 
-        for (var4 = 0; var4 < 9; ++var4)
+        for (i = 0; i < 9; ++i)
         {
-            this.addSlotToContainer(new Slot(par1InventoryPlayer, var4, 8 + var4 * 18, 142));
+            this.addSlotToContainer(new Slot(par1InventoryPlayer, i, 8 + i * 18, 142));
         }
 
         // this.a((IInventory) this.craftInventory); // CraftBukkit - unneeded since it just sets result slot to empty
@@ -94,13 +94,13 @@ public class ContainerPlayer extends Container
     {
         super.onCraftGuiClosed(par1EntityPlayer);
 
-        for (int var2 = 0; var2 < 4; ++var2)
+        for (int i = 0; i < 4; ++i)
         {
-            ItemStack var3 = this.craftMatrix.getStackInSlotOnClosing(var2);
+            ItemStack itemstack = this.craftMatrix.getStackInSlotOnClosing(i);
 
-            if (var3 != null)
+            if (itemstack != null)
             {
-                par1EntityPlayer.dropPlayerItem(var3);
+                par1EntityPlayer.dropPlayerItem(itemstack);
             }
         }
 
@@ -117,83 +117,83 @@ public class ContainerPlayer extends Container
      */
     public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
     {
-        ItemStack var3 = null;
-        Slot var4 = (Slot)this.inventorySlots.get(par2);
+        ItemStack itemstack = null;
+        Slot slot = (Slot)this.inventorySlots.get(par2);
 
-        if (var4 != null && var4.getHasStack())
+        if (slot != null && slot.getHasStack())
         {
-            ItemStack var5 = var4.getStack();
-            var3 = var5.copy();
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
 
             if (par2 == 0)
             {
-                if (!this.mergeItemStack(var5, 9, 45, true))
+                if (!this.mergeItemStack(itemstack1, 9, 45, true))
                 {
                     return null;
                 }
 
-                var4.onSlotChange(var5, var3);
+                slot.onSlotChange(itemstack1, itemstack);
             }
             else if (par2 >= 1 && par2 < 5)
             {
-                if (!this.mergeItemStack(var5, 9, 45, false))
+                if (!this.mergeItemStack(itemstack1, 9, 45, false))
                 {
                     return null;
                 }
             }
             else if (par2 >= 5 && par2 < 9)
             {
-                if (!this.mergeItemStack(var5, 9, 45, false))
+                if (!this.mergeItemStack(itemstack1, 9, 45, false))
                 {
                     return null;
                 }
             }
-            else if (var3.getItem() instanceof ItemArmor && !((Slot)this.inventorySlots.get(5 + ((ItemArmor)var3.getItem()).armorType)).getHasStack())
+            else if (itemstack.getItem() instanceof ItemArmor && !((Slot)this.inventorySlots.get(5 + ((ItemArmor)itemstack.getItem()).armorType)).getHasStack())
             {
-                int var6 = 5 + ((ItemArmor)var3.getItem()).armorType;
+                int j = 5 + ((ItemArmor)itemstack.getItem()).armorType;
 
-                if (!this.mergeItemStack(var5, var6, var6 + 1, false))
+                if (!this.mergeItemStack(itemstack1, j, j + 1, false))
                 {
                     return null;
                 }
             }
             else if (par2 >= 9 && par2 < 36)
             {
-                if (!this.mergeItemStack(var5, 36, 45, false))
+                if (!this.mergeItemStack(itemstack1, 36, 45, false))
                 {
                     return null;
                 }
             }
             else if (par2 >= 36 && par2 < 45)
             {
-                if (!this.mergeItemStack(var5, 9, 36, false))
+                if (!this.mergeItemStack(itemstack1, 9, 36, false))
                 {
                     return null;
                 }
             }
-            else if (!this.mergeItemStack(var5, 9, 45, false))
+            else if (!this.mergeItemStack(itemstack1, 9, 45, false))
             {
                 return null;
             }
 
-            if (var5.stackSize == 0)
+            if (itemstack1.stackSize == 0)
             {
-                var4.putStack((ItemStack)null);
+                slot.putStack((ItemStack)null);
             }
             else
             {
-                var4.onSlotChanged();
+                slot.onSlotChanged();
             }
 
-            if (var5.stackSize == var3.stackSize)
+            if (itemstack1.stackSize == itemstack.stackSize)
             {
                 return null;
             }
 
-            var4.onPickupFromSlot(par1EntityPlayer, var5);
+            slot.onPickupFromSlot(par1EntityPlayer, itemstack1);
         }
 
-        return var3;
+        return itemstack;
     }
 
     // CraftBukkit start

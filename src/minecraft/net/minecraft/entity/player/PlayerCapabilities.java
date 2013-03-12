@@ -29,36 +29,36 @@ public class PlayerCapabilities
 
     public void writeCapabilitiesToNBT(NBTTagCompound par1NBTTagCompound)
     {
-        NBTTagCompound var2 = new NBTTagCompound();
-        var2.setBoolean("invulnerable", this.disableDamage);
-        var2.setBoolean("flying", this.isFlying);
-        var2.setBoolean("mayfly", this.allowFlying);
-        var2.setBoolean("instabuild", this.isCreativeMode);
-        var2.setBoolean("mayBuild", this.allowEdit);
-        var2.setFloat("flySpeed", this.flySpeed);
-        var2.setFloat("walkSpeed", this.walkSpeed);
-        par1NBTTagCompound.setTag("abilities", var2);
+        NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+        nbttagcompound1.setBoolean("invulnerable", this.disableDamage);
+        nbttagcompound1.setBoolean("flying", this.isFlying);
+        nbttagcompound1.setBoolean("mayfly", this.allowFlying);
+        nbttagcompound1.setBoolean("instabuild", this.isCreativeMode);
+        nbttagcompound1.setBoolean("mayBuild", this.allowEdit);
+        nbttagcompound1.setFloat("flySpeed", this.flySpeed);
+        nbttagcompound1.setFloat("walkSpeed", this.walkSpeed);
+        par1NBTTagCompound.setTag("abilities", nbttagcompound1);
     }
 
     public void readCapabilitiesFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         if (par1NBTTagCompound.hasKey("abilities"))
         {
-            NBTTagCompound var2 = par1NBTTagCompound.getCompoundTag("abilities");
-            this.disableDamage = var2.getBoolean("invulnerable");
-            this.isFlying = var2.getBoolean("flying");
-            this.allowFlying = var2.getBoolean("mayfly");
-            this.isCreativeMode = var2.getBoolean("instabuild");
+            NBTTagCompound nbttagcompound1 = par1NBTTagCompound.getCompoundTag("abilities");
+            this.disableDamage = nbttagcompound1.getBoolean("invulnerable");
+            this.isFlying = nbttagcompound1.getBoolean("flying");
+            this.allowFlying = nbttagcompound1.getBoolean("mayfly");
+            this.isCreativeMode = nbttagcompound1.getBoolean("instabuild");
 
-            if (var2.hasKey("flySpeed"))
+            if (nbttagcompound1.hasKey("flySpeed"))
             {
-                this.flySpeed = var2.getFloat("flySpeed");
-                this.walkSpeed = var2.getFloat("walkSpeed");
+                this.flySpeed = nbttagcompound1.getFloat("flySpeed");
+                this.walkSpeed = nbttagcompound1.getFloat("walkSpeed");
             }
 
-            if (var2.hasKey("mayBuild"))
+            if (nbttagcompound1.hasKey("mayBuild"))
             {
-                this.allowEdit = var2.getBoolean("mayBuild");
+                this.allowEdit = nbttagcompound1.getBoolean("mayBuild");
             }
         }
     }

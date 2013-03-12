@@ -76,8 +76,8 @@ public class InventoryCrafting implements IInventory
 
     public InventoryCrafting(Container par1Container, int par2, int par3)
     {
-        int var4 = par2 * par3;
-        this.stackList = new ItemStack[var4];
+        int k = par2 * par3;
+        this.stackList = new ItemStack[k];
         this.eventHandler = par1Container;
         this.inventoryWidth = par2;
     }
@@ -105,8 +105,8 @@ public class InventoryCrafting implements IInventory
     {
         if (par1 >= 0 && par1 < this.inventoryWidth)
         {
-            int var3 = par1 + par2 * this.inventoryWidth;
-            return this.getStackInSlot(var3);
+            int k = par1 + par2 * this.inventoryWidth;
+            return this.getStackInSlot(k);
         }
         else
         {
@@ -130,9 +130,9 @@ public class InventoryCrafting implements IInventory
     {
         if (this.stackList[par1] != null)
         {
-            ItemStack var2 = this.stackList[par1];
+            ItemStack itemstack = this.stackList[par1];
             this.stackList[par1] = null;
-            return var2;
+            return itemstack;
         }
         else
         {
@@ -148,18 +148,18 @@ public class InventoryCrafting implements IInventory
     {
         if (this.stackList[par1] != null)
         {
-            ItemStack var3;
+            ItemStack itemstack;
 
             if (this.stackList[par1].stackSize <= par2)
             {
-                var3 = this.stackList[par1];
+                itemstack = this.stackList[par1];
                 this.stackList[par1] = null;
                 this.eventHandler.onCraftMatrixChanged(this);
-                return var3;
+                return itemstack;
             }
             else
             {
-                var3 = this.stackList[par1].splitStack(par2);
+                itemstack = this.stackList[par1].splitStack(par2);
 
                 if (this.stackList[par1].stackSize == 0)
                 {
@@ -167,7 +167,7 @@ public class InventoryCrafting implements IInventory
                 }
 
                 this.eventHandler.onCraftMatrixChanged(this);
-                return var3;
+                return itemstack;
             }
         }
         else

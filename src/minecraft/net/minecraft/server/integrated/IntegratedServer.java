@@ -57,7 +57,7 @@ public class IntegratedServer extends MinecraftServer
         {
             this.theServerListeningThread = new IntegratedServerListenThread(this);
         }
-        catch (IOException var6)
+        catch (IOException ioexception)
         {
             throw new Error();
         }
@@ -66,12 +66,12 @@ public class IntegratedServer extends MinecraftServer
     protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
     {
         this.convertMapIfNeeded(par1Str);
-        ISaveHandler var7 = this.getActiveAnvilConverter().getSaveLoader(par1Str, true);
+        ISaveHandler isavehandler = this.getActiveAnvilConverter().getSaveLoader(par1Str, true);
 
-        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, var7, par2Str, 0, theProfiler) : new WorldServer(this, var7, par2Str, 0, theWorldSettings, theProfiler));
+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler) : new WorldServer(this, isavehandler, par2Str, 0, theWorldSettings, theProfiler));
         for (int dim : DimensionManager.getStaticDimensionIDs())
         {
-            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var7, par2Str, dim, theWorldSettings, overWorld, theProfiler));
+            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, theWorldSettings, overWorld, theProfiler));
             world.addWorldAccess(new WorldManager(this, world));
             if (!this.isSinglePlayer())
             {
@@ -110,10 +110,10 @@ public class IntegratedServer extends MinecraftServer
      */
     public void tick()
     {
-        boolean var1 = this.isGamePaused;
+        boolean flag = this.isGamePaused;
         this.isGamePaused = this.theServerListeningThread.isGamePaused();
 
-        if (!var1 && this.isGamePaused)
+        if (!flag && this.isGamePaused)
         {
             logger.info("Saving and pausing game...");
             this.getConfigurationManager().saveAllPlayerData();
@@ -220,16 +220,16 @@ public class IntegratedServer extends MinecraftServer
     {
         try
         {
-            String var3 = this.theServerListeningThread.func_71755_c();
-            System.out.println("Started on " + var3);
+            String s = this.theServerListeningThread.func_71755_c();
+            System.out.println("Started on " + s);
             this.isPublic = true;
-            this.lanServerPing = new ThreadLanServerPing(this.getMOTD(), var3);
+            this.lanServerPing = new ThreadLanServerPing(this.getMOTD(), s);
             this.lanServerPing.start();
             this.getConfigurationManager().setGameType(par1EnumGameType);
             this.getConfigurationManager().setCommandsAllowedForAll(par2);
-            return var3;
+            return s;
         }
-        catch (IOException var4)
+        catch (IOException ioexception)
         {
             return null;
         }

@@ -40,9 +40,9 @@ final class HttpUtilRunnable implements Runnable
 
     public void run()
     {
-        URLConnection var1 = null;
-        InputStream var2 = null;
-        DataOutputStream var3 = null;
+        URLConnection urlconnection = null;
+        InputStream inputstream = null;
+        DataOutputStream dataoutputstream = null;
 
         if (this.feedbackHook != null)
         {
@@ -52,38 +52,38 @@ final class HttpUtilRunnable implements Runnable
 
         try
         {
-            byte[] var4 = new byte[4096];
-            URL var5 = new URL(this.sourceURL);
-            var1 = var5.openConnection();
-            float var6 = 0.0F;
-            float var7 = (float)this.field_76177_c.entrySet().size();
-            Iterator var8 = this.field_76177_c.entrySet().iterator();
+            byte[] abyte = new byte[4096];
+            URL url = new URL(this.sourceURL);
+            urlconnection = url.openConnection();
+            float f = 0.0F;
+            float f1 = (float)this.field_76177_c.entrySet().size();
+            Iterator iterator = this.field_76177_c.entrySet().iterator();
 
-            while (var8.hasNext())
+            while (iterator.hasNext())
             {
-                Entry var9 = (Entry)var8.next();
-                var1.setRequestProperty((String)var9.getKey(), (String)var9.getValue());
+                Entry entry = (Entry)iterator.next();
+                urlconnection.setRequestProperty((String)entry.getKey(), (String)entry.getValue());
 
                 if (this.feedbackHook != null)
                 {
-                    this.feedbackHook.setLoadingProgress((int)(++var6 / var7 * 100.0F));
+                    this.feedbackHook.setLoadingProgress((int)(++f / f1 * 100.0F));
                 }
             }
 
-            var2 = var1.getInputStream();
-            var7 = (float)var1.getContentLength();
-            int var28 = var1.getContentLength();
+            inputstream = urlconnection.getInputStream();
+            f1 = (float)urlconnection.getContentLength();
+            int i = urlconnection.getContentLength();
 
             if (this.feedbackHook != null)
             {
-                this.feedbackHook.resetProgresAndWorkingMessage(String.format("Downloading file (%.2f MB)...", new Object[] {Float.valueOf(var7 / 1000.0F / 1000.0F)}));
+                this.feedbackHook.resetProgresAndWorkingMessage(String.format("Downloading file (%.2f MB)...", new Object[] {Float.valueOf(f1 / 1000.0F / 1000.0F)}));
             }
 
             if (this.destinationFile.exists())
             {
-                long var29 = this.destinationFile.length();
+                long j = this.destinationFile.length();
 
-                if (var29 == (long)var28)
+                if (j == (long)i)
                 {
                     this.downloadSuccess.onSuccess(this.destinationFile);
 
@@ -95,45 +95,45 @@ final class HttpUtilRunnable implements Runnable
                     return;
                 }
 
-                System.out.println("Deleting " + this.destinationFile + " as it does not match what we currently have (" + var28 + " vs our " + var29 + ").");
+                System.out.println("Deleting " + this.destinationFile + " as it does not match what we currently have (" + i + " vs our " + j + ").");
                 this.destinationFile.delete();
             }
 
-            var3 = new DataOutputStream(new FileOutputStream(this.destinationFile));
+            dataoutputstream = new DataOutputStream(new FileOutputStream(this.destinationFile));
 
-            if (this.field_76173_f > 0 && var7 > (float)this.field_76173_f)
+            if (this.field_76173_f > 0 && f1 > (float)this.field_76173_f)
             {
                 if (this.feedbackHook != null)
                 {
                     this.feedbackHook.onNoMoreProgress();
                 }
 
-                throw new IOException("Filesize is bigger than maximum allowed (file is " + var6 + ", limit is " + this.field_76173_f + ")");
+                throw new IOException("Filesize is bigger than maximum allowed (file is " + f + ", limit is " + this.field_76173_f + ")");
             }
 
-            boolean var31 = false;
-            int var30;
+            boolean flag = false;
+            int k;
 
-            while ((var30 = var2.read(var4)) >= 0)
+            while ((k = inputstream.read(abyte)) >= 0)
             {
-                var6 += (float)var30;
+                f += (float)k;
 
                 if (this.feedbackHook != null)
                 {
-                    this.feedbackHook.setLoadingProgress((int)(var6 / var7 * 100.0F));
+                    this.feedbackHook.setLoadingProgress((int)(f / f1 * 100.0F));
                 }
 
-                if (this.field_76173_f > 0 && var6 > (float)this.field_76173_f)
+                if (this.field_76173_f > 0 && f > (float)this.field_76173_f)
                 {
                     if (this.feedbackHook != null)
                     {
                         this.feedbackHook.onNoMoreProgress();
                     }
 
-                    throw new IOException("Filesize was bigger than maximum allowed (got >= " + var6 + ", limit was " + this.field_76173_f + ")");
+                    throw new IOException("Filesize was bigger than maximum allowed (got >= " + f + ", limit was " + this.field_76173_f + ")");
                 }
 
-                var3.write(var4, 0, var30);
+                dataoutputstream.write(abyte, 0, k);
             }
 
             this.downloadSuccess.onSuccess(this.destinationFile);
@@ -143,32 +143,32 @@ final class HttpUtilRunnable implements Runnable
                 this.feedbackHook.onNoMoreProgress();
             }
         }
-        catch (Throwable var26)
+        catch (Throwable throwable)
         {
-            var26.printStackTrace();
+            throwable.printStackTrace();
         }
         finally
         {
             try
             {
-                if (var2 != null)
+                if (inputstream != null)
                 {
-                    var2.close();
+                    inputstream.close();
                 }
             }
-            catch (IOException var25)
+            catch (IOException ioexception)
             {
                 ;
             }
 
             try
             {
-                if (var3 != null)
+                if (dataoutputstream != null)
                 {
-                    var3.close();
+                    dataoutputstream.close();
                 }
             }
-            catch (IOException var24)
+            catch (IOException ioexception1)
             {
                 ;
             }

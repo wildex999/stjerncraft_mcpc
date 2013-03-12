@@ -85,9 +85,9 @@ public final class ItemStack
 
     public static ItemStack loadItemStackFromNBT(NBTTagCompound par0NBTTagCompound)
     {
-        ItemStack var1 = new ItemStack();
-        var1.readFromNBT(par0NBTTagCompound);
-        return var1.getItem() != null ? var1 : null;
+        ItemStack itemstack = new ItemStack();
+        itemstack.readFromNBT(par0NBTTagCompound);
+        return itemstack.getItem() != null ? itemstack : null;
     }
 
     private ItemStack()
@@ -101,15 +101,15 @@ public final class ItemStack
      */
     public ItemStack splitStack(int par1)
     {
-        ItemStack var2 = new ItemStack(this.itemID, par1, this.itemDamage);
+        ItemStack itemstack = new ItemStack(this.itemID, par1, this.itemDamage);
 
         if (this.stackTagCompound != null)
         {
-            var2.stackTagCompound = (NBTTagCompound)this.stackTagCompound.copy();
+            itemstack.stackTagCompound = (NBTTagCompound)this.stackTagCompound.copy();
         }
 
         this.stackSize -= par1;
-        return var2;
+        return itemstack;
     }
 
     /**
@@ -132,14 +132,14 @@ public final class ItemStack
 
     public boolean tryPlaceItemIntoWorld(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5, int par6, float par7, float par8, float par9)
     {
-        boolean var10 = this.getItem().onItemUse(this, par1EntityPlayer, par2World, par3, par4, par5, par6, par7, par8, par9);
+        boolean flag = this.getItem().onItemUse(this, par1EntityPlayer, par2World, par3, par4, par5, par6, par7, par8, par9);
 
-        if (var10)
+        if (flag)
         {
             par1EntityPlayer.addStat(StatList.objectUseStats[this.itemID], 1);
         }
 
-        return var10;
+        return flag;
     }
 
     /**
@@ -276,18 +276,18 @@ public final class ItemStack
         {
             if (par1 > 0 && par2EntityLiving instanceof EntityPlayer)
             {
-                int var3 = EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, this);
-                int var4 = 0;
+                int j = EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, this);
+                int k = 0;
 
-                for (int var5 = 0; var3 > 0 && var5 < par1; ++var5)
+                for (int l = 0; j > 0 && l < par1; ++l)
                 {
-                    if (EnchantmentDurability.func_92097_a(this, var3, par2EntityLiving.worldObj.rand))
+                    if (EnchantmentDurability.func_92097_a(this, j, par2EntityLiving.worldObj.rand))
                     {
-                        ++var4;
+                        ++k;
                     }
                 }
 
-                par1 -= var4;
+                par1 -= k;
 
                 if (par1 <= 0)
                 {
@@ -332,9 +332,9 @@ public final class ItemStack
      */
     public void hitEntity(EntityLiving par1EntityLiving, EntityPlayer par2EntityPlayer)
     {
-        boolean var3 = Item.itemsList[this.itemID].hitEntity(this, par1EntityLiving, par2EntityPlayer);
+        boolean flag = Item.itemsList[this.itemID].hitEntity(this, par1EntityLiving, par2EntityPlayer);
 
-        if (var3)
+        if (flag)
         {
             par2EntityPlayer.addStat(StatList.objectUseStats[this.itemID], 1);
         }
@@ -342,9 +342,9 @@ public final class ItemStack
 
     public void onBlockDestroyed(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer)
     {
-        boolean var7 = Item.itemsList[this.itemID].onBlockDestroyed(this, par1World, par2, par3, par4, par5, par6EntityPlayer);
+        boolean flag = Item.itemsList[this.itemID].onBlockDestroyed(this, par1World, par2, par3, par4, par5, par6EntityPlayer);
 
-        if (var7)
+        if (flag)
         {
             par6EntityPlayer.addStat(StatList.objectUseStats[this.itemID], 1);
         }
@@ -376,14 +376,14 @@ public final class ItemStack
      */
     public ItemStack copy()
     {
-        ItemStack var1 = new ItemStack(this.itemID, this.stackSize, this.itemDamage);
+        ItemStack itemstack = new ItemStack(this.itemID, this.stackSize, this.itemDamage);
 
         if (this.stackTagCompound != null)
         {
-            var1.stackTagCompound = (NBTTagCompound)this.stackTagCompound.copy();
+            itemstack.stackTagCompound = (NBTTagCompound)this.stackTagCompound.copy();
         }
 
-        return var1;
+        return itemstack;
     }
 
     public static boolean areItemStackTagsEqual(ItemStack par0ItemStack, ItemStack par1ItemStack)
@@ -506,19 +506,19 @@ public final class ItemStack
      */
     public String getDisplayName()
     {
-        String var1 = this.getItem().getItemDisplayName(this);
+        String s = this.getItem().getItemDisplayName(this);
 
         if (this.stackTagCompound != null && this.stackTagCompound.hasKey("display"))
         {
-            NBTTagCompound var2 = this.stackTagCompound.getCompoundTag("display");
+            NBTTagCompound nbttagcompound = this.stackTagCompound.getCompoundTag("display");
 
-            if (var2.hasKey("Name"))
+            if (nbttagcompound.hasKey("Name"))
             {
-                var1 = var2.getString("Name");
+                s = nbttagcompound.getString("Name");
             }
         }
 
-        return var1;
+        return s;
     }
 
     /**
@@ -554,85 +554,85 @@ public final class ItemStack
      */
     public List getTooltip(EntityPlayer par1EntityPlayer, boolean par2)
     {
-        ArrayList var3 = new ArrayList();
-        Item var4 = Item.itemsList[this.itemID];
-        String var5 = this.getDisplayName();
+        ArrayList arraylist = new ArrayList();
+        Item item = Item.itemsList[this.itemID];
+        String s = this.getDisplayName();
 
         if (this.hasDisplayName())
         {
-            var5 = "\u00a7o" + var5 + "\u00a7r";
+            s = "\u00a7o" + s + "\u00a7r";
         }
 
         if (par2)
         {
-            String var6 = "";
+            String s1 = "";
 
-            if (var5.length() > 0)
+            if (s.length() > 0)
             {
-                var5 = var5 + " (";
-                var6 = ")";
+                s = s + " (";
+                s1 = ")";
             }
 
             if (this.getHasSubtypes())
             {
-                var5 = var5 + String.format("#%04d/%d%s", new Object[] {Integer.valueOf(this.itemID), Integer.valueOf(this.itemDamage), var6});
+                s = s + String.format("#%04d/%d%s", new Object[] {Integer.valueOf(this.itemID), Integer.valueOf(this.itemDamage), s1});
             }
             else
             {
-                var5 = var5 + String.format("#%04d%s", new Object[] {Integer.valueOf(this.itemID), var6});
+                s = s + String.format("#%04d%s", new Object[] {Integer.valueOf(this.itemID), s1});
             }
         }
         else if (!this.hasDisplayName() && this.itemID == Item.map.itemID)
         {
-            var5 = var5 + " #" + this.itemDamage;
+            s = s + " #" + this.itemDamage;
         }
 
-        var3.add(var5);
-        var4.addInformation(this, par1EntityPlayer, var3, par2);
+        arraylist.add(s);
+        item.addInformation(this, par1EntityPlayer, arraylist, par2);
 
         if (this.hasTagCompound())
         {
-            NBTTagList var10 = this.getEnchantmentTagList();
+            NBTTagList nbttaglist = this.getEnchantmentTagList();
 
-            if (var10 != null)
+            if (nbttaglist != null)
             {
-                for (int var7 = 0; var7 < var10.tagCount(); ++var7)
+                for (int i = 0; i < nbttaglist.tagCount(); ++i)
                 {
-                    short var8 = ((NBTTagCompound)var10.tagAt(var7)).getShort("id");
-                    short var9 = ((NBTTagCompound)var10.tagAt(var7)).getShort("lvl");
+                    short short1 = ((NBTTagCompound)nbttaglist.tagAt(i)).getShort("id");
+                    short short2 = ((NBTTagCompound)nbttaglist.tagAt(i)).getShort("lvl");
 
-                    if (Enchantment.enchantmentsList[var8] != null)
+                    if (Enchantment.enchantmentsList[short1] != null)
                     {
-                        var3.add(Enchantment.enchantmentsList[var8].getTranslatedName(var9));
+                        arraylist.add(Enchantment.enchantmentsList[short1].getTranslatedName(short2));
                     }
                 }
             }
 
             if (this.stackTagCompound.hasKey("display"))
             {
-                NBTTagCompound var11 = this.stackTagCompound.getCompoundTag("display");
+                NBTTagCompound nbttagcompound = this.stackTagCompound.getCompoundTag("display");
 
-                if (var11.hasKey("color"))
+                if (nbttagcompound.hasKey("color"))
                 {
                     if (par2)
                     {
-                        var3.add("Color: #" + Integer.toHexString(var11.getInteger("color")).toUpperCase());
+                        arraylist.add("Color: #" + Integer.toHexString(nbttagcompound.getInteger("color")).toUpperCase());
                     }
                     else
                     {
-                        var3.add("\u00a7o" + StatCollector.translateToLocal("item.dyed"));
+                        arraylist.add("\u00a7o" + StatCollector.translateToLocal("item.dyed"));
                     }
                 }
 
-                if (var11.hasKey("Lore"))
+                if (nbttagcompound.hasKey("Lore"))
                 {
-                    NBTTagList var12 = var11.getTagList("Lore");
+                    NBTTagList nbttaglist1 = nbttagcompound.getTagList("Lore");
 
-                    if (var12.tagCount() > 0)
+                    if (nbttaglist1.tagCount() > 0)
                     {
-                        for (int var13 = 0; var13 < var12.tagCount(); ++var13)
+                        for (int j = 0; j < nbttaglist1.tagCount(); ++j)
                         {
-                            var3.add("\u00a75\u00a7o" + ((NBTTagString)var12.tagAt(var13)).data);
+                            arraylist.add("\u00a75\u00a7o" + ((NBTTagString)nbttaglist1.tagAt(j)).data);
                         }
                     }
                 }
@@ -641,10 +641,10 @@ public final class ItemStack
 
         if (par2 && this.isItemDamaged())
         {
-            var3.add("Durability: " + (this.getMaxDamage() - this.getItemDamageForDisplay()) + " / " + this.getMaxDamage());
+            arraylist.add("Durability: " + (this.getMaxDamage() - this.getItemDamageForDisplay()) + " / " + this.getMaxDamage());
         }
 
-        return var3;
+        return arraylist;
     }
 
     @SideOnly(Side.CLIENT)
@@ -682,11 +682,11 @@ public final class ItemStack
             this.stackTagCompound.setTag("ench", new NBTTagList("ench"));
         }
 
-        NBTTagList var3 = (NBTTagList)this.stackTagCompound.getTag("ench");
-        NBTTagCompound var4 = new NBTTagCompound();
-        var4.setShort("id", (short)par1Enchantment.effectId);
-        var4.setShort("lvl", (short)((byte)par2));
-        var3.appendTag(var4);
+        NBTTagList nbttaglist = (NBTTagList)this.stackTagCompound.getTag("ench");
+        NBTTagCompound nbttagcompound = new NBTTagCompound();
+        nbttagcompound.setShort("id", (short)par1Enchantment.effectId);
+        nbttagcompound.setShort("lvl", (short)((byte)par2));
+        nbttaglist.appendTag(nbttagcompound);
     }
 
     /**

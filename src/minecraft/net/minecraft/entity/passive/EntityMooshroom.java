@@ -29,11 +29,11 @@ public class EntityMooshroom extends EntityCow implements IShearable
      */
     public boolean interact(EntityPlayer par1EntityPlayer)
     {
-        ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
+        ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
 
-        if (var2 != null && var2.itemID == Item.bowlEmpty.itemID && this.getGrowingAge() >= 0)
+        if (itemstack != null && itemstack.itemID == Item.bowlEmpty.itemID && this.getGrowingAge() >= 0)
         {
-            if (var2.stackSize == 1)
+            if (itemstack.stackSize == 1)
             {
                 par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, new ItemStack(Item.bowlSoup));
                 return true;

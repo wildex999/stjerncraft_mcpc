@@ -28,9 +28,9 @@ public abstract class EntityMob extends EntityCreature implements IMob
     public void onLivingUpdate()
     {
         this.updateArmSwingProgress();
-        float var1 = this.getBrightness(1.0F);
+        float f = this.getBrightness(1.0F);
 
-        if (var1 > 0.5F)
+        if (f > 0.5F)
         {
             this.entityAge += 2;
         }
@@ -57,8 +57,8 @@ public abstract class EntityMob extends EntityCreature implements IMob
      */
     protected Entity findPlayerToAttack()
     {
-        EntityPlayer var1 = this.worldObj.getClosestVulnerablePlayerToEntity(this, 16.0D);
-        return var1 != null && this.canEntityBeSeen(var1) ? var1 : null;
+        EntityPlayer entityplayer = this.worldObj.getClosestVulnerablePlayerToEntity(this, 16.0D);
+        return entityplayer != null && this.canEntityBeSeen(entityplayer) ? entityplayer : null;
     }
 
     /**
@@ -72,16 +72,16 @@ public abstract class EntityMob extends EntityCreature implements IMob
         }
         else if (super.attackEntityFrom(par1DamageSource, par2))
         {
-            Entity var3 = par1DamageSource.getEntity();
+            Entity entity = par1DamageSource.getEntity();
 
-            if (this.riddenByEntity != var3 && this.ridingEntity != var3)
+            if (this.riddenByEntity != entity && this.ridingEntity != entity)
             {
-                if (var3 != this)
+                if (entity != this)
                 {
                     // CraftBukkit start - we still need to call events for entities without goals
-                    if (var3 != this.entityToAttack && (this instanceof EntityBlaze || this instanceof EntityEnderman || this instanceof EntitySpider || this instanceof EntityGiantZombie || this instanceof EntitySilverfish))
+                    if (entity != this.entityToAttack && (this instanceof EntityBlaze || this instanceof EntityEnderman || this instanceof EntitySpider || this instanceof EntityGiantZombie || this instanceof EntitySilverfish))
                     {
-                        EntityTargetEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetEvent(this, var3, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY);
+                        EntityTargetEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetEvent(this, entity, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY);
 
                         if (!event.isCancelled())
                         {
@@ -97,7 +97,7 @@ public abstract class EntityMob extends EntityCreature implements IMob
                     }
                     else
                     {
-                        this.entityToAttack = var3;
+                        this.entityToAttack = entity;
                     }
 
                     // CraftBukkit end
@@ -117,42 +117,42 @@ public abstract class EntityMob extends EntityCreature implements IMob
 
     public boolean attackEntityAsMob(Entity par1Entity)
     {
-        int var2 = this.getAttackStrength(par1Entity);
+        int i = this.getAttackStrength(par1Entity);
 
         if (this.isPotionActive(Potion.damageBoost))
         {
-            var2 += 3 << this.getActivePotionEffect(Potion.damageBoost).getAmplifier();
+            i += 3 << this.getActivePotionEffect(Potion.damageBoost).getAmplifier();
         }
 
         if (this.isPotionActive(Potion.weakness))
         {
-            var2 -= 2 << this.getActivePotionEffect(Potion.weakness).getAmplifier();
+            i -= 2 << this.getActivePotionEffect(Potion.weakness).getAmplifier();
         }
 
-        int var3 = 0;
+        int j = 0;
 
         if (par1Entity instanceof EntityLiving)
         {
-            var2 += EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLiving)par1Entity);
-            var3 += EnchantmentHelper.getKnockbackModifier(this, (EntityLiving)par1Entity);
+            i += EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLiving)par1Entity);
+            j += EnchantmentHelper.getKnockbackModifier(this, (EntityLiving)par1Entity);
         }
 
-        boolean var4 = par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), var2);
+        boolean flag = par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), i);
 
-        if (var4)
+        if (flag)
         {
-            if (var3 > 0)
+            if (j > 0)
             {
-                par1Entity.addVelocity((double)(-MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F) * (float)var3 * 0.5F), 0.1D, (double)(MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F) * (float)var3 * 0.5F));
+                par1Entity.addVelocity((double)(-MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F) * (float)j * 0.5F), 0.1D, (double)(MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F) * (float)j * 0.5F));
                 this.motionX *= 0.6D;
                 this.motionZ *= 0.6D;
             }
 
-            int var5 = EnchantmentHelper.getFireAspectModifier(this);
+            int k = EnchantmentHelper.getFireAspectModifier(this);
 
-            if (var5 > 0)
+            if (k > 0)
             {
-                par1Entity.setFire(var5 * 4);
+                par1Entity.setFire(k * 4);
             }
 
             if (par1Entity instanceof EntityLiving)
@@ -161,7 +161,7 @@ public abstract class EntityMob extends EntityCreature implements IMob
             }
         }
 
-        return var4;
+        return flag;
     }
 
     /**
@@ -190,27 +190,27 @@ public abstract class EntityMob extends EntityCreature implements IMob
      */
     protected boolean isValidLightLevel()
     {
-        int var1 = MathHelper.floor_double(this.posX);
-        int var2 = MathHelper.floor_double(this.boundingBox.minY);
-        int var3 = MathHelper.floor_double(this.posZ);
+        int i = MathHelper.floor_double(this.posX);
+        int j = MathHelper.floor_double(this.boundingBox.minY);
+        int k = MathHelper.floor_double(this.posZ);
 
-        if (this.worldObj.getSavedLightValue(EnumSkyBlock.Sky, var1, var2, var3) > this.rand.nextInt(32))
+        if (this.worldObj.getSavedLightValue(EnumSkyBlock.Sky, i, j, k) > this.rand.nextInt(32))
         {
             return false;
         }
         else
         {
-            int var4 = this.worldObj.getBlockLightValue(var1, var2, var3);
+            int l = this.worldObj.getBlockLightValue(i, j, k);
 
             if (this.worldObj.isThundering())
             {
-                int var5 = this.worldObj.skylightSubtracted;
+                int i1 = this.worldObj.skylightSubtracted;
                 this.worldObj.skylightSubtracted = 10;
-                var4 = this.worldObj.getBlockLightValue(var1, var2, var3);
-                this.worldObj.skylightSubtracted = var5;
+                l = this.worldObj.getBlockLightValue(i, j, k);
+                this.worldObj.skylightSubtracted = i1;
             }
 
-            return var4 <= this.rand.nextInt(8);
+            return l <= this.rand.nextInt(8);
         }
     }
 

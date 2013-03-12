@@ -100,9 +100,9 @@ public class NetLoginHandler extends NetHandler
             this.myTCPConnection.serverShutdown();
             this.connectionComplete = true;
         }
-        catch (Exception var3)
+        catch (Exception exception)
         {
-            var3.printStackTrace();
+            exception.printStackTrace();
         }
     }
 
@@ -119,7 +119,7 @@ public class NetLoginHandler extends NetHandler
         }
         else
         {
-            PublicKey var2 = this.mcServer.getKeyPair().getPublic();
+            PublicKey publickey = this.mcServer.getKeyPair().getPublic();
 
             if (par1Packet2ClientProtocol.getProtocolVersion() != 51)
             {
@@ -137,17 +137,17 @@ public class NetLoginHandler extends NetHandler
                 this.loginServerId = this.mcServer.isServerInOnlineMode() ? Long.toString(rand.nextLong(), 16) : "-";
                 this.verifyToken = new byte[4];
                 rand.nextBytes(this.verifyToken);
-                this.myTCPConnection.addToSendQueue(new Packet253ServerAuthData(this.loginServerId, var2, this.verifyToken));
+                this.myTCPConnection.addToSendQueue(new Packet253ServerAuthData(this.loginServerId, publickey, this.verifyToken));
             }
         }
     }
 
     public void handleSharedKey(Packet252SharedKey par1Packet252SharedKey)
     {
-        PrivateKey var2 = this.mcServer.getKeyPair().getPrivate();
-        this.sharedKey = par1Packet252SharedKey.getSharedKey(var2);
+        PrivateKey privatekey = this.mcServer.getKeyPair().getPrivate();
+        this.sharedKey = par1Packet252SharedKey.getSharedKey(privatekey);
 
-        if (!Arrays.equals(this.verifyToken, par1Packet252SharedKey.getVerifyToken(var2)))
+        if (!Arrays.equals(this.verifyToken, par1Packet252SharedKey.getVerifyToken(privatekey)))
         {
             this.raiseErrorAndDisconnect("Invalid client reply");
         }
@@ -190,11 +190,11 @@ public class NetLoginHandler extends NetHandler
         FMLNetworkHandler.onConnectionReceivedFromClient(this, this.mcServer, this.myTCPConnection.getSocketAddress(), this.clientUsername);
     }
 
-    public void completeConnection(String var1)
+    public void completeConnection(String s)
     {
-        if (var1 != null)
+        if (s != null)
         {
-            this.raiseErrorAndDisconnect(var1);
+            this.raiseErrorAndDisconnect(s);
         }
 
         // CraftBukkit start
@@ -236,28 +236,28 @@ public class NetLoginHandler extends NetHandler
 
         try
         {
-            ServerConfigurationManager var2 = this.mcServer.getConfigurationManager();
-            String var3 = null;
+            ServerConfigurationManager serverconfigurationmanager = this.mcServer.getConfigurationManager();
+            String s = null;
             // CraftBukkit
-            org.bukkit.event.server.ServerListPingEvent var4 = org.bukkit.craftbukkit.event.CraftEventFactory.callServerListPingEvent(this.mcServer.server, getSocket().getInetAddress(), this.mcServer.getMOTD(), var2.getCurrentPlayerCount(), var2.getMaxPlayers());
+            org.bukkit.event.server.ServerListPingEvent serverlistpingevent = org.bukkit.craftbukkit.event.CraftEventFactory.callServerListPingEvent(this.mcServer.server, getSocket().getInetAddress(), this.mcServer.getMOTD(), serverconfigurationmanager.getCurrentPlayerCount(), serverconfigurationmanager.getMaxPlayers());
 
             if (par1Packet254ServerPing.field_82559_a == 1)
             {
                 // CraftBukkit start - fix decompile issues, don't create a list from an array
-                Object[] list = new Object[] { 1, 51, this.mcServer.getMinecraftVersion(), var4.getMotd(), var2.getCurrentPlayerCount(), var4.getMaxPlayers() };
+                Object[] list = new Object[] { 1, 51, this.mcServer.getMinecraftVersion(), serverlistpingevent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), serverlistpingevent.getMaxPlayers() };
 
                 for (Object object : list)
                 {
-                    if (var3 == null)
+                    if (s == null)
                     {
-                        var3 = "\u00A7";
+                        s = "\u00A7";
                     }
                     else
                     {
-                        var3 = var3 + "\0";
+                        s = s + "\0";
                     }
 
-                    var3 += org.apache.commons.lang.StringUtils.replace(object.toString(), "\0", "");
+                    s += org.apache.commons.lang.StringUtils.replace(object.toString(), "\0", "");
                 }
 
                 // CraftBukkit end
@@ -265,29 +265,29 @@ public class NetLoginHandler extends NetHandler
             else
             {
                 // CraftBukkit
-                var3 = var4.getMotd() + "\u00A7" + var2.getCurrentPlayerCount() + "\u00A7" + var4.getMaxPlayers();
+                s = serverlistpingevent.getMotd() + "\u00A7" + serverconfigurationmanager.getCurrentPlayerCount() + "\u00A7" + serverlistpingevent.getMaxPlayers();
             }
 
-            InetAddress var6 = null;
+            InetAddress inetaddress = null;
 
             if (this.myTCPConnection.getSocket() != null)
             {
-                var6 = this.myTCPConnection.getSocket().getInetAddress();
+                inetaddress = this.myTCPConnection.getSocket().getInetAddress();
             }
 
-            this.myTCPConnection.addToSendQueue(new Packet255KickDisconnect(var3));
+            this.myTCPConnection.addToSendQueue(new Packet255KickDisconnect(s));
             this.myTCPConnection.serverShutdown();
 
-            if (var6 != null && this.mcServer.getNetworkThread() instanceof DedicatedServerListenThread)
+            if (inetaddress != null && this.mcServer.getNetworkThread() instanceof DedicatedServerListenThread)
             {
-                ((DedicatedServerListenThread) this.mcServer.getNetworkThread()).func_71761_a(var6);
+                ((DedicatedServerListenThread) this.mcServer.getNetworkThread()).func_71761_a(inetaddress);
             }
 
             this.connectionComplete = true;
         }
-        catch (Exception var5)
+        catch (Exception exception)
         {
-            var5.printStackTrace();
+            exception.printStackTrace();
         }
     }
 

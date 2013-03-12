@@ -53,15 +53,15 @@ public class EntityAIArrowAttack extends EntityAIBase
      */
     public boolean shouldExecute()
     {
-        EntityLiving var1 = this.entityHost.getAttackTarget();
+        EntityLiving entityliving = this.entityHost.getAttackTarget();
 
-        if (var1 == null)
+        if (entityliving == null)
         {
             return false;
         }
         else
         {
-            this.attackTarget = var1;
+            this.attackTarget = entityliving;
             return true;
         }
     }
@@ -93,10 +93,10 @@ public class EntityAIArrowAttack extends EntityAIBase
      */
     public void updateTask()
     {
-        double var1 = this.entityHost.getDistanceSq(this.attackTarget.posX, this.attackTarget.boundingBox.minY, this.attackTarget.posZ);
-        boolean var3 = this.entityHost.getEntitySenses().canSee(this.attackTarget);
+        double d0 = this.entityHost.getDistanceSq(this.attackTarget.posX, this.attackTarget.boundingBox.minY, this.attackTarget.posZ);
+        boolean flag = this.entityHost.getEntitySenses().canSee(this.attackTarget);
 
-        if (var3)
+        if (flag)
         {
             ++this.field_75318_f;
         }
@@ -105,7 +105,7 @@ public class EntityAIArrowAttack extends EntityAIBase
             this.field_75318_f = 0;
         }
 
-        if (var1 <= (double)this.field_82642_h && this.field_75318_f >= 20)
+        if (d0 <= (double)this.field_82642_h && this.field_75318_f >= 20)
         {
             this.entityHost.getNavigator().clearPathEntity();
         }
@@ -119,7 +119,7 @@ public class EntityAIArrowAttack extends EntityAIBase
 
         if (this.rangedAttackTime <= 0)
         {
-            if (var1 <= (double)this.field_82642_h && var3)
+            if (d0 <= (double)this.field_82642_h && flag)
             {
                 this.rangedAttackEntityHost.attackEntityWithRangedAttack(this.attackTarget);
                 this.rangedAttackTime = this.maxRangedAttackTime;

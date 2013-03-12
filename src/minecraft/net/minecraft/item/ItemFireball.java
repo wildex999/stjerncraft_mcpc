@@ -65,9 +65,9 @@ public class ItemFireball extends Item
             }
             else
             {
-                int var11 = par3World.getBlockId(par4, par5, par6);
+                int i1 = par3World.getBlockId(par4, par5, par6);
 
-                if (var11 == 0)
+                if (i1 == 0)
                 {
                     // CraftBukkit start
                     org.bukkit.block.Block blockClicked = par3World.getWorld().getBlockAt(par4, par5, par6);

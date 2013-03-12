@@ -49,17 +49,17 @@ public class BlockGrass extends Block
         }
         else
         {
-            Material var6 = par1IBlockAccess.getBlockMaterial(par2, par3 + 1, par4);
-            return var6 != Material.snow && var6 != Material.craftedSnow ? 3 : 68;
+            Material material = par1IBlockAccess.getBlockMaterial(par2, par3 + 1, par4);
+            return material != Material.snow && material != Material.craftedSnow ? 3 : 68;
         }
     }
 
     @SideOnly(Side.CLIENT)
     public int getBlockColor()
     {
-        double var1 = 0.5D;
-        double var3 = 1.0D;
-        return ColorizerGrass.getGrassColor(var1, var3);
+        double d0 = 0.5D;
+        double d1 = 1.0D;
+        return ColorizerGrass.getGrassColor(d0, d1);
     }
 
     @SideOnly(Side.CLIENT)
@@ -80,22 +80,22 @@ public class BlockGrass extends Block
      */
     public int colorMultiplier(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        int var5 = 0;
-        int var6 = 0;
-        int var7 = 0;
+        int l = 0;
+        int i1 = 0;
+        int j1 = 0;
 
-        for (int var8 = -1; var8 <= 1; ++var8)
+        for (int k1 = -1; k1 <= 1; ++k1)
         {
-            for (int var9 = -1; var9 <= 1; ++var9)
+            for (int l1 = -1; l1 <= 1; ++l1)
             {
-                int var10 = par1IBlockAccess.getBiomeGenForCoords(par2 + var9, par4 + var8).getBiomeGrassColor();
-                var5 += (var10 & 16711680) >> 16;
-                var6 += (var10 & 65280) >> 8;
-                var7 += var10 & 255;
+                int i2 = par1IBlockAccess.getBiomeGenForCoords(par2 + l1, par4 + k1).getBiomeGrassColor();
+                l += (i2 & 16711680) >> 16;
+                i1 += (i2 & 65280) >> 8;
+                j1 += i2 & 255;
             }
         }
 
-        return (var5 / 9 & 255) << 16 | (var6 / 9 & 255) << 8 | var7 / 9 & 255;
+        return (l / 9 & 255) << 16 | (i1 / 9 & 255) << 8 | j1 / 9 & 255;
     }
 
     /**
@@ -123,20 +123,20 @@ public class BlockGrass extends Block
             }
             else if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9)
             {
-                int var6 = Math.min(4, Math.max(20, (int)(4 * 100F / par1World.growthOdds)));  // Spigot
+                int l = Math.min(4, Math.max(20, (int)(4 * 100F / par1World.growthOdds)));  // Spigot
 
-                for (int var7 = 0; var7 < var6; ++var7)   // Spigot
+                for (int i1 = 0; i1 < l; ++i1)   // Spigot
                 {
-                    int var8 = par2 + par5Random.nextInt(3) - 1;
-                    int var9 = par3 + par5Random.nextInt(5) - 3;
-                    int var10 = par4 + par5Random.nextInt(3) - 1;
-                    int l1 = par1World.getBlockId(var8, var9 + 1, var10);
+                    int j1 = par2 + par5Random.nextInt(3) - 1;
+                    int k1 = par3 + par5Random.nextInt(5) - 3;
+                    int l1 = par4 + par5Random.nextInt(3) - 1;
+                    int l1 = par1World.getBlockId(j1, k1 + 1, l1);
 
-                    if (par1World.getBlockId(var8, var9, var10) == Block.dirt.blockID && par1World.getBlockLightValue(var8, var9 + 1, var10) >= 4 && par1World.getBlockLightOpacity(var8, var9 + 1, var10) <= 2)   // Forge
+                    if (par1World.getBlockId(j1, k1, l1) == Block.dirt.blockID && par1World.getBlockLightValue(j1, k1 + 1, l1) >= 4 && par1World.getBlockLightOpacity(j1, k1 + 1, l1) <= 2)   // Forge
                     {
                         // CraftBukkit start
                         org.bukkit.World bworld = par1World.getWorld();
-                        BlockState blockState = bworld.getBlockAt(var8, var9, var10).getState();
+                        BlockState blockState = bworld.getBlockAt(j1, k1, l1).getState();
                         blockState.setTypeId(Block.grass.blockID);
                         BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(par2, par3, par4), blockState);
                         par1World.getServer().getPluginManager().callEvent(event);

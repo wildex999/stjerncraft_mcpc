@@ -23,39 +23,39 @@ public class RecipesArmorDyes extends ShapelessRecipes implements IRecipe   // C
      */
     public boolean matches(InventoryCrafting par1InventoryCrafting, World par2World)
     {
-        ItemStack var3 = null;
-        ArrayList var4 = new ArrayList();
+        ItemStack itemstack = null;
+        ArrayList arraylist = new ArrayList();
 
-        for (int var5 = 0; var5 < par1InventoryCrafting.getSizeInventory(); ++var5)
+        for (int i = 0; i < par1InventoryCrafting.getSizeInventory(); ++i)
         {
-            ItemStack var6 = par1InventoryCrafting.getStackInSlot(var5);
+            ItemStack itemstack1 = par1InventoryCrafting.getStackInSlot(i);
 
-            if (var6 != null)
+            if (itemstack1 != null)
             {
-                if (var6.getItem() instanceof ItemArmor)
+                if (itemstack1.getItem() instanceof ItemArmor)
                 {
-                    ItemArmor var7 = (ItemArmor)var6.getItem();
+                    ItemArmor itemarmor = (ItemArmor)itemstack1.getItem();
 
-                    if (var7.getArmorMaterial() != EnumArmorMaterial.CLOTH || var3 != null)
+                    if (itemarmor.getArmorMaterial() != EnumArmorMaterial.CLOTH || itemstack != null)
                     {
                         return false;
                     }
 
-                    var3 = var6;
+                    itemstack = itemstack1;
                 }
                 else
                 {
-                    if (var6.itemID != Item.dyePowder.itemID)
+                    if (itemstack1.itemID != Item.dyePowder.itemID)
                     {
                         return false;
                     }
 
-                    var4.add(var6);
+                    arraylist.add(itemstack1);
                 }
             }
         }
 
-        return var3 != null && !var4.isEmpty();
+        return itemstack != null && !arraylist.isEmpty();
     }
 
     /**
@@ -63,85 +63,85 @@ public class RecipesArmorDyes extends ShapelessRecipes implements IRecipe   // C
      */
     public ItemStack getCraftingResult(InventoryCrafting par1InventoryCrafting)
     {
-        ItemStack var2 = null;
-        int[] var3 = new int[3];
-        int var4 = 0;
-        int var5 = 0;
-        ItemArmor var6 = null;
-        int var7;
-        int var9;
-        float var10;
-        float var11;
-        int var17;
+        ItemStack itemstack = null;
+        int[] aint = new int[3];
+        int i = 0;
+        int j = 0;
+        ItemArmor itemarmor = null;
+        int k;
+        int l;
+        float f;
+        float f1;
+        int i1;
 
-        for (var7 = 0; var7 < par1InventoryCrafting.getSizeInventory(); ++var7)
+        for (k = 0; k < par1InventoryCrafting.getSizeInventory(); ++k)
         {
-            ItemStack var8 = par1InventoryCrafting.getStackInSlot(var7);
+            ItemStack itemstack1 = par1InventoryCrafting.getStackInSlot(k);
 
-            if (var8 != null)
+            if (itemstack1 != null)
             {
-                if (var8.getItem() instanceof ItemArmor)
+                if (itemstack1.getItem() instanceof ItemArmor)
                 {
-                    var6 = (ItemArmor)var8.getItem();
+                    itemarmor = (ItemArmor)itemstack1.getItem();
 
-                    if (var6.getArmorMaterial() != EnumArmorMaterial.CLOTH || var2 != null)
+                    if (itemarmor.getArmorMaterial() != EnumArmorMaterial.CLOTH || itemstack != null)
                     {
                         return null;
                     }
 
-                    var2 = var8.copy();
+                    itemstack = itemstack1.copy();
 
-                    if (var6.hasColor(var8))
+                    if (itemarmor.hasColor(itemstack1))
                     {
-                        var9 = var6.getColor(var2);
-                        var10 = (float)(var9 >> 16 & 255) / 255.0F;
-                        var11 = (float)(var9 >> 8 & 255) / 255.0F;
-                        float var12 = (float)(var9 & 255) / 255.0F;
-                        var4 = (int)((float)var4 + Math.max(var10, Math.max(var11, var12)) * 255.0F);
-                        var3[0] = (int)((float)var3[0] + var10 * 255.0F);
-                        var3[1] = (int)((float)var3[1] + var11 * 255.0F);
-                        var3[2] = (int)((float)var3[2] + var12 * 255.0F);
-                        ++var5;
+                        l = itemarmor.getColor(itemstack);
+                        f = (float)(l >> 16 & 255) / 255.0F;
+                        f1 = (float)(l >> 8 & 255) / 255.0F;
+                        float f2 = (float)(l & 255) / 255.0F;
+                        i = (int)((float)i + Math.max(f, Math.max(f1, f2)) * 255.0F);
+                        aint[0] = (int)((float)aint[0] + f * 255.0F);
+                        aint[1] = (int)((float)aint[1] + f1 * 255.0F);
+                        aint[2] = (int)((float)aint[2] + f2 * 255.0F);
+                        ++j;
                     }
                 }
                 else
                 {
-                    if (var8.itemID != Item.dyePowder.itemID)
+                    if (itemstack1.itemID != Item.dyePowder.itemID)
                     {
                         return null;
                     }
 
-                    float[] var14 = EntitySheep.fleeceColorTable[BlockCloth.getBlockFromDye(var8.getItemDamage())];
-                    int var16 = (int)(var14[0] * 255.0F);
-                    int var15 = (int)(var14[1] * 255.0F);
-                    var17 = (int)(var14[2] * 255.0F);
-                    var4 += Math.max(var16, Math.max(var15, var17));
-                    var3[0] += var16;
-                    var3[1] += var15;
-                    var3[2] += var17;
-                    ++var5;
+                    float[] afloat = EntitySheep.fleeceColorTable[BlockCloth.getBlockFromDye(itemstack1.getItemDamage())];
+                    int j1 = (int)(afloat[0] * 255.0F);
+                    int k1 = (int)(afloat[1] * 255.0F);
+                    i1 = (int)(afloat[2] * 255.0F);
+                    i += Math.max(j1, Math.max(k1, i1));
+                    aint[0] += j1;
+                    aint[1] += k1;
+                    aint[2] += i1;
+                    ++j;
                 }
             }
         }
 
-        if (var6 == null)
+        if (itemarmor == null)
         {
             return null;
         }
         else
         {
-            var7 = var3[0] / var5;
-            int var13 = var3[1] / var5;
-            var9 = var3[2] / var5;
-            var10 = (float)var4 / (float)var5;
-            var11 = (float)Math.max(var7, Math.max(var13, var9));
-            var7 = (int)((float)var7 * var10 / var11);
-            var13 = (int)((float)var13 * var10 / var11);
-            var9 = (int)((float)var9 * var10 / var11);
-            var17 = (var7 << 8) + var13;
-            var17 = (var17 << 8) + var9;
-            var6.func_82813_b(var2, var17);
-            return var2;
+            k = aint[0] / j;
+            int l1 = aint[1] / j;
+            l = aint[2] / j;
+            f = (float)i / (float)j;
+            f1 = (float)Math.max(k, Math.max(l1, l));
+            k = (int)((float)k * f / f1);
+            l1 = (int)((float)l1 * f / f1);
+            l = (int)((float)l * f / f1);
+            i1 = (k << 8) + l1;
+            i1 = (i1 << 8) + l;
+            itemarmor.func_82813_b(itemstack, i1);
+            return itemstack;
         }
     }
 

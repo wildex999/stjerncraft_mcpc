@@ -25,16 +25,16 @@ public class BehaviorDispenseFirework extends BehaviorDefaultDispenseItem
      */
     public ItemStack dispenseStack(IBlockSource par1IBlockSource, ItemStack par2ItemStack)
     {
-        EnumFacing var3 = EnumFacing.getFront(par1IBlockSource.func_82620_h());
-        double var4 = par1IBlockSource.getX() + (double)var3.getFrontOffsetX();
-        double var6 = (double)((float)par1IBlockSource.getYInt() + 0.2F);
-        double var8 = par1IBlockSource.getZ() + (double)var3.getFrontOffsetZ();
+        EnumFacing enumfacing = EnumFacing.getFront(par1IBlockSource.func_82620_h());
+        double d0 = par1IBlockSource.getX() + (double)enumfacing.getFrontOffsetX();
+        double d1 = (double)((float)par1IBlockSource.getYInt() + 0.2F);
+        double d2 = par1IBlockSource.getZ() + (double)enumfacing.getFrontOffsetZ();
         // CraftBukkit start
         World world = par1IBlockSource.getWorld();
         ItemStack itemstack1 = par2ItemStack.splitStack(1);
         org.bukkit.block.Block block = world.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());
         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
-        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(var4, var6, var8));
+        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1, d2));
 
         if (!BlockDispenser.eventFired)
         {

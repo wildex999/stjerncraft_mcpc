@@ -34,33 +34,33 @@ public class Vec3Pool
             return Vec3.createVectorHelper(par1, par3, par5);    // CraftBukkit - don't pool objects indefinitely if thread doesn't adhere to contract
         }
 
-        Vec3 var7;
+        Vec3 vec3;
 
         if (this.freelist == null)   // CraftBukkit
         {
-            var7 = new Vec3(this, par1, par3, par5);
+            vec3 = new Vec3(this, par1, par3, par5);
             this.total_size++; // CraftBukkit
         }
         else
         {
             // CraftBukkit start
-            var7 = this.freelist;
-            this.freelist = var7.next;
+            vec3 = this.freelist;
+            this.freelist = vec3.next;
             // CraftBukkit end
-            var7.setComponents(par1, par3, par5);
+            vec3.setComponents(par1, par3, par5);
         }
 
         // CraftBukkit start
         if (this.alloclist == null)
         {
-            this.alloclisthead = var7;
+            this.alloclisthead = vec3;
         }
 
-        var7.next = this.alloclist; // add to allocated list
-        this.alloclist = var7;
+        vec3.next = this.alloclist; // add to allocated list
+        this.alloclist = vec3;
         // CraftBukkit end
         ++this.nextFreeSpace;
-        return var7;
+        return vec3;
     }
 
     // CraftBukkit start - offer back vector (can save LOTS of unneeded bloat) - works about 90% of the time

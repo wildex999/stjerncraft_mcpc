@@ -38,13 +38,13 @@ public class TileEntitySign extends TileEntity
         this.isEditable = false;
         super.readFromNBT(par1NBTTagCompound);
 
-        for (int var2 = 0; var2 < 4; ++var2)
+        for (int i = 0; i < 4; ++i)
         {
-            this.signText[var2] = par1NBTTagCompound.getString("Text" + (var2 + 1));
+            this.signText[i] = par1NBTTagCompound.getString("Text" + (i + 1));
 
-            if (this.signText[var2].length() > 15)
+            if (this.signText[i].length() > 15)
             {
-                this.signText[var2] = this.signText[var2].substring(0, 15);
+                this.signText[i] = this.signText[i].substring(0, 15);
             }
         }
     }
@@ -54,21 +54,21 @@ public class TileEntitySign extends TileEntity
      */
     public Packet getDescriptionPacket()
     {
-        String[] var1 = new String[4];
+        String[] astring = new String[4];
 
         // CraftBukkit start - limit sign text to 15 chars per line
         for (int i = 0; i < 4; ++i)
         {
-            var1[i] = this.signText[i];
+            astring[i] = this.signText[i];
 
             if (this.signText[i].length() > 15)
             {
-                var1[i] = this.signText[i].substring(0, 15);
+                astring[i] = this.signText[i].substring(0, 15);
             }
         }
 
         // CraftBukkit end
-        return new Packet130UpdateSign(this.xCoord, this.yCoord, this.zCoord, var1);
+        return new Packet130UpdateSign(this.xCoord, this.yCoord, this.zCoord, astring);
     }
 
     public boolean isEditable()

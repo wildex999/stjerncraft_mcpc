@@ -60,8 +60,8 @@ public class Packet20NamedEntitySpawn extends Packet
         this.zPosition = MathHelper.floor_double(par1EntityPlayer.posZ * 32.0D);
         this.rotation = (byte)((int)(par1EntityPlayer.rotationYaw * 256.0F / 360.0F));
         this.pitch = (byte)((int)(par1EntityPlayer.rotationPitch * 256.0F / 360.0F));
-        ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
-        this.currentItem = var2 == null ? 0 : var2.itemID;
+        ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
+        this.currentItem = itemstack == null ? 0 : itemstack.itemID;
         this.metadata = par1EntityPlayer.getDataWatcher();
     }
 

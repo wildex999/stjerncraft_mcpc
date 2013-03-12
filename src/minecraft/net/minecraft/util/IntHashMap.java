@@ -47,13 +47,13 @@ public class IntHashMap
      */
     public Object lookup(int par1)
     {
-        int var2 = computeHash(par1);
+        int j = computeHash(par1);
 
-        for (IntHashMapEntry var3 = this.slots[getSlotIndex(var2, this.slots.length)]; var3 != null; var3 = var3.nextEntry)
+        for (IntHashMapEntry inthashmapentry = this.slots[getSlotIndex(j, this.slots.length)]; inthashmapentry != null; inthashmapentry = inthashmapentry.nextEntry)
         {
-            if (var3.hashEntry == par1)
+            if (inthashmapentry.hashEntry == par1)
             {
-                return var3.valueEntry;
+                return inthashmapentry.valueEntry;
             }
         }
 
@@ -73,13 +73,13 @@ public class IntHashMap
      */
     final IntHashMapEntry lookupEntry(int par1)
     {
-        int var2 = computeHash(par1);
+        int j = computeHash(par1);
 
-        for (IntHashMapEntry var3 = this.slots[getSlotIndex(var2, this.slots.length)]; var3 != null; var3 = var3.nextEntry)
+        for (IntHashMapEntry inthashmapentry = this.slots[getSlotIndex(j, this.slots.length)]; inthashmapentry != null; inthashmapentry = inthashmapentry.nextEntry)
         {
-            if (var3.hashEntry == par1)
+            if (inthashmapentry.hashEntry == par1)
             {
-                return var3;
+                return inthashmapentry;
             }
         }
 
@@ -92,20 +92,20 @@ public class IntHashMap
     public void addKey(int par1, Object par2Obj)
     {
         // this.f.add(Integer.valueOf(i)); // CraftBukkit
-        int var3 = computeHash(par1);
-        int var4 = getSlotIndex(var3, this.slots.length);
+        int j = computeHash(par1);
+        int k = getSlotIndex(j, this.slots.length);
 
-        for (IntHashMapEntry var5 = this.slots[var4]; var5 != null; var5 = var5.nextEntry)
+        for (IntHashMapEntry inthashmapentry = this.slots[k]; inthashmapentry != null; inthashmapentry = inthashmapentry.nextEntry)
         {
-            if (var5.hashEntry == par1)
+            if (inthashmapentry.hashEntry == par1)
             {
-                var5.valueEntry = par2Obj;
+                inthashmapentry.valueEntry = par2Obj;
                 return;
             }
         }
 
         ++this.versionStamp;
-        this.insert(var3, par1, par2Obj, var4);
+        this.insert(j, par1, par2Obj, k);
     }
 
     /**
@@ -113,18 +113,18 @@ public class IntHashMap
      */
     private void grow(int par1)
     {
-        IntHashMapEntry[] var2 = this.slots;
-        int var3 = var2.length;
+        IntHashMapEntry[] ainthashmapentry = this.slots;
+        int j = ainthashmapentry.length;
 
-        if (var3 == 1073741824)
+        if (j == 1073741824)
         {
             this.threshold = Integer.MAX_VALUE;
         }
         else
         {
-            IntHashMapEntry[] var4 = new IntHashMapEntry[par1];
-            this.copyTo(var4);
-            this.slots = var4;
+            IntHashMapEntry[] ainthashmapentry1 = new IntHashMapEntry[par1];
+            this.copyTo(ainthashmapentry1);
+            this.slots = ainthashmapentry1;
             this.threshold = (int)((float)par1 * this.growFactor);
         }
     }
@@ -134,27 +134,27 @@ public class IntHashMap
      */
     private void copyTo(IntHashMapEntry[] par1ArrayOfIntHashMapEntry)
     {
-        IntHashMapEntry[] var2 = this.slots;
-        int var3 = par1ArrayOfIntHashMapEntry.length;
+        IntHashMapEntry[] ainthashmapentry1 = this.slots;
+        int i = par1ArrayOfIntHashMapEntry.length;
 
-        for (int var4 = 0; var4 < var2.length; ++var4)
+        for (int j = 0; j < ainthashmapentry1.length; ++j)
         {
-            IntHashMapEntry var5 = var2[var4];
+            IntHashMapEntry inthashmapentry = ainthashmapentry1[j];
 
-            if (var5 != null)
+            if (inthashmapentry != null)
             {
-                var2[var4] = null;
-                IntHashMapEntry var6;
+                ainthashmapentry1[j] = null;
+                IntHashMapEntry inthashmapentry1;
 
                 do
                 {
-                    var6 = var5.nextEntry;
-                    int var7 = getSlotIndex(var5.slotHash, var3);
-                    var5.nextEntry = par1ArrayOfIntHashMapEntry[var7];
-                    par1ArrayOfIntHashMapEntry[var7] = var5;
-                    var5 = var6;
+                    inthashmapentry1 = inthashmapentry.nextEntry;
+                    int k = getSlotIndex(inthashmapentry.slotHash, i);
+                    inthashmapentry.nextEntry = par1ArrayOfIntHashMapEntry[k];
+                    par1ArrayOfIntHashMapEntry[k] = inthashmapentry;
+                    inthashmapentry = inthashmapentry1;
                 }
-                while (var6 != null);
+                while (inthashmapentry1 != null);
             }
         }
     }
@@ -165,8 +165,8 @@ public class IntHashMap
     public Object removeObject(int par1)
     {
         // this.f.remove(Integer.valueOf(i)); // CraftBukkit
-        IntHashMapEntry var2 = this.removeEntry(par1);
-        return var2 == null ? null : var2.valueEntry;
+        IntHashMapEntry inthashmapentry = this.removeEntry(par1);
+        return inthashmapentry == null ? null : inthashmapentry.valueEntry;
     }
 
     /**
@@ -174,37 +174,37 @@ public class IntHashMap
      */
     final IntHashMapEntry removeEntry(int par1)
     {
-        int var2 = computeHash(par1);
-        int var3 = getSlotIndex(var2, this.slots.length);
-        IntHashMapEntry var4 = this.slots[var3];
-        IntHashMapEntry var5;
-        IntHashMapEntry var6;
+        int j = computeHash(par1);
+        int k = getSlotIndex(j, this.slots.length);
+        IntHashMapEntry inthashmapentry = this.slots[k];
+        IntHashMapEntry inthashmapentry1;
+        IntHashMapEntry inthashmapentry2;
 
-        for (var5 = var4; var5 != null; var5 = var6)
+        for (inthashmapentry1 = inthashmapentry; inthashmapentry1 != null; inthashmapentry1 = inthashmapentry2)
         {
-            var6 = var5.nextEntry;
+            inthashmapentry2 = inthashmapentry1.nextEntry;
 
-            if (var5.hashEntry == par1)
+            if (inthashmapentry1.hashEntry == par1)
             {
                 ++this.versionStamp;
                 --this.count;
 
-                if (var4 == var5)
+                if (inthashmapentry == inthashmapentry1)
                 {
-                    this.slots[var3] = var6;
+                    this.slots[k] = inthashmapentry2;
                 }
                 else
                 {
-                    var4.nextEntry = var6;
+                    inthashmapentry.nextEntry = inthashmapentry2;
                 }
 
-                return var5;
+                return inthashmapentry1;
             }
 
-            var4 = var5;
+            inthashmapentry = inthashmapentry1;
         }
 
-        return var5;
+        return inthashmapentry1;
     }
 
     /**
@@ -213,11 +213,11 @@ public class IntHashMap
     public void clearMap()
     {
         ++this.versionStamp;
-        IntHashMapEntry[] var1 = this.slots;
+        IntHashMapEntry[] ainthashmapentry = this.slots;
 
-        for (int var2 = 0; var2 < var1.length; ++var2)
+        for (int i = 0; i < ainthashmapentry.length; ++i)
         {
-            var1[var2] = null;
+            ainthashmapentry[i] = null;
         }
 
         this.count = 0;
@@ -228,8 +228,8 @@ public class IntHashMap
      */
     private void insert(int par1, int par2, Object par3Obj, int par4)
     {
-        IntHashMapEntry var5 = this.slots[par4];
-        this.slots[par4] = new IntHashMapEntry(par1, par2, par3Obj, var5);
+        IntHashMapEntry inthashmapentry = this.slots[par4];
+        this.slots[par4] = new IntHashMapEntry(par1, par2, par3Obj, inthashmapentry);
 
         if (this.count++ >= this.threshold)
         {

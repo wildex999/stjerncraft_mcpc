@@ -79,18 +79,18 @@ public class TileEntityDispenser extends TileEntity implements IInventory
     {
         if (this.dispenserContents[par1] != null)
         {
-            ItemStack var3;
+            ItemStack itemstack;
 
             if (this.dispenserContents[par1].stackSize <= par2)
             {
-                var3 = this.dispenserContents[par1];
+                itemstack = this.dispenserContents[par1];
                 this.dispenserContents[par1] = null;
                 this.onInventoryChanged();
-                return var3;
+                return itemstack;
             }
             else
             {
-                var3 = this.dispenserContents[par1].splitStack(par2);
+                itemstack = this.dispenserContents[par1].splitStack(par2);
 
                 if (this.dispenserContents[par1].stackSize == 0)
                 {
@@ -98,7 +98,7 @@ public class TileEntityDispenser extends TileEntity implements IInventory
                 }
 
                 this.onInventoryChanged();
-                return var3;
+                return itemstack;
             }
         }
         else
@@ -115,9 +115,9 @@ public class TileEntityDispenser extends TileEntity implements IInventory
     {
         if (this.dispenserContents[par1] != null)
         {
-            ItemStack var2 = this.dispenserContents[par1];
+            ItemStack itemstack = this.dispenserContents[par1];
             this.dispenserContents[par1] = null;
-            return var2;
+            return itemstack;
         }
         else
         {
@@ -127,23 +127,23 @@ public class TileEntityDispenser extends TileEntity implements IInventory
 
     public int getRandomStackFromInventory()
     {
-        int var1 = -1;
-        int var2 = 1;
+        int i = -1;
+        int j = 1;
 
-        for (int var3 = 0; var3 < this.dispenserContents.length; ++var3)
+        for (int k = 0; k < this.dispenserContents.length; ++k)
         {
-            if (this.dispenserContents[var3] != null && this.dispenserRandom.nextInt(var2++) == 0)
+            if (this.dispenserContents[k] != null && this.dispenserRandom.nextInt(j++) == 0)
             {
-                if (this.dispenserContents[var3].stackSize == 0)
+                if (this.dispenserContents[k].stackSize == 0)
                 {
                     continue;    // CraftBukkit
                 }
 
-                var1 = var3;
+                i = k;
             }
         }
 
-        return var1;
+        return i;
     }
 
     /**
@@ -166,12 +166,12 @@ public class TileEntityDispenser extends TileEntity implements IInventory
      */
     public int addItem(ItemStack par1ItemStack)
     {
-        for (int var2 = 0; var2 < this.dispenserContents.length; ++var2)
+        for (int i = 0; i < this.dispenserContents.length; ++i)
         {
-            if (this.dispenserContents[var2] == null || this.dispenserContents[var2].itemID == 0)
+            if (this.dispenserContents[i] == null || this.dispenserContents[i].itemID == 0)
             {
-                this.dispenserContents[var2] = par1ItemStack;
-                return var2;
+                this.dispenserContents[i] = par1ItemStack;
+                return i;
             }
         }
 
@@ -192,17 +192,17 @@ public class TileEntityDispenser extends TileEntity implements IInventory
     public void readFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.readFromNBT(par1NBTTagCompound);
-        NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
+        NBTTagList nbttaglist = par1NBTTagCompound.getTagList("Items");
         this.dispenserContents = new ItemStack[this.getSizeInventory()];
 
-        for (int var3 = 0; var3 < var2.tagCount(); ++var3)
+        for (int i = 0; i < nbttaglist.tagCount(); ++i)
         {
-            NBTTagCompound var4 = (NBTTagCompound)var2.tagAt(var3);
-            int var5 = var4.getByte("Slot") & 255;
+            NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
+            int j = nbttagcompound1.getByte("Slot") & 255;
 
-            if (var5 >= 0 && var5 < this.dispenserContents.length)
+            if (j >= 0 && j < this.dispenserContents.length)
             {
-                this.dispenserContents[var5] = ItemStack.loadItemStackFromNBT(var4);
+                this.dispenserContents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
             }
         }
     }
@@ -213,20 +213,20 @@ public class TileEntityDispenser extends TileEntity implements IInventory
     public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeToNBT(par1NBTTagCompound);
-        NBTTagList var2 = new NBTTagList();
+        NBTTagList nbttaglist = new NBTTagList();
 
-        for (int var3 = 0; var3 < this.dispenserContents.length; ++var3)
+        for (int i = 0; i < this.dispenserContents.length; ++i)
         {
-            if (this.dispenserContents[var3] != null)
+            if (this.dispenserContents[i] != null)
             {
-                NBTTagCompound var4 = new NBTTagCompound();
-                var4.setByte("Slot", (byte)var3);
-                this.dispenserContents[var3].writeToNBT(var4);
-                var2.appendTag(var4);
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                nbttagcompound1.setByte("Slot", (byte)i);
+                this.dispenserContents[i].writeToNBT(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
             }
         }
 
-        par1NBTTagCompound.setTag("Items", var2);
+        par1NBTTagCompound.setTag("Items", nbttaglist);
     }
 
     /**

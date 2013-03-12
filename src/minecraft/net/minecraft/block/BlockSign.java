@@ -24,9 +24,9 @@ public class BlockSign extends BlockContainer
         this.isFreestanding = par3;
         this.blockIndexInTexture = 4;
         this.signEntityClass = par2Class;
-        float var4 = 0.25F;
-        float var5 = 1.0F;
-        this.setBlockBounds(0.5F - var4, 0.0F, 0.5F - var4, 0.5F + var4, var5, 0.5F + var4);
+        float f = 0.25F;
+        float f1 = 1.0F;
+        this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, f1, 0.5F + f);
     }
 
     /**
@@ -56,32 +56,32 @@ public class BlockSign extends BlockContainer
     {
         if (!this.isFreestanding)
         {
-            int var5 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
-            float var6 = 0.28125F;
-            float var7 = 0.78125F;
-            float var8 = 0.0F;
-            float var9 = 1.0F;
-            float var10 = 0.125F;
+            int l = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
+            float f = 0.28125F;
+            float f1 = 0.78125F;
+            float f2 = 0.0F;
+            float f3 = 1.0F;
+            float f4 = 0.125F;
             this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
-            if (var5 == 2)
+            if (l == 2)
             {
-                this.setBlockBounds(var8, var6, 1.0F - var10, var9, var7, 1.0F);
+                this.setBlockBounds(f2, f, 1.0F - f4, f3, f1, 1.0F);
             }
 
-            if (var5 == 3)
+            if (l == 3)
             {
-                this.setBlockBounds(var8, var6, 0.0F, var9, var7, var10);
+                this.setBlockBounds(f2, f, 0.0F, f3, f1, f4);
             }
 
-            if (var5 == 4)
+            if (l == 4)
             {
-                this.setBlockBounds(1.0F - var10, var6, var8, 1.0F, var7, var9);
+                this.setBlockBounds(1.0F - f4, f, f2, 1.0F, f1, f3);
             }
 
-            if (var5 == 5)
+            if (l == 5)
             {
-                this.setBlockBounds(0.0F, var6, var8, var10, var7, var9);
+                this.setBlockBounds(0.0F, f, f2, f4, f1, f3);
             }
         }
     }
@@ -125,9 +125,9 @@ public class BlockSign extends BlockContainer
         {
             return (TileEntity)this.signEntityClass.newInstance();
         }
-        catch (Exception var3)
+        catch (Exception exception)
         {
-            throw new RuntimeException(var3);
+            throw new RuntimeException(exception);
         }
     }
 
@@ -145,42 +145,42 @@ public class BlockSign extends BlockContainer
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        boolean var6 = false;
+        boolean flag = false;
 
         if (this.isFreestanding)
         {
             if (!par1World.getBlockMaterial(par2, par3 - 1, par4).isSolid())
             {
-                var6 = true;
+                flag = true;
             }
         }
         else
         {
-            int var7 = par1World.getBlockMetadata(par2, par3, par4);
-            var6 = true;
+            int i1 = par1World.getBlockMetadata(par2, par3, par4);
+            flag = true;
 
-            if (var7 == 2 && par1World.getBlockMaterial(par2, par3, par4 + 1).isSolid())
+            if (i1 == 2 && par1World.getBlockMaterial(par2, par3, par4 + 1).isSolid())
             {
-                var6 = false;
+                flag = false;
             }
 
-            if (var7 == 3 && par1World.getBlockMaterial(par2, par3, par4 - 1).isSolid())
+            if (i1 == 3 && par1World.getBlockMaterial(par2, par3, par4 - 1).isSolid())
             {
-                var6 = false;
+                flag = false;
             }
 
-            if (var7 == 4 && par1World.getBlockMaterial(par2 + 1, par3, par4).isSolid())
+            if (i1 == 4 && par1World.getBlockMaterial(par2 + 1, par3, par4).isSolid())
             {
-                var6 = false;
+                flag = false;
             }
 
-            if (var7 == 5 && par1World.getBlockMaterial(par2 - 1, par3, par4).isSolid())
+            if (i1 == 5 && par1World.getBlockMaterial(par2 - 1, par3, par4).isSolid())
             {
-                var6 = false;
+                flag = false;
             }
         }
 
-        if (var6)
+        if (flag)
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
             par1World.setBlockWithNotify(par2, par3, par4, 0);

@@ -77,30 +77,30 @@ public class BlockEnderChest extends BlockContainer
      */
     public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
     {
-        byte var6 = 0;
-        int var7 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        byte b0 = 0;
+        int l = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
 
-        if (var7 == 0)
+        if (l == 0)
         {
-            var6 = 2;
+            b0 = 2;
         }
 
-        if (var7 == 1)
+        if (l == 1)
         {
-            var6 = 5;
+            b0 = 5;
         }
 
-        if (var7 == 2)
+        if (l == 2)
         {
-            var6 = 3;
+            b0 = 3;
         }
 
-        if (var7 == 3)
+        if (l == 3)
         {
-            var6 = 4;
+            b0 = 4;
         }
 
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, b0);
     }
 
     /**
@@ -108,10 +108,10 @@ public class BlockEnderChest extends BlockContainer
      */
     public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
     {
-        InventoryEnderChest var10 = par5EntityPlayer.getInventoryEnderChest();
-        TileEntityEnderChest var11 = (TileEntityEnderChest)par1World.getBlockTileEntity(par2, par3, par4);
+        InventoryEnderChest inventoryenderchest = par5EntityPlayer.getInventoryEnderChest();
+        TileEntityEnderChest tileentityenderchest = (TileEntityEnderChest)par1World.getBlockTileEntity(par2, par3, par4);
 
-        if (var10 != null && var11 != null)
+        if (inventoryenderchest != null && tileentityenderchest != null)
         {
             if (par1World.isBlockNormalCube(par2, par3 + 1, par4))
             {
@@ -123,8 +123,8 @@ public class BlockEnderChest extends BlockContainer
             }
             else
             {
-                var10.setAssociatedChest(var11);
-                par5EntityPlayer.displayGUIChest(var10);
+                inventoryenderchest.setAssociatedChest(tileentityenderchest);
+                par5EntityPlayer.displayGUIChest(inventoryenderchest);
                 return true;
             }
         }
@@ -149,24 +149,24 @@ public class BlockEnderChest extends BlockContainer
      */
     public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
-        for (int var6 = 0; var6 < 3; ++var6)
+        for (int l = 0; l < 3; ++l)
         {
-            double var10000 = (double)((float)par2 + par5Random.nextFloat());
-            double var9 = (double)((float)par3 + par5Random.nextFloat());
-            var10000 = (double)((float)par4 + par5Random.nextFloat());
-            double var13 = 0.0D;
-            double var15 = 0.0D;
-            double var17 = 0.0D;
-            int var19 = par5Random.nextInt(2) * 2 - 1;
-            int var20 = par5Random.nextInt(2) * 2 - 1;
-            var13 = ((double)par5Random.nextFloat() - 0.5D) * 0.125D;
-            var15 = ((double)par5Random.nextFloat() - 0.5D) * 0.125D;
-            var17 = ((double)par5Random.nextFloat() - 0.5D) * 0.125D;
-            double var11 = (double)par4 + 0.5D + 0.25D * (double)var20;
-            var17 = (double)(par5Random.nextFloat() * 1.0F * (float)var20);
-            double var7 = (double)par2 + 0.5D + 0.25D * (double)var19;
-            var13 = (double)(par5Random.nextFloat() * 1.0F * (float)var19);
-            par1World.spawnParticle("portal", var7, var9, var11, var13, var15, var17);
+            double d0 = (double)((float)par2 + par5Random.nextFloat());
+            double d1 = (double)((float)par3 + par5Random.nextFloat());
+            d0 = (double)((float)par4 + par5Random.nextFloat());
+            double d2 = 0.0D;
+            double d3 = 0.0D;
+            double d4 = 0.0D;
+            int i1 = par5Random.nextInt(2) * 2 - 1;
+            int j1 = par5Random.nextInt(2) * 2 - 1;
+            d2 = ((double)par5Random.nextFloat() - 0.5D) * 0.125D;
+            d3 = ((double)par5Random.nextFloat() - 0.5D) * 0.125D;
+            d4 = ((double)par5Random.nextFloat() - 0.5D) * 0.125D;
+            double d5 = (double)par4 + 0.5D + 0.25D * (double)j1;
+            d4 = (double)(par5Random.nextFloat() * 1.0F * (float)j1);
+            double d6 = (double)par2 + 0.5D + 0.25D * (double)i1;
+            d2 = (double)(par5Random.nextFloat() * 1.0F * (float)i1);
+            par1World.spawnParticle("portal", d6, d1, d5, d2, d3, d4);
         }
     }
 }

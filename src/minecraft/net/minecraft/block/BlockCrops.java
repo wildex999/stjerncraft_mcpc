@@ -18,8 +18,8 @@ public class BlockCrops extends BlockFlower
         super(par1, par2);
         this.blockIndexInTexture = par2;
         this.setTickRandomly(true);
-        float var3 = 0.5F;
-        this.setBlockBounds(0.5F - var3, 0.0F, 0.5F - var3, 0.5F + var3, 0.25F, 0.5F + var3);
+        float f = 0.5F;
+        this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, 0.25F, 0.5F + f);
         this.setCreativeTab((CreativeTabs)null);
         this.setHardness(0.0F);
         this.setStepSound(soundGrassFootstep);
@@ -45,15 +45,15 @@ public class BlockCrops extends BlockFlower
 
         if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9)
         {
-            int var6 = par1World.getBlockMetadata(par2, par3, par4);
+            int l = par1World.getBlockMetadata(par2, par3, par4);
 
-            if (var6 < 7)
+            if (l < 7)
             {
-                float var7 = this.getGrowthRate(par1World, par2, par3, par4);
+                float f = this.getGrowthRate(par1World, par2, par3, par4);
 
-                if (par5Random.nextInt((int)(par1World.growthOdds / par1World.getWorld().wheatGrowthModifier * (25.0F / var7)) + 1) == 0)    // Spigot
+                if (par5Random.nextInt((int)(par1World.growthOdds / par1World.getWorld().wheatGrowthModifier * (25.0F / f)) + 1) == 0)    // Spigot
                 {
-                    org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, ++var6); // CraftBukkit
+                    org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, ++l); // CraftBukkit
                 }
             }
         }
@@ -74,51 +74,51 @@ public class BlockCrops extends BlockFlower
      */
     private float getGrowthRate(World par1World, int par2, int par3, int par4)
     {
-        float var5 = 1.0F;
-        int var6 = par1World.getBlockId(par2, par3, par4 - 1);
-        int var7 = par1World.getBlockId(par2, par3, par4 + 1);
-        int var8 = par1World.getBlockId(par2 - 1, par3, par4);
-        int var9 = par1World.getBlockId(par2 + 1, par3, par4);
-        int var10 = par1World.getBlockId(par2 - 1, par3, par4 - 1);
-        int var11 = par1World.getBlockId(par2 + 1, par3, par4 - 1);
-        int var12 = par1World.getBlockId(par2 + 1, par3, par4 + 1);
-        int var13 = par1World.getBlockId(par2 - 1, par3, par4 + 1);
-        boolean var14 = var8 == this.blockID || var9 == this.blockID;
-        boolean var15 = var6 == this.blockID || var7 == this.blockID;
-        boolean var16 = var10 == this.blockID || var11 == this.blockID || var12 == this.blockID || var13 == this.blockID;
+        float f = 1.0F;
+        int l = par1World.getBlockId(par2, par3, par4 - 1);
+        int i1 = par1World.getBlockId(par2, par3, par4 + 1);
+        int j1 = par1World.getBlockId(par2 - 1, par3, par4);
+        int k1 = par1World.getBlockId(par2 + 1, par3, par4);
+        int l1 = par1World.getBlockId(par2 - 1, par3, par4 - 1);
+        int i2 = par1World.getBlockId(par2 + 1, par3, par4 - 1);
+        int j2 = par1World.getBlockId(par2 + 1, par3, par4 + 1);
+        int k2 = par1World.getBlockId(par2 - 1, par3, par4 + 1);
+        boolean flag = j1 == this.blockID || k1 == this.blockID;
+        boolean flag1 = l == this.blockID || i1 == this.blockID;
+        boolean flag2 = l1 == this.blockID || i2 == this.blockID || j2 == this.blockID || k2 == this.blockID;
 
-        for (int var17 = par2 - 1; var17 <= par2 + 1; ++var17)
+        for (int l2 = par2 - 1; l2 <= par2 + 1; ++l2)
         {
-            for (int var18 = par4 - 1; var18 <= par4 + 1; ++var18)
+            for (int i3 = par4 - 1; i3 <= par4 + 1; ++i3)
             {
-                int var19 = par1World.getBlockId(var17, par3 - 1, var18);
-                float var20 = 0.0F;
+                int j3 = par1World.getBlockId(l2, par3 - 1, i3);
+                float f1 = 0.0F;
 
-                if (blocksList[var19] != null && blocksList[var19].canSustainPlant(par1World, var17, par3 - 1, var18, ForgeDirection.UP, this))
+                if (blocksList[j3] != null && blocksList[j3].canSustainPlant(par1World, l2, par3 - 1, i3, ForgeDirection.UP, this))
                 {
-                    var20 = 1.0F;
+                    f1 = 1.0F;
 
-                    if (blocksList[var19].isFertile(par1World, var17, par3 - 1, var18))
+                    if (blocksList[j3].isFertile(par1World, l2, par3 - 1, i3))
                     {
-                        var20 = 3.0F;
+                        f1 = 3.0F;
                     }
                 }
 
-                if (var17 != par2 || var18 != par4)
+                if (l2 != par2 || i3 != par4)
                 {
-                    var20 /= 4.0F;
+                    f1 /= 4.0F;
                 }
 
-                var5 += var20;
+                f += f1;
             }
         }
 
-        if (var16 || var14 && var15)
+        if (flag2 || flag && flag1)
         {
-            var5 /= 2.0F;
+            f /= 2.0F;
         }
 
-        return var5;
+        return f;
     }
 
     /**

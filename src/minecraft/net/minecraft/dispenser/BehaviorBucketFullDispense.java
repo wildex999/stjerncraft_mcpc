@@ -31,19 +31,19 @@ public class BehaviorBucketFullDispense extends BehaviorDefaultDispenseItem
      */
     public ItemStack dispenseStack(IBlockSource par1IBlockSource, ItemStack par2ItemStack)
     {
-        ItemBucket var3 = (ItemBucket)par2ItemStack.getItem();
-        int var4 = par1IBlockSource.getXInt();
-        int var5 = par1IBlockSource.getYInt();
-        int var6 = par1IBlockSource.getZInt();
-        EnumFacing var7 = EnumFacing.getFront(par1IBlockSource.func_82620_h());
+        ItemBucket itembucket = (ItemBucket)par2ItemStack.getItem();
+        int i = par1IBlockSource.getXInt();
+        int j = par1IBlockSource.getYInt();
+        int k = par1IBlockSource.getZInt();
+        EnumFacing enumfacing = EnumFacing.getFront(par1IBlockSource.func_82620_h());
         // CraftBukkit start
         World world = par1IBlockSource.getWorld();
-        int i2 = var4 + var7.getFrontOffsetX();
-        int k2 = var6 + var7.getFrontOffsetZ();
+        int i2 = i + enumfacing.getFrontOffsetX();
+        int k2 = k + enumfacing.getFrontOffsetZ();
 
-        if (world.isAirBlock(i2, var5, k2) || world.getBlockMaterial(i2, var5, k2).isSolid())
+        if (world.isAirBlock(i2, j, k2) || world.getBlockMaterial(i2, j, k2).isSolid())
         {
-            org.bukkit.block.Block block = world.getWorld().getBlockAt(var4, var5, var6);
+            org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
             CraftItemStack craftItem = CraftItemStack.asCraftMirror(par2ItemStack);
             BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
 
@@ -70,12 +70,12 @@ public class BehaviorBucketFullDispense extends BehaviorDefaultDispenseItem
                 }
             }
 
-            var3 = (ItemBucket) CraftItemStack.asNMSCopy(event.getItem()).getItem();
+            itembucket = (ItemBucket) CraftItemStack.asNMSCopy(event.getItem()).getItem();
         }
 
         // CraftBukkit end
 
-        if (var3.tryPlaceContainedLiquid(par1IBlockSource.getWorld(), (double)var4, (double)var5, (double)var6, var4 + var7.getFrontOffsetX(), var5, var6 + var7.getFrontOffsetZ()))
+        if (itembucket.tryPlaceContainedLiquid(par1IBlockSource.getWorld(), (double)i, (double)j, (double)k, i + enumfacing.getFrontOffsetX(), j, k + enumfacing.getFrontOffsetZ()))
         {
             // CraftBukkit start - handle stacked buckets
             Item item = Item.bucketEmpty;

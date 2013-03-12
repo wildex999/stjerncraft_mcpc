@@ -44,13 +44,13 @@ public class ItemBlock extends Item
         par3World.curPlacedItemHitY = par9;
         par3World.curPlacedItemHitZ = par10;
         // MCPC+ end
-        int var11 = par3World.getBlockId(par4, par5, par6);
-        if (var11 == Block.snow.blockID)
+        int i1 = par3World.getBlockId(par4, par5, par6);
+        if (i1 == Block.snow.blockID)
         {
             par7 = 1;
         }
-        else if (var11 != Block.vine.blockID && var11 != Block.tallGrass.blockID && var11 != Block.deadBush.blockID
-                && (Block.blocksList[var11] == null || !Block.blocksList[var11].isBlockReplaceable(par3World, par4, par5, par6)))
+        else if (i1 != Block.vine.blockID && i1 != Block.tallGrass.blockID && i1 != Block.deadBush.blockID
+                && (Block.blocksList[i1] == null || !Block.blocksList[i1].isBlockReplaceable(par3World, par4, par5, par6)))
         {
             if (par7 == 0)
             {
@@ -97,15 +97,15 @@ public class ItemBlock extends Item
         }
         else if (par3World.canPlaceEntityOnSide(this.blockID, par4, par5, par6, false, par7, par2EntityPlayer))
         {
-            Block var12 = Block.blocksList[this.blockID];
-            int var13 = this.getMetadata(par1ItemStack.getItemDamage());
-            int var14 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
+            Block block = Block.blocksList[this.blockID];
+            int j1 = this.getMetadata(par1ItemStack.getItemDamage());
+            int k1 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, j1);
             // MCPC+ start - seperate forge/vanilla process block calls            
-            if (var12.isForgeBlock) // process forge block
+            if (block.isForgeBlock) // process forge block
             {
-                if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14))
+                if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, k1))
                 {
-                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
+                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
                     --par1ItemStack.stackSize;
                 }
                 return true;
@@ -113,7 +113,7 @@ public class ItemBlock extends Item
             else // process vanilla block 
             {
             // MCPC+ end
-                return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, var14, clickedX, clickedY, clickedZ);
+                return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, k1, clickedX, clickedY, clickedZ);
             }
         }
         else
@@ -178,14 +178,14 @@ public class ItemBlock extends Item
      */
     public boolean canPlaceItemBlockOnSide(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer, ItemStack par7ItemStack)
     {
-        int var8 = par1World.getBlockId(par2, par3, par4);
+        int i1 = par1World.getBlockId(par2, par3, par4);
 
-        if (var8 == Block.snow.blockID)
+        if (i1 == Block.snow.blockID)
         {
             par5 = 1;
         }
-        else if (var8 != Block.vine.blockID && var8 != Block.tallGrass.blockID && var8 != Block.deadBush.blockID
-                && (Block.blocksList[var8] == null || !Block.blocksList[var8].isBlockReplaceable(par1World, par2, par3, par4)))
+        else if (i1 != Block.vine.blockID && i1 != Block.tallGrass.blockID && i1 != Block.deadBush.blockID
+                && (Block.blocksList[i1] == null || !Block.blocksList[i1].isBlockReplaceable(par1World, par2, par3, par4)))
         {
             if (par5 == 0)
             {

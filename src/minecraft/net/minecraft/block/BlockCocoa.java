@@ -35,13 +35,13 @@ public class BlockCocoa extends BlockDirectional
         }
         else if (par1World.rand.nextInt(5) == 0)
         {
-            int var6 = par1World.getBlockMetadata(par2, par3, par4);
-            int var7 = func_72219_c(var6);
+            int l = par1World.getBlockMetadata(par2, par3, par4);
+            int i1 = func_72219_c(l);
 
-            if (var7 < 2)
+            if (i1 < 2)
             {
-                ++var7;
-                org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, var7 << 2 | getDirection(var6)); // CraftBukkit
+                ++i1;
+                org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, i1 << 2 | getDirection(l)); // CraftBukkit
             }
         }
     }
@@ -51,11 +51,11 @@ public class BlockCocoa extends BlockDirectional
      */
     public boolean canBlockStay(World par1World, int par2, int par3, int par4)
     {
-        int var5 = getDirection(par1World.getBlockMetadata(par2, par3, par4));
-        par2 += Direction.offsetX[var5];
-        par4 += Direction.offsetZ[var5];
-        int var6 = par1World.getBlockId(par2, par3, par4);
-        return var6 == Block.wood.blockID && BlockLog.limitToValidMetadata(par1World.getBlockMetadata(par2, par3, par4)) == 3;
+        int l = getDirection(par1World.getBlockMetadata(par2, par3, par4));
+        par2 += Direction.offsetX[l];
+        par4 += Direction.offsetZ[l];
+        int i1 = par1World.getBlockId(par2, par3, par4);
+        return i1 == Block.wood.blockID && BlockLog.limitToValidMetadata(par1World.getBlockMetadata(par2, par3, par4)) == 3;
     }
 
     /**
@@ -109,29 +109,29 @@ public class BlockCocoa extends BlockDirectional
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        int var5 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
-        int var6 = getDirection(var5);
-        int var7 = func_72219_c(var5);
-        int var8 = 4 + var7 * 2;
-        int var9 = 5 + var7 * 2;
-        float var10 = (float)var8 / 2.0F;
+        int l = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
+        int i1 = getDirection(l);
+        int j1 = func_72219_c(l);
+        int k1 = 4 + j1 * 2;
+        int l1 = 5 + j1 * 2;
+        float f = (float)k1 / 2.0F;
 
-        switch (var6)
+        switch (i1)
         {
             case 0:
-                this.setBlockBounds((8.0F - var10) / 16.0F, (12.0F - (float)var9) / 16.0F, (15.0F - (float)var8) / 16.0F, (8.0F + var10) / 16.0F, 0.75F, 0.9375F);
+                this.setBlockBounds((8.0F - f) / 16.0F, (12.0F - (float)l1) / 16.0F, (15.0F - (float)k1) / 16.0F, (8.0F + f) / 16.0F, 0.75F, 0.9375F);
                 break;
 
             case 1:
-                this.setBlockBounds(0.0625F, (12.0F - (float)var9) / 16.0F, (8.0F - var10) / 16.0F, (1.0F + (float)var8) / 16.0F, 0.75F, (8.0F + var10) / 16.0F);
+                this.setBlockBounds(0.0625F, (12.0F - (float)l1) / 16.0F, (8.0F - f) / 16.0F, (1.0F + (float)k1) / 16.0F, 0.75F, (8.0F + f) / 16.0F);
                 break;
 
             case 2:
-                this.setBlockBounds((8.0F - var10) / 16.0F, (12.0F - (float)var9) / 16.0F, 0.0625F, (8.0F + var10) / 16.0F, 0.75F, (1.0F + (float)var8) / 16.0F);
+                this.setBlockBounds((8.0F - f) / 16.0F, (12.0F - (float)l1) / 16.0F, 0.0625F, (8.0F + f) / 16.0F, 0.75F, (1.0F + (float)k1) / 16.0F);
                 break;
 
             case 3:
-                this.setBlockBounds((15.0F - (float)var8) / 16.0F, (12.0F - (float)var9) / 16.0F, (8.0F - var10) / 16.0F, 0.9375F, 0.75F, (8.0F + var10) / 16.0F);
+                this.setBlockBounds((15.0F - (float)k1) / 16.0F, (12.0F - (float)l1) / 16.0F, (8.0F - f) / 16.0F, 0.9375F, 0.75F, (8.0F + f) / 16.0F);
         }
     }
 
@@ -140,8 +140,8 @@ public class BlockCocoa extends BlockDirectional
      */
     public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
     {
-        int var6 = ((MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3) + 0) % 4;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
+        int l = ((MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3) + 0) % 4;
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, l);
     }
 
     /**
@@ -187,15 +187,15 @@ public class BlockCocoa extends BlockDirectional
     public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
     {
         ArrayList<ItemStack> dropped = super.getBlockDropped(world, x, y, z, metadata, fortune);
-        int var8 = func_72219_c(metadata);
-        byte var9 = 1;
+        int j1 = func_72219_c(metadata);
+        byte b0 = 1;
 
-        if (var8 >= 2)
+        if (j1 >= 2)
         {
-            var9 = 3;
+            b0 = 3;
         }
 
-        for (int var10 = 0; var10 < var9; ++var10)
+        for (int k1 = 0; k1 < b0; ++k1)
         {
             dropped.add(new ItemStack(Item.dyePowder, 1, 3));
         }

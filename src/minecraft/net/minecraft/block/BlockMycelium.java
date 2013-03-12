@@ -48,8 +48,8 @@ public class BlockMycelium extends Block
         }
         else
         {
-            Material var6 = par1IBlockAccess.getBlockMaterial(par2, par3 + 1, par4);
-            return var6 != Material.snow && var6 != Material.craftedSnow ? 77 : 68;
+            Material material = par1IBlockAccess.getBlockMaterial(par2, par3 + 1, par4);
+            return material != Material.snow && material != Material.craftedSnow ? 77 : 68;
         }
     }
 
@@ -78,20 +78,20 @@ public class BlockMycelium extends Block
             }
             else if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9)
             {
-                int var6 = Math.min(4, Math.max(20, (int)(4 * 100F / par1World.growthOdds)));  // Spigot
+                int l = Math.min(4, Math.max(20, (int)(4 * 100F / par1World.growthOdds)));  // Spigot
 
-                for (int var7 = 0; var7 < var6; ++var7)   // Spigot
+                for (int i1 = 0; i1 < l; ++i1)   // Spigot
                 {
-                    int var8 = par2 + par5Random.nextInt(3) - 1;
-                    int var9 = par3 + par5Random.nextInt(5) - 3;
-                    int var10 = par4 + par5Random.nextInt(3) - 1;
-                    int l1 = par1World.getBlockId(var8, var9 + 1, var10);
+                    int j1 = par2 + par5Random.nextInt(3) - 1;
+                    int k1 = par3 + par5Random.nextInt(5) - 3;
+                    int l1 = par4 + par5Random.nextInt(3) - 1;
+                    int l1 = par1World.getBlockId(j1, k1 + 1, l1);
 
-                    if (par1World.getBlockId(var8, var9, var10) == Block.dirt.blockID && par1World.getBlockLightValue(var8, var9 + 1, var10) >= 4 && par1World.getBlockLightOpacity(var8, var9 + 1, var10) <= 2)   // Forge
+                    if (par1World.getBlockId(j1, k1, l1) == Block.dirt.blockID && par1World.getBlockLightValue(j1, k1 + 1, l1) >= 4 && par1World.getBlockLightOpacity(j1, k1 + 1, l1) <= 2)   // Forge
                     {
                         // CraftBukkit start
                         org.bukkit.World bworld = par1World.getWorld();
-                        BlockState blockState = bworld.getBlockAt(var8, var9, var10).getState();
+                        BlockState blockState = bworld.getBlockAt(j1, k1, l1).getState();
                         blockState.setTypeId(this.blockID);
                         BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(par2, par3, par4), blockState);
                         par1World.getServer().getPluginManager().callEvent(event);

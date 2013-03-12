@@ -76,8 +76,8 @@ public class Vec3
      */
     public Vec3 normalize()
     {
-        double var1 = (double)MathHelper.sqrt_double(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
-        return var1 < 1.0E-4D ? this.myVec3LocalPool.getVecFromPool(0.0D, 0.0D, 0.0D) : this.myVec3LocalPool.getVecFromPool(this.xCoord / var1, this.yCoord / var1, this.zCoord / var1);
+        double d0 = (double)MathHelper.sqrt_double(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
+        return d0 < 1.0E-4D ? this.myVec3LocalPool.getVecFromPool(0.0D, 0.0D, 0.0D) : this.myVec3LocalPool.getVecFromPool(this.xCoord / d0, this.yCoord / d0, this.zCoord / d0);
     }
 
     public double dotProduct(Vec3 par1Vec3)
@@ -109,10 +109,10 @@ public class Vec3
      */
     public double distanceTo(Vec3 par1Vec3)
     {
-        double var2 = par1Vec3.xCoord - this.xCoord;
-        double var4 = par1Vec3.yCoord - this.yCoord;
-        double var6 = par1Vec3.zCoord - this.zCoord;
-        return (double)MathHelper.sqrt_double(var2 * var2 + var4 * var4 + var6 * var6);
+        double d0 = par1Vec3.xCoord - this.xCoord;
+        double d1 = par1Vec3.yCoord - this.yCoord;
+        double d2 = par1Vec3.zCoord - this.zCoord;
+        return (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1 + d2 * d2);
     }
 
     /**
@@ -120,10 +120,10 @@ public class Vec3
      */
     public double squareDistanceTo(Vec3 par1Vec3)
     {
-        double var2 = par1Vec3.xCoord - this.xCoord;
-        double var4 = par1Vec3.yCoord - this.yCoord;
-        double var6 = par1Vec3.zCoord - this.zCoord;
-        return var2 * var2 + var4 * var4 + var6 * var6;
+        double d0 = par1Vec3.xCoord - this.xCoord;
+        double d1 = par1Vec3.yCoord - this.yCoord;
+        double d2 = par1Vec3.zCoord - this.zCoord;
+        return d0 * d0 + d1 * d1 + d2 * d2;
     }
 
     /**
@@ -131,10 +131,10 @@ public class Vec3
      */
     public double squareDistanceTo(double par1, double par3, double par5)
     {
-        double var7 = par1 - this.xCoord;
-        double var9 = par3 - this.yCoord;
-        double var11 = par5 - this.zCoord;
-        return var7 * var7 + var9 * var9 + var11 * var11;
+        double d3 = par1 - this.xCoord;
+        double d4 = par3 - this.yCoord;
+        double d5 = par5 - this.zCoord;
+        return d3 * d3 + d4 * d4 + d5 * d5;
     }
 
     /**
@@ -151,18 +151,18 @@ public class Vec3
      */
     public Vec3 getIntermediateWithXValue(Vec3 par1Vec3, double par2)
     {
-        double var4 = par1Vec3.xCoord - this.xCoord;
-        double var6 = par1Vec3.yCoord - this.yCoord;
-        double var8 = par1Vec3.zCoord - this.zCoord;
+        double d1 = par1Vec3.xCoord - this.xCoord;
+        double d2 = par1Vec3.yCoord - this.yCoord;
+        double d3 = par1Vec3.zCoord - this.zCoord;
 
-        if (var4 * var4 < 1.0000000116860974E-7D)
+        if (d1 * d1 < 1.0000000116860974E-7D)
         {
             return null;
         }
         else
         {
-            double var10 = (par2 - this.xCoord) / var4;
-            return var10 >= 0.0D && var10 <= 1.0D ? this.myVec3LocalPool.getVecFromPool(this.xCoord + var4 * var10, this.yCoord + var6 * var10, this.zCoord + var8 * var10) : null;
+            double d4 = (par2 - this.xCoord) / d1;
+            return d4 >= 0.0D && d4 <= 1.0D ? this.myVec3LocalPool.getVecFromPool(this.xCoord + d1 * d4, this.yCoord + d2 * d4, this.zCoord + d3 * d4) : null;
         }
     }
 
@@ -172,18 +172,18 @@ public class Vec3
      */
     public Vec3 getIntermediateWithYValue(Vec3 par1Vec3, double par2)
     {
-        double var4 = par1Vec3.xCoord - this.xCoord;
-        double var6 = par1Vec3.yCoord - this.yCoord;
-        double var8 = par1Vec3.zCoord - this.zCoord;
+        double d1 = par1Vec3.xCoord - this.xCoord;
+        double d2 = par1Vec3.yCoord - this.yCoord;
+        double d3 = par1Vec3.zCoord - this.zCoord;
 
-        if (var6 * var6 < 1.0000000116860974E-7D)
+        if (d2 * d2 < 1.0000000116860974E-7D)
         {
             return null;
         }
         else
         {
-            double var10 = (par2 - this.yCoord) / var6;
-            return var10 >= 0.0D && var10 <= 1.0D ? this.myVec3LocalPool.getVecFromPool(this.xCoord + var4 * var10, this.yCoord + var6 * var10, this.zCoord + var8 * var10) : null;
+            double d4 = (par2 - this.yCoord) / d2;
+            return d4 >= 0.0D && d4 <= 1.0D ? this.myVec3LocalPool.getVecFromPool(this.xCoord + d1 * d4, this.yCoord + d2 * d4, this.zCoord + d3 * d4) : null;
         }
     }
 
@@ -193,18 +193,18 @@ public class Vec3
      */
     public Vec3 getIntermediateWithZValue(Vec3 par1Vec3, double par2)
     {
-        double var4 = par1Vec3.xCoord - this.xCoord;
-        double var6 = par1Vec3.yCoord - this.yCoord;
-        double var8 = par1Vec3.zCoord - this.zCoord;
+        double d1 = par1Vec3.xCoord - this.xCoord;
+        double d2 = par1Vec3.yCoord - this.yCoord;
+        double d3 = par1Vec3.zCoord - this.zCoord;
 
-        if (var8 * var8 < 1.0000000116860974E-7D)
+        if (d3 * d3 < 1.0000000116860974E-7D)
         {
             return null;
         }
         else
         {
-            double var10 = (par2 - this.zCoord) / var8;
-            return var10 >= 0.0D && var10 <= 1.0D ? this.myVec3LocalPool.getVecFromPool(this.xCoord + var4 * var10, this.yCoord + var6 * var10, this.zCoord + var8 * var10) : null;
+            double d4 = (par2 - this.zCoord) / d3;
+            return d4 >= 0.0D && d4 <= 1.0D ? this.myVec3LocalPool.getVecFromPool(this.xCoord + d1 * d4, this.yCoord + d2 * d4, this.zCoord + d3 * d4) : null;
         }
     }
 
@@ -218,14 +218,14 @@ public class Vec3
      */
     public void rotateAroundX(float par1)
     {
-        float var2 = MathHelper.cos(par1);
-        float var3 = MathHelper.sin(par1);
-        double var4 = this.xCoord;
-        double var6 = this.yCoord * (double)var2 + this.zCoord * (double)var3;
-        double var8 = this.zCoord * (double)var2 - this.yCoord * (double)var3;
-        this.xCoord = var4;
-        this.yCoord = var6;
-        this.zCoord = var8;
+        float f1 = MathHelper.cos(par1);
+        float f2 = MathHelper.sin(par1);
+        double d0 = this.xCoord;
+        double d1 = this.yCoord * (double)f1 + this.zCoord * (double)f2;
+        double d2 = this.zCoord * (double)f1 - this.yCoord * (double)f2;
+        this.xCoord = d0;
+        this.yCoord = d1;
+        this.zCoord = d2;
     }
 
     /**
@@ -233,14 +233,14 @@ public class Vec3
      */
     public void rotateAroundY(float par1)
     {
-        float var2 = MathHelper.cos(par1);
-        float var3 = MathHelper.sin(par1);
-        double var4 = this.xCoord * (double)var2 + this.zCoord * (double)var3;
-        double var6 = this.yCoord;
-        double var8 = this.zCoord * (double)var2 - this.xCoord * (double)var3;
-        this.xCoord = var4;
-        this.yCoord = var6;
-        this.zCoord = var8;
+        float f1 = MathHelper.cos(par1);
+        float f2 = MathHelper.sin(par1);
+        double d0 = this.xCoord * (double)f1 + this.zCoord * (double)f2;
+        double d1 = this.yCoord;
+        double d2 = this.zCoord * (double)f1 - this.xCoord * (double)f2;
+        this.xCoord = d0;
+        this.yCoord = d1;
+        this.zCoord = d2;
     }
 
     @SideOnly(Side.CLIENT)
@@ -250,13 +250,13 @@ public class Vec3
      */
     public void rotateAroundZ(float par1)
     {
-        float var2 = MathHelper.cos(par1);
-        float var3 = MathHelper.sin(par1);
-        double var4 = this.xCoord * (double)var2 + this.yCoord * (double)var3;
-        double var6 = this.yCoord * (double)var2 - this.xCoord * (double)var3;
-        double var8 = this.zCoord;
-        this.xCoord = var4;
-        this.yCoord = var6;
-        this.zCoord = var8;
+        float f1 = MathHelper.cos(par1);
+        float f2 = MathHelper.sin(par1);
+        double d0 = this.xCoord * (double)f1 + this.yCoord * (double)f2;
+        double d1 = this.yCoord * (double)f1 - this.xCoord * (double)f2;
+        double d2 = this.zCoord;
+        this.xCoord = d0;
+        this.yCoord = d1;
+        this.zCoord = d2;
     }
 }

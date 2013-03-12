@@ -21,17 +21,17 @@ public interface ISaveHandler
     /**
      * Returns the chunk loader with the provided world provider
      */
-    IChunkLoader getChunkLoader(WorldProvider var1);
+    IChunkLoader getChunkLoader(WorldProvider worldprovider);
 
     /**
      * Saves the given World Info with the given NBTTagCompound as the Player.
      */
-    void saveWorldInfoWithPlayer(WorldInfo var1, NBTTagCompound var2);
+    void saveWorldInfoWithPlayer(WorldInfo worldinfo, NBTTagCompound nbttagcompound);
 
     /**
      * Saves the passed in world info.
      */
-    void saveWorldInfo(WorldInfo var1);
+    void saveWorldInfo(WorldInfo worldinfo);
 
     /**
      * returns null if no saveHandler is relevent (eg. SMP)
@@ -46,7 +46,7 @@ public interface ISaveHandler
     /**
      * Gets the file location of the given map
      */
-    File getMapFileFromName(String var1);
+    File getMapFileFromName(String s);
 
     /**
      * Returns the name of the directory where world information is saved.

@@ -45,11 +45,11 @@ public class Slot
         {
             if (par1ItemStack.itemID == par2ItemStack.itemID)
             {
-                int var3 = par2ItemStack.stackSize - par1ItemStack.stackSize;
+                int i = par2ItemStack.stackSize - par1ItemStack.stackSize;
 
-                if (var3 > 0)
+                if (i > 0)
                 {
-                    this.onCrafting(par1ItemStack, var3);
+                    this.onCrafting(par1ItemStack, i);
                 }
             }
         }

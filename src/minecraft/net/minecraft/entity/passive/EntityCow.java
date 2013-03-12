@@ -129,20 +129,20 @@ public class EntityCow extends EntityAnimal
      */
     public boolean interact(EntityPlayer par1EntityPlayer)
     {
-        ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
+        ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
 
-        if (var2 != null && var2.itemID == Item.bucketEmpty.itemID)
+        if (itemstack != null && itemstack.itemID == Item.bucketEmpty.itemID)
         {
             // CraftBukkit start - got milk?
             org.bukkit.Location loc = this.getBukkitEntity().getLocation();
-            org.bukkit.event.player.PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(par1EntityPlayer, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), -1, var2, Item.bucketMilk);
+            org.bukkit.event.player.PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(par1EntityPlayer, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), -1, itemstack, Item.bucketMilk);
 
             if (event.isCancelled())
             {
                 return false;
             }
 
-            if (--var2.stackSize <= 0)
+            if (--itemstack.stackSize <= 0)
             {
                 par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, CraftItemStack.asNMSCopy(event.getItemStack()));
             }

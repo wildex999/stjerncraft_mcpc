@@ -69,9 +69,9 @@ public class BlockTNT extends Block
     {
         if (!par1World.isRemote)
         {
-            EntityTNTPrimed var5 = new EntityTNTPrimed(par1World, (double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F));
-            var5.fuse = par1World.rand.nextInt(var5.fuse / 4) + var5.fuse / 8;
-            par1World.spawnEntityInWorld(var5);
+            EntityTNTPrimed entitytntprimed = new EntityTNTPrimed(par1World, (double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F));
+            entitytntprimed.fuse = par1World.rand.nextInt(entitytntprimed.fuse / 4) + entitytntprimed.fuse / 8;
+            par1World.spawnEntityInWorld(entitytntprimed);
         }
     }
 
@@ -84,9 +84,9 @@ public class BlockTNT extends Block
         {
             if ((par5 & 1) == 1)
             {
-                EntityTNTPrimed var6 = new EntityTNTPrimed(par1World, (double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F));
-                par1World.spawnEntityInWorld(var6);
-                par1World.playSoundAtEntity(var6, "random.fuse", 1.0F, 1.0F);
+                EntityTNTPrimed entitytntprimed = new EntityTNTPrimed(par1World, (double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F));
+                par1World.spawnEntityInWorld(entitytntprimed);
+                par1World.playSoundAtEntity(entitytntprimed, "random.fuse", 1.0F, 1.0F);
             }
         }
     }
@@ -115,9 +115,9 @@ public class BlockTNT extends Block
     {
         if (par5Entity instanceof EntityArrow && !par1World.isRemote)
         {
-            EntityArrow var6 = (EntityArrow)par5Entity;
+            EntityArrow entityarrow = (EntityArrow)par5Entity;
 
-            if (var6.isBurning())
+            if (entityarrow.isBurning())
             {
                 this.onBlockDestroyedByPlayer(par1World, par2, par3, par4, 1);
                 par1World.setBlockWithNotify(par2, par3, par4, 0);

@@ -68,9 +68,9 @@ public class DedicatedServer extends MinecraftServer implements IServer
      */
     protected boolean startServer() throws java.net.UnknownHostException   // CraftBukkit - throws UnknownHostException
     {
-        DedicatedServerCommandThread var1 = new DedicatedServerCommandThread(this);
-        var1.setDaemon(true);
-        var1.start();
+        DedicatedServerCommandThread dedicatedservercommandthread = new DedicatedServerCommandThread(this);
+        dedicatedservercommandthread.setDaemon(true);
+        dedicatedservercommandthread.start();
         ConsoleLogManager.init(this); // CraftBukkit
         // CraftBukkit start
         System.setOut(new PrintStream(new LoggerOutputStream(logger, Level.INFO), true));
@@ -114,14 +114,14 @@ public class DedicatedServer extends MinecraftServer implements IServer
         }
 
         this.canSpawnStructures = this.settings.getBooleanProperty("generate-structures", true);
-        int var2 = this.settings.getIntProperty("gamemode", EnumGameType.SURVIVAL.getID());
-        this.gameType = WorldSettings.getGameTypeById(var2);
+        int i = this.settings.getIntProperty("gamemode", EnumGameType.SURVIVAL.getID());
+        this.gameType = WorldSettings.getGameTypeById(i);
         logger.info("Default game type: " + this.gameType);
-        InetAddress var3 = null;
+        InetAddress inetaddress = null;
 
         if (this.getServerHostname().length() > 0)
         {
-            var3 = InetAddress.getByName(this.getServerHostname());
+            inetaddress = InetAddress.getByName(this.getServerHostname());
         }
 
         if (this.getServerPort() < 0)
@@ -135,12 +135,12 @@ public class DedicatedServer extends MinecraftServer implements IServer
 
         try
         {
-            this.networkThread = new DedicatedServerListenThread(this, var3, this.getServerPort());
+            this.networkThread = new DedicatedServerListenThread(this, inetaddress, this.getServerPort());
         }
-        catch (Throwable var16)     // CraftBukkit - IOException -> Throwable
+        catch (Throwable throwable)     // CraftBukkit - IOException -> Throwable
         {
             logger.warning("**** FAILED TO BIND TO PORT!");
-            logger.log(Level.WARNING, "The exception was: " + var16.toString());
+            logger.log(Level.WARNING, "The exception was: " + throwable.toString());
             logger.warning("Perhaps a server is already running on that port?");
             return false;
         }
@@ -158,40 +158,40 @@ public class DedicatedServer extends MinecraftServer implements IServer
         FMLCommonHandler.instance().onServerStarted();
         // this.a((PlayerList) (new DedicatedPlayerList(this))); // CraftBukkit - moved up
         this.anvilConverterForAnvilFile = new AnvilSaveConverter(server.getWorldContainer()); // CraftBukkit - moved from MinecraftServer constructor
-        long var4 = System.nanoTime();
+        long j = System.nanoTime();
 
         if (this.getFolderName() == null)
         {
             this.setFolderName(this.settings.getProperty("level-name", "world"));
         }
 
-        String var6 = this.settings.getProperty("level-seed", "");
-        String var7 = this.settings.getProperty("level-type", "DEFAULT");
-        String var8 = this.settings.getProperty("generator-settings", "");
-        long var9 = (new Random()).nextLong();
+        String s = this.settings.getProperty("level-seed", "");
+        String s1 = this.settings.getProperty("level-type", "DEFAULT");
+        String s2 = this.settings.getProperty("generator-settings", "");
+        long k = (new Random()).nextLong();
 
-        if (var6.length() > 0)
+        if (s.length() > 0)
         {
             try
             {
-                long var11 = Long.parseLong(var6);
+                long l = Long.parseLong(s);
 
-                if (var11 != 0L)
+                if (l != 0L)
                 {
-                    var9 = var11;
+                    k = l;
                 }
             }
-            catch (NumberFormatException var15)
+            catch (NumberFormatException numberformatexception)
             {
-                var9 = (long)var6.hashCode();
+                k = (long)s.hashCode();
             }
         }
 
-        WorldType var17 = WorldType.parseWorldType(var7);
+        WorldType worldtype = WorldType.parseWorldType(s1);
 
-        if (var17 == null)
+        if (worldtype == null)
         {
-            var17 = WorldType.DEFAULT;
+            worldtype = WorldType.DEFAULT;
         }
 
         this.setBuildLimit(this.settings.getIntProperty("max-build-height", 256));
@@ -200,10 +200,10 @@ public class DedicatedServer extends MinecraftServer implements IServer
         this.settings.setProperty("max-build-height", Integer.valueOf(this.getBuildLimit()));
         if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
         logger.info("Preparing level \"" + this.getFolderName() + "\"");
-        this.loadAllWorlds(this.getFolderName(), this.getFolderName(), var9, var17, var8);
-        long var12 = System.nanoTime() - var4;
-        String var14 = String.format("%.3fs", new Object[] {Double.valueOf((double)var12 / 1.0E9D)});
-        logger.info("Done (" + var14 + ")! For help, type \"help\" or \"?\"");
+        this.loadAllWorlds(this.getFolderName(), this.getFolderName(), k, worldtype, s2);
+        long i1 = System.nanoTime() - j;
+        String s3 = String.format("%.3fs", new Object[] {Double.valueOf((double)i1 / 1.0E9D)});
+        logger.info("Done (" + s3 + ")! For help, type \"help\" or \"?\"");
 
         if (this.settings.getBooleanProperty("enable-query", false))
         {
@@ -278,9 +278,9 @@ public class DedicatedServer extends MinecraftServer implements IServer
             {
                 Thread.sleep(10L);
             }
-            catch (InterruptedException var3)
+            catch (InterruptedException interruptedexception)
             {
-                var3.printStackTrace();
+                interruptedexception.printStackTrace();
             }
         }
     }
@@ -344,13 +344,13 @@ public class DedicatedServer extends MinecraftServer implements IServer
     {
         while (!this.pendingCommandList.isEmpty())
         {
-            ServerCommand var1 = (ServerCommand)this.pendingCommandList.remove(0);
+            ServerCommand servercommand = (ServerCommand)this.pendingCommandList.remove(0);
             // CraftBukkit start - ServerCommand for preprocessing
-            ServerCommandEvent event = new ServerCommandEvent(this.console, var1.command);
+            ServerCommandEvent event = new ServerCommandEvent(this.console, servercommand.command);
             this.server.getPluginManager().callEvent(event);
-            var1 = new ServerCommand(event.getCommand(), var1.sender);
-            // this.getCommandManager().executeCommand(var1.sender, var1.command); // Called in dispatchServerCommand
-            this.server.dispatchServerCommand(this.console, var1);
+            servercommand = new ServerCommand(event.getCommand(), servercommand.sender);
+            // this.getCommandManager().executeCommand(servercommand.sender, servercommand.command); // Called in dispatchServerCommand
+            this.server.dispatchServerCommand(this.console, servercommand);
             // CraftBukkit end
         }
     }
@@ -415,8 +415,8 @@ public class DedicatedServer extends MinecraftServer implements IServer
      */
     public String getSettingsFilename()
     {
-        File var1 = this.settings.getPropertiesFile();
-        return var1 != null ? var1.getAbsolutePath() : "No settings file";
+        File file1 = this.settings.getPropertiesFile();
+        return file1 != null ? file1.getAbsolutePath() : "No settings file";
     }
 
     public boolean getGuiEnabled()

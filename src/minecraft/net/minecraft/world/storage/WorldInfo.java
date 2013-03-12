@@ -91,8 +91,8 @@ public class WorldInfo
 
         if (par1NBTTagCompound.hasKey("generatorName"))
         {
-            String var2 = par1NBTTagCompound.getString("generatorName");
-            this.terrainType = WorldType.parseWorldType(var2);
+            String s = par1NBTTagCompound.getString("generatorName");
+            this.terrainType = WorldType.parseWorldType(s);
 
             if (this.terrainType == null)
             {
@@ -100,14 +100,14 @@ public class WorldInfo
             }
             else if (this.terrainType.isVersioned())
             {
-                int var3 = 0;
+                int i = 0;
 
                 if (par1NBTTagCompound.hasKey("generatorVersion"))
                 {
-                    var3 = par1NBTTagCompound.getInteger("generatorVersion");
+                    i = par1NBTTagCompound.getInteger("generatorVersion");
                 }
 
-                this.terrainType = this.terrainType.getWorldTypeForGeneratorVersion(var3);
+                this.terrainType = this.terrainType.getWorldTypeForGeneratorVersion(i);
             }
 
             if (par1NBTTagCompound.hasKey("generatorOptions"))
@@ -233,9 +233,9 @@ public class WorldInfo
      */
     public NBTTagCompound getNBTTagCompound()
     {
-        NBTTagCompound var1 = new NBTTagCompound();
-        this.updateTagCompound(var1, this.playerTag);
-        return var1;
+        NBTTagCompound nbttagcompound = new NBTTagCompound();
+        this.updateTagCompound(nbttagcompound, this.playerTag);
+        return nbttagcompound;
     }
 
     /**
@@ -243,9 +243,9 @@ public class WorldInfo
      */
     public NBTTagCompound cloneNBTCompound(NBTTagCompound par1NBTTagCompound)
     {
-        NBTTagCompound var2 = new NBTTagCompound();
-        this.updateTagCompound(var2, par1NBTTagCompound);
-        return var2;
+        NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+        this.updateTagCompound(nbttagcompound1, par1NBTTagCompound);
+        return nbttagcompound1;
     }
 
     private void updateTagCompound(NBTTagCompound par1NBTTagCompound, NBTTagCompound par2NBTTagCompound)

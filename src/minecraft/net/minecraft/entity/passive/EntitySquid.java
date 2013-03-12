@@ -134,14 +134,14 @@ public class EntitySquid extends EntityWaterMob
 
         if (this.isInWater())
         {
-            float var1;
+            float f;
 
             if (this.field_70867_h < (float)Math.PI)
             {
-                var1 = this.field_70867_h / (float)Math.PI;
-                this.tentacleAngle = MathHelper.sin(var1 * var1 * (float)Math.PI) * (float)Math.PI * 0.25F;
+                f = this.field_70867_h / (float)Math.PI;
+                this.tentacleAngle = MathHelper.sin(f * f * (float)Math.PI) * (float)Math.PI * 0.25F;
 
-                if ((double)var1 > 0.75D)
+                if ((double)f > 0.75D)
                 {
                     this.randomMotionSpeed = 1.0F;
                     this.field_70871_bB = 1.0F;
@@ -165,13 +165,13 @@ public class EntitySquid extends EntityWaterMob
                 this.motionZ = (double)(this.randomMotionVecZ * this.randomMotionSpeed);
             }
 
-            var1 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
+            f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
             // CraftBukkit - Math -> TrigMath
             this.renderYawOffset += (-((float) TrigMath.atan2(this.motionX, this.motionZ)) * 180.0F / (float)Math.PI - this.renderYawOffset) * 0.1F;
             this.rotationYaw = this.renderYawOffset;
             this.field_70859_f += (float)Math.PI * this.field_70871_bB * 1.5F;
             // CraftBukkit - Math -> TrigMath
-            this.field_70861_d += (-((float) TrigMath.atan2((double) var1, this.motionY)) * 180.0F / (float)Math.PI - this.field_70861_d) * 0.1F;
+            this.field_70861_d += (-((float) TrigMath.atan2((double) f, this.motionY)) * 180.0F / (float)Math.PI - this.field_70861_d) * 0.1F;
         }
         else
         {
@@ -207,10 +207,10 @@ public class EntitySquid extends EntityWaterMob
         }
         else if (this.rand.nextInt(50) == 0 || !this.inWater || this.randomMotionVecX == 0.0F && this.randomMotionVecY == 0.0F && this.randomMotionVecZ == 0.0F)
         {
-            float var1 = this.rand.nextFloat() * (float)Math.PI * 2.0F;
-            this.randomMotionVecX = MathHelper.cos(var1) * 0.2F;
+            float f = this.rand.nextFloat() * (float)Math.PI * 2.0F;
+            this.randomMotionVecX = MathHelper.cos(f) * 0.2F;
             this.randomMotionVecY = -0.1F + this.rand.nextFloat() * 0.2F;
-            this.randomMotionVecZ = MathHelper.sin(var1) * 0.2F;
+            this.randomMotionVecZ = MathHelper.sin(f) * 0.2F;
         }
 
         this.despawnEntity();

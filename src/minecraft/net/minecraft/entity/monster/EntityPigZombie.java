@@ -110,24 +110,24 @@ public class EntityPigZombie extends EntityZombie
         }
         else
         {
-            Entity var3 = par1DamageSource.getEntity();
+            Entity entity = par1DamageSource.getEntity();
 
-            if (var3 instanceof EntityPlayer)
+            if (entity instanceof EntityPlayer)
             {
-                List var4 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(32.0D, 32.0D, 32.0D));
+                List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(32.0D, 32.0D, 32.0D));
 
-                for (int var5 = 0; var5 < var4.size(); ++var5)
+                for (int j = 0; j < list.size(); ++j)
                 {
-                    Entity var6 = (Entity)var4.get(var5);
+                    Entity entity1 = (Entity)list.get(j);
 
-                    if (var6 instanceof EntityPigZombie)
+                    if (entity1 instanceof EntityPigZombie)
                     {
-                        EntityPigZombie var7 = (EntityPigZombie)var6;
-                        var7.becomeAngryAt(var3);
+                        EntityPigZombie entitypigzombie = (EntityPigZombie)entity1;
+                        entitypigzombie.becomeAngryAt(entity);
                     }
                 }
 
-                this.becomeAngryAt(var3);
+                this.becomeAngryAt(entity);
             }
 
             return super.attackEntityFrom(par1DamageSource, par2);
@@ -277,14 +277,14 @@ public class EntityPigZombie extends EntityZombie
      */
     public int getAttackStrength(Entity par1Entity)
     {
-        ItemStack var2 = this.getHeldItem();
-        int var3 = 5;
+        ItemStack itemstack = this.getHeldItem();
+        int i = 5;
 
-        if (var2 != null)
+        if (itemstack != null)
         {
-            var3 += var2.getDamageVsEntity(this);
+            i += itemstack.getDamageVsEntity(this);
         }
 
-        return var3;
+        return i;
     }
 }

@@ -46,8 +46,8 @@ public class ItemFishingRod extends Item
     {
         if (par3EntityPlayer.fishEntity != null)
         {
-            int var4 = par3EntityPlayer.fishEntity.catchFish();
-            par1ItemStack.damageItem(var4, par3EntityPlayer);
+            int i = par3EntityPlayer.fishEntity.catchFish();
+            par1ItemStack.damageItem(i, par3EntityPlayer);
             par3EntityPlayer.swingItem();
         }
         else

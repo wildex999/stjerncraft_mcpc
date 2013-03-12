@@ -33,21 +33,21 @@ public class ContainerBeacon extends Container
         player = par1InventoryPlayer; // CraftBukkit
         this.theBeacon = par2TileEntityBeacon;
         this.addSlotToContainer(this.beaconSlot = new SlotBeacon(this, par2TileEntityBeacon, 0, 136, 110));
-        byte var3 = 36;
-        short var4 = 137;
-        int var5;
+        byte b0 = 36;
+        short short1 = 137;
+        int i;
 
-        for (var5 = 0; var5 < 3; ++var5)
+        for (i = 0; i < 3; ++i)
         {
-            for (int var6 = 0; var6 < 9; ++var6)
+            for (int j = 0; j < 9; ++j)
             {
-                this.addSlotToContainer(new Slot(par1InventoryPlayer, var6 + var5 * 9 + 9, var3 + var6 * 18, var4 + var5 * 18));
+                this.addSlotToContainer(new Slot(par1InventoryPlayer, j + i * 9 + 9, b0 + j * 18, short1 + i * 18));
             }
         }
 
-        for (var5 = 0; var5 < 9; ++var5)
+        for (i = 0; i < 9; ++i)
         {
-            this.addSlotToContainer(new Slot(par1InventoryPlayer, var5, var3 + var5 * 18, 58 + var4));
+            this.addSlotToContainer(new Slot(par1InventoryPlayer, i, b0 + i * 18, 58 + short1));
         }
 
         this.field_82865_g = par2TileEntityBeacon.getLevels();
@@ -113,67 +113,67 @@ public class ContainerBeacon extends Container
      */
     public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
     {
-        ItemStack var3 = null;
-        Slot var4 = (Slot)this.inventorySlots.get(par2);
+        ItemStack itemstack = null;
+        Slot slot = (Slot)this.inventorySlots.get(par2);
 
-        if (var4 != null && var4.getHasStack())
+        if (slot != null && slot.getHasStack())
         {
-            ItemStack var5 = var4.getStack();
-            var3 = var5.copy();
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
 
             if (par2 == 0)
             {
-                if (!this.mergeItemStack(var5, 1, 37, true))
+                if (!this.mergeItemStack(itemstack1, 1, 37, true))
                 {
                     return null;
                 }
 
-                var4.onSlotChange(var5, var3);
+                slot.onSlotChange(itemstack1, itemstack);
             }
-            else if (!this.beaconSlot.getHasStack() && this.beaconSlot.isItemValid(var5) && var5.stackSize == 1)
+            else if (!this.beaconSlot.getHasStack() && this.beaconSlot.isItemValid(itemstack1) && itemstack1.stackSize == 1)
             {
-                if (!this.mergeItemStack(var5, 0, 1, false))
+                if (!this.mergeItemStack(itemstack1, 0, 1, false))
                 {
                     return null;
                 }
             }
             else if (par2 >= 1 && par2 < 28)
             {
-                if (!this.mergeItemStack(var5, 28, 37, false))
+                if (!this.mergeItemStack(itemstack1, 28, 37, false))
                 {
                     return null;
                 }
             }
             else if (par2 >= 28 && par2 < 37)
             {
-                if (!this.mergeItemStack(var5, 1, 28, false))
+                if (!this.mergeItemStack(itemstack1, 1, 28, false))
                 {
                     return null;
                 }
             }
-            else if (!this.mergeItemStack(var5, 1, 37, false))
+            else if (!this.mergeItemStack(itemstack1, 1, 37, false))
             {
                 return null;
             }
 
-            if (var5.stackSize == 0)
+            if (itemstack1.stackSize == 0)
             {
-                var4.putStack((ItemStack)null);
+                slot.putStack((ItemStack)null);
             }
             else
             {
-                var4.onSlotChanged();
+                slot.onSlotChanged();
             }
 
-            if (var5.stackSize == var3.stackSize)
+            if (itemstack1.stackSize == itemstack.stackSize)
             {
                 return null;
             }
 
-            var4.onPickupFromSlot(par1EntityPlayer, var5);
+            slot.onPickupFromSlot(par1EntityPlayer, itemstack1);
         }
 
-        return var3;
+        return itemstack;
     }
 
     // CraftBukkit start

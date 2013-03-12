@@ -31,40 +31,40 @@ public class BehaviorDispenseBoat extends BehaviorDefaultDispenseItem
      */
     public ItemStack dispenseStack(IBlockSource par1IBlockSource, ItemStack par2ItemStack)
     {
-        EnumFacing var3 = EnumFacing.getFront(par1IBlockSource.func_82620_h());
-        World var4 = par1IBlockSource.getWorld();
-        double var5 = par1IBlockSource.getX() + (double)((float)var3.getFrontOffsetX() * 1.125F);
-        double var7 = par1IBlockSource.getY();
-        double var9 = par1IBlockSource.getZ() + (double)((float)var3.getFrontOffsetZ() * 1.125F);
-        int var11 = par1IBlockSource.getXInt() + var3.getFrontOffsetX();
-        int var12 = par1IBlockSource.getYInt();
-        int var13 = par1IBlockSource.getZInt() + var3.getFrontOffsetZ();
-        Material var14 = var4.getBlockMaterial(var11, var12, var13);
-        double var15;
+        EnumFacing enumfacing = EnumFacing.getFront(par1IBlockSource.func_82620_h());
+        World world = par1IBlockSource.getWorld();
+        double d0 = par1IBlockSource.getX() + (double)((float)enumfacing.getFrontOffsetX() * 1.125F);
+        double d1 = par1IBlockSource.getY();
+        double d2 = par1IBlockSource.getZ() + (double)((float)enumfacing.getFrontOffsetZ() * 1.125F);
+        int i = par1IBlockSource.getXInt() + enumfacing.getFrontOffsetX();
+        int j = par1IBlockSource.getYInt();
+        int k = par1IBlockSource.getZInt() + enumfacing.getFrontOffsetZ();
+        Material material = world.getBlockMaterial(i, j, k);
+        double d3;
 
-        if (Material.water.equals(var14))
+        if (Material.water.equals(material))
         {
-            var15 = 1.0D;
+            d3 = 1.0D;
         }
         else
         {
-            if (!Material.air.equals(var14) || !Material.water.equals(var4.getBlockMaterial(var11, var12 - 1, var13)))
+            if (!Material.air.equals(material) || !Material.water.equals(world.getBlockMaterial(i, j - 1, k)))
             {
                 return this.defaultItemDispenseBehavior.dispense(par1IBlockSource, par2ItemStack);
             }
 
-            var15 = 0.0D;
+            d3 = 0.0D;
         }
 
         // CraftBukkit start
         ItemStack itemstack1 = par2ItemStack.splitStack(1);
-        org.bukkit.block.Block block = var4.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());
+        org.bukkit.block.Block block = world.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());
         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
-        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(var5, var7 + var15, var9));
+        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));
 
         if (!BlockDispenser.eventFired)
         {
-            var4.getServer().getPluginManager().callEvent(event);
+            world.getServer().getPluginManager().callEvent(event);
         }
 
         if (event.isCancelled())
@@ -87,9 +87,9 @@ public class BehaviorDispenseBoat extends BehaviorDefaultDispenseItem
             }
         }
 
-        EntityBoat entityboat = new EntityBoat(var4, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
+        EntityBoat entityboat = new EntityBoat(world, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
         // CraftBukkit end
-        var4.spawnEntityInWorld(entityboat);
+        world.spawnEntityInWorld(entityboat);
         // itemstack.a(1); // CraftBukkit - handled during event processing
         return par2ItemStack;
     }

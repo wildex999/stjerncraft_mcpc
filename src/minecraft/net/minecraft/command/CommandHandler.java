@@ -36,23 +36,23 @@ public class CommandHandler implements ICommandManager
             par2Str = par2Str.substring(1);
         }
 
-        String[] var3 = par2Str.split(" ");
-        String var4 = var3[0];
-        var3 = dropFirstString(var3);
-        ICommand var5 = (ICommand)this.commandMap.get(var4);
-        int var6 = this.getUsernameIndex(var5, var3);
+        String[] astring = par2Str.split(" ");
+        String s1 = astring[0];
+        astring = dropFirstString(astring);
+        ICommand icommand = (ICommand)this.commandMap.get(s1);
+        int i = this.getUsernameIndex(icommand, astring);
 
         try
         {
-            if (var5 == null)
+            if (icommand == null)
             {
                 throw new CommandNotFoundException();
             }
 
             // MCPC+ start - disable check for permissions since we handle it on Bukkit side
-            //if (var5.canCommandSenderUseCommand(par1ICommandSender))
+            //if (icommand.canCommandSenderUseCommand(par1ICommandSender))
             //{
-            CommandEvent event = new CommandEvent(var5, par1ICommandSender, var3);
+            CommandEvent event = new CommandEvent(icommand, par1ICommandSender, astring);
             if (MinecraftForge.EVENT_BUS.post(event))
             {
                 if (event.exception != null)
@@ -62,33 +62,33 @@ public class CommandHandler implements ICommandManager
                 return;
             }
 
-            if (var6 > -1)
+            if (i > -1)
             {
-                EntityPlayerMP[] var7 = PlayerSelector.matchPlayers(par1ICommandSender, var3[var6]);
-                String var8 = var3[var6];
-                EntityPlayerMP[] var9 = var7;
-                int var10 = var7.length;
+                EntityPlayerMP[] aentityplayermp = PlayerSelector.matchPlayers(par1ICommandSender, astring[i]);
+                String s2 = astring[i];
+                EntityPlayerMP[] aentityplayermp1 = aentityplayermp;
+                int j = aentityplayermp.length;
 
-                for (int var11 = 0; var11 < var10; ++var11)
+                for (int k = 0; k < j; ++k)
                 {
-                    EntityPlayerMP var12 = var9[var11];
-                    var3[var6] = var12.getEntityName();
+                    EntityPlayerMP entityplayermp = aentityplayermp1[k];
+                    astring[i] = entityplayermp.getEntityName();
 
                     try
                     {
-                        var5.processCommand(par1ICommandSender, var3);
+                        icommand.processCommand(par1ICommandSender, astring);
                     }
-                    catch (PlayerNotFoundException var14)
+                    catch (PlayerNotFoundException playernotfoundexception)
                     {
-                        par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString(var14.getMessage(), var14.getErrorOjbects()));
+                        par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString(playernotfoundexception.getMessage(), playernotfoundexception.getErrorOjbects()));
                     }
                 }
 
-                var3[var6] = var8;
+                astring[i] = s2;
             }
             else
             {
-                var5.processCommand(par1ICommandSender, var3);
+                icommand.processCommand(par1ICommandSender, astring);
             }
             /*}
             else
@@ -97,18 +97,18 @@ public class CommandHandler implements ICommandManager
             }*/
             // MCPC+ end
         }
-        catch (WrongUsageException var15)
+        catch (WrongUsageException wrongusageexception)
         {
-            par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString("commands.generic.usage", new Object[] {par1ICommandSender.translateString(var15.getMessage(), var15.getErrorOjbects())}));
+            par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString("commands.generic.usage", new Object[] {par1ICommandSender.translateString(wrongusageexception.getMessage(), wrongusageexception.getErrorOjbects())}));
         }
-        catch (CommandException var16)
+        catch (CommandException commandexception)
         {
-            par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString(var16.getMessage(), var16.getErrorOjbects()));
+            par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString(commandexception.getMessage(), commandexception.getErrorOjbects()));
         }
-        catch (Throwable var17)
+        catch (Throwable throwable)
         {
             par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString("commands.generic.exception", new Object[0]));
-            var17.printStackTrace();
+            throwable.printStackTrace();
         }
     }
 
@@ -129,7 +129,7 @@ public class CommandHandler implements ICommandManager
     public ICommand registerCommand(ICommand par1ICommand, String permissionNode)
     {
         // MCPC+ end
-        List var2 = par1ICommand.getCommandAliases();
+        List list = par1ICommand.getCommandAliases();
         this.commandMap.put(par1ICommand.getCommandName(), par1ICommand);
         this.commandSet.add(par1ICommand);
         // MCPC+ start - register vanilla commands with Bukkit to support permissions.
@@ -139,18 +139,18 @@ public class CommandHandler implements ICommandManager
         commandMap.register(par1ICommand.getCommandName(), customCommand);
         FMLCommonHandler.instance().getMinecraftServerInstance().server.getLogger().info("Registered command " + par1ICommand.getCommandName() + " with permission node " + permissionNode);
         // MCPC+ end
-        if (var2 != null)
+        if (list != null)
         {
-            Iterator var3 = var2.iterator();
+            Iterator iterator = list.iterator();
 
-            while (var3.hasNext())
+            while (iterator.hasNext())
             {
-                String var4 = (String)var3.next();
-                ICommand var5 = (ICommand)this.commandMap.get(var4);
+                String s1 = (String)iterator.next();
+                ICommand icommand1 = (ICommand)this.commandMap.get(s1);
 
-                if (var5 == null || !var5.getCommandName().equals(var4))
+                if (icommand1 == null || !icommand1.getCommandName().equals(s1))
                 {
-                    this.commandMap.put(var4, par1ICommand);
+                    this.commandMap.put(s1, par1ICommand);
                 }
             }
         }
@@ -163,14 +163,14 @@ public class CommandHandler implements ICommandManager
      */
     private static String[] dropFirstString(String[] par0ArrayOfStr)
     {
-        String[] var1 = new String[par0ArrayOfStr.length - 1];
+        String[] astring1 = new String[par0ArrayOfStr.length - 1];
 
-        for (int var2 = 1; var2 < par0ArrayOfStr.length; ++var2)
+        for (int i = 1; i < par0ArrayOfStr.length; ++i)
         {
-            var1[var2 - 1] = par0ArrayOfStr[var2];
+            astring1[i - 1] = par0ArrayOfStr[i];
         }
 
-        return var1;
+        return astring1;
     }
 
     /**
@@ -178,35 +178,35 @@ public class CommandHandler implements ICommandManager
      */
     public List getPossibleCommands(ICommandSender par1ICommandSender, String par2Str)
     {
-        String[] var3 = par2Str.split(" ", -1);
-        String var4 = var3[0];
+        String[] astring = par2Str.split(" ", -1);
+        String s1 = astring[0];
 
-        if (var3.length == 1)
+        if (astring.length == 1)
         {
-            ArrayList var8 = new ArrayList();
-            Iterator var6 = this.commandMap.entrySet().iterator();
+            ArrayList arraylist = new ArrayList();
+            Iterator iterator = this.commandMap.entrySet().iterator();
 
-            while (var6.hasNext())
+            while (iterator.hasNext())
             {
-                Entry var7 = (Entry)var6.next();
+                Entry entry = (Entry)iterator.next();
 
-                if (CommandBase.doesStringStartWith(var4, (String)var7.getKey()) && ((ICommand)var7.getValue()).canCommandSenderUseCommand(par1ICommandSender))
+                if (CommandBase.doesStringStartWith(s1, (String)entry.getKey()) && ((ICommand)entry.getValue()).canCommandSenderUseCommand(par1ICommandSender))
                 {
-                    var8.add(var7.getKey());
+                    arraylist.add(entry.getKey());
                 }
             }
 
-            return var8;
+            return arraylist;
         }
         else
         {
-            if (var3.length > 1)
+            if (astring.length > 1)
             {
-                ICommand var5 = (ICommand)this.commandMap.get(var4);
+                ICommand icommand = (ICommand)this.commandMap.get(s1);
 
-                if (var5 != null)
+                if (icommand != null)
                 {
-                    return var5.addTabCompletionOptions(par1ICommandSender, dropFirstString(var3));
+                    return icommand.addTabCompletionOptions(par1ICommandSender, dropFirstString(astring));
                 }
             }
 
@@ -219,20 +219,20 @@ public class CommandHandler implements ICommandManager
      */
     public List getPossibleCommands(ICommandSender par1ICommandSender)
     {
-        ArrayList var2 = new ArrayList();
-        Iterator var3 = this.commandSet.iterator();
+        ArrayList arraylist = new ArrayList();
+        Iterator iterator = this.commandSet.iterator();
 
-        while (var3.hasNext())
+        while (iterator.hasNext())
         {
-            ICommand var4 = (ICommand)var3.next();
+            ICommand icommand = (ICommand)iterator.next();
 
-            if (var4.canCommandSenderUseCommand(par1ICommandSender))
+            if (icommand.canCommandSenderUseCommand(par1ICommandSender))
             {
-                var2.add(var4);
+                arraylist.add(icommand);
             }
         }
 
-        return var2;
+        return arraylist;
     }
 
     /**
@@ -254,11 +254,11 @@ public class CommandHandler implements ICommandManager
         }
         else
         {
-            for (int var3 = 0; var3 < par2ArrayOfStr.length; ++var3)
+            for (int i = 0; i < par2ArrayOfStr.length; ++i)
             {
-                if (par1ICommand.isUsernameIndex(var3) && PlayerSelector.matchesMultiplePlayers(par2ArrayOfStr[var3]))
+                if (par1ICommand.isUsernameIndex(i) && PlayerSelector.matchesMultiplePlayers(par2ArrayOfStr[i]))
                 {
-                    return var3;
+                    return i;
                 }
             }
 

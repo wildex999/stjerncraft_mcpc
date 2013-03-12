@@ -116,9 +116,9 @@ public class EntityItem extends Entity
             this.motionY -= 0.03999999910593033D;
             this.noClip = this.pushOutOfBlocks(this.posX, (this.boundingBox.minY + this.boundingBox.maxY) / 2.0D, this.posZ);
             this.moveEntity(this.motionX, this.motionY, this.motionZ);
-            boolean var1 = (int) this.prevPosX != (int) this.posX || (int) this.prevPosY != (int) this.posY || (int) this.prevPosZ != (int) this.posZ;
+            boolean flag = (int) this.prevPosX != (int) this.posX || (int) this.prevPosY != (int) this.posY || (int) this.prevPosZ != (int) this.posZ;
 
-            if (var1 || this.ticksExisted % 25 == 0)
+            if (flag || this.ticksExisted % 25 == 0)
             {
                 if (this.worldObj.getBlockMaterial(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) == Material.lava)
                 {
@@ -134,22 +134,22 @@ public class EntityItem extends Entity
                 }
             }
 
-            float var2 = 0.98F;
+            float f = 0.98F;
 
             if (this.onGround)
             {
-                var2 = 0.58800006F;
-                int var3 = this.worldObj.getBlockId(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ));
+                f = 0.58800006F;
+                int i = this.worldObj.getBlockId(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ));
 
-                if (var3 > 0)
+                if (i > 0)
                 {
-                    var2 = Block.blocksList[var3].slipperiness * 0.98F;
+                    f = Block.blocksList[i].slipperiness * 0.98F;
                 }
             }
 
-            this.motionX *= (double) var2;
+            this.motionX *= (double) f;
             this.motionY *= 0.9800000190734863D;
-            this.motionZ *= (double) var2;
+            this.motionZ *= (double) f;
 
             if (this.onGround)
             {
@@ -200,13 +200,13 @@ public class EntityItem extends Entity
     private void func_85054_d()
     {
         double radius = worldObj.getWorld().itemMergeRadius;
-        Iterator var1 = this.worldObj.getEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(radius, radius, radius)).iterator();
+        Iterator iterator = this.worldObj.getEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(radius, radius, radius)).iterator();
         
 
-        while (var1.hasNext())
+        while (iterator.hasNext())
         {
-            EntityItem var2 = (EntityItem)var1.next();
-            this.combineItems(var2);
+            EntityItem entityitem = (EntityItem)iterator.next();
+            this.combineItems(entityitem);
         }
     }
 
@@ -222,39 +222,39 @@ public class EntityItem extends Entity
         }
         else if (par1EntityItem.isEntityAlive() && this.isEntityAlive())
         {
-            ItemStack var2 = this.getEntityItem();
-            ItemStack var3 = par1EntityItem.getEntityItem();
+            ItemStack itemstack = this.getEntityItem();
+            ItemStack itemstack1 = par1EntityItem.getEntityItem();
 
-            if (var3.getItem() != var2.getItem())
+            if (itemstack1.getItem() != itemstack.getItem())
             {
                 return false;
             }
-            else if (var3.hasTagCompound() ^ var2.hasTagCompound())
+            else if (itemstack1.hasTagCompound() ^ itemstack.hasTagCompound())
             {
                 return false;
             }
-            else if (var3.hasTagCompound() && !var3.getTagCompound().equals(var2.getTagCompound()))
+            else if (itemstack1.hasTagCompound() && !itemstack1.getTagCompound().equals(itemstack.getTagCompound()))
             {
                 return false;
             }
-            else if (var3.getItem().getHasSubtypes() && var3.getItemDamage() != var2.getItemDamage())
+            else if (itemstack1.getItem().getHasSubtypes() && itemstack1.getItemDamage() != itemstack.getItemDamage())
             {
                 return false;
             }
-            else if (var3.stackSize < var2.stackSize)
+            else if (itemstack1.stackSize < itemstack.stackSize)
             {
                 return par1EntityItem.combineItems(this);
             }
-            else if (var3.stackSize + var2.stackSize > var3.getMaxStackSize())
+            else if (itemstack1.stackSize + itemstack.stackSize > itemstack1.getMaxStackSize())
             {
                 return false;
             }
             else
             {
-                var2.stackSize += var3.stackSize;
+                itemstack.stackSize += itemstack1.stackSize;
                 this.delayBeforeCanPickup = Math.max(par1EntityItem.delayBeforeCanPickup, this.delayBeforeCanPickup);
                 this.age = Math.min(par1EntityItem.age, this.age);
-                this.func_92058_a(var2);
+                this.func_92058_a(itemstack);
                 par1EntityItem.setDead();
                 return true;
             }
@@ -336,12 +336,12 @@ public class EntityItem extends Entity
     {
         this.health = par1NBTTagCompound.getShort("Health") & 255;
         this.age = par1NBTTagCompound.getShort("Age");
-        NBTTagCompound var2 = par1NBTTagCompound.getCompoundTag("Item");
+        NBTTagCompound nbttagcompound1 = par1NBTTagCompound.getCompoundTag("Item");
 
         // CraftBukkit start
-        if (var2 != null)
+        if (nbttagcompound1 != null)
         {
-            ItemStack itemstack = ItemStack.loadItemStackFromNBT(var2);
+            ItemStack itemstack = ItemStack.loadItemStackFromNBT(nbttagcompound1);
 
             if (itemstack != null)
             {
@@ -391,19 +391,19 @@ public class EntityItem extends Entity
                 return;
             }
 
-            ItemStack var2 = this.getEntityItem();
-            int var3 = var2.stackSize;
+            ItemStack itemstack = this.getEntityItem();
+            int i = itemstack.stackSize;
             // CraftBukkit start
-            int canHold = par1EntityPlayer.inventory.canHold(var2);
-            int remaining = var2.stackSize - canHold;
+            int canHold = par1EntityPlayer.inventory.canHold(itemstack);
+            int remaining = itemstack.stackSize - canHold;
 
             if (this.delayBeforeCanPickup <= 0 && canHold > 0)
             {
-                var2.stackSize = canHold;
+                itemstack.stackSize = canHold;
                 PlayerPickupItemEvent cbEvent = new PlayerPickupItemEvent((org.bukkit.entity.Player) par1EntityPlayer.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
                 cbEvent.setCancelled(!par1EntityPlayer.canPickUpLoot);
                 this.worldObj.getServer().getPluginManager().callEvent(cbEvent);
-                var2.stackSize = canHold + remaining;
+                itemstack.stackSize = canHold + remaining;
 
                 if (cbEvent.isCancelled())
                 {
@@ -416,24 +416,24 @@ public class EntityItem extends Entity
 
             // CraftBukkit end
 
-            if (this.delayBeforeCanPickup <= 0 && (event.getResult() == Result.ALLOW || var3 <= 0 || par1EntityPlayer.inventory.addItemStackToInventory(var2)))
+            if (this.delayBeforeCanPickup <= 0 && (event.getResult() == Result.ALLOW || i <= 0 || par1EntityPlayer.inventory.addItemStackToInventory(itemstack)))
             {
-                if (var2.itemID == Block.wood.blockID)
+                if (itemstack.itemID == Block.wood.blockID)
                 {
                     par1EntityPlayer.triggerAchievement(AchievementList.mineWood);
                 }
 
-                if (var2.itemID == Item.leather.itemID)
+                if (itemstack.itemID == Item.leather.itemID)
                 {
                     par1EntityPlayer.triggerAchievement(AchievementList.killCow);
                 }
 
-                if (var2.itemID == Item.diamond.itemID)
+                if (itemstack.itemID == Item.diamond.itemID)
                 {
                     par1EntityPlayer.triggerAchievement(AchievementList.diamonds);
                 }
 
-                if (var2.itemID == Item.blazeRod.itemID)
+                if (itemstack.itemID == Item.blazeRod.itemID)
                 {
                     par1EntityPlayer.triggerAchievement(AchievementList.blazeRod);
                 }
@@ -441,9 +441,9 @@ public class EntityItem extends Entity
                 GameRegistry.onPickupNotification(par1EntityPlayer, this);
 
                 this.playSound("random.pop", 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-                par1EntityPlayer.onItemPickup(this, var3);
+                par1EntityPlayer.onItemPickup(this, i);
 
-                if (var2.stackSize <= 0)
+                if (itemstack.stackSize <= 0)
                 {
                     this.setDead();
                 }
@@ -482,16 +482,16 @@ public class EntityItem extends Entity
 
     public ItemStack getEntityItem()
     {
-        ItemStack var1 = this.getDataWatcher().getWatchableObjectItemStack(10);
+        ItemStack itemstack = this.getDataWatcher().getWatchableObjectItemStack(10);
 
-        if (var1 == null)
+        if (itemstack == null)
         {
             //System.out.println("Item entity " + this.entityId + " has no item?!");
             return new ItemStack(Block.stone);
         }
         else
         {
-            return var1;
+            return itemstack;
         }
     }
 

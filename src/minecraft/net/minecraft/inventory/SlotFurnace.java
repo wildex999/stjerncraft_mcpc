@@ -74,24 +74,24 @@ public class SlotFurnace extends Slot
 
         if (!this.thePlayer.worldObj.isRemote)
         {
-            int var2 = this.field_75228_b;
-            float var3 = FurnaceRecipes.smelting().getExperience(par1ItemStack);
-            int var4;
+            int i = this.field_75228_b;
+            float f = FurnaceRecipes.smelting().getExperience(par1ItemStack);
+            int j;
 
-            if (var3 == 0.0F)
+            if (f == 0.0F)
             {
-                var2 = 0;
+                i = 0;
             }
-            else if (var3 < 1.0F)
+            else if (f < 1.0F)
             {
-                var4 = MathHelper.floor_float((float)var2 * var3);
+                j = MathHelper.floor_float((float)i * f);
 
-                if (var4 < MathHelper.ceiling_float_int((float)var2 * var3) && (float)Math.random() < (float)var2 * var3 - (float)var4)
+                if (j < MathHelper.ceiling_float_int((float)i * f) && (float)Math.random() < (float)i * f - (float)j)
                 {
-                    ++var4;
+                    ++j;
                 }
 
-                var2 = var4;
+                i = j;
             }
 
             // MCPC start - fix IC2 crash
@@ -101,19 +101,19 @@ public class SlotFurnace extends Slot
                 Player player = (Player) thePlayer.getBukkitEntity();
                 TileEntityFurnace furnace = ((TileEntityFurnace) this.inventory);
                 org.bukkit.block.Block block = thePlayer.worldObj.getWorld().getBlockAt(furnace.xCoord, furnace.yCoord, furnace.zCoord);
-                FurnaceExtractEvent event = new FurnaceExtractEvent(player, block, org.bukkit.Material.getMaterial(par1ItemStack.itemID), par1ItemStack.stackSize, var2);
+                FurnaceExtractEvent event = new FurnaceExtractEvent(player, block, org.bukkit.Material.getMaterial(par1ItemStack.itemID), par1ItemStack.stackSize, i);
                 thePlayer.worldObj.getServer().getPluginManager().callEvent(event);
-                var2 = event.getExpToDrop();
+                i = event.getExpToDrop();
                 // CraftBukkit end
             }
 
             // MCPC end
 
-            while (var2 > 0)
+            while (i > 0)
             {
-                var4 = EntityXPOrb.getXPSplit(var2);
-                var2 -= var4;
-                this.thePlayer.worldObj.spawnEntityInWorld(new EntityXPOrb(this.thePlayer.worldObj, this.thePlayer.posX, this.thePlayer.posY + 0.5D, this.thePlayer.posZ + 0.5D, var4));
+                j = EntityXPOrb.getXPSplit(i);
+                i -= j;
+                this.thePlayer.worldObj.spawnEntityInWorld(new EntityXPOrb(this.thePlayer.worldObj, this.thePlayer.posX, this.thePlayer.posY + 0.5D, this.thePlayer.posZ + 0.5D, j));
             }
         }
 

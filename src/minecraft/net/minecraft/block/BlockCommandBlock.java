@@ -31,25 +31,25 @@ public class BlockCommandBlock extends BlockContainer
     {
         if (!par1World.isRemote)
         {
-            boolean var6 = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
-            int var7 = par1World.getBlockMetadata(par2, par3, par4);
-            boolean var8 = (var7 & 1) != 0;
+            boolean flag = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
+            int i1 = par1World.getBlockMetadata(par2, par3, par4);
+            boolean flag1 = (i1 & 1) != 0;
             // CraftBukkit start
             org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
-            int old = var8 ? 1 : 0;
-            int current = var6 ? 1 : 0;
+            int old = flag1 ? 1 : 0;
+            int current = flag ? 1 : 0;
             BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
             par1World.getServer().getPluginManager().callEvent(eventRedstone);
             // CraftBukkit end
 
             if (eventRedstone.getNewCurrent() > 0 && !(eventRedstone.getOldCurrent() > 0))   // CraftBukkit
             {
-                par1World.setBlockMetadata(par2, par3, par4, var7 | 1);
+                par1World.setBlockMetadata(par2, par3, par4, i1 | 1);
                 par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
             }
             else if (!(eventRedstone.getNewCurrent() > 0) && eventRedstone.getOldCurrent() > 0)     // CraftBukkit
             {
-                par1World.setBlockMetadata(par2, par3, par4, var7 & -2);
+                par1World.setBlockMetadata(par2, par3, par4, i1 & -2);
             }
         }
     }
@@ -59,11 +59,11 @@ public class BlockCommandBlock extends BlockContainer
      */
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
-        TileEntity var6 = par1World.getBlockTileEntity(par2, par3, par4);
+        TileEntity tileentity = par1World.getBlockTileEntity(par2, par3, par4);
 
-        if (var6 != null && var6 instanceof TileEntityCommandBlock)
+        if (tileentity != null && tileentity instanceof TileEntityCommandBlock)
         {
-            ((TileEntityCommandBlock)var6).executeCommandOnPowered(par1World);
+            ((TileEntityCommandBlock)tileentity).executeCommandOnPowered(par1World);
         }
     }
 
@@ -80,11 +80,11 @@ public class BlockCommandBlock extends BlockContainer
      */
     public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
     {
-        TileEntityCommandBlock var10 = (TileEntityCommandBlock)par1World.getBlockTileEntity(par2, par3, par4);
+        TileEntityCommandBlock tileentitycommandblock = (TileEntityCommandBlock)par1World.getBlockTileEntity(par2, par3, par4);
 
-        if (var10 != null)
+        if (tileentitycommandblock != null)
         {
-            par5EntityPlayer.displayGUIEditSign(var10);
+            par5EntityPlayer.displayGUIEditSign(tileentitycommandblock);
         }
 
         return true;

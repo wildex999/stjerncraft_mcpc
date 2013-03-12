@@ -39,23 +39,23 @@ public class MapGenScatteredFeature extends MapGenStructure
     public MapGenScatteredFeature(Map par1Map)
     {
         this();
-        Iterator var2 = par1Map.entrySet().iterator();
+        Iterator iterator = par1Map.entrySet().iterator();
 
-        while (var2.hasNext())
+        while (iterator.hasNext())
         {
-            Entry var3 = (Entry)var2.next();
+            Entry entry = (Entry)iterator.next();
 
-            if (((String)var3.getKey()).equals("distance"))
+            if (((String)entry.getKey()).equals("distance"))
             {
-                this.maxDistanceBetweenScatteredFeatures = MathHelper.parseIntWithDefaultAndMax((String)var3.getValue(), this.maxDistanceBetweenScatteredFeatures, this.minDistanceBetweenScatteredFeatures + 1);
+                this.maxDistanceBetweenScatteredFeatures = MathHelper.parseIntWithDefaultAndMax((String)entry.getValue(), this.maxDistanceBetweenScatteredFeatures, this.minDistanceBetweenScatteredFeatures + 1);
             }
         }
     }
 
     protected boolean canSpawnStructureAtCoords(int par1, int par2)
     {
-        int var3 = par1;
-        int var4 = par2;
+        int k = par1;
+        int l = par2;
 
         if (par1 < 0)
         {
@@ -67,24 +67,24 @@ public class MapGenScatteredFeature extends MapGenStructure
             par2 -= this.maxDistanceBetweenScatteredFeatures - 1;
         }
 
-        int var5 = par1 / this.maxDistanceBetweenScatteredFeatures;
-        int var6 = par2 / this.maxDistanceBetweenScatteredFeatures;
-        Random var7 = this.worldObj.setRandomSeed(var5, var6, 14357617);
-        var5 *= this.maxDistanceBetweenScatteredFeatures;
-        var6 *= this.maxDistanceBetweenScatteredFeatures;
-        var5 += var7.nextInt(this.maxDistanceBetweenScatteredFeatures - this.minDistanceBetweenScatteredFeatures);
-        var6 += var7.nextInt(this.maxDistanceBetweenScatteredFeatures - this.minDistanceBetweenScatteredFeatures);
+        int i1 = par1 / this.maxDistanceBetweenScatteredFeatures;
+        int j1 = par2 / this.maxDistanceBetweenScatteredFeatures;
+        Random random = this.worldObj.setRandomSeed(i1, j1, 14357617);
+        i1 *= this.maxDistanceBetweenScatteredFeatures;
+        j1 *= this.maxDistanceBetweenScatteredFeatures;
+        i1 += random.nextInt(this.maxDistanceBetweenScatteredFeatures - this.minDistanceBetweenScatteredFeatures);
+        j1 += random.nextInt(this.maxDistanceBetweenScatteredFeatures - this.minDistanceBetweenScatteredFeatures);
 
-        if (var3 == var5 && var4 == var6)
+        if (k == i1 && l == j1)
         {
-            BiomeGenBase var8 = this.worldObj.getWorldChunkManager().getBiomeGenAt(var3 * 16 + 8, var4 * 16 + 8);
-            Iterator var9 = biomelist.iterator();
+            BiomeGenBase biomegenbase = this.worldObj.getWorldChunkManager().getBiomeGenAt(k * 16 + 8, l * 16 + 8);
+            Iterator iterator = biomelist.iterator();
 
-            while (var9.hasNext())
+            while (iterator.hasNext())
             {
-                BiomeGenBase var10 = (BiomeGenBase)var9.next();
+                BiomeGenBase biomegenbase1 = (BiomeGenBase)iterator.next();
 
-                if (var8 == var10)
+                if (biomegenbase == biomegenbase1)
                 {
                     return true;
                 }

@@ -41,8 +41,8 @@ public class ItemSeeds extends Item implements IPlantable
         }
         else if (par2EntityPlayer.isWithinHomeDistance(par4, par5, par6) && par2EntityPlayer.isWithinHomeDistance(par4, par5 + 1, par6))
         {
-            int var11 = par3World.getBlockId(par4, par5, par6);
-            Block block = Block.blocksList[var11];
+            int i1 = par3World.getBlockId(par4, par5, par6);
+            Block block = Block.blocksList[i1];
 
             if (block != null && block.canSustainPlant(par3World, par4, par5, par6, ForgeDirection.UP, this) && par3World.isAirBlock(par4, par5 + 1, par6))   // Forge
             {

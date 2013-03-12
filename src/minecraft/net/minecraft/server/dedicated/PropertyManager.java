@@ -22,27 +22,27 @@ public class PropertyManager
 
         if (par1File.exists())
         {
-            FileInputStream var2 = null;
+            FileInputStream fileinputstream = null;
 
             try
             {
-                var2 = new FileInputStream(par1File);
-                this.properties.load(var2);
+                fileinputstream = new FileInputStream(par1File);
+                this.properties.load(fileinputstream);
             }
-            catch (Exception var12)
+            catch (Exception exception)
             {
-                logger.log(Level.WARNING, "Failed to load " + par1File, var12);
+                logger.log(Level.WARNING, "Failed to load " + par1File, exception);
                 this.logMessageAndSave();
             }
             finally
             {
-                if (var2 != null)
+                if (fileinputstream != null)
                 {
                     try
                     {
-                        var2.close();
+                        fileinputstream.close();
                     }
-                    catch (IOException var11)
+                    catch (IOException ioexception)
                     {
                         ;
                     }
@@ -91,7 +91,7 @@ public class PropertyManager
      */
     public void saveProperties()
     {
-        FileOutputStream var1 = null;
+        FileOutputStream fileoutputstream = null;
 
         try
         {
@@ -102,23 +102,23 @@ public class PropertyManager
             }
 
             // CraftBukkit end
-            var1 = new FileOutputStream(this.associatedFile);
-            this.properties.store(var1, "Minecraft server properties");
+            fileoutputstream = new FileOutputStream(this.associatedFile);
+            this.properties.store(fileoutputstream, "Minecraft server properties");
         }
-        catch (Exception var11)
+        catch (Exception exception)
         {
-            logger.log(Level.WARNING, "Failed to save " + this.associatedFile, var11);
+            logger.log(Level.WARNING, "Failed to save " + this.associatedFile, exception);
             this.logMessageAndSave();
         }
         finally
         {
-            if (var1 != null)
+            if (fileoutputstream != null)
             {
                 try
                 {
-                    var1.close();
+                    fileoutputstream.close();
                 }
-                catch (IOException var10)
+                catch (IOException ioexception)
                 {
                     ;
                 }
@@ -157,7 +157,7 @@ public class PropertyManager
         {
             return this.getOverride(par1Str, Integer.parseInt(this.getProperty(par1Str, "" + par2))); // CraftBukkit
         }
-        catch (Exception var4)
+        catch (Exception exception)
         {
             this.properties.setProperty(par1Str, "" + par2);
             return this.getOverride(par1Str, par2); // CraftBukkit
@@ -173,7 +173,7 @@ public class PropertyManager
         {
             return this.getOverride(par1Str, Boolean.parseBoolean(this.getProperty(par1Str, "" + par2))); // CraftBukkit
         }
-        catch (Exception var4)
+        catch (Exception exception)
         {
             this.properties.setProperty(par1Str, "" + par2);
             return this.getOverride(par1Str, par2); // CraftBukkit

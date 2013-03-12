@@ -139,14 +139,14 @@ public class EntityCreeper extends EntityMob
         if (this.isEntityAlive())
         {
             this.lastActiveTime = this.timeSinceIgnited;
-            int var1 = this.getCreeperState();
+            int i = this.getCreeperState();
 
-            if (var1 > 0 && this.timeSinceIgnited == 0)
+            if (i > 0 && this.timeSinceIgnited == 0)
             {
                 this.playSound("random.fuse", 1.0F, 0.5F);
             }
 
-            this.timeSinceIgnited += var1;
+            this.timeSinceIgnited += i;
 
             if (this.timeSinceIgnited < 0)
             {
@@ -159,7 +159,7 @@ public class EntityCreeper extends EntityMob
 
                 if (!this.worldObj.isRemote)
                 {
-                    boolean var2 = this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing");
+                    boolean flag = this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing");
                     // CraftBukkit start
                     float radius = this.getPowered() ? 6.0F : 3.0F;
                     ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), radius, false);
@@ -167,7 +167,7 @@ public class EntityCreeper extends EntityMob
 
                     if (!event.isCancelled())
                     {
-                        this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, event.getRadius(), event.getFire(), var2);
+                        this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, event.getRadius(), event.getFire(), flag);
                         this.setDead();
                     }
                     else

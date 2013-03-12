@@ -40,8 +40,8 @@ public class ItemHangingEntity extends Item
         }
         else
         {
-            int var11 = Direction.vineGrowth[par7];
-            EntityHanging var12 = this.createHangingEntity(par3World, par4, par5, par6, var11);
+            int i1 = Direction.vineGrowth[par7];
+            EntityHanging entityhanging = this.createHangingEntity(par3World, par4, par5, par6, i1);
 
             if (!par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack))
             {
@@ -49,7 +49,7 @@ public class ItemHangingEntity extends Item
             }
             else
             {
-                if (var12 != null && var12.onValidSurface())
+                if (entityhanging != null && entityhanging.onValidSurface())
                 {
                     if (!par3World.isRemote)
                     {
@@ -57,14 +57,14 @@ public class ItemHangingEntity extends Item
                         Player who = (par2EntityPlayer == null) ? null : (Player) par2EntityPlayer.getBukkitEntity();
                         org.bukkit.block.Block blockClicked = par3World.getWorld().getBlockAt(par4, par5, par6);
                         org.bukkit.block.BlockFace blockFace = org.bukkit.craftbukkit.block.CraftBlock.notchToBlockFace(par7);
-                        HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) var12.getBukkitEntity(), who, blockClicked, blockFace);
+                        HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) entityhanging.getBukkitEntity(), who, blockClicked, blockFace);
                         par3World.getServer().getPluginManager().callEvent(event);
                         PaintingPlaceEvent paintingEvent = null;
 
-                        if (var12 instanceof EntityPainting)
+                        if (entityhanging instanceof EntityPainting)
                         {
                             // Fire old painting event until it can be removed
-                            paintingEvent = new PaintingPlaceEvent((org.bukkit.entity.Painting) var12.getBukkitEntity(), who, blockClicked, blockFace);
+                            paintingEvent = new PaintingPlaceEvent((org.bukkit.entity.Painting) entityhanging.getBukkitEntity(), who, blockClicked, blockFace);
                             paintingEvent.setCancelled(event.isCancelled());
                             par3World.getServer().getPluginManager().callEvent(paintingEvent);
                         }
@@ -75,7 +75,7 @@ public class ItemHangingEntity extends Item
                         }
 
                         // CraftBukkit end
-                        par3World.spawnEntityInWorld(var12);
+                        par3World.spawnEntityInWorld(entityhanging);
                     }
 
                     --par1ItemStack.stackSize;

@@ -50,13 +50,13 @@ public class BlockDragonEgg extends Block
     {
         if (BlockSand.canFallBelow(par1World, par2, par3 - 1, par4) && par3 >= 0)
         {
-            byte var5 = 32;
+            byte b0 = 32;
 
-            if (!BlockSand.fallInstantly && par1World.checkChunksExist(par2 - var5, par3 - var5, par4 - var5, par2 + var5, par3 + var5, par4 + var5))
+            if (!BlockSand.fallInstantly && par1World.checkChunksExist(par2 - b0, par3 - b0, par4 - b0, par2 + b0, par3 + b0, par4 + b0))
             {
                 // CraftBukkit - added data
-                EntityFallingSand var6 = new EntityFallingSand(par1World, (double)((float) par2 + 0.5F), (double)((float) par3 + 0.5F), (double)((float) par4 + 0.5F), this.blockID, par1World.getBlockMetadata(par2, par3, par4));
-                par1World.spawnEntityInWorld(var6);
+                EntityFallingSand entityfallingsand = new EntityFallingSand(par1World, (double)((float) par2 + 0.5F), (double)((float) par3 + 0.5F), (double)((float) par4 + 0.5F), this.blockID, par1World.getBlockMetadata(par2, par3, par4));
+                par1World.spawnEntityInWorld(entityfallingsand);
             }
             else
             {
@@ -99,17 +99,17 @@ public class BlockDragonEgg extends Block
     {
         if (par1World.getBlockId(par2, par3, par4) == this.blockID)
         {
-            for (int var5 = 0; var5 < 1000; ++var5)
+            for (int l = 0; l < 1000; ++l)
             {
-                int var6 = par2 + par1World.rand.nextInt(16) - par1World.rand.nextInt(16);
-                int var7 = par3 + par1World.rand.nextInt(8) - par1World.rand.nextInt(8);
-                int var8 = par4 + par1World.rand.nextInt(16) - par1World.rand.nextInt(16);
+                int i1 = par2 + par1World.rand.nextInt(16) - par1World.rand.nextInt(16);
+                int j1 = par3 + par1World.rand.nextInt(8) - par1World.rand.nextInt(8);
+                int k1 = par4 + par1World.rand.nextInt(16) - par1World.rand.nextInt(16);
 
-                if (par1World.getBlockId(var6, var7, var8) == 0)
+                if (par1World.getBlockId(i1, j1, k1) == 0)
                 {
                     // CraftBukkit start
                     org.bukkit.block.Block from = par1World.getWorld().getBlockAt(par2, par3, par4);
-                    org.bukkit.block.Block to = par1World.getWorld().getBlockAt(var6, var7, var8);
+                    org.bukkit.block.Block to = par1World.getWorld().getBlockAt(i1, j1, k1);
                     BlockFromToEvent event = new BlockFromToEvent(from, to);
                     org.bukkit.Bukkit.getPluginManager().callEvent(event);
 
@@ -118,29 +118,29 @@ public class BlockDragonEgg extends Block
                         return;
                     }
 
-                    var6 = event.getToBlock().getX();
-                    var7 = event.getToBlock().getY();
-                    var8 = event.getToBlock().getZ();
+                    i1 = event.getToBlock().getX();
+                    j1 = event.getToBlock().getY();
+                    k1 = event.getToBlock().getZ();
                     // CraftBukkit end
                     if (!par1World.isRemote)
                     {
-                        par1World.setBlockAndMetadataWithNotify(var6, var7, var8, this.blockID, par1World.getBlockMetadata(par2, par3, par4));
+                        par1World.setBlockAndMetadataWithNotify(i1, j1, k1, this.blockID, par1World.getBlockMetadata(par2, par3, par4));
                         par1World.setBlockWithNotify(par2, par3, par4, 0);
                     }
                     else
                     {
-                        short var9 = 128;
+                        short short1 = 128;
 
-                        for (int var10 = 0; var10 < var9; ++var10)
+                        for (int l1 = 0; l1 < short1; ++l1)
                         {
-                            double var11 = par1World.rand.nextDouble();
-                            float var13 = (par1World.rand.nextFloat() - 0.5F) * 0.2F;
-                            float var14 = (par1World.rand.nextFloat() - 0.5F) * 0.2F;
-                            float var15 = (par1World.rand.nextFloat() - 0.5F) * 0.2F;
-                            double var16 = (double)var6 + (double)(par2 - var6) * var11 + (par1World.rand.nextDouble() - 0.5D) * 1.0D + 0.5D;
-                            double var18 = (double)var7 + (double)(par3 - var7) * var11 + par1World.rand.nextDouble() * 1.0D - 0.5D;
-                            double var20 = (double)var8 + (double)(par4 - var8) * var11 + (par1World.rand.nextDouble() - 0.5D) * 1.0D + 0.5D;
-                            par1World.spawnParticle("portal", var16, var18, var20, (double)var13, (double)var14, (double)var15);
+                            double d0 = par1World.rand.nextDouble();
+                            float f = (par1World.rand.nextFloat() - 0.5F) * 0.2F;
+                            float f1 = (par1World.rand.nextFloat() - 0.5F) * 0.2F;
+                            float f2 = (par1World.rand.nextFloat() - 0.5F) * 0.2F;
+                            double d1 = (double)i1 + (double)(par2 - i1) * d0 + (par1World.rand.nextDouble() - 0.5D) * 1.0D + 0.5D;
+                            double d2 = (double)j1 + (double)(par3 - j1) * d0 + par1World.rand.nextDouble() * 1.0D - 0.5D;
+                            double d3 = (double)k1 + (double)(par4 - k1) * d0 + (par1World.rand.nextDouble() - 0.5D) * 1.0D + 0.5D;
+                            par1World.spawnParticle("portal", d1, d2, d3, (double)f, (double)f1, (double)f2);
                         }
                     }
 

@@ -18,7 +18,7 @@ public class WorldGenTallGrass extends WorldGenerator
 
     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
     {
-        int var11;
+        int l;
 
         Block block = null;
         do
@@ -31,15 +31,15 @@ public class WorldGenTallGrass extends WorldGenerator
             par4--;
         } while (par4 > 0);
 
-        for (int var7 = 0; var7 < 128; ++var7)
+        for (int i1 = 0; i1 < 128; ++i1)
         {
-            int var8 = par3 + par2Random.nextInt(8) - par2Random.nextInt(8);
-            int var9 = par4 + par2Random.nextInt(4) - par2Random.nextInt(4);
-            int var10 = par5 + par2Random.nextInt(8) - par2Random.nextInt(8);
+            int j1 = par3 + par2Random.nextInt(8) - par2Random.nextInt(8);
+            int k1 = par4 + par2Random.nextInt(4) - par2Random.nextInt(4);
+            int l1 = par5 + par2Random.nextInt(8) - par2Random.nextInt(8);
 
-            if (par1World.isAirBlock(var8, var9, var10) && Block.blocksList[this.tallGrassID].canBlockStay(par1World, var8, var9, var10))
+            if (par1World.isAirBlock(j1, k1, l1) && Block.blocksList[this.tallGrassID].canBlockStay(par1World, j1, k1, l1))
             {
-                par1World.setBlockAndMetadata(var8, var9, var10, this.tallGrassID, this.tallGrassMetadata);
+                par1World.setBlockAndMetadata(j1, k1, l1, this.tallGrassID, this.tallGrassMetadata);
             }
         }
 

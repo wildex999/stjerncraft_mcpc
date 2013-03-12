@@ -91,33 +91,33 @@ public class TileEntityBeacon extends TileEntity implements IInventory
     {
         if (this.field_82135_d && this.levels > 0 && !this.worldObj.isRemote && this.primaryEffect > 0)
         {
-            double var1 = (double)(this.levels * 8 + 8);
-            byte var3 = 0;
+            double d0 = (double)(this.levels * 8 + 8);
+            byte b0 = 0;
 
             if (this.levels >= 4 && this.primaryEffect == this.secondaryEffect)
             {
-                var3 = 1;
+                b0 = 1;
             }
 
-            AxisAlignedBB var4 = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)this.xCoord, (double)this.yCoord, (double)this.zCoord, (double)(this.xCoord + 1), (double)(this.yCoord + 1), (double)(this.zCoord + 1)).expand(var1, var1, var1);
-            List var5 = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, var4);
-            Iterator var6 = var5.iterator();
-            EntityPlayer var7;
+            AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)this.xCoord, (double)this.yCoord, (double)this.zCoord, (double)(this.xCoord + 1), (double)(this.yCoord + 1), (double)(this.zCoord + 1)).expand(d0, d0, d0);
+            List list = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, axisalignedbb);
+            Iterator iterator = list.iterator();
+            EntityPlayer entityplayer;
 
-            while (var6.hasNext())
+            while (iterator.hasNext())
             {
-                var7 = (EntityPlayer)var6.next();
-                var7.addPotionEffect(new PotionEffect(this.primaryEffect, 180, var3, true));
+                entityplayer = (EntityPlayer)iterator.next();
+                entityplayer.addPotionEffect(new PotionEffect(this.primaryEffect, 180, b0, true));
             }
 
             if (this.levels >= 4 && this.primaryEffect != this.secondaryEffect && this.secondaryEffect > 0)
             {
-                var6 = var5.iterator();
+                iterator = list.iterator();
 
-                while (var6.hasNext())
+                while (iterator.hasNext())
                 {
-                    var7 = (EntityPlayer)var6.next();
-                    var7.addPotionEffect(new PotionEffect(this.secondaryEffect, 180, 0, true));
+                    entityplayer = (EntityPlayer)iterator.next();
+                    entityplayer.addPotionEffect(new PotionEffect(this.secondaryEffect, 180, 0, true));
                 }
             }
         }
@@ -135,33 +135,33 @@ public class TileEntityBeacon extends TileEntity implements IInventory
             this.field_82135_d = true;
             this.levels = 0;
 
-            for (int var1 = 1; var1 <= 4; this.levels = var1++)
+            for (int i = 1; i <= 4; this.levels = i++)
             {
-                int var2 = this.yCoord - var1;
+                int j = this.yCoord - i;
 
-                if (var2 < 0)
+                if (j < 0)
                 {
                     break;
                 }
 
-                boolean var3 = true;
+                boolean flag = true;
 
-                for (int var4 = this.xCoord - var1; var4 <= this.xCoord + var1 && var3; ++var4)
+                for (int k = this.xCoord - i; k <= this.xCoord + i && flag; ++k)
                 {
-                    for (int var5 = this.zCoord - var1; var5 <= this.zCoord + var1; ++var5)
+                    for (int l = this.zCoord - i; l <= this.zCoord + i; ++l)
                     {
-                        int var6 = this.worldObj.getBlockId(var4, var2, var5);
-                        Block block = Block.blocksList[var6];
+                        int i1 = this.worldObj.getBlockId(k, j, l);
+                        Block block = Block.blocksList[i1];
 
-                        if (block == null || !block.isBeaconBase(worldObj, var4, var2, var5, xCoord, yCoord, zCoord))
+                        if (block == null || !block.isBeaconBase(worldObj, k, j, l, xCoord, yCoord, zCoord))
                         {
-                            var3 = false;
+                            flag = false;
                             break;
                         }
                     }
                 }
 
-                if (!var3)
+                if (!flag)
                 {
                     break;
                 }
@@ -183,12 +183,12 @@ public class TileEntityBeacon extends TileEntity implements IInventory
         }
         else
         {
-            int var1 = (int)(this.worldObj.getTotalWorldTime() - this.field_82137_b);
+            int i = (int)(this.worldObj.getTotalWorldTime() - this.field_82137_b);
             this.field_82137_b = this.worldObj.getTotalWorldTime();
 
-            if (var1 > 1)
+            if (i > 1)
             {
-                this.field_82138_c -= (float)var1 / 40.0F;
+                this.field_82138_c -= (float)i / 40.0F;
 
                 if (this.field_82138_c < 0.0F)
                 {
@@ -245,16 +245,16 @@ public class TileEntityBeacon extends TileEntity implements IInventory
     {
         this.primaryEffect = 0;
 
-        for (int var2 = 0; var2 < this.levels && var2 < 3; ++var2)
+        for (int j = 0; j < this.levels && j < 3; ++j)
         {
-            Potion[] var3 = effectsList[var2];
-            int var4 = var3.length;
+            Potion[] apotion = effectsList[j];
+            int k = apotion.length;
 
-            for (int var5 = 0; var5 < var4; ++var5)
+            for (int l = 0; l < k; ++l)
             {
-                Potion var6 = var3[var5];
+                Potion potion = apotion[l];
 
-                if (var6.id == par1)
+                if (potion.id == par1)
                 {
                     this.primaryEffect = par1;
                     return;
@@ -269,16 +269,16 @@ public class TileEntityBeacon extends TileEntity implements IInventory
 
         if (this.levels >= 4)
         {
-            for (int var2 = 0; var2 < 4; ++var2)
+            for (int j = 0; j < 4; ++j)
             {
-                Potion[] var3 = effectsList[var2];
-                int var4 = var3.length;
+                Potion[] apotion = effectsList[j];
+                int k = apotion.length;
 
-                for (int var5 = 0; var5 < var4; ++var5)
+                for (int l = 0; l < k; ++l)
                 {
-                    Potion var6 = var3[var5];
+                    Potion potion = apotion[l];
 
-                    if (var6.id == par1)
+                    if (potion.id == par1)
                     {
                         this.secondaryEffect = par1;
                         return;
@@ -293,9 +293,9 @@ public class TileEntityBeacon extends TileEntity implements IInventory
      */
     public Packet getDescriptionPacket()
     {
-        NBTTagCompound var1 = new NBTTagCompound();
-        this.writeToNBT(var1);
-        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 3, var1);
+        NBTTagCompound nbttagcompound = new NBTTagCompound();
+        this.writeToNBT(nbttagcompound);
+        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 3, nbttagcompound);
     }
 
     @SideOnly(Side.CLIENT)
@@ -352,9 +352,9 @@ public class TileEntityBeacon extends TileEntity implements IInventory
         {
             if (par2 >= this.payment.stackSize)
             {
-                ItemStack var3 = this.payment;
+                ItemStack itemstack = this.payment;
                 this.payment = null;
-                return var3;
+                return itemstack;
             }
             else
             {
@@ -376,9 +376,9 @@ public class TileEntityBeacon extends TileEntity implements IInventory
     {
         if (par1 == 0 && this.payment != null)
         {
-            ItemStack var2 = this.payment;
+            ItemStack itemstack = this.payment;
             this.payment = null;
-            return var2;
+            return itemstack;
         }
         else
         {

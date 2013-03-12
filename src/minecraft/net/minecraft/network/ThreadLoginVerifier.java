@@ -74,13 +74,13 @@ class ThreadLoginVerifier extends Thread
             }
 
             // Spigot end
-            String var1 = (new BigInteger(CryptManager.getServerIdHash(NetLoginHandler.getServerId(this.loginHandler), NetLoginHandler.getLoginMinecraftServer(this.loginHandler).getKeyPair().getPublic(), NetLoginHandler.getSharedKey(this.loginHandler)))).toString(16);
-            URL var2 = new URL("http://session.minecraft.net/game/checkserver.jsp?user=" + URLEncoder.encode(NetLoginHandler.getClientUsername(this.loginHandler), "UTF-8") + "&serverId=" + URLEncoder.encode(var1, "UTF-8"));
-            BufferedReader var3 = new BufferedReader(new InputStreamReader(var2.openStream()));
-            String var4 = var3.readLine();
-            var3.close();
+            String s = (new BigInteger(CryptManager.getServerIdHash(NetLoginHandler.getServerId(this.loginHandler), NetLoginHandler.getLoginMinecraftServer(this.loginHandler).getKeyPair().getPublic(), NetLoginHandler.getSharedKey(this.loginHandler)))).toString(16);
+            URL url = new URL("http://session.minecraft.net/game/checkserver.jsp?user=" + URLEncoder.encode(NetLoginHandler.getClientUsername(this.loginHandler), "UTF-8") + "&serverId=" + URLEncoder.encode(s, "UTF-8"));
+            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(url.openStream()));
+            String s1 = bufferedreader.readLine();
+            bufferedreader.close();
 
-            if (!"YES".equals(var4))
+            if (!"YES".equals(s1))
             {
                 this.loginHandler.raiseErrorAndDisconnect("Failed to verify username!");
                 return;

@@ -175,48 +175,48 @@ public class BlockRedstoneOre extends Block
      */
     private void sparkle(World par1World, int par2, int par3, int par4)
     {
-        Random var5 = par1World.rand;
-        double var6 = 0.0625D;
+        Random random = par1World.rand;
+        double d0 = 0.0625D;
 
-        for (int var8 = 0; var8 < 6; ++var8)
+        for (int l = 0; l < 6; ++l)
         {
-            double var9 = (double)((float)par2 + var5.nextFloat());
-            double var11 = (double)((float)par3 + var5.nextFloat());
-            double var13 = (double)((float)par4 + var5.nextFloat());
+            double d1 = (double)((float)par2 + random.nextFloat());
+            double d2 = (double)((float)par3 + random.nextFloat());
+            double d3 = (double)((float)par4 + random.nextFloat());
 
-            if (var8 == 0 && !par1World.isBlockOpaqueCube(par2, par3 + 1, par4))
+            if (l == 0 && !par1World.isBlockOpaqueCube(par2, par3 + 1, par4))
             {
-                var11 = (double)(par3 + 1) + var6;
+                d2 = (double)(par3 + 1) + d0;
             }
 
-            if (var8 == 1 && !par1World.isBlockOpaqueCube(par2, par3 - 1, par4))
+            if (l == 1 && !par1World.isBlockOpaqueCube(par2, par3 - 1, par4))
             {
-                var11 = (double)(par3 + 0) - var6;
+                d2 = (double)(par3 + 0) - d0;
             }
 
-            if (var8 == 2 && !par1World.isBlockOpaqueCube(par2, par3, par4 + 1))
+            if (l == 2 && !par1World.isBlockOpaqueCube(par2, par3, par4 + 1))
             {
-                var13 = (double)(par4 + 1) + var6;
+                d3 = (double)(par4 + 1) + d0;
             }
 
-            if (var8 == 3 && !par1World.isBlockOpaqueCube(par2, par3, par4 - 1))
+            if (l == 3 && !par1World.isBlockOpaqueCube(par2, par3, par4 - 1))
             {
-                var13 = (double)(par4 + 0) - var6;
+                d3 = (double)(par4 + 0) - d0;
             }
 
-            if (var8 == 4 && !par1World.isBlockOpaqueCube(par2 + 1, par3, par4))
+            if (l == 4 && !par1World.isBlockOpaqueCube(par2 + 1, par3, par4))
             {
-                var9 = (double)(par2 + 1) + var6;
+                d1 = (double)(par2 + 1) + d0;
             }
 
-            if (var8 == 5 && !par1World.isBlockOpaqueCube(par2 - 1, par3, par4))
+            if (l == 5 && !par1World.isBlockOpaqueCube(par2 - 1, par3, par4))
             {
-                var9 = (double)(par2 + 0) - var6;
+                d1 = (double)(par2 + 0) - d0;
             }
 
-            if (var9 < (double)par2 || var9 > (double)(par2 + 1) || var11 < 0.0D || var11 > (double)(par3 + 1) || var13 < (double)par4 || var13 > (double)(par4 + 1))
+            if (d1 < (double)par2 || d1 > (double)(par2 + 1) || d2 < 0.0D || d2 > (double)(par3 + 1) || d3 < (double)par4 || d3 > (double)(par4 + 1))
             {
-                par1World.spawnParticle("reddust", var9, var11, var13, 0.0D, 0.0D, 0.0D);
+                par1World.spawnParticle("reddust", d1, d2, d3, 0.0D, 0.0D, 0.0D);
             }
         }
     }

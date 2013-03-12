@@ -60,14 +60,14 @@ public class BlockRedstoneRepeater extends BlockDirectional
      */
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
-        int var6 = par1World.getBlockMetadata(par2, par3, par4);
-        boolean var7 = this.func_82523_e(par1World, par2, par3, par4, var6);
+        int l = par1World.getBlockMetadata(par2, par3, par4);
+        boolean flag = this.func_82523_e(par1World, par2, par3, par4, l);
 
-        if (!var7)
+        if (!flag)
         {
-            boolean var8 = this.ignoreTick(par1World, par2, par3, par4, var6);
+            boolean flag1 = this.ignoreTick(par1World, par2, par3, par4, l);
 
-            if (this.isRepeaterPowered && !var8)
+            if (this.isRepeaterPowered && !flag1)
             {
                 // CraftBukkit start
                 if (CraftEventFactory.callRedstoneChange(par1World, par2, par3, par4, 15, 0).getNewCurrent() != 0)
@@ -76,7 +76,7 @@ public class BlockRedstoneRepeater extends BlockDirectional
                 }
 
                 // CraftBukkit end
-                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, Block.redstoneRepeaterIdle.blockID, var6);
+                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, Block.redstoneRepeaterIdle.blockID, l);
             }
             else if (!this.isRepeaterPowered)
             {
@@ -87,12 +87,12 @@ public class BlockRedstoneRepeater extends BlockDirectional
                 }
 
                 // CraftBukkit end
-                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, Block.redstoneRepeaterActive.blockID, var6);
+                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, Block.redstoneRepeaterActive.blockID, l);
 
-                if (!var8)
+                if (!flag1)
                 {
-                    int var9 = (var6 & 12) >> 2;
-                    par1World.scheduleBlockUpdate(par2, par3, par4, Block.redstoneRepeaterActive.blockID, repeaterState[var9] * 2);
+                    int i1 = (l & 12) >> 2;
+                    par1World.scheduleBlockUpdate(par2, par3, par4, Block.redstoneRepeaterActive.blockID, repeaterState[i1] * 2);
                 }
             }
         }
@@ -155,8 +155,8 @@ public class BlockRedstoneRepeater extends BlockDirectional
         }
         else
         {
-            int var6 = getDirection(par1IBlockAccess.getBlockMetadata(par2, par3, par4));
-            return var6 == 0 && par5 == 3 ? true : (var6 == 1 && par5 == 4 ? true : (var6 == 2 && par5 == 2 ? true : var6 == 3 && par5 == 5));
+            int i1 = getDirection(par1IBlockAccess.getBlockMetadata(par2, par3, par4));
+            return i1 == 0 && par5 == 3 ? true : (i1 == 1 && par5 == 4 ? true : (i1 == 2 && par5 == 2 ? true : i1 == 3 && par5 == 5));
         }
     }
 
@@ -179,24 +179,24 @@ public class BlockRedstoneRepeater extends BlockDirectional
         }
         else
         {
-            int var6 = par1World.getBlockMetadata(par2, par3, par4);
-            boolean var7 = this.func_82523_e(par1World, par2, par3, par4, var6);
+            int i1 = par1World.getBlockMetadata(par2, par3, par4);
+            boolean flag = this.func_82523_e(par1World, par2, par3, par4, i1);
 
-            if (!var7)
+            if (!flag)
             {
-                boolean var8 = this.ignoreTick(par1World, par2, par3, par4, var6);
-                int var9 = (var6 & 12) >> 2;
+                boolean flag1 = this.ignoreTick(par1World, par2, par3, par4, i1);
+                int j1 = (i1 & 12) >> 2;
 
-                if (this.isRepeaterPowered && !var8 || !this.isRepeaterPowered && var8)
+                if (this.isRepeaterPowered && !flag1 || !this.isRepeaterPowered && flag1)
                 {
-                    byte var10 = 0;
+                    byte b0 = 0;
 
-                    if (this.func_83011_d(par1World, par2, par3, par4, var6))
+                    if (this.func_83011_d(par1World, par2, par3, par4, i1))
                     {
-                        var10 = -1;
+                        b0 = -1;
                     }
 
-                    par1World.func_82740_a(par2, par3, par4, this.blockID, repeaterState[var9] * 2, var10);
+                    par1World.func_82740_a(par2, par3, par4, this.blockID, repeaterState[j1] * 2, b0);
                 }
             }
         }
@@ -204,9 +204,9 @@ public class BlockRedstoneRepeater extends BlockDirectional
 
     private boolean ignoreTick(World par1World, int par2, int par3, int par4, int par5)
     {
-        int var6 = getDirection(par5);
+        int i1 = getDirection(par5);
 
-        switch (var6)
+        switch (i1)
         {
             case 0:
                 return par1World.isBlockIndirectlyProvidingPowerTo(par2, par3, par4 + 1, 3) || par1World.getBlockId(par2, par3, par4 + 1) == Block.redstoneWire.blockID && par1World.getBlockMetadata(par2, par3, par4 + 1) > 0;
@@ -223,9 +223,9 @@ public class BlockRedstoneRepeater extends BlockDirectional
 
     public boolean func_82523_e(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        int var6 = getDirection(par5);
+        int i1 = getDirection(par5);
 
-        switch (var6)
+        switch (i1)
         {
             case 0:
             case 2:
@@ -243,10 +243,10 @@ public class BlockRedstoneRepeater extends BlockDirectional
      */
     public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
     {
-        int var10 = par1World.getBlockMetadata(par2, par3, par4);
-        int var11 = (var10 & 12) >> 2;
-        var11 = var11 + 1 << 2 & 12;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, var11 | var10 & 3);
+        int i1 = par1World.getBlockMetadata(par2, par3, par4);
+        int j1 = (i1 & 12) >> 2;
+        j1 = j1 + 1 << 2 & 12;
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, j1 | i1 & 3);
         return true;
     }
 
@@ -263,11 +263,11 @@ public class BlockRedstoneRepeater extends BlockDirectional
      */
     public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
     {
-        int var6 = ((MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3) + 2) % 4;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
-        boolean var7 = this.ignoreTick(par1World, par2, par3, par4, var6);
+        int l = ((MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3) + 2) % 4;
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, l);
+        boolean flag = this.ignoreTick(par1World, par2, par3, par4, l);
 
-        if (var7)
+        if (flag)
         {
             par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, 1);
         }
@@ -330,52 +330,52 @@ public class BlockRedstoneRepeater extends BlockDirectional
     {
         if (this.isRepeaterPowered)
         {
-            int var6 = par1World.getBlockMetadata(par2, par3, par4);
-            int var7 = getDirection(var6);
-            double var8 = (double)((float)par2 + 0.5F) + (double)(par5Random.nextFloat() - 0.5F) * 0.2D;
-            double var10 = (double)((float)par3 + 0.4F) + (double)(par5Random.nextFloat() - 0.5F) * 0.2D;
-            double var12 = (double)((float)par4 + 0.5F) + (double)(par5Random.nextFloat() - 0.5F) * 0.2D;
-            double var14 = 0.0D;
-            double var16 = 0.0D;
+            int l = par1World.getBlockMetadata(par2, par3, par4);
+            int i1 = getDirection(l);
+            double d0 = (double)((float)par2 + 0.5F) + (double)(par5Random.nextFloat() - 0.5F) * 0.2D;
+            double d1 = (double)((float)par3 + 0.4F) + (double)(par5Random.nextFloat() - 0.5F) * 0.2D;
+            double d2 = (double)((float)par4 + 0.5F) + (double)(par5Random.nextFloat() - 0.5F) * 0.2D;
+            double d3 = 0.0D;
+            double d4 = 0.0D;
 
             if (par5Random.nextInt(2) == 0)
             {
-                switch (var7)
+                switch (i1)
                 {
                     case 0:
-                        var16 = -0.3125D;
+                        d4 = -0.3125D;
                         break;
                     case 1:
-                        var14 = 0.3125D;
+                        d3 = 0.3125D;
                         break;
                     case 2:
-                        var16 = 0.3125D;
+                        d4 = 0.3125D;
                         break;
                     case 3:
-                        var14 = -0.3125D;
+                        d3 = -0.3125D;
                 }
             }
             else
             {
-                int var18 = (var6 & 12) >> 2;
+                int j1 = (l & 12) >> 2;
 
-                switch (var7)
+                switch (i1)
                 {
                     case 0:
-                        var16 = repeaterTorchOffset[var18];
+                        d4 = repeaterTorchOffset[j1];
                         break;
                     case 1:
-                        var14 = -repeaterTorchOffset[var18];
+                        d3 = -repeaterTorchOffset[j1];
                         break;
                     case 2:
-                        var16 = -repeaterTorchOffset[var18];
+                        d4 = -repeaterTorchOffset[j1];
                         break;
                     case 3:
-                        var14 = repeaterTorchOffset[var18];
+                        d3 = repeaterTorchOffset[j1];
                 }
             }
 
-            par1World.spawnParticle("reddust", var8 + var14, var10, var12 + var16, 0.0D, 0.0D, 0.0D);
+            par1World.spawnParticle("reddust", d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D);
         }
     }
 
@@ -396,13 +396,13 @@ public class BlockRedstoneRepeater extends BlockDirectional
 
     public boolean func_83011_d(World par1World, int par2, int par3, int par4, int par5)
     {
-        int var6 = getDirection(par5);
+        int i1 = getDirection(par5);
 
-        if (func_82524_c(par1World.getBlockId(par2 - Direction.offsetX[var6], par3, par4 - Direction.offsetZ[var6])))
+        if (func_82524_c(par1World.getBlockId(par2 - Direction.offsetX[i1], par3, par4 - Direction.offsetZ[i1])))
         {
-            int var7 = par1World.getBlockMetadata(par2 - Direction.offsetX[var6], par3, par4 - Direction.offsetZ[var6]);
-            int var8 = getDirection(var7);
-            return var8 != var6;
+            int j1 = par1World.getBlockMetadata(par2 - Direction.offsetX[i1], par3, par4 - Direction.offsetZ[i1]);
+            int k1 = getDirection(j1);
+            return k1 != i1;
         }
         else
         {

@@ -49,10 +49,10 @@ public class EntityExpBottle extends EntityThrowable
         {
             // CraftBukkit moved after event
             // this.world.triggerEffect(2002, (int) Math.round(this.locX), (int) Math.round(this.locY), (int) Math.round(this.locZ), 0);
-            int var2 = 3 + this.worldObj.rand.nextInt(5) + this.worldObj.rand.nextInt(5);
+            int i = 3 + this.worldObj.rand.nextInt(5) + this.worldObj.rand.nextInt(5);
             // CraftBukkit start
-            org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExpBottleEvent(this, var2);
-            var2 = event.getExperience();
+            org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExpBottleEvent(this, i);
+            i = event.getExperience();
 
             if (event.getShowEffect())
             {
@@ -60,11 +60,11 @@ public class EntityExpBottle extends EntityThrowable
             }
             // CraftBukkit end
 
-            while (var2 > 0)
+            while (i > 0)
             {
-                int var3 = EntityXPOrb.getXPSplit(var2);
-                var2 -= var3;
-                this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, var3));
+                int j = EntityXPOrb.getXPSplit(i);
+                i -= j;
+                this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, j));
             }
 
             this.setDead();

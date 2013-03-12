@@ -100,13 +100,13 @@ public class BlockTripWire extends Block
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        int var6 = par1World.getBlockMetadata(par2, par3, par4);
-        boolean var7 = (var6 & 2) == 2;
-        boolean var8 = !par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4);
+        int i1 = par1World.getBlockMetadata(par2, par3, par4);
+        boolean flag = (i1 & 2) == 2;
+        boolean flag1 = !par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4);
 
-        if (var7 != var8)
+        if (flag != flag1)
         {
-            this.dropBlockAsItem(par1World, par2, par3, par4, var6, 0);
+            this.dropBlockAsItem(par1World, par2, par3, par4, i1, 0);
             par1World.setBlockWithNotify(par2, par3, par4, 0);
         }
     }
@@ -116,15 +116,15 @@ public class BlockTripWire extends Block
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        int var5 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
-        boolean var6 = (var5 & 4) == 4;
-        boolean var7 = (var5 & 2) == 2;
+        int l = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
+        boolean flag = (l & 4) == 4;
+        boolean flag1 = (l & 2) == 2;
 
-        if (!var7)
+        if (!flag1)
         {
             this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.09375F, 1.0F);
         }
-        else if (!var6)
+        else if (!flag)
         {
             this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.5F, 1.0F);
         }
@@ -139,9 +139,9 @@ public class BlockTripWire extends Block
      */
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
-        int var5 = par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) ? 0 : 2;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, var5);
-        this.func_72149_e(par1World, par2, par3, par4, var5);
+        int l = par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) ? 0 : 2;
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, l);
+        this.func_72149_e(par1World, par2, par3, par4, l);
     }
 
     /**
@@ -168,37 +168,37 @@ public class BlockTripWire extends Block
 
     private void func_72149_e(World par1World, int par2, int par3, int par4, int par5)
     {
-        int var6 = 0;
+        int i1 = 0;
 
-        while (var6 < 2)
+        while (i1 < 2)
         {
-            int var7 = 1;
+            int j1 = 1;
 
             while (true)
             {
-                if (var7 < 42)
+                if (j1 < 42)
                 {
-                    int var8 = par2 + Direction.offsetX[var6] * var7;
-                    int var9 = par4 + Direction.offsetZ[var6] * var7;
-                    int var10 = par1World.getBlockId(var8, par3, var9);
+                    int k1 = par2 + Direction.offsetX[i1] * j1;
+                    int l1 = par4 + Direction.offsetZ[i1] * j1;
+                    int i2 = par1World.getBlockId(k1, par3, l1);
 
-                    if (var10 == Block.tripWireSource.blockID)
+                    if (i2 == Block.tripWireSource.blockID)
                     {
-                        int var11 = par1World.getBlockMetadata(var8, par3, var9) & 3;
+                        int j2 = par1World.getBlockMetadata(k1, par3, l1) & 3;
 
-                        if (var11 == Direction.footInvisibleFaceRemap[var6])
+                        if (j2 == Direction.footInvisibleFaceRemap[i1])
                         {
-                            Block.tripWireSource.func_72143_a(par1World, var8, par3, var9, var10, par1World.getBlockMetadata(var8, par3, var9), true, var7, par5);
+                            Block.tripWireSource.func_72143_a(par1World, k1, par3, l1, i2, par1World.getBlockMetadata(k1, par3, l1), true, j1, par5);
                         }
                     }
-                    else if (var10 == Block.tripWire.blockID)
+                    else if (i2 == Block.tripWire.blockID)
                     {
-                        ++var7;
+                        ++j1;
                         continue;
                     }
                 }
 
-                ++var6;
+                ++i1;
                 break;
             }
         }
@@ -234,22 +234,22 @@ public class BlockTripWire extends Block
 
     private void updateTripWireState(World par1World, int par2, int par3, int par4)
     {
-        int var5 = par1World.getBlockMetadata(par2, par3, par4);
-        boolean var6 = (var5 & 1) == 1;
-        boolean var7 = false;
-        List var8 = par1World.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
+        int l = par1World.getBlockMetadata(par2, par3, par4);
+        boolean flag = (l & 1) == 1;
+        boolean flag1 = false;
+        List list = par1World.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
 
-        if (!var8.isEmpty())
+        if (!list.isEmpty())
         {
-            Iterator var9 = var8.iterator();
+            Iterator iterator = list.iterator();
 
-            while (var9.hasNext())
+            while (iterator.hasNext())
             {
-                Entity var10 = (Entity)var9.next();
+                Entity entity = (Entity)iterator.next();
 
-                if (!var10.doesEntityNotTriggerPressurePlate())
+                if (!entity.doesEntityNotTriggerPressurePlate())
                 {
-                    var7 = true;
+                    flag1 = true;
                     break;
                 }
             }
@@ -259,11 +259,11 @@ public class BlockTripWire extends Block
         org.bukkit.World bworld = par1World.getWorld();
         org.bukkit.plugin.PluginManager manager = par1World.getServer().getPluginManager();
 
-        if (var6 != var7)
+        if (flag != flag1)
         {
-            if (var7)
+            if (flag1)
             {
-                for (Object object : var8)
+                for (Object object : list)
                 {
                     if (object != null)
                     {
@@ -292,23 +292,23 @@ public class BlockTripWire extends Block
             }
         }
         // CraftBukkit end
-        if (var7 && !var6)
+        if (flag1 && !flag)
         {
-            var5 |= 1;
+            l |= 1;
         }
 
-        if (!var7 && var6)
+        if (!flag1 && flag)
         {
-            var5 &= -2;
+            l &= -2;
         }
 
-        if (var7 != var6)
+        if (flag1 != flag)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var5);
-            this.func_72149_e(par1World, par2, par3, par4, var5);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, l);
+            this.func_72149_e(par1World, par2, par3, par4, l);
         }
 
-        if (var7)
+        if (flag1)
         {
             par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
         }
@@ -317,23 +317,23 @@ public class BlockTripWire extends Block
     @SideOnly(Side.CLIENT)
     public static boolean func_72148_a(IBlockAccess par0IBlockAccess, int par1, int par2, int par3, int par4, int par5)
     {
-        int var6 = par1 + Direction.offsetX[par5];
-        int var8 = par3 + Direction.offsetZ[par5];
-        int var9 = par0IBlockAccess.getBlockId(var6, par2, var8);
-        boolean var10 = (par4 & 2) == 2;
-        int var11;
+        int j1 = par1 + Direction.offsetX[par5];
+        int k1 = par3 + Direction.offsetZ[par5];
+        int l1 = par0IBlockAccess.getBlockId(j1, par2, k1);
+        boolean flag = (par4 & 2) == 2;
+        int i2;
 
-        if (var9 == Block.tripWireSource.blockID)
+        if (l1 == Block.tripWireSource.blockID)
         {
-            var11 = par0IBlockAccess.getBlockMetadata(var6, par2, var8);
-            int var13 = var11 & 3;
-            return var13 == Direction.footInvisibleFaceRemap[par5];
+            i2 = par0IBlockAccess.getBlockMetadata(j1, par2, k1);
+            int j2 = i2 & 3;
+            return j2 == Direction.footInvisibleFaceRemap[par5];
         }
-        else if (var9 == Block.tripWire.blockID)
+        else if (l1 == Block.tripWire.blockID)
         {
-            var11 = par0IBlockAccess.getBlockMetadata(var6, par2, var8);
-            boolean var12 = (var11 & 2) == 2;
-            return var10 == var12;
+            i2 = par0IBlockAccess.getBlockMetadata(j1, par2, k1);
+            boolean flag1 = (i2 & 2) == 2;
+            return flag == flag1;
         }
         else
         {

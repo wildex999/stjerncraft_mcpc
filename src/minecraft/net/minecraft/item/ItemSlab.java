@@ -72,15 +72,15 @@ public class ItemSlab extends ItemBlock
         }
         else
         {
-            int var11 = par3World.getBlockId(par4, par5, par6);
-            int var12 = par3World.getBlockMetadata(par4, par5, par6);
-            int var13 = var12 & 7;
-            boolean var14 = (var12 & 8) != 0;
+            int i1 = par3World.getBlockId(par4, par5, par6);
+            int j1 = par3World.getBlockMetadata(par4, par5, par6);
+            int k1 = j1 & 7;
+            boolean flag = (j1 & 8) != 0;
 
-            if ((par7 == 1 && !var14 || par7 == 0 && var14) && var11 == this.theHalfSlab.blockID && var13 == par1ItemStack.getItemDamage())
+            if ((par7 == 1 && !flag || par7 == 0 && flag) && i1 == this.theHalfSlab.blockID && k1 == par1ItemStack.getItemDamage())
             {
                 // CraftBukkit start - world.setTypeIdAndData -> processBlockPlace()
-                if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, this.theHalfSlab2.blockID, var13, clickedX, clickedY, clickedZ))
+                if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, this.theHalfSlab2.blockID, k1, clickedX, clickedY, clickedZ))
                 {
                     // par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.theHalfSlab2.stepSound.getPlaceSound(), (this.theHalfSlab2.stepSound.getVolume() + 1.0F) / 2.0F, this.theHalfSlab2.stepSound.getPitch() * 0.8F);
                     // CraftBukkit end
@@ -103,15 +103,15 @@ public class ItemSlab extends ItemBlock
      */
     public boolean canPlaceItemBlockOnSide(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer, ItemStack par7ItemStack)
     {
-        int var8 = par2;
-        int var9 = par3;
-        int var10 = par4;
-        int var11 = par1World.getBlockId(par2, par3, par4);
-        int var12 = par1World.getBlockMetadata(par2, par3, par4);
-        int var13 = var12 & 7;
-        boolean var14 = (var12 & 8) != 0;
+        int i1 = par2;
+        int j1 = par3;
+        int k1 = par4;
+        int l1 = par1World.getBlockId(par2, par3, par4);
+        int i2 = par1World.getBlockMetadata(par2, par3, par4);
+        int j2 = i2 & 7;
+        boolean flag = (i2 & 8) != 0;
 
-        if ((par5 == 1 && !var14 || par5 == 0 && var14) && var11 == this.theHalfSlab.blockID && var13 == par7ItemStack.getItemDamage())
+        if ((par5 == 1 && !flag || par5 == 0 && flag) && l1 == this.theHalfSlab.blockID && j2 == par7ItemStack.getItemDamage())
         {
             return true;
         }
@@ -147,11 +147,11 @@ public class ItemSlab extends ItemBlock
                 ++par2;
             }
 
-            var11 = par1World.getBlockId(par2, par3, par4);
-            var12 = par1World.getBlockMetadata(par2, par3, par4);
-            var13 = var12 & 7;
-            var14 = (var12 & 8) != 0;
-            return var11 == this.theHalfSlab.blockID && var13 == par7ItemStack.getItemDamage() ? true : super.canPlaceItemBlockOnSide(par1World, var8, var9, var10, par5, par6EntityPlayer, par7ItemStack);
+            l1 = par1World.getBlockId(par2, par3, par4);
+            i2 = par1World.getBlockMetadata(par2, par3, par4);
+            j2 = i2 & 7;
+            flag = (i2 & 8) != 0;
+            return l1 == this.theHalfSlab.blockID && j2 == par7ItemStack.getItemDamage() ? true : super.canPlaceItemBlockOnSide(par1World, i1, j1, k1, par5, par6EntityPlayer, par7ItemStack);
         }
     }
 
@@ -187,13 +187,13 @@ public class ItemSlab extends ItemBlock
             ++par4;
         }
 
-        int var8 = par3World.getBlockId(par4, par5, par6);
-        int var9 = par3World.getBlockMetadata(par4, par5, par6);
-        int var10 = var9 & 7;
+        int i1 = par3World.getBlockId(par4, par5, par6);
+        int j1 = par3World.getBlockMetadata(par4, par5, par6);
+        int k1 = j1 & 7;
 
-        if (var8 == this.theHalfSlab.blockID && var10 == par1ItemStack.getItemDamage())
+        if (i1 == this.theHalfSlab.blockID && k1 == par1ItemStack.getItemDamage())
         {
-            if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.theHalfSlab2.blockID, var10))
+            if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.theHalfSlab2.blockID, k1))
             {
                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.theHalfSlab2.stepSound.getPlaceSound(), (this.theHalfSlab2.stepSound.getVolume() + 1.0F) / 2.0F, this.theHalfSlab2.stepSound.getPitch() * 0.8F);
                 --par1ItemStack.stackSize;

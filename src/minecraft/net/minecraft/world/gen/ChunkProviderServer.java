@@ -78,13 +78,13 @@ public class ChunkProviderServer implements IChunkProvider
     {
         if (this.worldObj.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(this.worldObj.dimension))   // Forge
         {
-            ChunkCoordinates var3 = this.worldObj.getSpawnPoint();
-            int var4 = par1 * 16 + 8 - var3.posX;
-            int var5 = par2 * 16 + 8 - var3.posZ;
-            short var6 = 128;
+            ChunkCoordinates chunkcoordinates = this.worldObj.getSpawnPoint();
+            int k = par1 * 16 + 8 - chunkcoordinates.posX;
+            int l = par2 * 16 + 8 - chunkcoordinates.posZ;
+            short short1 = 128;
 
             // CraftBukkit start
-            if (var4 < -var6 || var4 > var6 || var5 < -var6 || var5 > var6 || !(this.worldObj.keepSpawnInMemory))   // Added 'this.world.keepSpawnInMemory'
+            if (k < -short1 || k > short1 || l < -short1 || l > short1 || !(this.worldObj.keepSpawnInMemory))   // Added 'this.world.keepSpawnInMemory'
             {
                 this.chunksToUnload.add(par1, par2);
                 Chunk c = this.loadedChunkHashMap.get(LongHash.toLong(par1, par2));
@@ -117,12 +117,12 @@ public class ChunkProviderServer implements IChunkProvider
      */
     public void unloadAllChunks()
     {
-        Iterator var1 = this.loadedChunkHashMap.values().iterator(); // CraftBukkit
+        Iterator iterator = this.loadedChunkHashMap.values().iterator(); // CraftBukkit
 
-        while (var1.hasNext())
+        while (iterator.hasNext())
         {
-            Chunk var2 = (Chunk)var1.next();
-            this.unloadChunksIfNotNearSpawn(var2.xPosition, var2.zPosition);
+            Chunk chunk = (Chunk)iterator.next();
+            this.unloadChunksIfNotNearSpawn(chunk.xPosition, chunk.zPosition);
         }
     }
 
@@ -266,11 +266,11 @@ public class ChunkProviderServer implements IChunkProvider
         {
             try
             {
-                Chunk var3 = this.currentChunkLoader.loadChunk(this.worldObj, par1, par2);
+                Chunk chunk = this.currentChunkLoader.loadChunk(this.worldObj, par1, par2);
 
-                if (var3 != null)
+                if (chunk != null)
                 {
-                    var3.lastSaveTime = this.worldObj.getTotalWorldTime();
+                    chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
 
                     if (this.currentChunkProvider != null)
                     {
@@ -278,11 +278,11 @@ public class ChunkProviderServer implements IChunkProvider
                     }
                 }
 
-                return var3;
+                return chunk;
             }
-            catch (Exception var4)
+            catch (Exception exception)
             {
-                var4.printStackTrace();
+                exception.printStackTrace();
                 return null;
             }
         }
@@ -296,9 +296,9 @@ public class ChunkProviderServer implements IChunkProvider
             {
                 this.currentChunkLoader.saveExtraChunkData(this.worldObj, par1Chunk);
             }
-            catch (Exception var3)
+            catch (Exception exception)
             {
-                var3.printStackTrace();
+                exception.printStackTrace();
             }
         }
     }
@@ -312,9 +312,9 @@ public class ChunkProviderServer implements IChunkProvider
                 par1Chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
                 this.currentChunkLoader.saveChunk(this.worldObj, par1Chunk);
             }
-            catch (Exception var3)     // CraftBukkit - IOException -> Exception
+            catch (Exception exception)     // CraftBukkit - IOException -> Exception
             {
-                var3.printStackTrace();
+                exception.printStackTrace();
                 // CraftBukkit start - remove extra exception
             }
 
@@ -330,11 +330,11 @@ public class ChunkProviderServer implements IChunkProvider
      */
     public void populate(IChunkProvider par1IChunkProvider, int par2, int par3)
     {
-        Chunk var4 = this.provideChunk(par2, par3);
+        Chunk chunk = this.provideChunk(par2, par3);
 
-        if (!var4.isTerrainPopulated)
+        if (!chunk.isTerrainPopulated)
         {
-            var4.isTerrainPopulated = true;
+            chunk.isTerrainPopulated = true;
 
             if (this.currentChunkProvider != null)
             {
@@ -352,15 +352,15 @@ public class ChunkProviderServer implements IChunkProvider
                 {
                     for (org.bukkit.generator.BlockPopulator populator : world.getPopulators())
                     {
-                        populator.populate(world, random, var4.bukkitChunk);
+                        populator.populate(world, random, chunk.bukkitChunk);
                     }
                 }
 
                 BlockSand.fallInstantly = false;
-                this.worldObj.getServer().getPluginManager().callEvent(new org.bukkit.event.world.ChunkPopulateEvent(var4.bukkitChunk));
+                this.worldObj.getServer().getPluginManager().callEvent(new org.bukkit.event.world.ChunkPopulateEvent(chunk.bukkitChunk));
                 // CraftBukkit end
                 GameRegistry.generateWorld(par2, par3, this.worldObj, this.currentChunkProvider, par1IChunkProvider); // Forge
-                var4.setChunkModified();
+                chunk.setChunkModified();
             }
         }
     }
@@ -371,7 +371,7 @@ public class ChunkProviderServer implements IChunkProvider
      */
     public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate)
     {
-        int var3 = 0;
+        int i = 0;
         // CraftBukkit start
         Iterator iterator = this.loadedChunkHashMap.values().iterator();
 
@@ -389,9 +389,9 @@ public class ChunkProviderServer implements IChunkProvider
             {
                 this.safeSaveChunk(chunk);
                 chunk.isModified = false;
-                ++var3;
+                ++i;
 
-                if (var3 == 24 && !par1)
+                if (i == 24 && !par1)
                 {
                     return false;
                 }

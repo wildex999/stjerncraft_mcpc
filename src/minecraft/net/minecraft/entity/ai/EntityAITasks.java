@@ -28,22 +28,22 @@ public class EntityAITasks
 
     public void func_85156_a(EntityAIBase par1EntityAIBase)
     {
-        Iterator var2 = this.taskEntries.iterator();
+        Iterator iterator = this.taskEntries.iterator();
 
-        while (var2.hasNext())
+        while (iterator.hasNext())
         {
-            EntityAITaskEntry var3 = (EntityAITaskEntry)var2.next();
-            EntityAIBase var4 = var3.action;
+            EntityAITaskEntry entityaitaskentry = (EntityAITaskEntry)iterator.next();
+            EntityAIBase entityaibase1 = entityaitaskentry.action;
 
-            if (var4 == par1EntityAIBase)
+            if (entityaibase1 == par1EntityAIBase)
             {
-                if (this.executingTaskEntries.contains(var3))
+                if (this.executingTaskEntries.contains(entityaitaskentry))
                 {
-                    var4.resetTask();
-                    this.executingTaskEntries.remove(var3);
+                    entityaibase1.resetTask();
+                    this.executingTaskEntries.remove(entityaitaskentry);
                 }
 
-                var2.remove();
+                iterator.remove();
             }
         }
     }
@@ -51,51 +51,51 @@ public class EntityAITasks
     public void onUpdateTasks()
     {
         // ArrayList arraylist = new ArrayList(); // CraftBukkit - remove usage
-        Iterator var1;
-        EntityAITaskEntry var2;
+        Iterator iterator;
+        EntityAITaskEntry entityaitaskentry;
 
         if (this.field_75778_d++ % this.field_75779_e == 0)
         {
-            var1 = this.taskEntries.iterator();
+            iterator = this.taskEntries.iterator();
 
-            while (var1.hasNext())
+            while (iterator.hasNext())
             {
-                var2 = (EntityAITaskEntry) var1.next();
-                boolean var3 = this.executingTaskEntries.contains(var2);
+                entityaitaskentry = (EntityAITaskEntry) iterator.next();
+                boolean flag = this.executingTaskEntries.contains(entityaitaskentry);
 
-                if (var3)
+                if (flag)
                 {
-                    if (this.func_75775_b(var2) && this.func_75773_a(var2))
+                    if (this.func_75775_b(entityaitaskentry) && this.func_75773_a(entityaitaskentry))
                     {
                         continue;
                     }
 
-                    var2.action.resetTask();
-                    this.executingTaskEntries.remove(var2);
+                    entityaitaskentry.action.resetTask();
+                    this.executingTaskEntries.remove(entityaitaskentry);
                 }
 
-                if (this.func_75775_b(var2) && var2.action.shouldExecute())
+                if (this.func_75775_b(entityaitaskentry) && entityaitaskentry.action.shouldExecute())
                 {
                     // CraftBukkit start - call method now instead of queueing
                     // arraylist.add(pathfindergoalselectoritem);
-                    var2.action.startExecuting();
+                    entityaitaskentry.action.startExecuting();
                     // CraftBukkit end
-                    this.executingTaskEntries.add(var2);
+                    this.executingTaskEntries.add(entityaitaskentry);
                 }
             }
         }
         else
         {
-            var1 = this.executingTaskEntries.iterator();
+            iterator = this.executingTaskEntries.iterator();
 
-            while (var1.hasNext())
+            while (iterator.hasNext())
             {
-                var2 = (EntityAITaskEntry) var1.next();
+                entityaitaskentry = (EntityAITaskEntry) iterator.next();
 
-                if (!var2.action.continueExecuting())
+                if (!entityaitaskentry.action.continueExecuting())
                 {
-                    var2.action.resetTask();
-                    var1.remove();
+                    entityaitaskentry.action.resetTask();
+                    iterator.remove();
                 }
             }
         }
@@ -113,12 +113,12 @@ public class EntityAITasks
         // CraftBukkit end
         this.theProfiler.endSection();
         this.theProfiler.startSection("goalTick");
-        var1 = this.executingTaskEntries.iterator();
+        iterator = this.executingTaskEntries.iterator();
 
-        while (var1.hasNext())
+        while (iterator.hasNext())
         {
-            var2 = (EntityAITaskEntry) var1.next();
-            var2.action.updateTask();
+            entityaitaskentry = (EntityAITaskEntry) iterator.next();
+            entityaitaskentry.action.updateTask();
         }
 
         this.theProfiler.endSection();
@@ -127,31 +127,31 @@ public class EntityAITasks
     private boolean func_75773_a(EntityAITaskEntry par1EntityAITaskEntry)
     {
         this.theProfiler.startSection("canContinue");
-        boolean var2 = par1EntityAITaskEntry.action.continueExecuting();
+        boolean flag = par1EntityAITaskEntry.action.continueExecuting();
         this.theProfiler.endSection();
-        return var2;
+        return flag;
     }
 
     private boolean func_75775_b(EntityAITaskEntry par1EntityAITaskEntry)
     {
         this.theProfiler.startSection("canUse");
-        Iterator var2 = this.taskEntries.iterator();
+        Iterator iterator = this.taskEntries.iterator();
 
-        while (var2.hasNext())
+        while (iterator.hasNext())
         {
-            EntityAITaskEntry var3 = (EntityAITaskEntry)var2.next();
+            EntityAITaskEntry entityaitaskentry1 = (EntityAITaskEntry)iterator.next();
 
-            if (var3 != par1EntityAITaskEntry)
+            if (entityaitaskentry1 != par1EntityAITaskEntry)
             {
-                if (par1EntityAITaskEntry.priority >= var3.priority)
+                if (par1EntityAITaskEntry.priority >= entityaitaskentry1.priority)
                 {
-                    if (this.executingTaskEntries.contains(var3) && !this.areTasksCompatible(par1EntityAITaskEntry, var3))
+                    if (this.executingTaskEntries.contains(entityaitaskentry1) && !this.areTasksCompatible(par1EntityAITaskEntry, entityaitaskentry1))
                     {
                         this.theProfiler.endSection();
                         return false;
                     }
                 }
-                else if (this.executingTaskEntries.contains(var3) && !var3.action.isContinuous())
+                else if (this.executingTaskEntries.contains(entityaitaskentry1) && !entityaitaskentry1.action.isContinuous())
                 {
                     this.theProfiler.endSection();
                     return false;

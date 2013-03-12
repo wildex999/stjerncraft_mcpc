@@ -125,19 +125,19 @@ public class EntityLightningBolt extends EntityWeatherEffect
                 // CraftBukkit
                 if (!this.isEffect && !this.worldObj.isRemote && this.worldObj.doChunksNearChunkExist(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ), 10))
                 {
-                    int var1 = MathHelper.floor_double(this.posX);
-                    int var2 = MathHelper.floor_double(this.posY);
-                    int var3 = MathHelper.floor_double(this.posZ);
+                    int i = MathHelper.floor_double(this.posX);
+                    int j = MathHelper.floor_double(this.posY);
+                    int k = MathHelper.floor_double(this.posZ);
 
-                    if (this.worldObj.getBlockId(var1, var2, var3) == 0 && Block.fire.canPlaceBlockAt(this.worldObj, var1, var2, var3))
+                    if (this.worldObj.getBlockId(i, j, k) == 0 && Block.fire.canPlaceBlockAt(this.worldObj, i, j, k))
                     {
                         // CraftBukkit start
-                        BlockIgniteEvent event = new BlockIgniteEvent(this.cworld.getBlockAt(var1, var2, var3), BlockIgniteEvent.IgniteCause.LIGHTNING, null);
+                        BlockIgniteEvent event = new BlockIgniteEvent(this.cworld.getBlockAt(i, j, k), BlockIgniteEvent.IgniteCause.LIGHTNING, null);
                         this.worldObj.getServer().getPluginManager().callEvent(event);
 
                         if (!event.isCancelled())
                         {
-                            this.worldObj.setBlockWithNotify(var1, var2, var3, Block.fire.blockID);
+                            this.worldObj.setBlockWithNotify(i, j, k, Block.fire.blockID);
                         }
 
                         // CraftBukkit end
@@ -154,13 +154,13 @@ public class EntityLightningBolt extends EntityWeatherEffect
             }
             else
             {
-                double var6 = 3.0D;
-                List var7 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(this.posX - var6, this.posY - var6, this.posZ - var6, this.posX + var6, this.posY + 6.0D + var6, this.posZ + var6));
+                double d0 = 3.0D;
+                List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(this.posX - d0, this.posY - d0, this.posZ - d0, this.posX + d0, this.posY + 6.0D + d0, this.posZ + d0));
 
-                for (int var4 = 0; var4 < var7.size(); ++var4)
+                for (int l = 0; l < list.size(); ++l)
                 {
-                    Entity var5 = (Entity)var7.get(var4);
-                    var5.onStruckByLightning(this);
+                    Entity entity = (Entity)list.get(l);
+                    entity.onStruckByLightning(this);
                 }
             }
         }

@@ -68,11 +68,11 @@ public class BlockFarmland extends Block
     {
         if (!this.isWaterNearby(par1World, par2, par3, par4) && !par1World.canLightningStrikeAt(par2, par3 + 1, par4))
         {
-            int var6 = par1World.getBlockMetadata(par2, par3, par4);
+            int l = par1World.getBlockMetadata(par2, par3, par4);
 
-            if (var6 > 0)
+            if (l > 0)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 - 1);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, l - 1);
             }
             else if (!this.isCropsNearby(par1World, par2, par3, par4))
             {
@@ -134,15 +134,15 @@ public class BlockFarmland extends Block
      */
     private boolean isCropsNearby(World par1World, int par2, int par3, int par4)
     {
-        byte var5 = 0;
+        byte b0 = 0;
 
-        for (int var6 = par2 - var5; var6 <= par2 + var5; ++var6)
+        for (int l = par2 - b0; l <= par2 + b0; ++l)
         {
-            for (int var7 = par4 - var5; var7 <= par4 + var5; ++var7)
+            for (int i1 = par4 - b0; i1 <= par4 + b0; ++i1)
             {
-                int var8 = par1World.getBlockId(var6, par3 + 1, var7);
+                int j1 = par1World.getBlockId(l, par3 + 1, i1);
 
-                Block plant = blocksList[var8];
+                Block plant = blocksList[j1];
                 if (plant instanceof IPlantable && canSustainPlant(par1World, par2, par3, par4, ForgeDirection.UP, (IPlantable)plant))
                 {
                     return true;
@@ -158,13 +158,13 @@ public class BlockFarmland extends Block
      */
     private boolean isWaterNearby(World par1World, int par2, int par3, int par4)
     {
-        for (int var5 = par2 - 4; var5 <= par2 + 4; ++var5)
+        for (int l = par2 - 4; l <= par2 + 4; ++l)
         {
-            for (int var6 = par3; var6 <= par3 + 1; ++var6)
+            for (int i1 = par3; i1 <= par3 + 1; ++i1)
             {
-                for (int var7 = par4 - 4; var7 <= par4 + 4; ++var7)
+                for (int j1 = par4 - 4; j1 <= par4 + 4; ++j1)
                 {
-                    if (par1World.getBlockMaterial(var5, var6, var7) == Material.water)
+                    if (par1World.getBlockMaterial(l, i1, j1) == Material.water)
                     {
                         return true;
                     }
@@ -182,9 +182,9 @@ public class BlockFarmland extends Block
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
         super.onNeighborBlockChange(par1World, par2, par3, par4, par5);
-        Material var6 = par1World.getBlockMaterial(par2, par3 + 1, par4);
+        Material material = par1World.getBlockMaterial(par2, par3 + 1, par4);
 
-        if (var6.isSolid())
+        if (material.isSolid())
         {
             par1World.setBlockWithNotify(par2, par3, par4, Block.dirt.blockID);
         }

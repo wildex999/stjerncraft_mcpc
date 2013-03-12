@@ -75,22 +75,22 @@ public class EntityEnderman extends EntityMob
      */
     protected Entity findPlayerToAttack()
     {
-        EntityPlayer var1 = this.worldObj.getClosestVulnerablePlayerToEntity(this, 64.0D);
+        EntityPlayer entityplayer = this.worldObj.getClosestVulnerablePlayerToEntity(this, 64.0D);
 
-        if (var1 != null)
+        if (entityplayer != null)
         {
-            if (this.shouldAttackPlayer(var1))
+            if (this.shouldAttackPlayer(entityplayer))
             {
                 if (this.field_70826_g == 0)
                 {
-                    this.worldObj.playSoundAtEntity(var1, "mob.endermen.stare", 1.0F, 1.0F);
+                    this.worldObj.playSoundAtEntity(entityplayer, "mob.endermen.stare", 1.0F, 1.0F);
                 }
 
                 if (this.field_70826_g++ == 5)
                 {
                     this.field_70826_g = 0;
                     this.setScreaming(true);
-                    return var1;
+                    return entityplayer;
                 }
             }
             else
@@ -107,20 +107,20 @@ public class EntityEnderman extends EntityMob
      */
     private boolean shouldAttackPlayer(EntityPlayer par1EntityPlayer)
     {
-        ItemStack var2 = par1EntityPlayer.inventory.armorInventory[3];
+        ItemStack itemstack = par1EntityPlayer.inventory.armorInventory[3];
 
-        if (var2 != null && var2.itemID == Block.pumpkin.blockID)
+        if (itemstack != null && itemstack.itemID == Block.pumpkin.blockID)
         {
             return false;
         }
         else
         {
-            Vec3 var3 = par1EntityPlayer.getLook(1.0F).normalize();
-            Vec3 var4 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX - par1EntityPlayer.posX, this.boundingBox.minY + (double)(this.height / 2.0F) - (par1EntityPlayer.posY + (double)par1EntityPlayer.getEyeHeight()), this.posZ - par1EntityPlayer.posZ);
-            double var5 = var4.lengthVector();
-            var4 = var4.normalize();
-            double var7 = var3.dotProduct(var4);
-            return var7 > 1.0D - 0.025D / var5 ? par1EntityPlayer.canEntityBeSeen(this) : false;
+            Vec3 vec3 = par1EntityPlayer.getLook(1.0F).normalize();
+            Vec3 vec31 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX - par1EntityPlayer.posX, this.boundingBox.minY + (double)(this.height / 2.0F) - (par1EntityPlayer.posY + (double)par1EntityPlayer.getEyeHeight()), this.posZ - par1EntityPlayer.posZ);
+            double d0 = vec31.lengthVector();
+            vec31 = vec31.normalize();
+            double d1 = vec3.dotProduct(vec31);
+            return d1 > 1.0D - 0.025D / d0 ? par1EntityPlayer.canEntityBeSeen(this) : false;
         }
     }
 
@@ -136,31 +136,31 @@ public class EntityEnderman extends EntityMob
         }
 
         this.moveSpeed = this.entityToAttack != null ? 6.5F : 0.3F;
-        int var1;
+        int i;
 
         if (!this.worldObj.isRemote && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
         {
-            int var2;
-            int var3;
-            int var4;
+            int j;
+            int k;
+            int l;
 
             if (this.getCarried() == 0)
             {
                 if (this.rand.nextInt(20) == 0)
                 {
-                    var1 = MathHelper.floor_double(this.posX - 2.0D + this.rand.nextDouble() * 4.0D);
-                    var2 = MathHelper.floor_double(this.posY + this.rand.nextDouble() * 3.0D);
-                    var3 = MathHelper.floor_double(this.posZ - 2.0D + this.rand.nextDouble() * 4.0D);
-                    var4 = this.worldObj.getBlockId(var1, var2, var3);
+                    i = MathHelper.floor_double(this.posX - 2.0D + this.rand.nextDouble() * 4.0D);
+                    j = MathHelper.floor_double(this.posY + this.rand.nextDouble() * 3.0D);
+                    k = MathHelper.floor_double(this.posZ - 2.0D + this.rand.nextDouble() * 4.0D);
+                    l = this.worldObj.getBlockId(i, j, k);
 
-                    if (carriableBlocks[var4])
+                    if (carriableBlocks[l])
                     {
                         // CraftBukkit start - pickup event
-                        if (!CraftEventFactory.callEntityChangeBlockEvent(this, this.worldObj.getWorld().getBlockAt(var1, var2, var3), org.bukkit.Material.AIR).isCancelled())
+                        if (!CraftEventFactory.callEntityChangeBlockEvent(this, this.worldObj.getWorld().getBlockAt(i, j, k), org.bukkit.Material.AIR).isCancelled())
                         {
-                            this.setCarried(this.worldObj.getBlockId(var1, var2, var3));
-                            this.setCarryingData(this.worldObj.getBlockMetadata(var1, var2, var3));
-                            this.worldObj.setBlockWithNotify(var1, var2, var3, 0);
+                            this.setCarried(this.worldObj.getBlockId(i, j, k));
+                            this.setCarryingData(this.worldObj.getBlockMetadata(i, j, k));
+                            this.worldObj.setBlockWithNotify(i, j, k, 0);
                         }
 
                         // CraftBukkit end
@@ -169,18 +169,18 @@ public class EntityEnderman extends EntityMob
             }
             else if (this.rand.nextInt(2000) == 0)
             {
-                var1 = MathHelper.floor_double(this.posX - 1.0D + this.rand.nextDouble() * 2.0D);
-                var2 = MathHelper.floor_double(this.posY + this.rand.nextDouble() * 2.0D);
-                var3 = MathHelper.floor_double(this.posZ - 1.0D + this.rand.nextDouble() * 2.0D);
-                var4 = this.worldObj.getBlockId(var1, var2, var3);
-                int var5 = this.worldObj.getBlockId(var1, var2 - 1, var3);
+                i = MathHelper.floor_double(this.posX - 1.0D + this.rand.nextDouble() * 2.0D);
+                j = MathHelper.floor_double(this.posY + this.rand.nextDouble() * 2.0D);
+                k = MathHelper.floor_double(this.posZ - 1.0D + this.rand.nextDouble() * 2.0D);
+                l = this.worldObj.getBlockId(i, j, k);
+                int i1 = this.worldObj.getBlockId(i, j - 1, k);
 
-                if (var4 == 0 && var5 > 0 && Block.blocksList[var5].renderAsNormalBlock())
+                if (l == 0 && i1 > 0 && Block.blocksList[i1].renderAsNormalBlock())
                 {
                     // CraftBukkit start - place event
-                    if (!CraftEventFactory.callEntityChangeBlockEvent(this, var1, var2, var3, this.getCarried(), this.getCarryingData()).isCancelled())
+                    if (!CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, this.getCarried(), this.getCarryingData()).isCancelled())
                     {
-                        this.worldObj.setBlockAndMetadataWithNotify(var1, var2, var3, this.getCarried(), this.getCarryingData());
+                        this.worldObj.setBlockAndMetadataWithNotify(i, j, k, this.getCarried(), this.getCarryingData());
                         this.setCarried(0);
                     }
                     // CraftBukkit end
@@ -188,16 +188,16 @@ public class EntityEnderman extends EntityMob
             }
         }
 
-        for (var1 = 0; var1 < 2; ++var1)
+        for (i = 0; i < 2; ++i)
         {
             this.worldObj.spawnParticle("portal", this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width, this.posY + this.rand.nextDouble() * (double)this.height - 0.25D, this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, (this.rand.nextDouble() - 0.5D) * 2.0D, -this.rand.nextDouble(), (this.rand.nextDouble() - 0.5D) * 2.0D);
         }
 
         if (this.worldObj.isDaytime() && !this.worldObj.isRemote)
         {
-            float var6 = this.getBrightness(1.0F);
+            float f = this.getBrightness(1.0F);
 
-            if (var6 > 0.5F && this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) && this.rand.nextFloat() * 30.0F < (var6 - 0.4F) * 2.0F)
+            if (f > 0.5F && this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) && this.rand.nextFloat() * 30.0F < (f - 0.4F) * 2.0F)
             {
                 this.entityToAttack = null;
                 this.setScreaming(false);
@@ -255,10 +255,10 @@ public class EntityEnderman extends EntityMob
      */
     protected boolean teleportRandomly()
     {
-        double var1 = this.posX + (this.rand.nextDouble() - 0.5D) * 64.0D;
-        double var3 = this.posY + (double)(this.rand.nextInt(64) - 32);
-        double var5 = this.posZ + (this.rand.nextDouble() - 0.5D) * 64.0D;
-        return this.teleportTo(var1, var3, var5);
+        double d0 = this.posX + (this.rand.nextDouble() - 0.5D) * 64.0D;
+        double d1 = this.posY + (double)(this.rand.nextInt(64) - 32);
+        double d2 = this.posZ + (this.rand.nextDouble() - 0.5D) * 64.0D;
+        return this.teleportTo(d0, d1, d2);
     }
 
     /**
@@ -266,13 +266,13 @@ public class EntityEnderman extends EntityMob
      */
     protected boolean teleportToEntity(Entity par1Entity)
     {
-        Vec3 var2 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX - par1Entity.posX, this.boundingBox.minY + (double)(this.height / 2.0F) - par1Entity.posY + (double)par1Entity.getEyeHeight(), this.posZ - par1Entity.posZ);
-        var2 = var2.normalize();
-        double var3 = 16.0D;
-        double var5 = this.posX + (this.rand.nextDouble() - 0.5D) * 8.0D - var2.xCoord * var3;
-        double var7 = this.posY + (double)(this.rand.nextInt(16) - 8) - var2.yCoord * var3;
-        double var9 = this.posZ + (this.rand.nextDouble() - 0.5D) * 8.0D - var2.zCoord * var3;
-        return this.teleportTo(var5, var7, var9);
+        Vec3 vec3 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX - par1Entity.posX, this.boundingBox.minY + (double)(this.height / 2.0F) - par1Entity.posY + (double)par1Entity.getEyeHeight(), this.posZ - par1Entity.posZ);
+        vec3 = vec3.normalize();
+        double d0 = 16.0D;
+        double d1 = this.posX + (this.rand.nextDouble() - 0.5D) * 8.0D - vec3.xCoord * d0;
+        double d2 = this.posY + (double)(this.rand.nextInt(16) - 8) - vec3.yCoord * d0;
+        double d3 = this.posZ + (this.rand.nextDouble() - 0.5D) * 8.0D - vec3.zCoord * d0;
+        return this.teleportTo(d1, d2, d3);
     }
 
     /**
@@ -280,41 +280,41 @@ public class EntityEnderman extends EntityMob
      */
     protected boolean teleportTo(double par1, double par3, double par5)
     {
-        double var7 = this.posX;
-        double var9 = this.posY;
-        double var11 = this.posZ;
+        double d3 = this.posX;
+        double d4 = this.posY;
+        double d5 = this.posZ;
         this.posX = par1;
         this.posY = par3;
         this.posZ = par5;
-        boolean var13 = false;
-        int var14 = MathHelper.floor_double(this.posX);
-        int var15 = MathHelper.floor_double(this.posY);
-        int var16 = MathHelper.floor_double(this.posZ);
-        int var18;
+        boolean flag = false;
+        int i = MathHelper.floor_double(this.posX);
+        int j = MathHelper.floor_double(this.posY);
+        int k = MathHelper.floor_double(this.posZ);
+        int l;
 
-        if (this.worldObj.blockExists(var14, var15, var16))
+        if (this.worldObj.blockExists(i, j, k))
         {
-            boolean var17 = false;
+            boolean flag1 = false;
 
-            while (!var17 && var15 > 0)
+            while (!flag1 && j > 0)
             {
-                var18 = this.worldObj.getBlockId(var14, var15 - 1, var16);
+                l = this.worldObj.getBlockId(i, j - 1, k);
 
-                if (var18 != 0 && Block.blocksList[var18].blockMaterial.blocksMovement())
+                if (l != 0 && Block.blocksList[l].blockMaterial.blocksMovement())
                 {
-                    var17 = true;
+                    flag1 = true;
                 }
                 else
                 {
                     --this.posY;
-                    --var15;
+                    --j;
                 }
             }
 
-            if (var17)
+            if (flag1)
             {
                 // CraftBukkit start - teleport event
-                EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.worldObj.getWorld(), var7, var9, var11), new Location(this.worldObj.getWorld(), this.posX, this.posY, this.posZ));
+                EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.worldObj.getWorld(), d3, d4, d5), new Location(this.worldObj.getWorld(), this.posX, this.posY, this.posZ));
                 this.worldObj.getServer().getPluginManager().callEvent(teleport);
 
                 if (teleport.isCancelled())
@@ -328,33 +328,33 @@ public class EntityEnderman extends EntityMob
 
                 if (this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox))
                 {
-                    var13 = true;
+                    flag = true;
                 }
             }
         }
 
-        if (!var13)
+        if (!flag)
         {
-            this.setPosition(var7, var9, var11);
+            this.setPosition(d3, d4, d5);
             return false;
         }
         else
         {
-            short var30 = 128;
+            short short1 = 128;
 
-            for (var18 = 0; var18 < var30; ++var18)
+            for (l = 0; l < short1; ++l)
             {
-                double var19 = (double)var18 / ((double)var30 - 1.0D);
-                float var21 = (this.rand.nextFloat() - 0.5F) * 0.2F;
-                float var22 = (this.rand.nextFloat() - 0.5F) * 0.2F;
-                float var23 = (this.rand.nextFloat() - 0.5F) * 0.2F;
-                double var24 = var7 + (this.posX - var7) * var19 + (this.rand.nextDouble() - 0.5D) * (double)this.width * 2.0D;
-                double var26 = var9 + (this.posY - var9) * var19 + this.rand.nextDouble() * (double)this.height;
-                double var28 = var11 + (this.posZ - var11) * var19 + (this.rand.nextDouble() - 0.5D) * (double)this.width * 2.0D;
-                this.worldObj.spawnParticle("portal", var24, var26, var28, (double)var21, (double)var22, (double)var23);
+                double d6 = (double)l / ((double)short1 - 1.0D);
+                float f = (this.rand.nextFloat() - 0.5F) * 0.2F;
+                float f1 = (this.rand.nextFloat() - 0.5F) * 0.2F;
+                float f2 = (this.rand.nextFloat() - 0.5F) * 0.2F;
+                double d7 = d3 + (this.posX - d3) * d6 + (this.rand.nextDouble() - 0.5D) * (double)this.width * 2.0D;
+                double d8 = d4 + (this.posY - d4) * d6 + this.rand.nextDouble() * (double)this.height;
+                double d9 = d5 + (this.posZ - d5) * d6 + (this.rand.nextDouble() - 0.5D) * (double)this.width * 2.0D;
+                this.worldObj.spawnParticle("portal", d7, d8, d9, (double)f, (double)f1, (double)f2);
             }
 
-            this.worldObj.playSoundEffect(var7, var9, var11, "mob.endermen.portal", 1.0F, 1.0F);
+            this.worldObj.playSoundEffect(d3, d4, d5, "mob.endermen.portal", 1.0F, 1.0F);
             this.playSound("mob.endermen.portal", 1.0F, 1.0F);
             return true;
         }
@@ -398,17 +398,17 @@ public class EntityEnderman extends EntityMob
      */
     protected void dropFewItems(boolean par1, int par2)
     {
-        int var3 = this.getDropItemId();
+        int j = this.getDropItemId();
 
-        if (var3 > 0)
+        if (j > 0)
         {
             // CraftBukkit start - whole method
             java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
             int count = this.rand.nextInt(2 + par2);
 
-            if ((var3 > 0) && (count > 0))
+            if ((j > 0) && (count > 0))
             {
-                loot.add(new org.bukkit.inventory.ItemStack(var3, count));
+                loot.add(new org.bukkit.inventory.ItemStack(j, count));
             }
 
             CraftEventFactory.callEntityDeathEvent(this, loot);
@@ -463,7 +463,7 @@ public class EntityEnderman extends EntityMob
 
             if (par1DamageSource instanceof EntityDamageSourceIndirect)
             {
-                for (int var3 = 0; var3 < 64; ++var3)
+                for (int j = 0; j < 64; ++j)
                 {
                     if (this.teleportRandomly())
                     {

@@ -35,9 +35,9 @@ public class VillageSiege
      */
     public void tick()
     {
-        boolean var1 = false;
+        boolean flag = false;
 
-        if (var1)
+        if (flag)
         {
             if (this.field_75536_c == 2)
             {
@@ -60,9 +60,9 @@ public class VillageSiege
 
             if (this.field_75536_c == 0)
             {
-                float var2 = this.worldObj.getCelestialAngle(0.0F);
+                float f = this.worldObj.getCelestialAngle(0.0F);
 
-                if ((double)var2 < 0.5D || (double)var2 > 0.501D)
+                if ((double)f < 0.5D || (double)f > 0.501D)
                 {
                     return;
                 }
@@ -109,57 +109,57 @@ public class VillageSiege
 
     private boolean func_75529_b()
     {
-        List var1 = this.worldObj.playerEntities;
-        Iterator var2 = var1.iterator();
+        List list = this.worldObj.playerEntities;
+        Iterator iterator = list.iterator();
 
-        while (var2.hasNext())
+        while (iterator.hasNext())
         {
-            EntityPlayer var3 = (EntityPlayer)var2.next();
-            this.theVillage = this.worldObj.villageCollectionObj.findNearestVillage((int)var3.posX, (int)var3.posY, (int)var3.posZ, 1);
+            EntityPlayer entityplayer = (EntityPlayer)iterator.next();
+            this.theVillage = this.worldObj.villageCollectionObj.findNearestVillage((int)entityplayer.posX, (int)entityplayer.posY, (int)entityplayer.posZ, 1);
 
             if (this.theVillage != null && this.theVillage.getNumVillageDoors() >= 10 && this.theVillage.getTicksSinceLastDoorAdding() >= 20 && this.theVillage.getNumVillagers() >= 20)
             {
-                ChunkCoordinates var4 = this.theVillage.getCenter();
-                float var5 = (float)this.theVillage.getVillageRadius();
-                boolean var6 = false;
-                int var7 = 0;
+                ChunkCoordinates chunkcoordinates = this.theVillage.getCenter();
+                float f = (float)this.theVillage.getVillageRadius();
+                boolean flag = false;
+                int i = 0;
 
                 while (true)
                 {
-                    if (var7 < 10)
+                    if (i < 10)
                     {
-                        this.field_75532_g = var4.posX + (int)((double)(MathHelper.cos(this.worldObj.rand.nextFloat() * (float)Math.PI * 2.0F) * var5) * 0.9D);
-                        this.field_75538_h = var4.posY;
-                        this.field_75539_i = var4.posZ + (int)((double)(MathHelper.sin(this.worldObj.rand.nextFloat() * (float)Math.PI * 2.0F) * var5) * 0.9D);
-                        var6 = false;
-                        Iterator var8 = this.worldObj.villageCollectionObj.getVillageList().iterator();
+                        this.field_75532_g = chunkcoordinates.posX + (int)((double)(MathHelper.cos(this.worldObj.rand.nextFloat() * (float)Math.PI * 2.0F) * f) * 0.9D);
+                        this.field_75538_h = chunkcoordinates.posY;
+                        this.field_75539_i = chunkcoordinates.posZ + (int)((double)(MathHelper.sin(this.worldObj.rand.nextFloat() * (float)Math.PI * 2.0F) * f) * 0.9D);
+                        flag = false;
+                        Iterator iterator1 = this.worldObj.villageCollectionObj.getVillageList().iterator();
 
-                        while (var8.hasNext())
+                        while (iterator1.hasNext())
                         {
-                            Village var9 = (Village)var8.next();
+                            Village village = (Village)iterator1.next();
 
-                            if (var9 != this.theVillage && var9.isInRange(this.field_75532_g, this.field_75538_h, this.field_75539_i))
+                            if (village != this.theVillage && village.isInRange(this.field_75532_g, this.field_75538_h, this.field_75539_i))
                             {
-                                var6 = true;
+                                flag = true;
                                 break;
                             }
                         }
 
-                        if (var6)
+                        if (flag)
                         {
-                            ++var7;
+                            ++i;
                             continue;
                         }
                     }
 
-                    if (var6)
+                    if (flag)
                     {
                         return false;
                     }
 
-                    Vec3 var10 = this.func_75527_a(this.field_75532_g, this.field_75538_h, this.field_75539_i);
+                    Vec3 vec3 = this.func_75527_a(this.field_75532_g, this.field_75538_h, this.field_75539_i);
 
-                    if (var10 != null)
+                    if (vec3 != null)
                     {
                         this.field_75534_e = 0;
                         this.field_75533_d = 20;
@@ -176,47 +176,47 @@ public class VillageSiege
 
     private boolean spawnZombie()
     {
-        Vec3 var1 = this.func_75527_a(this.field_75532_g, this.field_75538_h, this.field_75539_i);
+        Vec3 vec3 = this.func_75527_a(this.field_75532_g, this.field_75538_h, this.field_75539_i);
 
-        if (var1 == null)
+        if (vec3 == null)
         {
             return false;
         }
         else
         {
-            EntityZombie var2;
+            EntityZombie entityzombie;
 
             try
             {
-                var2 = new EntityZombie(this.worldObj);
-                var2.initCreature();
-                var2.setVillager(false);
+                entityzombie = new EntityZombie(this.worldObj);
+                entityzombie.initCreature();
+                entityzombie.setVillager(false);
             }
-            catch (Exception var4)
+            catch (Exception exception)
             {
-                var4.printStackTrace();
+                exception.printStackTrace();
                 return false;
             }
 
-            var2.setLocationAndAngles(var1.xCoord, var1.yCoord, var1.zCoord, this.worldObj.rand.nextFloat() * 360.0F, 0.0F);
-            this.worldObj.addEntity(var2, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_INVASION); // CraftBukkit
-            ChunkCoordinates var3 = this.theVillage.getCenter();
-            var2.setHomeArea(var3.posX, var3.posY, var3.posZ, this.theVillage.getVillageRadius());
+            entityzombie.setLocationAndAngles(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.worldObj.rand.nextFloat() * 360.0F, 0.0F);
+            this.worldObj.addEntity(entityzombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_INVASION); // CraftBukkit
+            ChunkCoordinates chunkcoordinates = this.theVillage.getCenter();
+            entityzombie.setHomeArea(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this.theVillage.getVillageRadius());
             return true;
         }
     }
 
     private Vec3 func_75527_a(int par1, int par2, int par3)
     {
-        for (int var4 = 0; var4 < 10; ++var4)
+        for (int l = 0; l < 10; ++l)
         {
-            int var5 = par1 + this.worldObj.rand.nextInt(16) - 8;
-            int var6 = par2 + this.worldObj.rand.nextInt(6) - 3;
-            int var7 = par3 + this.worldObj.rand.nextInt(16) - 8;
+            int i1 = par1 + this.worldObj.rand.nextInt(16) - 8;
+            int j1 = par2 + this.worldObj.rand.nextInt(6) - 3;
+            int k1 = par3 + this.worldObj.rand.nextInt(16) - 8;
 
-            if (this.theVillage.isInRange(var5, var6, var7) && SpawnerAnimals.canCreatureTypeSpawnAtLocation(EnumCreatureType.monster, this.worldObj, var5, var6, var7))
+            if (this.theVillage.isInRange(i1, j1, k1) && SpawnerAnimals.canCreatureTypeSpawnAtLocation(EnumCreatureType.monster, this.worldObj, i1, j1, k1))
             {
-                return this.worldObj.getWorldVec3Pool().getVecFromPool((double) var5, (double) var6, (double) var7);
+                return this.worldObj.getWorldVec3Pool().getVecFromPool((double) i1, (double) j1, (double) k1);
             }
         }
 

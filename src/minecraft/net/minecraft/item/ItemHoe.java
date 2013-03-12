@@ -49,17 +49,17 @@ public class ItemHoe extends Item
                 return true;
             }
 
-            int var11 = par3World.getBlockId(par4, par5, par6);
-            int var12 = par3World.getBlockId(par4, par5 + 1, par6);
+            int i1 = par3World.getBlockId(par4, par5, par6);
+            int j1 = par3World.getBlockId(par4, par5 + 1, par6);
 
-            if ((par7 == 0 || var12 != 0 || var11 != Block.grass.blockID) && var11 != Block.dirt.blockID)
+            if ((par7 == 0 || j1 != 0 || i1 != Block.grass.blockID) && i1 != Block.dirt.blockID)
             {
                 return false;
             }
             else
             {
-                Block var13 = Block.tilledField;
-                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var13.stepSound.getStepSound(), (var13.stepSound.getVolume() + 1.0F) / 2.0F, var13.stepSound.getPitch() * 0.8F);
+                Block block = Block.tilledField;
+                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getStepSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
 
                 if (par3World.isRemote)
                 {
@@ -69,7 +69,7 @@ public class ItemHoe extends Item
                 {
                     // CraftBukkit start - Hoes - blockface -1 for 'SELF'
                     // world.setTypeId(i, j, k, block.id);
-                    if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, var13.blockID, 0, clickedX, clickedY, clickedZ))
+                    if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, block.blockID, 0, clickedX, clickedY, clickedZ))
                     {
                         return false;
                     }

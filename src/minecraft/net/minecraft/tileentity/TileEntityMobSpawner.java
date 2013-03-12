@@ -77,15 +77,15 @@ public class TileEntityMobSpawner extends TileEntity
     {
         if (this.anyPlayerInRange())
         {
-            double var5;
+            double d0;
 
             if (this.worldObj.isRemote)
             {
-                double var1 = (double)((float)this.xCoord + this.worldObj.rand.nextFloat());
-                double var3 = (double)((float)this.yCoord + this.worldObj.rand.nextFloat());
-                var5 = (double)((float)this.zCoord + this.worldObj.rand.nextFloat());
-                this.worldObj.spawnParticle("smoke", var1, var3, var5, 0.0D, 0.0D, 0.0D);
-                this.worldObj.spawnParticle("flame", var1, var3, var5, 0.0D, 0.0D, 0.0D);
+                double d1 = (double)((float)this.xCoord + this.worldObj.rand.nextFloat());
+                double d2 = (double)((float)this.yCoord + this.worldObj.rand.nextFloat());
+                d0 = (double)((float)this.zCoord + this.worldObj.rand.nextFloat());
+                this.worldObj.spawnParticle("smoke", d1, d2, d0, 0.0D, 0.0D, 0.0D);
+                this.worldObj.spawnParticle("flame", d1, d2, d0, 0.0D, 0.0D, 0.0D);
 
                 if (this.delay > 0)
                 {
@@ -108,50 +108,50 @@ public class TileEntityMobSpawner extends TileEntity
                     return;
                 }
 
-                boolean var12 = false;
+                boolean flag = false;
 
-                for (int var2 = 0; var2 < this.spawnCount; ++var2)
+                for (int i = 0; i < this.spawnCount; ++i)
                 {
-                    Entity var13 = EntityList.createEntityByName(this.getMobID(), this.worldObj);
+                    Entity entity = EntityList.createEntityByName(this.getMobID(), this.worldObj);
 
-                    if (var13 == null)
+                    if (entity == null)
                     {
                         return;
                     }
 
-                    int var4 = this.worldObj.getEntitiesWithinAABB(var13.getClass(), AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)this.xCoord, (double)this.yCoord, (double)this.zCoord, (double)(this.xCoord + 1), (double)(this.yCoord + 1), (double)(this.zCoord + 1)).expand((double)(this.spawnRange * 2), 4.0D, (double)(this.spawnRange * 2))).size();
+                    int j = this.worldObj.getEntitiesWithinAABB(entity.getClass(), AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)this.xCoord, (double)this.yCoord, (double)this.zCoord, (double)(this.xCoord + 1), (double)(this.yCoord + 1), (double)(this.zCoord + 1)).expand((double)(this.spawnRange * 2), 4.0D, (double)(this.spawnRange * 2))).size();
 
-                    if (var4 >= this.maxNearbyEntities)
+                    if (j >= this.maxNearbyEntities)
                     {
                         this.updateDelay();
                         return;
                     }
 
-                    if (var13 != null)
+                    if (entity != null)
                     {
-                        var5 = (double)this.xCoord + (this.worldObj.rand.nextDouble() - this.worldObj.rand.nextDouble()) * (double)this.spawnRange;
-                        double var7 = (double)(this.yCoord + this.worldObj.rand.nextInt(3) - 1);
-                        double var9 = (double)this.zCoord + (this.worldObj.rand.nextDouble() - this.worldObj.rand.nextDouble()) * (double)this.spawnRange;
-                        EntityLiving var11 = var13 instanceof EntityLiving ? (EntityLiving)var13 : null;
-                        var13.setLocationAndAngles(var5, var7, var9, this.worldObj.rand.nextFloat() * 360.0F, 0.0F);
+                        d0 = (double)this.xCoord + (this.worldObj.rand.nextDouble() - this.worldObj.rand.nextDouble()) * (double)this.spawnRange;
+                        double d3 = (double)(this.yCoord + this.worldObj.rand.nextInt(3) - 1);
+                        double d4 = (double)this.zCoord + (this.worldObj.rand.nextDouble() - this.worldObj.rand.nextDouble()) * (double)this.spawnRange;
+                        EntityLiving entityliving = entity instanceof EntityLiving ? (EntityLiving)entity : null;
+                        entity.setLocationAndAngles(d0, d3, d4, this.worldObj.rand.nextFloat() * 360.0F, 0.0F);
 
-                        if (var11 == null || var11.getCanSpawnHere())
+                        if (entityliving == null || entityliving.getCanSpawnHere())
                         {
-                            this.writeNBTTagsTo(var13);
-                            this.worldObj.addEntity(var13, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
+                            this.writeNBTTagsTo(entity);
+                            this.worldObj.addEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
                             this.worldObj.playAuxSFX(2004, this.xCoord, this.yCoord, this.zCoord, 0);
 
-                            if (var11 != null)
+                            if (entityliving != null)
                             {
-                                var11.spawnExplosionParticle();
+                                entityliving.spawnExplosionParticle();
                             }
 
-                            var12 = true;
+                            flag = true;
                         }
                     }
                 }
 
-                if (var12)
+                if (flag)
                 {
                     this.updateDelay();
                 }
@@ -165,17 +165,17 @@ public class TileEntityMobSpawner extends TileEntity
     {
         if (this.spawnerTags != null)
         {
-            NBTTagCompound var2 = new NBTTagCompound();
-            par1Entity.addEntityID(var2);
-            Iterator var3 = this.spawnerTags.field_92083_b.getTags().iterator();
+            NBTTagCompound nbttagcompound = new NBTTagCompound();
+            par1Entity.addEntityID(nbttagcompound);
+            Iterator iterator = this.spawnerTags.field_92083_b.getTags().iterator();
 
-            while (var3.hasNext())
+            while (iterator.hasNext())
             {
-                NBTBase var4 = (NBTBase)var3.next();
-                var2.setTag(var4.getName(), var4.copy());
+                NBTBase nbtbase = (NBTBase)iterator.next();
+                nbttagcompound.setTag(nbtbase.getName(), nbtbase.copy());
             }
 
-            par1Entity.readFromNBT(var2);
+            par1Entity.readFromNBT(nbttagcompound);
         }
         else if (par1Entity instanceof EntityLiving && par1Entity.worldObj != null)
         {
@@ -218,11 +218,11 @@ public class TileEntityMobSpawner extends TileEntity
         if (par1NBTTagCompound.hasKey("SpawnPotentials"))
         {
             this.field_92060_e = new ArrayList();
-            NBTTagList var2 = par1NBTTagCompound.getTagList("SpawnPotentials");
+            NBTTagList nbttaglist = par1NBTTagCompound.getTagList("SpawnPotentials");
 
-            for (int var3 = 0; var3 < var2.tagCount(); ++var3)
+            for (int i = 0; i < nbttaglist.tagCount(); ++i)
             {
-                this.field_92060_e.add(new TileEntityMobSpawnerSpawnData(this, (NBTTagCompound)var2.tagAt(var3)));
+                this.field_92060_e.add(new TileEntityMobSpawnerSpawnData(this, (NBTTagCompound)nbttaglist.tagAt(i)));
             }
         }
         else
@@ -285,24 +285,24 @@ public class TileEntityMobSpawner extends TileEntity
 
         if (this.spawnerTags != null || this.field_92060_e != null && this.field_92060_e.size() > 0)
         {
-            NBTTagList var2 = new NBTTagList();
+            NBTTagList nbttaglist = new NBTTagList();
 
             if (this.field_92060_e != null && this.field_92060_e.size() > 0)
             {
-                Iterator var3 = this.field_92060_e.iterator();
+                Iterator iterator = this.field_92060_e.iterator();
 
-                while (var3.hasNext())
+                while (iterator.hasNext())
                 {
-                    TileEntityMobSpawnerSpawnData var4 = (TileEntityMobSpawnerSpawnData)var3.next();
-                    var2.appendTag(var4.func_92081_a());
+                    TileEntityMobSpawnerSpawnData tileentitymobspawnerspawndata = (TileEntityMobSpawnerSpawnData)iterator.next();
+                    nbttaglist.appendTag(tileentitymobspawnerspawndata.func_92081_a());
                 }
             }
             else
             {
-                var2.appendTag(this.spawnerTags.func_92081_a());
+                nbttaglist.appendTag(this.spawnerTags.func_92081_a());
             }
 
-            par1NBTTagCompound.setTag("SpawnPotentials", var2);
+            par1NBTTagCompound.setTag("SpawnPotentials", nbttaglist);
         }
     }
 
@@ -315,9 +315,9 @@ public class TileEntityMobSpawner extends TileEntity
     {
         if (this.spawnedMob == null)
         {
-            Entity var1 = EntityList.createEntityByName(this.getMobID(), (World)null);
-            this.writeNBTTagsTo(var1);
-            this.spawnedMob = var1;
+            Entity entity = EntityList.createEntityByName(this.getMobID(), (World)null);
+            this.writeNBTTagsTo(entity);
+            this.spawnedMob = entity;
         }
 
         return this.spawnedMob;
@@ -328,10 +328,10 @@ public class TileEntityMobSpawner extends TileEntity
      */
     public Packet getDescriptionPacket()
     {
-        NBTTagCompound var1 = new NBTTagCompound();
-        this.writeToNBT(var1);
-        var1.removeTag("SpawnPotentials");
-        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 1, var1);
+        NBTTagCompound nbttagcompound = new NBTTagCompound();
+        this.writeToNBT(nbttagcompound);
+        nbttagcompound.removeTag("SpawnPotentials");
+        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 1, nbttagcompound);
     }
 
     /**

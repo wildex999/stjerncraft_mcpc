@@ -54,32 +54,32 @@ public class ShapelessRecipes implements IRecipe
      */
     public boolean matches(InventoryCrafting par1InventoryCrafting, World par2World)
     {
-        ArrayList var3 = new ArrayList(this.recipeItems);
+        ArrayList arraylist = new ArrayList(this.recipeItems);
 
-        for (int var4 = 0; var4 < 3; ++var4)
+        for (int i = 0; i < 3; ++i)
         {
-            for (int var5 = 0; var5 < 3; ++var5)
+            for (int j = 0; j < 3; ++j)
             {
-                ItemStack var6 = par1InventoryCrafting.getStackInRowAndColumn(var5, var4);
+                ItemStack itemstack = par1InventoryCrafting.getStackInRowAndColumn(j, i);
 
-                if (var6 != null)
+                if (itemstack != null)
                 {
-                    boolean var7 = false;
-                    Iterator var8 = var3.iterator();
+                    boolean flag = false;
+                    Iterator iterator = arraylist.iterator();
 
-                    while (var8.hasNext())
+                    while (iterator.hasNext())
                     {
-                        ItemStack var9 = (ItemStack)var8.next();
+                        ItemStack itemstack1 = (ItemStack)iterator.next();
 
-                        if (var6.itemID == var9.itemID && (var9.getItemDamage() == -1 || var6.getItemDamage() == var9.getItemDamage()))
+                        if (itemstack.itemID == itemstack1.itemID && (itemstack1.getItemDamage() == -1 || itemstack.getItemDamage() == itemstack1.getItemDamage()))
                         {
-                            var7 = true;
-                            var3.remove(var9);
+                            flag = true;
+                            arraylist.remove(itemstack1);
                             break;
                         }
                     }
 
-                    if (!var7)
+                    if (!flag)
                     {
                         return false;
                     }
@@ -87,7 +87,7 @@ public class ShapelessRecipes implements IRecipe
             }
         }
 
-        return var3.isEmpty();
+        return arraylist.isEmpty();
     }
 
     /**

@@ -14,24 +14,24 @@ public interface IInventory
     /**
      * Returns the stack in slot i
      */
-    ItemStack getStackInSlot(int var1);
+    ItemStack getStackInSlot(int i);
 
     /**
      * Removes from an inventory slot (first arg) up to a specified number (second arg) of items and returns them in a
      * new stack.
      */
-    ItemStack decrStackSize(int var1, int var2);
+    ItemStack decrStackSize(int i, int j);
 
     /**
      * When some containers are closed they call this on each slot, then drop whatever it returns as an EntityItem -
      * like when you close a workbench GUI.
      */
-    ItemStack getStackInSlotOnClosing(int var1);
+    ItemStack getStackInSlotOnClosing(int i);
 
     /**
      * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
      */
-    void setInventorySlotContents(int var1, ItemStack var2);
+    void setInventorySlotContents(int i, ItemStack itemstack);
 
     /**
      * Returns the name of the inventory.
@@ -52,7 +52,7 @@ public interface IInventory
     /**
      * Do not make give this method the name canInteractWith because it clashes with Container
      */
-    boolean isUseableByPlayer(EntityPlayer var1);
+    boolean isUseableByPlayer(EntityPlayer entityplayer);
 
     void openChest();
 

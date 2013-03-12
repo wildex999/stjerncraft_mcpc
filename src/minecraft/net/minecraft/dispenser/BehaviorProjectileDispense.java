@@ -19,19 +19,19 @@ public abstract class BehaviorProjectileDispense extends BehaviorDefaultDispense
      */
     public ItemStack dispenseStack(IBlockSource par1IBlockSource, ItemStack par2ItemStack)
     {
-        World var3 = par1IBlockSource.getWorld();
-        IPosition var4 = BlockDispenser.func_82525_a(par1IBlockSource);
-        EnumFacing var5 = EnumFacing.getFront(par1IBlockSource.func_82620_h());
-        IProjectile var6 = this.getProjectileEntity(var3, var4);
+        World world = par1IBlockSource.getWorld();
+        IPosition iposition = BlockDispenser.func_82525_a(par1IBlockSource);
+        EnumFacing enumfacing = EnumFacing.getFront(par1IBlockSource.func_82620_h());
+        IProjectile iprojectile = this.getProjectileEntity(world, iposition);
         // CraftBukkit start
         ItemStack itemstack1 = par2ItemStack.splitStack(1);
-        org.bukkit.block.Block block = var3.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());
+        org.bukkit.block.Block block = world.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());
         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
-        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector((double) var5.getFrontOffsetX(), 0.10000000149011612D, (double) var5.getFrontOffsetZ()));
+        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector((double) enumfacing.getFrontOffsetX(), 0.10000000149011612D, (double) enumfacing.getFrontOffsetZ()));
 
         if (!BlockDispenser.eventFired)
         {
-            var3.getServer().getPluginManager().callEvent(event);
+            world.getServer().getPluginManager().callEvent(event);
         }
 
         if (event.isCancelled())
@@ -54,9 +54,9 @@ public abstract class BehaviorProjectileDispense extends BehaviorDefaultDispense
             }
         }
 
-        var6.setThrowableHeading(event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), this.func_82500_b(), this.func_82498_a());
+        iprojectile.setThrowableHeading(event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), this.func_82500_b(), this.func_82498_a());
         // CraftBukkit end
-        var3.spawnEntityInWorld((Entity)var6);
+        world.spawnEntityInWorld((Entity)iprojectile);
         // itemstack.a(1); // CraftBukkit - Handled during event processing
         return par2ItemStack;
     }
@@ -72,7 +72,7 @@ public abstract class BehaviorProjectileDispense extends BehaviorDefaultDispense
     /**
      * Return the projectile entity spawned by this dispense behavior.
      */
-    protected abstract IProjectile getProjectileEntity(World var1, IPosition var2);
+    protected abstract IProjectile getProjectileEntity(World world, IPosition iposition);
 
     protected float func_82498_a()
     {

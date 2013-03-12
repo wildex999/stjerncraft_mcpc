@@ -104,35 +104,35 @@ public class EntityPotion extends EntityThrowable
     {
         if (!this.worldObj.isRemote)
         {
-            List var2 = Item.potion.getEffects(this.potionDamage);
+            List list = Item.potion.getEffects(this.potionDamage);
 
-            if (var2 != null && !var2.isEmpty())
+            if (list != null && !list.isEmpty())
             {
-                AxisAlignedBB var3 = this.boundingBox.expand(4.0D, 2.0D, 4.0D);
-                List var4 = this.worldObj.getEntitiesWithinAABB(EntityLiving.class, var3);
+                AxisAlignedBB axisalignedbb = this.boundingBox.expand(4.0D, 2.0D, 4.0D);
+                List list1 = this.worldObj.getEntitiesWithinAABB(EntityLiving.class, axisalignedbb);
 
-                if (var4 != null)   // CraftBukkit - Run code even if there are no entities around
+                if (list1 != null)   // CraftBukkit - Run code even if there are no entities around
                 {
-                    Iterator var5 = var4.iterator();
+                    Iterator iterator = list1.iterator();
                     // CraftBukkit
                     HashMap<LivingEntity, Double> var6 = new HashMap<LivingEntity, Double>();
 
-                    while (var5.hasNext())
+                    while (iterator.hasNext())
                     {
-                        EntityLiving var7 = (EntityLiving) var5.next();
-                        double var9 = this.getDistanceSqToEntity(var7);
+                        EntityLiving entityliving = (EntityLiving) iterator.next();
+                        double d0 = this.getDistanceSqToEntity(entityliving);
 
-                        if (var9 < 16.0D)
+                        if (d0 < 16.0D)
                         {
-                            double var11 = 1.0D - Math.sqrt(var9) / 4.0D;
+                            double d1 = 1.0D - Math.sqrt(d0) / 4.0D;
 
-                            if (var7 == par1MovingObjectPosition.entityHit)
+                            if (entityliving == par1MovingObjectPosition.entityHit)
                             {
-                                var11 = 1.0D;
+                                d1 = 1.0D;
                             }
 
                             // CraftBukkit start
-                            var6.put((LivingEntity) var7.getBukkitEntity(), var11);
+                            var6.put((LivingEntity) entityliving.getBukkitEntity(), d1);
                         }
                     }
 
@@ -150,18 +150,18 @@ public class EntityPotion extends EntityThrowable
                             EntityLiving entityliving = ((CraftLivingEntity) victim).getHandle();
                             double d1 = event.getIntensity(victim);
                             // CraftBukkit end
-                            Iterator var12 = var2.iterator();
+                            Iterator iterator1 = list.iterator();
 
-                            while (var12.hasNext())
+                            while (iterator1.hasNext())
                             {
-                                PotionEffect var13 = (PotionEffect) var12.next();
-                                int var14 = var13.getPotionID();
+                                PotionEffect potioneffect = (PotionEffect) iterator1.next();
+                                int i = potioneffect.getPotionID();
 
                                 // CraftBukkit start - abide by PVP settings - for players only!
                                 if (!this.worldObj.pvpMode && this.getThrower() instanceof EntityPlayerMP && entityliving instanceof EntityPlayerMP && entityliving != this.getThrower())
                                 {
                                     // Block SLOWER_MOVEMENT, SLOWER_DIG, HARM, BLINDNESS, HUNGER, WEAKNESS and POISON potions
-                                    if (var14 == 2 || var14 == 4 || var14 == 7 || var14 == 15 || var14 == 17 || var14 == 18 || var14 == 19)
+                                    if (i == 2 || i == 4 || i == 7 || i == 15 || i == 17 || i == 18 || i == 19)
                                     {
                                         continue;
                                     }
@@ -169,18 +169,18 @@ public class EntityPotion extends EntityThrowable
 
                                 // CraftBukkit end
 
-                                if (Potion.potionTypes[var14].isInstant())
+                                if (Potion.potionTypes[i].isInstant())
                                 {
                                     // CraftBukkit - added 'this'
-                                    Potion.potionTypes[var14].applyInstantEffect(this.getThrower(), entityliving, var13.getAmplifier(), d1, this);
+                                    Potion.potionTypes[i].applyInstantEffect(this.getThrower(), entityliving, potioneffect.getAmplifier(), d1, this);
                                 }
                                 else
                                 {
-                                    int j = (int)(d1 * (double) var13.getDuration() + 0.5D);
+                                    int j = (int)(d1 * (double) potioneffect.getDuration() + 0.5D);
 
                                     if (j > 20)
                                     {
-                                        entityliving.addPotionEffect(new PotionEffect(var14, j, var13.getAmplifier()));
+                                        entityliving.addPotionEffect(new PotionEffect(i, j, potioneffect.getAmplifier()));
                                     }
                                 }
                             }

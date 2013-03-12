@@ -38,14 +38,14 @@ public class BlockOre extends Block
     {
         if (par1 > 0 && this.blockID != this.idDropped(0, par2Random, par1))
         {
-            int var3 = par2Random.nextInt(par1 + 2) - 1;
+            int j = par2Random.nextInt(par1 + 2) - 1;
 
-            if (var3 < 0)
+            if (j < 0)
             {
-                var3 = 0;
+                j = 0;
             }
 
-            return this.quantityDropped(par2Random) * (var3 + 1);
+            return this.quantityDropped(par2Random) * (j + 1);
         }
         else
         {

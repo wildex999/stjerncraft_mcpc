@@ -38,16 +38,16 @@ public class RegionFile
             }
 
             this.dataFile = new RandomAccessFile(par1File, "rw");
-            int var2;
+            int i;
 
             if (this.dataFile.length() < 4096L)
             {
-                for (var2 = 0; var2 < 1024; ++var2)
+                for (i = 0; i < 1024; ++i)
                 {
                     this.dataFile.writeInt(0);
                 }
 
-                for (var2 = 0; var2 < 1024; ++var2)
+                for (i = 0; i < 1024; ++i)
                 {
                     this.dataFile.writeInt(0);
                 }
@@ -57,17 +57,17 @@ public class RegionFile
 
             if ((this.dataFile.length() & 4095L) != 0L)
             {
-                for (var2 = 0; (long)var2 < (this.dataFile.length() & 4095L); ++var2)
+                for (i = 0; (long)i < (this.dataFile.length() & 4095L); ++i)
                 {
                     this.dataFile.write(0);
                 }
             }
 
-            var2 = (int)this.dataFile.length() / 4096;
-            this.sectorFree = new ArrayList(var2);
-            int var3;
+            i = (int)this.dataFile.length() / 4096;
+            this.sectorFree = new ArrayList(i);
+            int j;
 
-            for (var3 = 0; var3 < var2; ++var3)
+            for (j = 0; j < i; ++j)
             {
                 this.sectorFree.add(Boolean.valueOf(true));
             }
@@ -75,31 +75,31 @@ public class RegionFile
             this.sectorFree.set(0, Boolean.valueOf(false));
             this.sectorFree.set(1, Boolean.valueOf(false));
             this.dataFile.seek(0L);
-            int var4;
+            int k;
 
-            for (var3 = 0; var3 < 1024; ++var3)
+            for (j = 0; j < 1024; ++j)
             {
-                var4 = this.dataFile.readInt();
-                this.offsets[var3] = var4;
+                k = this.dataFile.readInt();
+                this.offsets[j] = k;
 
-                if (var4 != 0 && (var4 >> 8) + (var4 & 255) <= this.sectorFree.size())
+                if (k != 0 && (k >> 8) + (k & 255) <= this.sectorFree.size())
                 {
-                    for (int var5 = 0; var5 < (var4 & 255); ++var5)
+                    for (int l = 0; l < (k & 255); ++l)
                     {
-                        this.sectorFree.set((var4 >> 8) + var5, Boolean.valueOf(false));
+                        this.sectorFree.set((k >> 8) + l, Boolean.valueOf(false));
                     }
                 }
             }
 
-            for (var3 = 0; var3 < 1024; ++var3)
+            for (j = 0; j < 1024; ++j)
             {
-                var4 = this.dataFile.readInt();
-                this.chunkTimestamps[var3] = var4;
+                k = this.dataFile.readInt();
+                this.chunkTimestamps[j] = k;
             }
         }
-        catch (IOException var6)
+        catch (IOException ioexception)
         {
-            var6.printStackTrace();
+            ioexception.printStackTrace();
         }
     }
 
@@ -171,50 +171,50 @@ public class RegionFile
         {
             try
             {
-                int var3 = this.getOffset(par1, par2);
+                int k = this.getOffset(par1, par2);
 
-                if (var3 == 0)
+                if (k == 0)
                 {
                     return null;
                 }
                 else
                 {
-                    int var4 = var3 >> 8;
-                    int var5 = var3 & 255;
+                    int l = k >> 8;
+                    int i1 = k & 255;
 
-                    if (var4 + var5 > this.sectorFree.size())
+                    if (l + i1 > this.sectorFree.size())
                     {
                         return null;
                     }
                     else
                     {
-                        this.dataFile.seek((long)(var4 * 4096));
-                        int var6 = this.dataFile.readInt();
+                        this.dataFile.seek((long)(l * 4096));
+                        int j1 = this.dataFile.readInt();
 
-                        if (var6 > 4096 * var5)
+                        if (j1 > 4096 * i1)
                         {
                             return null;
                         }
-                        else if (var6 <= 0)
+                        else if (j1 <= 0)
                         {
                             return null;
                         }
                         else
                         {
-                            byte var7 = this.dataFile.readByte();
-                            byte[] var8;
+                            byte b0 = this.dataFile.readByte();
+                            byte[] abyte;
 
-                            if (var7 == 1)
+                            if (b0 == 1)
                             {
-                                var8 = new byte[var6 - 1];
-                                this.dataFile.read(var8);
-                                return new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(var8))));
+                                abyte = new byte[j1 - 1];
+                                this.dataFile.read(abyte);
+                                return new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(abyte))));
                             }
-                            else if (var7 == 2)
+                            else if (b0 == 2)
                             {
-                                var8 = new byte[var6 - 1];
-                                this.dataFile.read(var8);
-                                return new DataInputStream(new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(var8))));
+                                abyte = new byte[j1 - 1];
+                                this.dataFile.read(abyte);
+                                return new DataInputStream(new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(abyte))));
                             }
                             else
                             {
@@ -224,7 +224,7 @@ public class RegionFile
                     }
                 }
             }
-            catch (IOException var9)
+            catch (IOException ioexception)
             {
                 return null;
             }
@@ -246,95 +246,95 @@ public class RegionFile
     {
         try
         {
-            int var5 = this.getOffset(par1, par2);
-            int var6 = var5 >> 8;
-            int var7 = var5 & 255;
-            int var8 = (par4 + 5) / 4096 + 1;
+            int l = this.getOffset(par1, par2);
+            int i1 = l >> 8;
+            int j1 = l & 255;
+            int k1 = (par4 + 5) / 4096 + 1;
 
-            if (var8 >= 256)
+            if (k1 >= 256)
             {
                 return;
             }
 
-            if (var6 != 0 && var7 == var8)
+            if (i1 != 0 && j1 == k1)
             {
-                this.write(var6, par3ArrayOfByte, par4);
+                this.write(i1, par3ArrayOfByte, par4);
             }
             else
             {
-                int var9;
+                int l1;
 
-                for (var9 = 0; var9 < var7; ++var9)
+                for (l1 = 0; l1 < j1; ++l1)
                 {
-                    this.sectorFree.set(var6 + var9, Boolean.valueOf(true));
+                    this.sectorFree.set(i1 + l1, Boolean.valueOf(true));
                 }
 
-                var9 = this.sectorFree.indexOf(Boolean.valueOf(true));
-                int var10 = 0;
-                int var11;
+                l1 = this.sectorFree.indexOf(Boolean.valueOf(true));
+                int i2 = 0;
+                int j2;
 
-                if (var9 != -1)
+                if (l1 != -1)
                 {
-                    for (var11 = var9; var11 < this.sectorFree.size(); ++var11)
+                    for (j2 = l1; j2 < this.sectorFree.size(); ++j2)
                     {
-                        if (var10 != 0)
+                        if (i2 != 0)
                         {
-                            if (((Boolean)this.sectorFree.get(var11)).booleanValue())
+                            if (((Boolean)this.sectorFree.get(j2)).booleanValue())
                             {
-                                ++var10;
+                                ++i2;
                             }
                             else
                             {
-                                var10 = 0;
+                                i2 = 0;
                             }
                         }
-                        else if (((Boolean)this.sectorFree.get(var11)).booleanValue())
+                        else if (((Boolean)this.sectorFree.get(j2)).booleanValue())
                         {
-                            var9 = var11;
-                            var10 = 1;
+                            l1 = j2;
+                            i2 = 1;
                         }
 
-                        if (var10 >= var8)
+                        if (i2 >= k1)
                         {
                             break;
                         }
                     }
                 }
 
-                if (var10 >= var8)
+                if (i2 >= k1)
                 {
-                    var6 = var9;
-                    this.setOffset(par1, par2, var9 << 8 | var8);
+                    i1 = l1;
+                    this.setOffset(par1, par2, l1 << 8 | k1);
 
-                    for (var11 = 0; var11 < var8; ++var11)
+                    for (j2 = 0; j2 < k1; ++j2)
                     {
-                        this.sectorFree.set(var6 + var11, Boolean.valueOf(false));
+                        this.sectorFree.set(i1 + j2, Boolean.valueOf(false));
                     }
 
-                    this.write(var6, par3ArrayOfByte, par4);
+                    this.write(i1, par3ArrayOfByte, par4);
                 }
                 else
                 {
                     this.dataFile.seek(this.dataFile.length());
-                    var6 = this.sectorFree.size();
+                    i1 = this.sectorFree.size();
 
-                    for (var11 = 0; var11 < var8; ++var11)
+                    for (j2 = 0; j2 < k1; ++j2)
                     {
                         this.dataFile.write(emptySector);
                         this.sectorFree.add(Boolean.valueOf(false));
                     }
 
-                    this.sizeDelta += 4096 * var8;
-                    this.write(var6, par3ArrayOfByte, par4);
-                    this.setOffset(par1, par2, var6 << 8 | var8);
+                    this.sizeDelta += 4096 * k1;
+                    this.write(i1, par3ArrayOfByte, par4);
+                    this.setOffset(par1, par2, i1 << 8 | k1);
                 }
             }
 
             this.setChunkTimestamp(par1, par2, (int)(System.currentTimeMillis() / 1000L));
         }
-        catch (IOException var12)
+        catch (IOException ioexception)
         {
-            var12.printStackTrace();
+            ioexception.printStackTrace();
         }
     }
 

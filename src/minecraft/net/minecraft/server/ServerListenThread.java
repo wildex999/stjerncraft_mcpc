@@ -45,31 +45,31 @@ public class ServerListenThread extends Thread
 
     public void processPendingConnections()
     {
-        List var1 = this.pendingConnections;
+        List list = this.pendingConnections;
 
         synchronized (this.pendingConnections)
         {
-            for (int var2 = 0; var2 < this.pendingConnections.size(); ++var2)
+            for (int i = 0; i < this.pendingConnections.size(); ++i)
             {
-                NetLoginHandler var3 = (NetLoginHandler)this.pendingConnections.get(var2);
+                NetLoginHandler netloginhandler = (NetLoginHandler)this.pendingConnections.get(i);
 
                 try
                 {
-                    var3.tryLogin();
+                    netloginhandler.tryLogin();
                 }
-                catch (Exception var6)
+                catch (Exception exception)
                 {
-                    var3.raiseErrorAndDisconnect("Internal server error");
-                    FMLLog.log(Level.SEVERE, var6, "Error handling login related packet - connection from %s refused", var3.getUsernameAndAddress());
-                    logger.log(Level.WARNING, "Failed to handle packet for " + var3.getUsernameAndAddress() + ": " + var6, var6);
+                    netloginhandler.raiseErrorAndDisconnect("Internal server error");
+                    FMLLog.log(Level.SEVERE, exception, "Error handling login related packet - connection from %s refused", netloginhandler.getUsernameAndAddress());
+                    logger.log(Level.WARNING, "Failed to handle packet for " + netloginhandler.getUsernameAndAddress() + ": " + exception, exception);
                 }
 
-                if (var3.connectionComplete)
+                if (netloginhandler.connectionComplete)
                 {
-                    this.pendingConnections.remove(var2--);
+                    this.pendingConnections.remove(i--);
                 }
 
-                var3.myTCPConnection.wakeThreads();
+                netloginhandler.myTCPConnection.wakeThreads();
             }
         }
     }
@@ -80,15 +80,15 @@ public class ServerListenThread extends Thread
         {
             try
             {
-                Socket var1 = this.myServerSocket.accept();
-                InetAddress var2 = var1.getInetAddress();
-                long var3 = System.currentTimeMillis();
-                HashMap var5 = this.recentConnections;
+                Socket socket = this.myServerSocket.accept();
+                InetAddress inetaddress = socket.getInetAddress();
+                long i = System.currentTimeMillis();
+                HashMap hashmap = this.recentConnections;
 
                 // CraftBukkit start
                 if (((MinecraftServer) this.myNetworkListenThread.getServer()).server == null)
                 {
-                    var1.close();
+                    socket.close();
                     continue;
                 }
 
@@ -97,22 +97,22 @@ public class ServerListenThread extends Thread
 
                 synchronized (this.recentConnections)
                 {
-                    if (this.recentConnections.containsKey(var2) && !isLocalHost(var2) && var3 - ((Long) this.recentConnections.get(var2)).longValue() < connectionThrottle)
+                    if (this.recentConnections.containsKey(inetaddress) && !isLocalHost(inetaddress) && i - ((Long) this.recentConnections.get(inetaddress)).longValue() < connectionThrottle)
                     {
-                        this.recentConnections.put(var2, Long.valueOf(var3));
-                        var1.close();
+                        this.recentConnections.put(inetaddress, Long.valueOf(i));
+                        socket.close();
                         continue;
                     }
 
-                    this.recentConnections.put(var2, Long.valueOf(var3));
+                    this.recentConnections.put(inetaddress, Long.valueOf(i));
                 }
 
-                NetLoginHandler var9 = new NetLoginHandler(this.myNetworkListenThread.getServer(), var1, "Connection #" + this.connectionCounter++);
-                this.addPendingConnection(var9);
+                NetLoginHandler netloginhandler = new NetLoginHandler(this.myNetworkListenThread.getServer(), socket, "Connection #" + this.connectionCounter++);
+                this.addPendingConnection(netloginhandler);
             }
-            catch (IOException var8)
+            catch (IOException ioexception)
             {
-                logger.warning("DSCT: " + var8.getMessage()); // CraftBukkit
+                logger.warning("DSCT: " + ioexception.getMessage()); // CraftBukkit
             }
         }
 
@@ -127,7 +127,7 @@ public class ServerListenThread extends Thread
         }
         else
         {
-            List var2 = this.pendingConnections;
+            List list = this.pendingConnections;
 
             synchronized (this.pendingConnections)
             {
@@ -145,7 +145,7 @@ public class ServerListenThread extends Thread
     {
         if (par1InetAddress != null)
         {
-            HashMap var2 = this.recentConnections;
+            HashMap hashmap = this.recentConnections;
 
             synchronized (this.recentConnections)
             {
@@ -160,7 +160,7 @@ public class ServerListenThread extends Thread
         {
             this.myServerSocket.close();
         }
-        catch (Throwable var2)
+        catch (Throwable throwable)
         {
             ;
         }

@@ -140,42 +140,42 @@ public class BlockFire extends Block
             }
             else
             {
-                int var6 = par1World.getBlockMetadata(par2, par3, par4);
+                int l = par1World.getBlockMetadata(par2, par3, par4);
 
-                if (var6 < 15)
+                if (l < 15)
                 {
-                    par1World.setBlockMetadata(par2, par3, par4, var6 + par5Random.nextInt(3) / 2);
+                    par1World.setBlockMetadata(par2, par3, par4, l + par5Random.nextInt(3) / 2);
                 }
 
                 par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate() + par5Random.nextInt(10));
 
                 if (!flag && !this.canNeighborBurn(par1World, par2, par3, par4))
                 {
-                    if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) || var6 > 3)
+                    if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) || l > 3)
                     {
                         par1World.setBlockWithNotify(par2, par3, par4, 0);
                     }
                 }
-                else if (!flag && !this.canBlockCatchFire((IBlockAccess) par1World, par2, par3 - 1, par4, UP) && var6 == 15 && par5Random.nextInt(4) == 0)     // Forge
+                else if (!flag && !this.canBlockCatchFire((IBlockAccess) par1World, par2, par3 - 1, par4, UP) && l == 15 && par5Random.nextInt(4) == 0)     // Forge
                 {
                     fireExtinguished(par1World, par2, par3, par4); // CraftBukkit - burn out
                 }
                 else
                 {
-                    boolean var7 = par1World.isBlockHighHumidity(par2, par3, par4);
-                    byte var8 = 0;
+                    boolean flag = par1World.isBlockHighHumidity(par2, par3, par4);
+                    byte b0 = 0;
 
-                    if (var7)
+                    if (flag)
                     {
-                        var8 = -50;
+                        b0 = -50;
                     }
 
-                    this.tryToCatchBlockOnFire(par1World, par2 + 1, par3, par4, 300 + var8, par5Random, var6, WEST);
-                    this.tryToCatchBlockOnFire(par1World, par2 - 1, par3, par4, 300 + var8, par5Random, var6, EAST);
-                    this.tryToCatchBlockOnFire(par1World, par2, par3 - 1, par4, 250 + var8, par5Random, var6, UP);
-                    this.tryToCatchBlockOnFire(par1World, par2, par3 + 1, par4, 250 + var8, par5Random, var6, DOWN);
-                    this.tryToCatchBlockOnFire(par1World, par2, par3, par4 - 1, 300 + var8, par5Random, var6, SOUTH);
-                    this.tryToCatchBlockOnFire(par1World, par2, par3, par4 + 1, 300 + var8, par5Random, var6, NORTH);
+                    this.tryToCatchBlockOnFire(par1World, par2 + 1, par3, par4, 300 + b0, par5Random, l, WEST);
+                    this.tryToCatchBlockOnFire(par1World, par2 - 1, par3, par4, 300 + b0, par5Random, l, EAST);
+                    this.tryToCatchBlockOnFire(par1World, par2, par3 - 1, par4, 250 + b0, par5Random, l, UP);
+                    this.tryToCatchBlockOnFire(par1World, par2, par3 + 1, par4, 250 + b0, par5Random, l, DOWN);
+                    this.tryToCatchBlockOnFire(par1World, par2, par3, par4 - 1, 300 + b0, par5Random, l, SOUTH);
+                    this.tryToCatchBlockOnFire(par1World, par2, par3, par4 + 1, 300 + b0, par5Random, l, NORTH);
                     // CraftBukkit start - call to stop spread of fire
                     org.bukkit.Server server = par1World.getServer();
                     org.bukkit.World bworld = par1World.getWorld();
@@ -183,43 +183,43 @@ public class BlockFire extends Block
                     org.bukkit.block.Block fromBlock = bworld.getBlockAt(par2, par3, par4);
                     // CraftBukkit end
 
-                    for (int var9 = par2 - 1; var9 <= par2 + 1; ++var9)
+                    for (int i1 = par2 - 1; i1 <= par2 + 1; ++i1)
                     {
-                        for (int var10 = par4 - 1; var10 <= par4 + 1; ++var10)
+                        for (int j1 = par4 - 1; j1 <= par4 + 1; ++j1)
                         {
-                            for (int var11 = par3 - 1; var11 <= par3 + 4; ++var11)
+                            for (int k1 = par3 - 1; k1 <= par3 + 4; ++k1)
                             {
-                                if (var9 != par2 || var11 != par3 || var10 != par4)
+                                if (i1 != par2 || k1 != par3 || j1 != par4)
                                 {
-                                    int var12 = 100;
+                                    int l1 = 100;
 
-                                    if (var11 > par3 + 1)
+                                    if (k1 > par3 + 1)
                                     {
-                                        var12 += (var11 - (par3 + 1)) * 100;
+                                        l1 += (k1 - (par3 + 1)) * 100;
                                     }
 
-                                    int var13 = this.getChanceOfNeighborsEncouragingFire(par1World, var9, var11, var10);
+                                    int i2 = this.getChanceOfNeighborsEncouragingFire(par1World, i1, k1, j1);
 
-                                    if (var13 > 0)
+                                    if (i2 > 0)
                                     {
-                                        int var14 = (var13 + 40 + par1World.difficultySetting * 7) / (var6 + 30);
+                                        int j2 = (i2 + 40 + par1World.difficultySetting * 7) / (l + 30);
 
-                                        if (var7)
+                                        if (flag)
                                         {
-                                            var14 /= 2;
+                                            j2 /= 2;
                                         }
 
-                                        if (var14 > 0 && par5Random.nextInt(var12) <= var14 && (!par1World.isRaining() || !par1World.canLightningStrikeAt(var9, var11, var10)) && !par1World.canLightningStrikeAt(var9 - 1, var11, par4) && !par1World.canLightningStrikeAt(var9 + 1, var11, var10) && !par1World.canLightningStrikeAt(var9, var11, var10 - 1) && !par1World.canLightningStrikeAt(var9, var11, var10 + 1))
+                                        if (j2 > 0 && par5Random.nextInt(l1) <= j2 && (!par1World.isRaining() || !par1World.canLightningStrikeAt(i1, k1, j1)) && !par1World.canLightningStrikeAt(i1 - 1, k1, par4) && !par1World.canLightningStrikeAt(i1 + 1, k1, j1) && !par1World.canLightningStrikeAt(i1, k1, j1 - 1) && !par1World.canLightningStrikeAt(i1, k1, j1 + 1))
                                         {
-                                            int var15 = var6 + par5Random.nextInt(5) / 4;
+                                            int k2 = l + par5Random.nextInt(5) / 4;
 
-                                            if (var15 > 15)
+                                            if (k2 > 15)
                                             {
-                                                var15 = 15;
+                                                k2 = 15;
                                             }
 
                                             // CraftBukkit start - call to stop spread of fire
-                                            org.bukkit.block.Block block = bworld.getBlockAt(var9, var11, var10);
+                                            org.bukkit.block.Block block = bworld.getBlockAt(i1, k1, j1);
 
                                             if (block.getTypeId() != Block.fire.blockID)
                                             {
@@ -231,9 +231,9 @@ public class BlockFire extends Block
                                                     continue;
                                                 }
 
-                                                org.bukkit.block.BlockState blockState = bworld.getBlockAt(var9, var11, var10).getState();
+                                                org.bukkit.block.BlockState blockState = bworld.getBlockAt(i1, k1, j1).getState();
                                                 blockState.setTypeId(this.blockID);
-                                                blockState.setData(new org.bukkit.material.MaterialData(this.blockID, (byte) var15));
+                                                blockState.setData(new org.bukkit.material.MaterialData(this.blockID, (byte) k2));
                                                 BlockSpreadEvent spreadEvent = new BlockSpreadEvent(blockState.getBlock(), fromBlock, blockState);
                                                 server.getPluginManager().callEvent(spreadEvent);
 
@@ -333,7 +333,7 @@ public class BlockFire extends Block
      */
     private int getChanceOfNeighborsEncouragingFire(World par1World, int par2, int par3, int par4)
     {
-        byte var5 = 0;
+        byte b0 = 0;
 
         if (!par1World.isAirBlock(par2, par3, par4))
         {
@@ -341,13 +341,13 @@ public class BlockFire extends Block
         }
         else
         {
-            int var6 = this.getChanceToEncourageFire(par1World, par2 + 1, par3, par4, var5, WEST);
-            var6 = this.getChanceToEncourageFire(par1World, par2 - 1, par3, par4, var6, EAST);
-            var6 = this.getChanceToEncourageFire(par1World, par2, par3 - 1, par4, var6, UP);
-            var6 = this.getChanceToEncourageFire(par1World, par2, par3 + 1, par4, var6, DOWN);
-            var6 = this.getChanceToEncourageFire(par1World, par2, par3, par4 - 1, var6, SOUTH);
-            var6 = this.getChanceToEncourageFire(par1World, par2, par3, par4 + 1, var6, NORTH);
-            return var6;
+            int l = this.getChanceToEncourageFire(par1World, par2 + 1, par3, par4, b0, WEST);
+            l = this.getChanceToEncourageFire(par1World, par2 - 1, par3, par4, l, EAST);
+            l = this.getChanceToEncourageFire(par1World, par2, par3 - 1, par4, l, UP);
+            l = this.getChanceToEncourageFire(par1World, par2, par3 + 1, par4, l, DOWN);
+            l = this.getChanceToEncourageFire(par1World, par2, par3, par4 - 1, l, SOUTH);
+            l = this.getChanceToEncourageFire(par1World, par2, par3, par4 + 1, l, NORTH);
+            return l;
         }
     }
 
@@ -431,76 +431,76 @@ public class BlockFire extends Block
             par1World.playSound((double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F), "fire.fire", 1.0F + par5Random.nextFloat(), par5Random.nextFloat() * 0.7F + 0.3F, false);
         }
 
-        int var6;
-        float var7;
-        float var8;
-        float var9;
+        int l;
+        float f;
+        float f1;
+        float f2;
 
         if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(par1World, par2, par3 - 1, par4, UP))
         {
             if (Block.fire.canBlockCatchFire(par1World, par2 - 1, par3, par4, EAST))
             {
-                for (var6 = 0; var6 < 2; ++var6)
+                for (l = 0; l < 2; ++l)
                 {
-                    var7 = (float)par2 + par5Random.nextFloat() * 0.1F;
-                    var8 = (float)par3 + par5Random.nextFloat();
-                    var9 = (float)par4 + par5Random.nextFloat();
-                    par1World.spawnParticle("largesmoke", (double)var7, (double)var8, (double)var9, 0.0D, 0.0D, 0.0D);
+                    f = (float)par2 + par5Random.nextFloat() * 0.1F;
+                    f1 = (float)par3 + par5Random.nextFloat();
+                    f2 = (float)par4 + par5Random.nextFloat();
+                    par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
                 }
             }
 
             if (Block.fire.canBlockCatchFire(par1World, par2 + 1, par3, par4, WEST))
             {
-                for (var6 = 0; var6 < 2; ++var6)
+                for (l = 0; l < 2; ++l)
                 {
-                    var7 = (float)(par2 + 1) - par5Random.nextFloat() * 0.1F;
-                    var8 = (float)par3 + par5Random.nextFloat();
-                    var9 = (float)par4 + par5Random.nextFloat();
-                    par1World.spawnParticle("largesmoke", (double)var7, (double)var8, (double)var9, 0.0D, 0.0D, 0.0D);
+                    f = (float)(par2 + 1) - par5Random.nextFloat() * 0.1F;
+                    f1 = (float)par3 + par5Random.nextFloat();
+                    f2 = (float)par4 + par5Random.nextFloat();
+                    par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
                 }
             }
 
             if (Block.fire.canBlockCatchFire(par1World, par2, par3, par4 - 1, SOUTH))
             {
-                for (var6 = 0; var6 < 2; ++var6)
+                for (l = 0; l < 2; ++l)
                 {
-                    var7 = (float)par2 + par5Random.nextFloat();
-                    var8 = (float)par3 + par5Random.nextFloat();
-                    var9 = (float)par4 + par5Random.nextFloat() * 0.1F;
-                    par1World.spawnParticle("largesmoke", (double)var7, (double)var8, (double)var9, 0.0D, 0.0D, 0.0D);
+                    f = (float)par2 + par5Random.nextFloat();
+                    f1 = (float)par3 + par5Random.nextFloat();
+                    f2 = (float)par4 + par5Random.nextFloat() * 0.1F;
+                    par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
                 }
             }
 
             if (Block.fire.canBlockCatchFire(par1World, par2, par3, par4 + 1, NORTH))
             {
-                for (var6 = 0; var6 < 2; ++var6)
+                for (l = 0; l < 2; ++l)
                 {
-                    var7 = (float)par2 + par5Random.nextFloat();
-                    var8 = (float)par3 + par5Random.nextFloat();
-                    var9 = (float)(par4 + 1) - par5Random.nextFloat() * 0.1F;
-                    par1World.spawnParticle("largesmoke", (double)var7, (double)var8, (double)var9, 0.0D, 0.0D, 0.0D);
+                    f = (float)par2 + par5Random.nextFloat();
+                    f1 = (float)par3 + par5Random.nextFloat();
+                    f2 = (float)(par4 + 1) - par5Random.nextFloat() * 0.1F;
+                    par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
                 }
             }
 
             if (Block.fire.canBlockCatchFire(par1World, par2, par3 + 1, par4, DOWN))
             {
-                for (var6 = 0; var6 < 2; ++var6)
+                for (l = 0; l < 2; ++l)
                 {
-                    var7 = (float)par2 + par5Random.nextFloat();
-                    var8 = (float)(par3 + 1) - par5Random.nextFloat() * 0.1F;
-                    var9 = (float)par4 + par5Random.nextFloat();
-                    par1World.spawnParticle("largesmoke", (double)var7, (double)var8, (double)var9, 0.0D, 0.0D, 0.0D);
+                    f = (float)par2 + par5Random.nextFloat();
+                    f1 = (float)(par3 + 1) - par5Random.nextFloat() * 0.1F;
+                    f2 = (float)par4 + par5Random.nextFloat();
+                    par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
                 }
             }
         }
         else
         {
-            for (var6 = 0; var6 < 3; ++var6)
+            for (l = 0; l < 3; ++l)
             {
-                var7 = (float)par2 + par5Random.nextFloat();
-                var8 = (float)par3 + par5Random.nextFloat() * 0.5F + 0.5F;
-                var9 = (float)par4 + par5Random.nextFloat();
-                par1World.spawnParticle("largesmoke", (double)var7, (double)var8, (double)var9, 0.0D, 0.0D, 0.0D);
+                f = (float)par2 + par5Random.nextFloat();
+                f1 = (float)par3 + par5Random.nextFloat() * 0.5F + 0.5F;
+                f2 = (float)par4 + par5Random.nextFloat();
+                par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
             }
         }
     }

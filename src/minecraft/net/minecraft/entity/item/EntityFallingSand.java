@@ -118,20 +118,20 @@ public class EntityFallingSand extends Entity
 
             if (!this.worldObj.isRemote)
             {
-                int var1 = MathHelper.floor_double(this.posX);
-                int var2 = MathHelper.floor_double(this.posY);
-                int var3 = MathHelper.floor_double(this.posZ);
+                int i = MathHelper.floor_double(this.posX);
+                int j = MathHelper.floor_double(this.posY);
+                int k = MathHelper.floor_double(this.posZ);
 
                 if (this.fallTime == 1)
                 {
-                    if (this.fallTime != 1 || this.worldObj.getBlockId(var1, var2, var3) != this.blockID || this.worldObj.getBlockMetadata(var1, var2, var3) != this.metadata || CraftEventFactory.callEntityChangeBlockEvent(this, var1, var2, var3, 0, 0).isCancelled()) // CraftBukkit - compare data and call event
+                    if (this.fallTime != 1 || this.worldObj.getBlockId(i, j, k) != this.blockID || this.worldObj.getBlockMetadata(i, j, k) != this.metadata || CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, 0, 0).isCancelled()) // CraftBukkit - compare data and call event
                     {
                         this.setDead();
                         return;
                     }
 
                     // CraftBukkit start - Store the block tile entity with this entity
-                    TileEntity tile = this.worldObj.getBlockTileEntity(var1, var2, var3);
+                    TileEntity tile = this.worldObj.getBlockTileEntity(i, j, k);
 
                     if (tile != null)
                     {
@@ -139,11 +139,11 @@ public class EntityFallingSand extends Entity
                         // Save the data
                         tile.writeToNBT(tileEntityData);
                         // Remove the existing tile entity
-                        this.worldObj.removeBlockTileEntity(var1, var2, var3);
+                        this.worldObj.removeBlockTileEntity(i, j, k);
                     }
 
                     // CraftBukkit end
-                    this.worldObj.setBlockWithNotify(var1, var2, var3, 0);
+                    this.worldObj.setBlockWithNotify(i, j, k, 0);
                 }
 
                 if (this.onGround)
@@ -152,29 +152,29 @@ public class EntityFallingSand extends Entity
                     this.motionZ *= 0.699999988079071D;
                     this.motionY *= -0.5D;
 
-                    if (this.worldObj.getBlockId(var1, var2, var3) != Block.pistonMoving.blockID)
+                    if (this.worldObj.getBlockId(i, j, k) != Block.pistonMoving.blockID)
                     {
                         this.setDead();
 
                         // CraftBukkit start
-                        if (!this.isBreakingAnvil && this.worldObj.canPlaceEntityOnSide(this.blockID, var1, var2, var3, true, 1, (Entity) null) && !BlockSand.canFallBelow(this.worldObj, var1, var2 - 1, var3) /* mimic the false conditions of setTypeIdAndData */ && var1 >= -30000000 && var3 >= -30000000 && var1 < 30000000 && var3 < 30000000 && var2 > 0 && var2 < 256 && !(this.worldObj.getBlockId(var1, var2, var3) == this.blockID && this.worldObj.getBlockMetadata(var1, var2, var3) == this.metadata))
+                        if (!this.isBreakingAnvil && this.worldObj.canPlaceEntityOnSide(this.blockID, i, j, k, true, 1, (Entity) null) && !BlockSand.canFallBelow(this.worldObj, i, j - 1, k) /* mimic the false conditions of setTypeIdAndData */ && i >= -30000000 && k >= -30000000 && i < 30000000 && k < 30000000 && j > 0 && j < 256 && !(this.worldObj.getBlockId(i, j, k) == this.blockID && this.worldObj.getBlockMetadata(i, j, k) == this.metadata))
                         {
-                            if (CraftEventFactory.callEntityChangeBlockEvent(this, var1, var2, var3, this.blockID, this.metadata).isCancelled())
+                            if (CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, this.blockID, this.metadata).isCancelled())
                             {
                                 return;
                             }
 
-                            this.worldObj.setBlockAndMetadataWithNotify(var1, var2, var3, this.blockID, this.metadata);
+                            this.worldObj.setBlockAndMetadataWithNotify(i, j, k, this.blockID, this.metadata);
 
                             if (this.tileEntityData != null)
                             {
-                                this.worldObj.setBlockTileEntity(var1, var2, var3, TileEntity.createAndLoadEntity(this.tileEntityData));
+                                this.worldObj.setBlockTileEntity(i, j, k, TileEntity.createAndLoadEntity(this.tileEntityData));
                             }
 
                             // CraftBukkit end
                             if (Block.blocksList[this.blockID] instanceof BlockSand)
                             {
-                                ((BlockSand)Block.blocksList[this.blockID]).onFinishFalling(this.worldObj, var1, var2, var3, this.metadata);
+                                ((BlockSand)Block.blocksList[this.blockID]).onFinishFalling(this.worldObj, i, j, k, this.metadata);
                             }
                         }
                         else if (this.shouldDropItem && !this.isBreakingAnvil)
@@ -183,7 +183,7 @@ public class EntityFallingSand extends Entity
                         }
                     }
                 }
-                else if (this.fallTime > 100 && !this.worldObj.isRemote && (var2 < 1 || var2 > 256) || this.fallTime > 600)
+                else if (this.fallTime > 100 && !this.worldObj.isRemote && (j < 1 || j > 256) || this.fallTime > 600)
                 {
                     if (this.shouldDropItem)
                     {
@@ -203,43 +203,43 @@ public class EntityFallingSand extends Entity
     {
         if (this.isAnvil)
         {
-            int var2 = MathHelper.ceiling_float_int(par1 - 1.0F);
+            int i = MathHelper.ceiling_float_int(par1 - 1.0F);
 
-            if (var2 > 0)
+            if (i > 0)
             {
-                ArrayList var3 = new ArrayList(this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox));
-                DamageSource var4 = this.blockID == Block.anvil.blockID ? DamageSource.anvil : DamageSource.fallingBlock;
-                Iterator var5 = var3.iterator();
+                ArrayList arraylist = new ArrayList(this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox));
+                DamageSource damagesource = this.blockID == Block.anvil.blockID ? DamageSource.anvil : DamageSource.fallingBlock;
+                Iterator iterator = arraylist.iterator();
 
-                while (var5.hasNext())
+                while (iterator.hasNext())
                 {
-                    Entity var6 = (Entity)var5.next();
+                    Entity entity = (Entity)iterator.next();
                     // CraftBukkit start
-                    int damage = Math.min(MathHelper.floor_float((float) var2 * this.fallHurtAmount), this.fallHurtMax);
-                    EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(this, var6, EntityDamageEvent.DamageCause.FALLING_BLOCK, damage);
+                    int damage = Math.min(MathHelper.floor_float((float) i * this.fallHurtAmount), this.fallHurtMax);
+                    EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(this, entity, EntityDamageEvent.DamageCause.FALLING_BLOCK, damage);
 
                     if (event.isCancelled())
                     {
                         continue;
                     }
 
-                    var6.attackEntityFrom(var4, event.getDamage());
+                    entity.attackEntityFrom(damagesource, event.getDamage());
                     // CraftBukkit end
                 }
 
-                if (this.blockID == Block.anvil.blockID && (double)this.rand.nextFloat() < 0.05000000074505806D + (double)var2 * 0.05D)
+                if (this.blockID == Block.anvil.blockID && (double)this.rand.nextFloat() < 0.05000000074505806D + (double)i * 0.05D)
                 {
-                    int var7 = this.metadata >> 2;
-                    int var8 = this.metadata & 3;
-                    ++var7;
+                    int j = this.metadata >> 2;
+                    int k = this.metadata & 3;
+                    ++j;
 
-                    if (var7 > 2)
+                    if (j > 2)
                     {
                         this.isBreakingAnvil = true;
                     }
                     else
                     {
-                        this.metadata = var8 | var7 << 2;
+                        this.metadata = k | j << 2;
                     }
                 }
             }
