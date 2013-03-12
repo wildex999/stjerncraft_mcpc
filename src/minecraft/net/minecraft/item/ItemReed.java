@@ -75,10 +75,10 @@ public class ItemReed extends Item
             if (par3World.canPlaceEntityOnSide(this.spawnID, par4, par5, par6, false, par7, (Entity)null))
             {
                 Block block = Block.blocksList[this.spawnID];
-                int i1 = block.onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, 0);
+                int j1 = block.onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, 0);
 
                 // CraftBukkit start - redirect to common handler
-                ItemBlock.processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.spawnID, i1, clickedX, clickedY, clickedZ);
+                ItemBlock.processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.spawnID, j1, clickedX, clickedY, clickedZ);
                 /*
                 if (par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.spawnID, i1))
                 {

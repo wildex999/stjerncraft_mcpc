@@ -3581,16 +3581,16 @@ public abstract class World implements IBlockAccess
         }
 
         //Keep chunks with growth inside of the optimal chunk range
-        int i1 = Math.min(200, Math.max(1, (int)(((l - playerEntities.size()) / (double)playerEntities.size()) + 0.5)));
-        int j1 = 3 + i1 / 30;
+        int chunksPerPlayer = Math.min(200, Math.max(1, (int)(((l - playerEntities.size()) / (double)playerEntities.size()) + 0.5)));
+        int randRange = 3 + chunksPerPlayer / 30;
 
-        if (j1 > chunkTickRadius)  // Limit to normal tick radius - including view distance
+        if (randRange > chunkTickRadius)  // Limit to normal tick radius - including view distance
         {
-            j1 = chunkTickRadius;
+            randRange = chunkTickRadius;
         }
 
         //odds of growth happening vs growth happening in vanilla
-        final float f = Math.max(35, Math.min(100, ((i1 + 1) * 100F) / 15F));
+        final float f = Math.max(35, Math.min(100, ((chunksPerPlayer + 1) * 100F) / 15F));
         this.modifiedOdds = f;
         this.growthOdds = f;
 
@@ -3605,10 +3605,10 @@ public abstract class World implements IBlockAccess
             activeChunkSet.put(key, (short)(existingPlayers + 1));
 
             //Check and see if we update the chunks surrounding the player this tick
-            for (int chunk = 0; chunk < i1; chunk++)
+            for (int chunk = 0; chunk < chunksPerPlayer; chunk++)
             {
-                int dx = (rand.nextBoolean() ? 1 : -1) * rand.nextInt(j1);
-                int dz = (rand.nextBoolean() ? 1 : -1) * rand.nextInt(j1);
+                int dx = (rand.nextBoolean() ? 1 : -1) * rand.nextInt(randRange);
+                int dz = (rand.nextBoolean() ? 1 : -1) * rand.nextInt(randRange);
                 long hash = chunkToKey(dx + chunkX, dz + chunkZ);
 
                 if (!activeChunkSet.contains(hash) && this.chunkExists(dx + chunkX, dz + chunkZ))

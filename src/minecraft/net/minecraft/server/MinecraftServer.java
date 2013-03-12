@@ -541,23 +541,23 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             // CraftBukkit end
             ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
 
-            for (int j = -short1; j <= short1 && this.isServerRunning(); j += 16)
+            for (int k = -short1; k <= short1 && this.isServerRunning(); k += 16)
             {
-                for (int k = -short1; k <= short1 && this.isServerRunning(); k += 16)
+                for (int l = -short1; l <= short1 && this.isServerRunning(); l += 16)
                 {
-                    long l = System.currentTimeMillis();
+                    long i1 = System.currentTimeMillis();
 
-                    if (l < i)
+                    if (i1 < i)
                     {
-                        i = l;
+                        i = i1;
                     }
 
-                    if (l > i + 1000L)
+                    if (i1 > i + 1000L)
                     {
-                        int i1 = (short1 * 2 + 1) * (short1 * 2 + 1);
-                        int k1 = (j + short1) * (short1 * 2 + 1) + k + 1;
-                        this.outputPercentRemaining("Preparing spawn area", k1 * 100 / i1);
-                        i = l;
+                        int j1 = (short1 * 2 + 1) * (short1 * 2 + 1);
+                        int k1 = (k + short1) * (short1 * 2 + 1) + l + 1;
+                        this.outputPercentRemaining("Preparing spawn area", k1 * 100 / j1);
+                        i = i1;
                     }
 
                     worldserver.theChunkProviderServer.loadChunk(chunkcoordinates.posX + j >> 4, chunkcoordinates.posZ + k >> 4);

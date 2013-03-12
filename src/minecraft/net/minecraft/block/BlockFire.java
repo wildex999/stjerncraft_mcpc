@@ -7,7 +7,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProviderEnd;
 
 import net.minecraftforge.common.ForgeDirection;
 import static net.minecraftforge.common.ForgeDirection.*;
@@ -162,10 +161,10 @@ public class BlockFire extends Block
                 }
                 else
                 {
-                    boolean flag = par1World.isBlockHighHumidity(par2, par3, par4);
+                    boolean flag1 = par1World.isBlockHighHumidity(par2, par3, par4);
                     byte b0 = 0;
 
-                    if (flag)
+                    if (flag1)
                     {
                         b0 = -50;
                     }
@@ -204,7 +203,7 @@ public class BlockFire extends Block
                                     {
                                         int j2 = (i2 + 40 + par1World.difficultySetting * 7) / (l + 30);
 
-                                        if (flag)
+                                        if (flag1)
                                         {
                                             j2 /= 2;
                                         }

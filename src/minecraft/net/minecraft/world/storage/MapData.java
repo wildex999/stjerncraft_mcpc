@@ -69,12 +69,12 @@ public class MapData extends WorldSavedData
         // Forge end
         if (dimension >= 10)
         {
-            long i = par1NBTTagCompound.getLong("UUIDLeast");
-            long j = par1NBTTagCompound.getLong("UUIDMost");
+            long least = par1NBTTagCompound.getLong("UUIDLeast");
+            long most = par1NBTTagCompound.getLong("UUIDMost");
 
-            if (i != 0L && j != 0L)
+            if (least != 0L && most != 0L)
             {
-                this.uniqueId = new UUID(j, i);
+                this.uniqueId = new UUID(most, least);
                 CraftWorld craftworld = (CraftWorld) server.getWorld(this.uniqueId);
 
                 // Check if the stored world details are correct.
@@ -118,18 +118,18 @@ public class MapData extends WorldSavedData
         {
             byte[] abyte = par1NBTTagCompound.getByteArray("colors");
             this.colors = new byte[16384];
-            int k = (128 - short1) / 2;
-            int l = (128 - short2) / 2;
+            int i = (128 - short1) / 2;
+            int j = (128 - short2) / 2;
 
-            for (int i1 = 0; i1 < short2; ++i1)
+            for (int k = 0; k < short2; ++k)
             {
-                int l = i1 + l;
+                int l = k + j;
 
                 if (l >= 0 || l < 128)
                 {
                     for (int i1 = 0; i1 < short1; ++i1)
                     {
-                        int j1 = i1 + k;
+                        int j1 = i1 + i;
 
                         if (j1 >= 0 || j1 < 128)
                         {

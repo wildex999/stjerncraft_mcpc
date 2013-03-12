@@ -513,9 +513,9 @@ public class NetServerHandler extends NetHandler
                 double d9 = Math.max(Math.abs(d6), Math.abs(this.playerEntity.motionY));
                 double d10 = Math.max(Math.abs(d7), Math.abs(this.playerEntity.motionZ));
                 // CraftBukkit end
-                double d8 = d8 * d8 + d9 * d9 + d10 * d10;
+                double d11 = d8 * d8 + d9 * d9 + d10 * d10;
 
-                if (d8 > 100.0D && this.hasMoved && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.username)))   // CraftBukkit - Added this.checkMovement condition to solve this check being triggered by teleports
+                if (d11 > 100.0D && this.hasMoved && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.username)))   // CraftBukkit - Added this.checkMovement condition to solve this check being triggered by teleports
                 {
                     logger.warning(this.playerEntity.username + " moved too quickly! " + d4 + "," + d6 + "," + d7 + " (" + d8 + ", " + d9 + ", " + d10 + ")");
                     this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, this.playerEntity.rotationYaw, this.playerEntity.rotationPitch);
@@ -538,7 +538,7 @@ public class NetServerHandler extends NetHandler
                 this.playerEntity.moveEntity(d4, d6, d7);
                 this.playerEntity.onGround = par1Packet10Flying.onGround;
                 this.playerEntity.addMovementStat(d4, d6, d7);
-                double d9 = d6;
+                double d12 = d6;
                 d4 = d1 - this.playerEntity.posX;
                 d6 = d2 - this.playerEntity.posY;
 
@@ -548,10 +548,10 @@ public class NetServerHandler extends NetHandler
                 }
 
                 d7 = d3 - this.playerEntity.posZ;
-                d8 = d4 * d4 + d6 * d6 + d7 * d7;
+                d11 = d4 * d4 + d6 * d6 + d7 * d7;
                 boolean flag1 = false;
 
-                if (d8 > 0.0625D && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.theItemInWorldManager.isCreative())
+                if (d11 > 0.0625D && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.theItemInWorldManager.isCreative())
                 {
                     flag1 = true;
                     logger.warning(this.playerEntity.username + " moved wrongly!");
@@ -575,7 +575,7 @@ public class NetServerHandler extends NetHandler
 
                 if (!this.mcServer.isFlightAllowed() && !this.playerEntity.capabilities.allowFlying && !worldserver.isAABBNonEmpty(axisalignedbb))   // CraftBukkit - check abilities instead of creative mode
                 {
-                    if (d9 >= -0.03125D)
+                    if (d12 >= -0.03125D)
                     {
                         ++this.ticksForFloatKick;
 

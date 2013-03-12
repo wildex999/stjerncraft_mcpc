@@ -190,11 +190,11 @@ public class NetLoginHandler extends NetHandler
         FMLNetworkHandler.onConnectionReceivedFromClient(this, this.mcServer, this.myTCPConnection.getSocketAddress(), this.clientUsername);
     }
 
-    public void completeConnection(String s)
+    public void completeConnection(String par1)
     {
-        if (s != null)
+        if (par1 != null)
         {
-            this.raiseErrorAndDisconnect(s);
+            this.raiseErrorAndDisconnect(par1);
         }
 
         // CraftBukkit start
