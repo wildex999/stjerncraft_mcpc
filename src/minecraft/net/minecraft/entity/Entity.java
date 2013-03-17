@@ -264,7 +264,6 @@ public abstract class Entity
     private NBTTagCompound customEntityData;
     public boolean captureDrops = false;
     public ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
-    private UUID persistentID;    
 
     private HashMap<String, IExtendedEntityProperties> extendedProperties;
 
@@ -303,7 +302,7 @@ public abstract class Entity
         this.addedToChunk = false;
         this.field_82152_aq = 0;
         this.invulnerable = false;
-        this.entityUniqueID = UUID.randomUUID();
+        this.entityUniqueID = new UUID(rand.nextLong(), rand.nextLong()); // Spigot
         this.myEntitySize = EnumEntitySize.SIZE_2;
         this.worldObj = par1World;
         this.setPosition(0.0D, 0.0D, 0.0D);
