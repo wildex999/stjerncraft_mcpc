@@ -301,14 +301,7 @@ public class EntityFishHook extends Entity
                     }
                     else
                     {
-                        short short1 = 500;
-
-                        if (this.worldObj.canLightningStrikeAt(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ)))
-                        {
-                            short1 = 300;
-                        }
-
-                        if (this.rand.nextInt(short1) == 0)
+                        if (rand.nextDouble() < ((org.bukkit.entity.Fish) this.getBukkitEntity()).getBiteChance())   // CraftBukkit - moved logic to CraftFish
                         {
                             this.ticksCatchable = this.rand.nextInt(30) + 10;
                             this.motionY -= 0.20000000298023224D;
