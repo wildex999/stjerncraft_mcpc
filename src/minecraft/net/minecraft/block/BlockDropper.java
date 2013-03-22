@@ -1,5 +1,9 @@
 package net.minecraft.block;
 
+// CraftBukkit start
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.inventory.Inventory;
 import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
 import net.minecraft.dispenser.IBehaviorDispenseItem;
 import net.minecraft.inventory.IInventory;
@@ -10,6 +14,8 @@ import net.minecraft.tileentity.TileEntityDropper;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.Facing;
 import net.minecraft.world.World;
+// CraftBukkit end
+
 public class BlockDropper extends BlockDispenser
 {
     private final IBehaviorDispenseItem field_96474_cR = new BehaviorDefaultDispenseItem();
@@ -54,10 +60,22 @@ public class BlockDropper extends BlockDispenser
 
                 if (iinventory != null)
                 {
-                    itemstack1 = TileEntityHopper.func_94117_a(iinventory, itemstack.copy().splitStack(1), Facing.faceToSide[i1]);
+                    // CraftBukkit start - fire event when pushing items into other inventories
+                    CraftItemStack oitemstack = CraftItemStack.asCraftMirror(itemstack.copy().splitStack(1));
+                    Inventory destinationInventory = iinventory.getOwner() != null ? iinventory.getOwner().getInventory() : null;
+                    InventoryMoveItemEvent event = new InventoryMoveItemEvent(tileentitydispenser.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
+                    par1World.getServer().getPluginManager().callEvent(event);
 
-                    if (itemstack1 == null)
+                    if (event.isCancelled())
                     {
+                        return;
+                    }
+
+                    itemstack1 = TileEntityHopper.func_94117_a(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.faceToSide[i1]);
+
+                    if (event.getItem().equals(oitemstack) && itemstack1 == null)
+                    {
+                        // CraftBukkit end
                         itemstack1 = itemstack.copy();
 
                         if (--itemstack1.stackSize == 0)

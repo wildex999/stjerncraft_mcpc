@@ -20,8 +20,11 @@ import net.minecraft.world.World;
 
 // CraftBukkit start
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.inventory.Inventory;
 // CraftBukkit end
 
 public class TileEntityHopper extends TileEntity implements Hopper
@@ -317,11 +320,33 @@ public class TileEntityHopper extends TileEntity implements Hopper
                 if (this.getStackInSlot(i) != null)
                 {
                     ItemStack itemstack = this.getStackInSlot(i).copy();
-                    ItemStack itemstack1 = func_94117_a(iinventory, this.decrStackSize(i, 1), Facing.faceToSide[BlockHopper.func_94451_c(this.getBlockMetadata())]);
+                    // CraftBukkit start - fire event when pushing items into other inventories
+                    CraftItemStack oitemstack = CraftItemStack.asCraftMirror(this.decrStackSize(i, 1));
+                    Inventory destinationInventory = iinventory.getOwner() != null ? iinventory.getOwner().getInventory() : null;
+                    InventoryMoveItemEvent event = new InventoryMoveItemEvent(this.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
+                    this.getWorldObj().getServer().getPluginManager().callEvent(event);
+
+                    if (event.isCancelled())
+                    {
+                        this.setInventorySlotContents(i, itemstack);
+                        this.func_98046_c(8); // delay hopper checks
+                        return false;
+                    }
+
+                    ItemStack itemstack1 = func_94117_a(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.faceToSide[BlockHopper.func_94451_c(this.getBlockMetadata())]);
 
                     if (itemstack1 == null || itemstack1.stackSize == 0)
                     {
-                        iinventory.onInventoryChanged();
+                        if (event.getItem().equals(oitemstack))
+                        {
+                            iinventory.onInventoryChanged();
+                        }
+                        else
+                        {
+                            this.setInventorySlotContents(i, itemstack);
+                        }
+
+                        // CraftBukkit end
                         return true;
                     }
 
@@ -387,11 +412,33 @@ public class TileEntityHopper extends TileEntity implements Hopper
         if (itemstack != null && func_102013_b(par1IInventory, itemstack, par2, par3))
         {
             ItemStack itemstack1 = itemstack.copy();
-            ItemStack itemstack2 = func_94117_a(par0Hopper, par1IInventory.decrStackSize(par2, 1), -1);
+            // CraftBukkit start - fire event on collection of items from inventories into the hopper
+            CraftItemStack oitemstack = CraftItemStack.asCraftMirror(par1IInventory.decrStackSize(par2, 1));
+            Inventory sourceInventory = par1IInventory.getOwner() != null ? par1IInventory.getOwner().getInventory() : null;
+            InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), par0Hopper.getOwner().getInventory(), false);
+            par0Hopper.getWorldObj().getServer().getPluginManager().callEvent(event);
+
+            if (event.isCancelled())
+            {
+                par1IInventory.setInventorySlotContents(par2, itemstack1);
+                ((TileEntityHopper) par0Hopper).func_98046_c(8); // delay hopper checks
+                return false;
+            }
+
+            ItemStack itemstack2 = func_94117_a(par0Hopper, CraftItemStack.asNMSCopy(event.getItem()), -1);
 
             if (itemstack2 == null || itemstack2.stackSize == 0)
             {
-                par1IInventory.onInventoryChanged();
+                if (event.getItem().equals(oitemstack))
+                {
+                    par1IInventory.onInventoryChanged();
+                }
+                else
+                {
+                    par1IInventory.setInventorySlotContents(par2, itemstack1);
+                }
+
+                // CraftBukkit end
                 return true;
             }
 
