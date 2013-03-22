@@ -925,4 +925,15 @@ public class Item
         return getPotionEffect();
     }
     
+    /**
+     * Allow or forbid the specific book/item combination as an anvil enchant
+     *
+     * @param itemstack1 The item
+     * @param itemstack2 The book
+     * @return if the enchantment is allowed
+     */
+    public boolean isBookEnchantable(ItemStack itemstack1, ItemStack itemstack2)
+    {
+        return true;
+    }
 }
