@@ -31,7 +31,7 @@ public class ServerScoreboard extends Scoreboard
 
         if (this.field_96553_b.contains(par1Score.func_96645_d()))
         {
-            this.field_96555_a.getConfigurationManager().sendPacketToAllPlayers(new Packet207SetScore(par1Score, 0));
+            this.sendAll(new Packet207SetScore(par1Score, 0)); // CraftBukkit - Internal packet method
         }
 
         this.func_96551_b();
@@ -40,7 +40,7 @@ public class ServerScoreboard extends Scoreboard
     public void func_96516_a(String par1Str)
     {
         super.func_96516_a(par1Str);
-        this.field_96555_a.getConfigurationManager().sendPacketToAllPlayers(new Packet207SetScore(par1Str));
+        this.sendAll(new Packet207SetScore(par1Str)); // CraftBukkit - Internal packet method
         this.func_96551_b();
     }
 
@@ -53,7 +53,7 @@ public class ServerScoreboard extends Scoreboard
         {
             if (this.func_96552_h(scoreobjective1) > 0)
             {
-                this.field_96555_a.getConfigurationManager().sendPacketToAllPlayers(new Packet208SetDisplayObjective(par1, par2ScoreObjective));
+                this.sendAll(new Packet208SetDisplayObjective(par1, par2ScoreObjective)); // CraftBukkit - Internal packet method
             }
             else
             {
@@ -65,7 +65,7 @@ public class ServerScoreboard extends Scoreboard
         {
             if (this.field_96553_b.contains(par2ScoreObjective))
             {
-                this.field_96555_a.getConfigurationManager().sendPacketToAllPlayers(new Packet208SetDisplayObjective(par1, par2ScoreObjective));
+                this.sendAll(new Packet208SetDisplayObjective(par1, par2ScoreObjective)); // CraftBukkit - Internal packet method
             }
             else
             {
@@ -79,14 +79,14 @@ public class ServerScoreboard extends Scoreboard
     public void func_96521_a(String par1Str, ScorePlayerTeam par2ScorePlayerTeam)
     {
         super.func_96521_a(par1Str, par2ScorePlayerTeam);
-        this.field_96555_a.getConfigurationManager().sendPacketToAllPlayers(new Packet209SetPlayerTeam(par2ScorePlayerTeam, Arrays.asList(new String[] {par1Str}), 3));
+        this.sendAll(new Packet209SetPlayerTeam(par2ScorePlayerTeam, Arrays.asList(new String[] { par1Str}), 3)); // CraftBukkit - Internal packet method
         this.func_96551_b();
     }
 
     public void func_96512_b(String par1Str, ScorePlayerTeam par2ScorePlayerTeam)
     {
         super.func_96512_b(par1Str, par2ScorePlayerTeam);
-        this.field_96555_a.getConfigurationManager().sendPacketToAllPlayers(new Packet209SetPlayerTeam(par2ScorePlayerTeam, Arrays.asList(new String[] {par1Str}), 4));
+        this.sendAll(new Packet209SetPlayerTeam(par2ScorePlayerTeam, Arrays.asList(new String[] { par1Str}), 4)); // CraftBukkit - Internal packet method
         this.func_96551_b();
     }
 
@@ -102,7 +102,7 @@ public class ServerScoreboard extends Scoreboard
 
         if (this.field_96553_b.contains(par1ScoreObjective))
         {
-            this.field_96555_a.getConfigurationManager().sendPacketToAllPlayers(new Packet206SetObjective(par1ScoreObjective, 2));
+            this.sendAll(new Packet206SetObjective(par1ScoreObjective, 2)); // CraftBukkit - Internal packet method
         }
 
         this.func_96551_b();
@@ -123,21 +123,21 @@ public class ServerScoreboard extends Scoreboard
     public void func_96523_a(ScorePlayerTeam par1ScorePlayerTeam)
     {
         super.func_96523_a(par1ScorePlayerTeam);
-        this.field_96555_a.getConfigurationManager().sendPacketToAllPlayers(new Packet209SetPlayerTeam(par1ScorePlayerTeam, 0));
+        this.sendAll(new Packet209SetPlayerTeam(par1ScorePlayerTeam, 0)); // CraftBukkit - Internal packet method
         this.func_96551_b();
     }
 
     public void func_96538_b(ScorePlayerTeam par1ScorePlayerTeam)
     {
         super.func_96538_b(par1ScorePlayerTeam);
-        this.field_96555_a.getConfigurationManager().sendPacketToAllPlayers(new Packet209SetPlayerTeam(par1ScorePlayerTeam, 2));
+        this.sendAll(new Packet209SetPlayerTeam(par1ScorePlayerTeam, 2)); // CraftBukkit - Internal packet method
         this.func_96551_b();
     }
 
     public void func_96513_c(ScorePlayerTeam par1ScorePlayerTeam)
     {
         super.func_96513_c(par1ScorePlayerTeam);
-        this.field_96555_a.getConfigurationManager().sendPacketToAllPlayers(new Packet209SetPlayerTeam(par1ScorePlayerTeam, 1));
+        this.sendAll(new Packet209SetPlayerTeam(par1ScorePlayerTeam, 1)); // CraftBukkit - Internal packet method
         this.func_96551_b();
     }
 
@@ -186,6 +186,12 @@ public class ServerScoreboard extends Scoreboard
         while (iterator.hasNext())
         {
             EntityPlayerMP entityplayermp = (EntityPlayerMP)iterator.next();
+
+            if (entityplayermp.getBukkitEntity().getScoreboard().getHandle() != this)
+            {
+                continue;    // CraftBukkit - Only players on this board
+            }
+
             Iterator iterator1 = list.iterator();
 
             while (iterator1.hasNext())
@@ -222,6 +228,12 @@ public class ServerScoreboard extends Scoreboard
         while (iterator.hasNext())
         {
             EntityPlayerMP entityplayermp = (EntityPlayerMP)iterator.next();
+
+            if (entityplayermp.getBukkitEntity().getScoreboard().getHandle() != this)
+            {
+                continue;    // CraftBukkit - Only players on this board
+            }
+
             Iterator iterator1 = list.iterator();
 
             while (iterator1.hasNext())
@@ -248,4 +260,17 @@ public class ServerScoreboard extends Scoreboard
 
         return i;
     }
+
+    // CraftBukkit start - Send to players
+    private void sendAll(Packet packet)
+    {
+        for (EntityPlayerMP entityplayermp : (List<EntityPlayerMP>) this.field_96555_a.getConfigurationManager().playerEntityList)
+        {
+            if (entityplayermp.getBukkitEntity().getScoreboard().getHandle() == this)
+            {
+                entityplayermp.playerNetServerHandler.sendPacketToPlayer(packet);
+            }
+        }
+    }
+    // CraftBukkit end
 }

@@ -399,6 +399,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
             }
 
+            this.server.scoreboardManager = new org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager(this, world.getScoreboard());
             this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(world.getWorld()));
             world.addWorldAccess(new WorldManager(this, world));
 

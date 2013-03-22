@@ -39,6 +39,7 @@ import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.map.CraftMapView;
 import org.bukkit.craftbukkit.map.RenderData;
+import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
@@ -51,6 +52,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
+import org.bukkit.scoreboard.Scoreboard;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -425,6 +427,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         server.getHandle().playerNBTManagerObj.writePlayerData(getHandle());
     }
 
+    @Deprecated
     public void updateInventory() {
         getHandle().sendContainerToPlayer(getHandle().openContainer);
     }
@@ -978,5 +981,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void resetMaxHealth() {
         super.resetMaxHealth();
         getHandle().setPlayerHealthUpdated();
+    }
+
+    public CraftScoreboard getScoreboard() {
+        return this.server.getScoreboardManager().getPlayerBoard(this);
+    }
+
+    public void setScoreboard(net.minecraft.scoreboard.Scoreboard scoreboard) {
+        Validate.notNull(scoreboard, "Scoreboard cannot be null");
+        this.server.getScoreboardManager().setPlayerBoard(this, scoreboard);
     }
 }

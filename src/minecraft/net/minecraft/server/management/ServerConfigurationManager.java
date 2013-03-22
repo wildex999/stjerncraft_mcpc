@@ -203,7 +203,7 @@ public abstract class ServerConfigurationManager
         }
     }
 
-    protected void func_96456_a(ServerScoreboard par1ServerScoreboard, EntityPlayerMP par2EntityPlayerMP)
+    public void func_96456_a(ServerScoreboard par1ServerScoreboard, EntityPlayerMP par2EntityPlayerMP)   // CraftBukkit - protected -> public
     {
         HashSet hashset = new HashSet();
         Iterator iterator = par1ServerScoreboard.func_96525_g().iterator();
@@ -402,6 +402,8 @@ public abstract class ServerConfigurationManager
             }
         }
 
+        // This removes the scoreboard (and player reference) for the specific player in the manager
+        this.cserver.getScoreboardManager().removePlayer(entityplayermp.getBukkitEntity());
         return playerQuitEvent.getQuitMessage();
         // CraftBukkit end
     }

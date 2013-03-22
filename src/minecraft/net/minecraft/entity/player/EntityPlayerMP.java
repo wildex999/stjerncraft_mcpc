@@ -374,14 +374,8 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
     public void setEntityHealth(int par1)
     {
         super.setEntityHealth(par1);
-        Collection collection = this.func_96123_co().func_96520_a(ScoreObjectiveCriteria.field_96638_f);
-        Iterator iterator = collection.iterator();
-
-        while (iterator.hasNext())
-        {
-            ScoreObjective scoreobjective = (ScoreObjective)iterator.next();
-            this.func_96123_co().func_96529_a(this.getEntityName(), scoreobjective).func_96651_a(Arrays.asList(new EntityPlayer[] {this}));
-        }
+        // CraftBukkit - Update ALL the scores!
+        this.worldObj.getServer().getScoreboardManager().updateAllScoresForList(ScoreObjectiveCriteria.field_96638_f, this.getEntityName(), com.google.common.collect.ImmutableList.of(this));
     }
 
     public void onUpdateEntity()
@@ -515,13 +509,13 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
         this.closeScreen();
         // CraftBukkit end
-        Collection collection = this.worldObj.getScoreboard().func_96520_a(ScoreObjectiveCriteria.field_96642_c);
+        // CraftBukkit - Get our scores instead
+        Collection<Score> collection = this.worldObj.getServer().getScoreboardManager().getScoreboardScores(ScoreObjectiveCriteria.field_96642_c, this.getEntityName(), new java.util.ArrayList<Score>());
         Iterator iterator = collection.iterator();
 
         while (iterator.hasNext())
         {
-            ScoreObjective scoreobjective = (ScoreObjective)iterator.next();
-            Score score = this.func_96123_co().func_96529_a(this.getEntityName(), scoreobjective);
+            Score score = (Score) iterator.next(); // CraftBukkit - Use our scores instead
             score.func_96648_a();
         }
 

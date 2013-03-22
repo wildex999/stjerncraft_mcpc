@@ -52,6 +52,7 @@ import org.bukkit.craftbukkit.metadata.PlayerMetadataStore;
 import org.bukkit.craftbukkit.metadata.WorldMetadataStore;
 import org.bukkit.craftbukkit.potion.CraftPotionBrewer;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
+import org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager;
 import org.bukkit.craftbukkit.updater.AutoUpdater;
 import org.bukkit.craftbukkit.updater.BukkitDLUpdaterService;
 import org.bukkit.craftbukkit.util.DatFileFilter;
@@ -153,6 +154,7 @@ public final class CraftServer implements Server {
     private boolean dumpMaterials = false; // MCPC+
 
     private final BooleanWrapper online = new BooleanWrapper();
+    public CraftScoreboardManager scoreboardManager;    
 
     // Orebfuscator use
     public boolean orebfuscatorEnabled = false;
@@ -1421,5 +1423,9 @@ public final class CraftServer implements Server {
 
     public CraftItemFactory getItemFactory() {
         return CraftItemFactory.instance();
+    }
+
+    public CraftScoreboardManager getScoreboardManager() {
+        return scoreboardManager;
     }
 }

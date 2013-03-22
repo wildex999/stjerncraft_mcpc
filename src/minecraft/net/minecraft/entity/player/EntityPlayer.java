@@ -133,7 +133,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
     public double field_71085_bR;
     // CraftBukkit start
 
-    // CraftBukkit start
     /** Boolean value indicating weather a player is sleeping or not */
     public boolean sleeping; // protected -> public
     public boolean fauxSleeping;
@@ -733,12 +732,14 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
     public void addToPlayerScore(Entity par1Entity, int par2)
     {
         this.addScore(par2);
-        Collection collection = this.func_96123_co().func_96520_a(ScoreObjectiveCriteria.field_96640_e);
+        // CraftBukkit - Get our scores instead
+        Collection<Score> collection = this.worldObj.getServer().getScoreboardManager().getScoreboardScores(ScoreObjectiveCriteria.field_96640_e, this.getEntityName(), new java.util.ArrayList<Score>());
 
         if (par1Entity instanceof EntityPlayer)
         {
             this.addStat(StatList.playerKillsStat, 1);
-            collection.addAll(this.func_96123_co().func_96520_a(ScoreObjectiveCriteria.field_96639_d));
+            // CraftBukkit - Get our scores instead
+            this.worldObj.getServer().getScoreboardManager().getScoreboardScores(ScoreObjectiveCriteria.field_96639_d, this.getEntityName(), collection);
         }
         else
         {
@@ -749,8 +750,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
         while (iterator.hasNext())
         {
-            ScoreObjective scoreobjective = (ScoreObjective)iterator.next();
-            Score score = this.func_96123_co().func_96529_a(this.getEntityName(), scoreobjective);
+            Score score = (Score) iterator.next(); // CraftBukkit - Use our scores instead
             score.func_96648_a();
         }
     }
@@ -1108,9 +1108,38 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
     public boolean func_96122_a(EntityPlayer par1EntityPlayer)
     {
-        ScorePlayerTeam scoreplayerteam = this.func_96124_cp();
-        ScorePlayerTeam scoreplayerteam1 = par1EntityPlayer.func_96124_cp();
-        return scoreplayerteam != scoreplayerteam1 ? true : (scoreplayerteam != null ? scoreplayerteam.func_96665_g() : true);
+        // CraftBukkit start - Change to check player's scoreboard team according to API reference to this (or main) scoreboard
+        org.bukkit.scoreboard.Team team;
+
+        if (this instanceof EntityPlayerMP)
+        {
+            EntityPlayerMP thisPlayer = (EntityPlayerMP) this;
+            team = thisPlayer.getBukkitEntity().getScoreboard().getPlayerTeam(thisPlayer.getBukkitEntity());
+
+            if (team == null || team.allowFriendlyFire())
+            {
+                return true;
+            }
+        }
+        else
+        {
+            // This should never be called, but is implemented anyway
+            org.bukkit.OfflinePlayer thisPlayer = this.worldObj.getServer().getOfflinePlayer(this.username);
+            team = this.worldObj.getServer().getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
+
+            if (team == null || team.allowFriendlyFire())
+            {
+                return true;
+            }
+        }
+
+        if (par1EntityPlayer instanceof EntityPlayerMP)
+        {
+            return team.hasPlayer(((EntityPlayerMP) par1EntityPlayer).getBukkitEntity());
+        }
+
+        return team.hasPlayer(this.worldObj.getServer().getOfflinePlayer(par1EntityPlayer.username));
+        // CraftBukkit end
     }
 
     /**
@@ -2366,6 +2395,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
     public String func_96090_ax()
     {
+        // TODO: fun
         return ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.username);
     }
 
