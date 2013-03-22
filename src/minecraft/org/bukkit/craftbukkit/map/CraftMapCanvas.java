@@ -37,7 +37,7 @@ public class CraftMapCanvas implements MapCanvas {
             return;
         if (buffer[y * 128 + x] != color) {
             buffer[y * 128 + x] = color;
-            mapView.worldMap.setColumnDirty/*was:flagDirty*/(x, y, y);
+            mapView.worldMap.setColumnDirty(x, y, y);
         }
     }
 

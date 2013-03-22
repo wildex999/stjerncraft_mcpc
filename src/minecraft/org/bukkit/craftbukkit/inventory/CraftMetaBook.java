@@ -39,23 +39,23 @@ class CraftMetaBook extends CraftMetaItem implements BookMeta {
         pages.addAll(bookMeta.pages);
     }
 
-    CraftMetaBook(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
+    CraftMetaBook(net.minecraft.nbt.NBTTagCompound tag) {
         super(tag);
 
-        if (tag.hasKey/*was:hasKey*/(BOOK_TITLE.NBT)) {
-            this.title = tag.getString/*was:getString*/(BOOK_TITLE.NBT);
+        if (tag.hasKey(BOOK_TITLE.NBT)) {
+            this.title = tag.getString(BOOK_TITLE.NBT);
         }
 
-        if (tag.hasKey/*was:hasKey*/(BOOK_AUTHOR.NBT)) {
-            this.author = tag.getString/*was:getString*/(BOOK_AUTHOR.NBT);
+        if (tag.hasKey(BOOK_AUTHOR.NBT)) {
+            this.author = tag.getString(BOOK_AUTHOR.NBT);
         }
 
-        if (tag.hasKey/*was:hasKey*/(BOOK_PAGES.NBT)) {
-            net.minecraft.nbt.NBTTagList/*was:NBTTagList*/ pages = tag.getTagList/*was:getList*/(BOOK_PAGES.NBT);
-            String[] pageArray = new String[pages.tagCount/*was:size*/()];
+        if (tag.hasKey(BOOK_PAGES.NBT)) {
+            net.minecraft.nbt.NBTTagList pages = tag.getTagList(BOOK_PAGES.NBT);
+            String[] pageArray = new String[pages.tagCount()];
 
-            for (int i = 0; i < pages.tagCount/*was:size*/(); i++) {
-                String page = ((net.minecraft.nbt.NBTTagString/*was:NBTTagString*/) pages.tagAt/*was:get*/(i)).data/*was:data*/;
+            for (int i = 0; i < pages.tagCount(); i++) {
+                String page = ((net.minecraft.nbt.NBTTagString) pages.tagAt(i)).data;
                 pageArray[i] = page;
             }
 
@@ -75,19 +75,19 @@ class CraftMetaBook extends CraftMetaItem implements BookMeta {
     }
 
     @Override
-    void applyToItem(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ itemData) {
+    void applyToItem(net.minecraft.nbt.NBTTagCompound itemData) {
         super.applyToItem(itemData);
 
         if (hasTitle()) {
-            itemData.setString/*was:setString*/(BOOK_TITLE.NBT, this.title);
+            itemData.setString(BOOK_TITLE.NBT, this.title);
         }
 
         if (hasAuthor()) {
-            itemData.setString/*was:setString*/(BOOK_AUTHOR.NBT, this.author);
+            itemData.setString(BOOK_AUTHOR.NBT, this.author);
         }
 
         if (hasPages()) {
-            itemData.setTag/*was:set*/(BOOK_PAGES.NBT, createStringList(pages, BOOK_PAGES));
+            itemData.setTag(BOOK_PAGES.NBT, createStringList(pages, BOOK_PAGES));
         }
     }
 

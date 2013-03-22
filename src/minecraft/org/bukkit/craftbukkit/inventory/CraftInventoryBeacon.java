@@ -4,7 +4,7 @@ import org.bukkit.inventory.BeaconInventory;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftInventoryBeacon extends CraftInventory implements BeaconInventory {
-    public CraftInventoryBeacon(net.minecraft.tileentity.TileEntityBeacon/*was:TileEntityBeacon*/ beacon) {
+    public CraftInventoryBeacon(net.minecraft.tileentity.TileEntityBeacon beacon) {
         super(beacon);
     }
 

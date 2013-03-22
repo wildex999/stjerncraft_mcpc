@@ -13,21 +13,21 @@ import org.bukkit.potion.PotionEffect;
 public class CraftThrownPotion extends CraftProjectile implements ThrownPotion {
     private Collection<PotionEffect> effects = null;
 
-    public CraftThrownPotion(CraftServer server, net.minecraft.entity.projectile.EntityPotion/*was:EntityPotion*/ entity) {
+    public CraftThrownPotion(CraftServer server, net.minecraft.entity.projectile.EntityPotion entity) {
         super(server, entity);
     }
 
     public Collection<PotionEffect> getEffects() {
         if (effects == null) {
-            effects = Potion.getBrewer().getEffectsFromDamage(getHandle().getPotionDamage/*was:getPotionValue*/());
+            effects = Potion.getBrewer().getEffectsFromDamage(getHandle().getPotionDamage());
         }
 
         return effects;
     }
 
     @Override
-    public net.minecraft.entity.projectile.EntityPotion/*was:EntityPotion*/ getHandle() {
-        return (net.minecraft.entity.projectile.EntityPotion/*was:EntityPotion*/) entity;
+    public net.minecraft.entity.projectile.EntityPotion getHandle() {
+        return (net.minecraft.entity.projectile.EntityPotion) entity;
     }
 
     @Override

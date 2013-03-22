@@ -5,13 +5,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.IronGolem;
 
 public class CraftIronGolem extends CraftGolem implements IronGolem {
-    public CraftIronGolem(CraftServer server, net.minecraft.entity.monster.EntityIronGolem/*was:EntityIronGolem*/ entity) {
+    public CraftIronGolem(CraftServer server, net.minecraft.entity.monster.EntityIronGolem entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.monster.EntityIronGolem/*was:EntityIronGolem*/ getHandle() {
-        return (net.minecraft.entity.monster.EntityIronGolem/*was:EntityIronGolem*/) entity;
+    public net.minecraft.entity.monster.EntityIronGolem getHandle() {
+        return (net.minecraft.entity.monster.EntityIronGolem) entity;
     }
 
     @Override
@@ -20,11 +20,11 @@ public class CraftIronGolem extends CraftGolem implements IronGolem {
     }
 
     public boolean isPlayerCreated() {
-        return getHandle().isPlayerCreated/*was:p*/();
+        return getHandle().isPlayerCreated();
     }
 
     public void setPlayerCreated(boolean playerCreated) {
-        getHandle().setHoldingRose/*was:f*/(playerCreated);
+        getHandle().setHoldingRose(playerCreated);
     }
 
     @Override

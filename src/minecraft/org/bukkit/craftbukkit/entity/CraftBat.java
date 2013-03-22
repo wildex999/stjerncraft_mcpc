@@ -5,13 +5,13 @@ import org.bukkit.entity.Bat;
 import org.bukkit.entity.EntityType;
 
 public class CraftBat extends CraftAmbient implements Bat {
-    public CraftBat(CraftServer server, net.minecraft.entity.passive.EntityBat/*was:EntityBat*/ entity) {
+    public CraftBat(CraftServer server, net.minecraft.entity.passive.EntityBat entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.passive.EntityBat/*was:EntityBat*/ getHandle() {
-        return (net.minecraft.entity.passive.EntityBat/*was:EntityBat*/) entity;
+    public net.minecraft.entity.passive.EntityBat getHandle() {
+        return (net.minecraft.entity.passive.EntityBat) entity;
     }
 
     @Override

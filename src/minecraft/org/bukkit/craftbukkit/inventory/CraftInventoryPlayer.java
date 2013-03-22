@@ -6,13 +6,13 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.inventory.PlayerInventory, EntityEquipment {
-    public CraftInventoryPlayer(/*was:net.minecraft.server.*/net.minecraft.entity.player.InventoryPlayer/*was:PlayerInventory*/ inventory) {
+    public CraftInventoryPlayer(net.minecraft.entity.player.InventoryPlayer inventory) {
         super(inventory);
     }
 
     @Override
-    public net.minecraft.entity.player.InventoryPlayer/*was:PlayerInventory*/ getInventory() {
-        return (net.minecraft.entity.player.InventoryPlayer/*was:PlayerInventory*/) inventory;
+    public net.minecraft.entity.player.InventoryPlayer getInventory() {
+        return (net.minecraft.entity.player.InventoryPlayer) inventory;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     }
 
     public ItemStack getItemInHand() {
-        return CraftItemStack.asCraftMirror(getInventory().getCurrentItem/*was:getItemInHand*/());
+        return CraftItemStack.asCraftMirror(getInventory().getCurrentItem());
     }
 
     public void setItemInHand(ItemStack stack) {
@@ -29,7 +29,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     }
 
     public int getHeldItemSlot() {
-        return getInventory().currentItem/*was:itemInHandIndex*/;
+        return getInventory().currentItem;
     }
 
     public ItemStack getHelmet() {
@@ -65,7 +65,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     }
 
     public ItemStack[] getArmorContents() {
-        /*was:net.minecraft.server.*/net.minecraft.item.ItemStack/*was:ItemStack*/[] mcItems = getInventory().getArmorContents();
+        net.minecraft.item.ItemStack[] mcItems = getInventory().getArmorContents();
         ItemStack[] ret = new ItemStack[mcItems.length];
 
         for (int i = 0; i < mcItems.length; i++) {

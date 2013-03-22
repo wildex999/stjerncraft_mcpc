@@ -8,13 +8,13 @@ import org.bukkit.inventory.ShapedRecipe;
 
 public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
     // TODO: Could eventually use this to add a matches() method or some such
-    private net.minecraft.item.crafting.ShapedRecipes/*was:ShapedRecipes*/ recipe;
+    private net.minecraft.item.crafting.ShapedRecipes recipe;
     
     public CraftShapedRecipe(ItemStack result) {
         super(result);
     }
     
-    public CraftShapedRecipe(ItemStack result, net.minecraft.item.crafting.ShapedRecipes/*was:ShapedRecipes*/ recipe) {
+    public CraftShapedRecipe(ItemStack result, net.minecraft.item.crafting.ShapedRecipes recipe) {
         this(result);
         this.recipe = recipe;
     }
@@ -54,9 +54,9 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
             i++;
             int id = mdata.getTypeId();
             short dmg = mdata.getDurability();
-            data[i] = new net.minecraft.item.ItemStack/*was:ItemStack*/(id, 1, dmg);
+            data[i] = new net.minecraft.item.ItemStack(id, 1, dmg);
             i++;
         }
-        net.minecraft.item.crafting.CraftingManager/*was:CraftingManager*/.getInstance/*was:getInstance*/().addRecipe/*was:registerShapedRecipe*/(CraftItemStack.asNMSCopy(this.getResult()), data);
+        net.minecraft.item.crafting.CraftingManager.getInstance().addRecipe(CraftItemStack.asNMSCopy(this.getResult()), data);
     }
 }

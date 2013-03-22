@@ -19,6 +19,6 @@ public class CraftFurnaceRecipe extends FurnaceRecipe implements CraftRecipe {
     public void addToCraftingManager() {
         ItemStack result = this.getResult();
         ItemStack input = this.getInput();
-        net.minecraft.item.crafting.FurnaceRecipes/*was:RecipesFurnace*/.smelting/*was:getInstance*/().addSmelting/*was:registerRecipe*/(input.getTypeId(), CraftItemStack.asNMSCopy(result), 0.1f);
+        net.minecraft.item.crafting.FurnaceRecipes.smelting().addSmelting(input.getTypeId(), CraftItemStack.asNMSCopy(result), 0.1f);
     }
 }

@@ -26,16 +26,16 @@ public class CraftMinecart extends CraftVehicle implements Minecart {
         }
     }
 
-    public CraftMinecart(CraftServer server, net.minecraft.entity.item.EntityMinecart/*was:EntityMinecart*/ entity) {
+    public CraftMinecart(CraftServer server, net.minecraft.entity.item.EntityMinecart entity) {
         super(server, entity);
     }
 
     public void setDamage(int damage) {
-        getHandle().setDamage/*was:setDamage*/(damage);
+        getHandle().setDamage(damage);
     }
 
     public int getDamage() {
-        return getHandle().getDamage/*was:getDamage*/();
+        return getHandle().getDamage();
     }
 
     public double getMaxSpeed() {
@@ -73,8 +73,8 @@ public class CraftMinecart extends CraftVehicle implements Minecart {
     }
 
     @Override
-    public net.minecraft.entity.item.EntityMinecart/*was:EntityMinecart*/ getHandle() {
-        return (net.minecraft.entity.item.EntityMinecart/*was:EntityMinecart*/) entity;
+    public net.minecraft.entity.item.EntityMinecart getHandle() {
+        return (net.minecraft.entity.item.EntityMinecart) entity;
     }
 
     @Override

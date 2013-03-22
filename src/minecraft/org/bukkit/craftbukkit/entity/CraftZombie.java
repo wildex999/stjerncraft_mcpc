@@ -7,13 +7,13 @@ import org.bukkit.entity.Zombie;
 
 public class CraftZombie extends CraftMonster implements Zombie {
 
-    public CraftZombie(CraftServer server, net.minecraft.entity.monster.EntityZombie/*was:EntityZombie*/ entity) {
+    public CraftZombie(CraftServer server, net.minecraft.entity.monster.EntityZombie entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.monster.EntityZombie/*was:EntityZombie*/ getHandle() {
-        return (net.minecraft.entity.monster.EntityZombie/*was:EntityZombie*/) entity;
+    public net.minecraft.entity.monster.EntityZombie getHandle() {
+        return (net.minecraft.entity.monster.EntityZombie) entity;
     }
 
     @Override
@@ -26,18 +26,18 @@ public class CraftZombie extends CraftMonster implements Zombie {
     }
 
     public boolean isBaby() {
-        return getHandle().isChild/*was:isBaby*/();
+        return getHandle().isChild();
     }
 
     public void setBaby(boolean flag) {
-        getHandle().setChild/*was:setBaby*/(flag);
+        getHandle().setChild(flag);
     }
 
     public boolean isVillager() {
-        return getHandle().isVillager/*was:isVillager*/();
+        return getHandle().isVillager();
     }
 
     public void setVillager(boolean flag) {
-        getHandle().setVillager/*was:setVillager*/(flag);
+        getHandle().setVillager(flag);
     }
 }

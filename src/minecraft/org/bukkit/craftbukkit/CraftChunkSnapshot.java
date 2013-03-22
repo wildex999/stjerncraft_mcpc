@@ -19,11 +19,11 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     private final boolean[] empty;
     private final int[] hmap; // Height map
     private final long captureFulltime;
-    private final net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/[] biome;
+    private final net.minecraft.world.biome.BiomeGenBase[] biome;
     private final double[] biomeTemp;
     private final double[] biomeRain;
 
-    CraftChunkSnapshot(int x, int z, String wname, long wtime, short[][] sectionBlockIDs, byte[][] sectionBlockData, byte[][] sectionSkyLights, byte[][] sectionEmitLights, boolean[] sectionEmpty, int[] hmap, net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/[] biome, double[] biomeTemp, double[] biomeRain) {
+    CraftChunkSnapshot(int x, int z, String wname, long wtime, short[][] sectionBlockIDs, byte[][] sectionBlockData, byte[][] sectionSkyLights, byte[][] sectionEmitLights, boolean[] sectionEmpty, int[] hmap, net.minecraft.world.biome.BiomeGenBase[] biome, double[] biomeTemp, double[] biomeRain) {
         this.x = x;
         this.z = z;
         this.worldname = wname;

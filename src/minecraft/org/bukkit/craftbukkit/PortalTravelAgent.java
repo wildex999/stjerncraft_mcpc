@@ -20,10 +20,10 @@ public class PortalTravelAgent implements TravelAgent {
     public PortalTravelAgent() { }
 
     public Location findOrCreate(Location location) {
-        net.minecraft.world.WorldServer/*was:WorldServer*/ worldServer = ((CraftWorld) location.getWorld()).getHandle();
-        boolean wasEnabled = worldServer.theChunkProviderServer/*was:chunkProviderServer*/.loadChunkOnProvideRequest/*was:forceChunkLoad*/;
+        net.minecraft.world.WorldServer worldServer = ((CraftWorld) location.getWorld()).getHandle();
+        boolean wasEnabled = worldServer.theChunkProviderServer.loadChunkOnProvideRequest;
         if (!wasEnabled) {
-            worldServer.theChunkProviderServer/*was:chunkProviderServer*/.loadChunkOnProvideRequest/*was:forceChunkLoad*/ = true;
+            worldServer.theChunkProviderServer.loadChunkOnProvideRequest = true;
         }
         // Attempt to find a Portal.
         Location resultLocation = this.findPortal(location);
@@ -40,19 +40,19 @@ public class PortalTravelAgent implements TravelAgent {
         }
 
         if (!wasEnabled) {
-            worldServer.theChunkProviderServer/*was:chunkProviderServer*/.loadChunkOnProvideRequest/*was:forceChunkLoad*/ = false;
+            worldServer.theChunkProviderServer.loadChunkOnProvideRequest = false;
         }
         // Return our resulting portal location.
         return resultLocation;
     }
 
     public Location findPortal(Location location) {
-        /*was:net.minecraft.server.*/net.minecraft.world.World/*was:World*/ world = ((CraftWorld) location.getWorld()).getHandle();
+        net.minecraft.world.World world = ((CraftWorld) location.getWorld()).getHandle();
 
         if (location.getWorld().getEnvironment() == Environment.THE_END) {
-            int i = net.minecraft.util.MathHelper/*was:MathHelper*/.floor_double/*was:floor*/(location.getBlockX());
-            int j = net.minecraft.util.MathHelper/*was:MathHelper*/.floor_double/*was:floor*/(location.getBlockY()) - 1;
-            int k = net.minecraft.util.MathHelper/*was:MathHelper*/.floor_double/*was:floor*/(location.getBlockZ());
+            int i = net.minecraft.util.MathHelper.floor_double(location.getBlockX());
+            int j = net.minecraft.util.MathHelper.floor_double(location.getBlockY()) - 1;
+            int k = net.minecraft.util.MathHelper.floor_double(location.getBlockZ());
             byte b0 = 1;
             byte b1 = 0;
 
@@ -64,7 +64,7 @@ public class PortalTravelAgent implements TravelAgent {
                         int i2 = k + i1 * b1 - l * b0;
                         boolean flag = j1 < 0;
 
-                        if (world.getBlockId/*was:getTypeId*/(k1, l1, i2) != (flag ? net.minecraft.block.Block/*was:Block*/.obsidian/*was:OBSIDIAN*/.blockID/*was:id*/ : 0)) {
+                        if (world.getBlockId(k1, l1, i2) != (flag ? net.minecraft.block.Block.obsidian.blockID : 0)) {
                             return null;
                         }
                     }
@@ -90,9 +90,9 @@ public class PortalTravelAgent implements TravelAgent {
             for (int k1 = i1 - this.searchRadius; k1 <= i1 + this.searchRadius; ++k1) {
                 double d3 = (double) k1 + 0.5D - location.getZ();
 
-                for (int l1 = world.getActualHeight/*was:P*/() - 1; l1 >= 0; --l1) {
-                    if (world.getBlockId/*was:getTypeId*/(j1, l1, k1) == net.minecraft.block.Block/*was:Block*/.portal/*was:PORTAL*/.blockID/*was:id*/) {
-                        while (world.getBlockId/*was:getTypeId*/(j1, l1 - 1, k1) == net.minecraft.block.Block/*was:Block*/.portal/*was:PORTAL*/.blockID/*was:id*/) {
+                for (int l1 = world.getActualHeight() - 1; l1 >= 0; --l1) {
+                    if (world.getBlockId(j1, l1, k1) == net.minecraft.block.Block.portal.blockID) {
+                        while (world.getBlockId(j1, l1 - 1, k1) == net.minecraft.block.Block.portal.blockID) {
                             --l1;
                         }
 
@@ -115,19 +115,19 @@ public class PortalTravelAgent implements TravelAgent {
             double d6 = (double) j + 0.5D;
 
             d1 = (double) k + 0.5D;
-            if (world.getBlockId/*was:getTypeId*/(i - 1, j, k) == net.minecraft.block.Block/*was:Block*/.portal/*was:PORTAL*/.blockID/*was:id*/) {
+            if (world.getBlockId(i - 1, j, k) == net.minecraft.block.Block.portal.blockID) {
                 d5 -= 0.5D;
             }
 
-            if (world.getBlockId/*was:getTypeId*/(i + 1, j, k) == net.minecraft.block.Block/*was:Block*/.portal/*was:PORTAL*/.blockID/*was:id*/) {
+            if (world.getBlockId(i + 1, j, k) == net.minecraft.block.Block.portal.blockID) {
                 d5 += 0.5D;
             }
 
-            if (world.getBlockId/*was:getTypeId*/(i, j, k - 1) == net.minecraft.block.Block/*was:Block*/.portal/*was:PORTAL*/.blockID/*was:id*/) {
+            if (world.getBlockId(i, j, k - 1) == net.minecraft.block.Block.portal.blockID) {
                 d1 -= 0.5D;
             }
 
-            if (world.getBlockId/*was:getTypeId*/(i, j, k + 1) == net.minecraft.block.Block/*was:Block*/.portal/*was:PORTAL*/.blockID/*was:id*/) {
+            if (world.getBlockId(i, j, k + 1) == net.minecraft.block.Block.portal.blockID) {
                 d1 += 0.5D;
             }
 
@@ -138,12 +138,12 @@ public class PortalTravelAgent implements TravelAgent {
     }
 
     public boolean createPortal(Location location) {
-        /*was:net.minecraft.server.*/net.minecraft.world.World/*was:World*/ world = ((CraftWorld) location.getWorld()).getHandle();
+        net.minecraft.world.World world = ((CraftWorld) location.getWorld()).getHandle();
 
         if (location.getWorld().getEnvironment() == Environment.THE_END) {
-            int i = net.minecraft.util.MathHelper/*was:MathHelper*/.floor_double/*was:floor*/(location.getBlockX());
-            int j = net.minecraft.util.MathHelper/*was:MathHelper*/.floor_double/*was:floor*/(location.getBlockY()) - 1;
-            int k = net.minecraft.util.MathHelper/*was:MathHelper*/.floor_double/*was:floor*/(location.getBlockZ());
+            int i = net.minecraft.util.MathHelper.floor_double(location.getBlockX());
+            int j = net.minecraft.util.MathHelper.floor_double(location.getBlockY()) - 1;
+            int k = net.minecraft.util.MathHelper.floor_double(location.getBlockZ());
             byte b0 = 1;
             byte b1 = 0;
 
@@ -155,7 +155,7 @@ public class PortalTravelAgent implements TravelAgent {
                         int i2 = k + i1 * b1 - l * b0;
                         boolean flag = j1 < 0;
 
-                        world.setBlockWithNotify/*was:setTypeId*/(k1, l1, i2, flag ? net.minecraft.block.Block/*was:Block*/.obsidian/*was:OBSIDIAN*/.blockID/*was:id*/ : 0);
+                        world.setBlockWithNotify(k1, l1, i2, flag ? net.minecraft.block.Block.obsidian.blockID : 0);
                     }
                 }
             }
@@ -197,9 +197,9 @@ public class PortalTravelAgent implements TravelAgent {
                 d2 = (double) j2 + 0.5D - location.getZ();
 
                 label271:
-                for (l2 = world.getActualHeight/*was:P*/() - 1; l2 >= 0; --l2) {
-                    if (world.isAirBlock/*was:isEmpty*/(i2, l2, j2)) {
-                        while (l2 > 0 && world.isAirBlock/*was:isEmpty*/(i2, l2 - 1, j2)) {
+                for (l2 = world.getActualHeight() - 1; l2 >= 0; --l2) {
+                    if (world.isAirBlock(i2, l2, j2)) {
+                        while (l2 > 0 && world.isAirBlock(i2, l2 - 1, j2)) {
                             --l2;
                         }
 
@@ -218,7 +218,7 @@ public class PortalTravelAgent implements TravelAgent {
                                         k4 = l2 + j4;
                                         int l4 = j2 + (k3 - 1) * i3 - l3 * j3;
 
-                                        if (j4 < 0 && !world.getBlockMaterial/*was:getMaterial*/(i4, k4, l4).isSolid/*was:isBuildable*/() || j4 >= 0 && !world.isAirBlock/*was:isEmpty*/(i4, k4, l4)) {
+                                        if (j4 < 0 && !world.getBlockMaterial(i4, k4, l4).isSolid() || j4 >= 0 && !world.isAirBlock(i4, k4, l4)) {
                                             continue label271;
                                         }
                                     }
@@ -248,9 +248,9 @@ public class PortalTravelAgent implements TravelAgent {
                     d2 = (double) j2 + 0.5D - location.getZ();
 
                     label219:
-                    for (l2 = world.getActualHeight/*was:P*/() - 1; l2 >= 0; --l2) {
-                        if (world.isAirBlock/*was:isEmpty*/(i2, l2, j2)) {
-                            while (l2 > 0 && world.isAirBlock/*was:isEmpty*/(i2, l2 - 1, j2)) {
+                    for (l2 = world.getActualHeight() - 1; l2 >= 0; --l2) {
+                        if (world.isAirBlock(i2, l2, j2)) {
+                            while (l2 > 0 && world.isAirBlock(i2, l2 - 1, j2)) {
                                 --l2;
                             }
 
@@ -263,7 +263,7 @@ public class PortalTravelAgent implements TravelAgent {
                                         j4 = i2 + (l3 - 1) * j3;
                                         i4 = l2 + k3;
                                         k4 = j2 + (l3 - 1) * i3;
-                                        if (k3 < 0 && !world.getBlockMaterial/*was:getMaterial*/(j4, i4, k4).isSolid/*was:isBuildable*/() || k3 >= 0 && !world.isAirBlock/*was:isEmpty*/(j4, i4, k4)) {
+                                        if (k3 < 0 && !world.getBlockMaterial(j4, i4, k4).isSolid() || k3 >= 0 && !world.isAirBlock(j4, i4, k4)) {
                                             continue label219;
                                         }
                                     }
@@ -302,15 +302,15 @@ public class PortalTravelAgent implements TravelAgent {
         // CraftBukkit start - portal create event
         java.util.ArrayList<org.bukkit.block.Block> blocks = new java.util.ArrayList<org.bukkit.block.Block>();
         // Find out what blocks the portal is going to modify, duplicated from below
-        CraftWorld craftWorld = ((net.minecraft.world.WorldServer/*was:WorldServer*/) world).getWorld();
+        CraftWorld craftWorld = ((net.minecraft.world.WorldServer) world).getWorld();
 
         if (d0 < 0.0D) {
             if (i1 < 70) {
                 i1 = 70;
             }
 
-            if (i1 > world.getActualHeight/*was:P*/() - 10) {
-                i1 = world.getActualHeight/*was:P*/() - 10;
+            if (i1 > world.getActualHeight() - 10) {
+                i1 = world.getActualHeight() - 10;
             }
 
             j5 = i1;
@@ -369,14 +369,14 @@ public class PortalTravelAgent implements TravelAgent {
                         l3 = j5 + j3;
                         k3 = j2 + (k2 - 1) * l5 - l2 * k5;
                         flag = j3 < 0;
-                        world.setBlockWithNotify/*was:setTypeId*/(i3, l3, k3, flag ? net.minecraft.block.Block/*was:Block*/.obsidian/*was:OBSIDIAN*/.blockID/*was:id*/ : 0);
+                        world.setBlockWithNotify(i3, l3, k3, flag ? net.minecraft.block.Block.obsidian.blockID : 0);
                     }
                 }
             }
         }
 
         for (l2 = 0; l2 < 4; ++l2) {
-            world.editingBlocks/*was:suppressPhysics*/ = true;
+            world.editingBlocks = true;
 
             for (k2 = 0; k2 < 4; ++k2) {
                 for (j3 = -1; j3 < 4; ++j3) {
@@ -384,18 +384,18 @@ public class PortalTravelAgent implements TravelAgent {
                     l3 = j5 + j3;
                     k3 = j2 + (k2 - 1) * l5;
                     flag = k2 == 0 || k2 == 3 || j3 == -1 || j3 == 3;
-                    world.setBlockWithNotify/*was:setTypeId*/(i3, l3, k3, flag ? net.minecraft.block.Block/*was:Block*/.obsidian/*was:OBSIDIAN*/.blockID/*was:id*/ : net.minecraft.block.Block/*was:Block*/.portal/*was:PORTAL*/.blockID/*was:id*/);
+                    world.setBlockWithNotify(i3, l3, k3, flag ? net.minecraft.block.Block.obsidian.blockID : net.minecraft.block.Block.portal.blockID);
                 }
             }
 
-            world.editingBlocks/*was:suppressPhysics*/ = false;
+            world.editingBlocks = false;
 
             for (k2 = 0; k2 < 4; ++k2) {
                 for (j3 = -1; j3 < 4; ++j3) {
                     i3 = i5 + (k2 - 1) * k5;
                     l3 = j5 + j3;
                     k3 = j2 + (k2 - 1) * l5;
-                    world.notifyBlocksOfNeighborChange/*was:applyPhysics*/(i3, l3, k3, world.getBlockId/*was:getTypeId*/(i3, l3, k3));
+                    world.notifyBlocksOfNeighborChange(i3, l3, k3, world.getBlockId(i3, l3, k3));
                 }
             }
         }

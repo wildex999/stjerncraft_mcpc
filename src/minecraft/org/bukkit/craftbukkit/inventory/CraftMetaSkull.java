@@ -27,11 +27,11 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
         this.player = skullMeta.player;
     }
 
-    CraftMetaSkull(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
+    CraftMetaSkull(net.minecraft.nbt.NBTTagCompound tag) {
         super(tag);
 
-        if (tag.hasKey/*was:hasKey*/(SKULL_OWNER.NBT)) {
-            player = tag.getString/*was:getString*/(SKULL_OWNER.NBT);
+        if (tag.hasKey(SKULL_OWNER.NBT)) {
+            player = tag.getString(SKULL_OWNER.NBT);
         }
     }
 
@@ -41,11 +41,11 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     }
 
     @Override
-    void applyToItem(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
+    void applyToItem(net.minecraft.nbt.NBTTagCompound tag) {
         super.applyToItem(tag);
 
         if (hasOwner()) {
-            tag.setString/*was:setString*/(SKULL_OWNER.NBT, player);
+            tag.setString(SKULL_OWNER.NBT, player);
         }
     }
 

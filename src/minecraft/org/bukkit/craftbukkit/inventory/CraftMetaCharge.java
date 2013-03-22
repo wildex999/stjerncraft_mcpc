@@ -31,11 +31,11 @@ class CraftMetaCharge extends CraftMetaItem implements FireworkEffectMeta {
         setEffect(SerializableMeta.getObject(FireworkEffect.class, map, EXPLOSION.BUKKIT, true));
     }
 
-    CraftMetaCharge(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
+    CraftMetaCharge(net.minecraft.nbt.NBTTagCompound tag) {
         super(tag);
 
-        if (tag.hasKey/*was:hasKey*/(EXPLOSION.NBT)) {
-            effect = CraftMetaFirework.getEffect(tag.getCompoundTag/*was:getCompound*/(EXPLOSION.NBT));
+        if (tag.hasKey(EXPLOSION.NBT)) {
+            effect = CraftMetaFirework.getEffect(tag.getCompoundTag(EXPLOSION.NBT));
         }
     }
 
@@ -52,11 +52,11 @@ class CraftMetaCharge extends CraftMetaItem implements FireworkEffectMeta {
     }
 
     @Override
-    void applyToItem(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ itemTag) {
+    void applyToItem(net.minecraft.nbt.NBTTagCompound itemTag) {
         super.applyToItem(itemTag);
 
         if (hasEffect()) {
-            itemTag.setTag/*was:set*/(EXPLOSION.NBT, CraftMetaFirework.getExplosion(effect));
+            itemTag.setTag(EXPLOSION.NBT, CraftMetaFirework.getExplosion(effect));
         }
     }
 

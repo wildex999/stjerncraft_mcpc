@@ -15,7 +15,7 @@ public class Main {
     public static boolean useConsole = true;
     // MCPC start
     public static void main(String[] args) {
-        net.minecraft.server.MinecraftServer/*was:MinecraftServer*/.main(args);
+        net.minecraft.server.MinecraftServer.main(args);
     }
 
     public static OptionSet loadOptions(String[] args) {

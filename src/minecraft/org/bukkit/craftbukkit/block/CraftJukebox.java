@@ -9,35 +9,35 @@ import org.bukkit.craftbukkit.CraftWorld;
 
 public class CraftJukebox extends CraftBlockState implements Jukebox {
     private final CraftWorld world;
-    private final net.minecraft.block.TileEntityRecordPlayer/*was:TileEntityRecordPlayer*/ jukebox;
+    private final net.minecraft.block.TileEntityRecordPlayer jukebox;
 
     public CraftJukebox(final Block block) {
         super(block);
 
         world = (CraftWorld) block.getWorld();
-        jukebox = (net.minecraft.block.TileEntityRecordPlayer/*was:TileEntityRecordPlayer*/) world.getTileEntityAt(getX(), getY(), getZ());
+        jukebox = (net.minecraft.block.TileEntityRecordPlayer) world.getTileEntityAt(getX(), getY(), getZ());
     }
 
     public Material getPlaying() {
-        net.minecraft.item.ItemStack/*was:ItemStack*/ record = jukebox.record/*was:record*/;
+        net.minecraft.item.ItemStack record = jukebox.record;
         if (record == null) {
             return Material.AIR;
         }
-        return Material.getMaterial(record.itemID/*was:id*/);
+        return Material.getMaterial(record.itemID);
     }
 
     public void setPlaying(Material record) {
-        if (record == null || net.minecraft.item.Item/*was:Item*/.itemsList/*was:byId*/[record.getId()] == null) {
+        if (record == null || net.minecraft.item.Item.itemsList[record.getId()] == null) {
             record = Material.AIR;
-            jukebox.record/*was:record*/ = null;
+            jukebox.record = null;
         } else {
-            jukebox.record/*was:record*/ = new net.minecraft.item.ItemStack/*was:ItemStack*/(net.minecraft.item.Item/*was:Item*/.itemsList/*was:byId*/[record.getId()], 1);
+            jukebox.record = new net.minecraft.item.ItemStack(net.minecraft.item.Item.itemsList[record.getId()], 1);
         }
-        jukebox.onInventoryChanged/*was:update*/();
+        jukebox.onInventoryChanged();
         if (record == Material.AIR) {
-            world.getHandle().setBlockMetadataWithNotify/*was:setData*/(getX(), getY(), getZ(), 0);
+            world.getHandle().setBlockMetadataWithNotify(getX(), getY(), getZ(), 0);
         } else {
-            world.getHandle().setBlockMetadataWithNotify/*was:setData*/(getX(), getY(), getZ(), 1);
+            world.getHandle().setBlockMetadataWithNotify(getX(), getY(), getZ(), 1);
         }
         world.playEffect(getLocation(), Effect.RECORD_PLAY, record.getId());
     }
@@ -48,7 +48,7 @@ public class CraftJukebox extends CraftBlockState implements Jukebox {
 
     public boolean eject() {
         boolean result = isPlaying();
-        ((net.minecraft.block.BlockJukeBox/*was:BlockJukeBox*/) net.minecraft.block.Block/*was:Block*/.jukebox/*was:JUKEBOX*/).ejectRecord/*was:dropRecord*/(world.getHandle(), getX(), getY(), getZ());
+        ((net.minecraft.block.BlockJukeBox) net.minecraft.block.Block.jukebox).ejectRecord(world.getHandle(), getX(), getY(), getZ());
         return result;
     }
 }

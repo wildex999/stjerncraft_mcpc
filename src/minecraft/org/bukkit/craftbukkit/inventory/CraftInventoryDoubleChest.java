@@ -11,22 +11,22 @@ public class CraftInventoryDoubleChest extends CraftInventory implements DoubleC
     private final CraftInventory right;
 
     public CraftInventoryDoubleChest(CraftInventory left, CraftInventory right) {
-        super(new net.minecraft.inventory.InventoryLargeChest/*was:InventoryLargeChest*/("Large chest", left.getInventory(), right.getInventory()));
+        super(new net.minecraft.inventory.InventoryLargeChest("Large chest", left.getInventory(), right.getInventory()));
         this.left = left;
         this.right = right;
     }
 
-    public CraftInventoryDoubleChest(net.minecraft.inventory.InventoryLargeChest/*was:InventoryLargeChest*/ largeChest) {
+    public CraftInventoryDoubleChest(net.minecraft.inventory.InventoryLargeChest largeChest) {
         super(largeChest);
-        if (largeChest.upperChest/*was:left*/ instanceof net.minecraft.inventory.InventoryLargeChest/*was:InventoryLargeChest*/) {
-            left = new CraftInventoryDoubleChest((net.minecraft.inventory.InventoryLargeChest/*was:InventoryLargeChest*/) largeChest.upperChest/*was:left*/);
+        if (largeChest.upperChest instanceof net.minecraft.inventory.InventoryLargeChest) {
+            left = new CraftInventoryDoubleChest((net.minecraft.inventory.InventoryLargeChest) largeChest.upperChest);
         } else {
-            left = new CraftInventory(largeChest.upperChest/*was:left*/);
+            left = new CraftInventory(largeChest.upperChest);
         }
-        if (largeChest.lowerChest/*was:right*/ instanceof net.minecraft.inventory.InventoryLargeChest/*was:InventoryLargeChest*/) {
-            right = new CraftInventoryDoubleChest((net.minecraft.inventory.InventoryLargeChest/*was:InventoryLargeChest*/) largeChest.lowerChest/*was:right*/);
+        if (largeChest.lowerChest instanceof net.minecraft.inventory.InventoryLargeChest) {
+            right = new CraftInventoryDoubleChest((net.minecraft.inventory.InventoryLargeChest) largeChest.lowerChest);
         } else {
-            right = new CraftInventory(largeChest.lowerChest/*was:right*/);
+            right = new CraftInventory(largeChest.lowerChest);
         }
     }
 
