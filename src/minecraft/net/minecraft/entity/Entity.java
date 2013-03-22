@@ -2087,7 +2087,7 @@ public abstract class Entity
         else
         {
             // CraftBukkit start
-            if ((this.bukkitEntity instanceof LivingEntity) && (entity.getBukkitEntity() instanceof Vehicle))
+            if ((this.bukkitEntity instanceof LivingEntity) && (entity.getBukkitEntity() instanceof Vehicle) && entity.worldObj.chunkExists((int) entity.posX >> 4, (int) entity.posZ >> 4))
             {
                 VehicleEnterEvent event = new VehicleEnterEvent((Vehicle) entity.getBukkitEntity(), this.bukkitEntity);
                 pluginManager.callEvent(event);

@@ -649,7 +649,7 @@ public abstract class World implements IBlockAccess
     /**
      * Returns whether a chunk exists at chunk coordinates x, y
      */
-    protected boolean chunkExists(int par1, int par2)
+    public boolean chunkExists(int par1, int par2) // MCPC+ - protected -> public for repackaging
     {
         return this.chunkProvider.chunkExists(par1, par2);
     }
