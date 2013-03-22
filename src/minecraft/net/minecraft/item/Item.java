@@ -936,4 +936,18 @@ public class Item
     {
         return true;
     }
+
+    /**
+     * An itemstack sensitive version of getDamageVsEntity - allows items to handle damage based on
+     * itemstack data, like tags. Falls back to getDamageVsEntity.
+     *
+     * @param par1Entity The entity being attacked (or the attacking mob, if it's a mob - vanilla bug?)
+     * @param itemStack The itemstack
+     * @return the damage
+     */
+    public int getDamageVsEntity(Entity par1Entity, ItemStack itemStack)
+    {
+        return getDamageVsEntity(par1Entity);
+    }
+
 }

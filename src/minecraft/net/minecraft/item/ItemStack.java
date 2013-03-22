@@ -386,7 +386,7 @@ public final class ItemStack
      */
     public int getDamageVsEntity(Entity par1Entity)
     {
-        return Item.itemsList[this.itemID].getDamageVsEntity(par1Entity);
+        return Item.itemsList[this.itemID].getDamageVsEntity(par1Entity, this);
     }
 
     /**
