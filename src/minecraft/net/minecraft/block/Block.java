@@ -268,10 +268,10 @@ public class Block
     public final int blockID;
 
     /** Indicates how many hits it takes to break a block. */
-    protected float blockHardness;
+    public float blockHardness;
 
     /** Indicates the blocks resistance to explosions. */
-    protected float blockResistance;
+    public float blockResistance;
 
     /**
      * set to true when Block's constructor is called through the chain of super()'s. Note: Never used

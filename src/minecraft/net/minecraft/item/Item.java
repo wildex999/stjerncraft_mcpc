@@ -512,7 +512,7 @@ public class Item
     /**
      * Sets the string representing this item's effect on a potion when used as an ingredient.
      */
-    protected Item setPotionEffect(String par1Str)
+    public Item setPotionEffect(String par1Str)
     {
         this.potionEffect = par1Str;
         return this;

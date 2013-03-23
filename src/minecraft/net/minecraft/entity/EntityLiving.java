@@ -204,7 +204,7 @@ public abstract class EntityLiving extends Entity
     private EntityBodyHelper bodyHelper;
     private PathNavigate navigator;
     public final EntityAITasks tasks;
-    protected final EntityAITasks targetTasks;
+    public final EntityAITasks targetTasks;
 
     /** The active target the Task system uses for tracking */
     private EntityLiving attackTarget;
