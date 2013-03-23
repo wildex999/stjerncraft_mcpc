@@ -13,7 +13,7 @@
     <minecraft.version>1.5.1</minecraft.version>
     <minecraft_version>1_5_R2</minecraft_version>
     <minecraft_version_download>1_5_1</minecraft_version_download>
-    <forge.build>600</forge.build>
+    <forge.build>605</forge.build>
     <forge.version>7.7.0.${forge.build}</forge.version>
     <forge.remapped.revision>R1-MCPC</forge.remapped.revision>
     <fml.at>https://raw.github.com/MinecraftForge/FML/9565529baf77de27ed8b75be2065da3ba08d16c8/common/fml_at.cfg</fml.at>
