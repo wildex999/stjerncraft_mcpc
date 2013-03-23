@@ -22,9 +22,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 // CraftBukkit start
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 // CraftBukkit end
 
@@ -270,11 +268,7 @@ public class EntityArrow extends Entity implements IProjectile
 
             if (movingobjectposition != null)
             {
-                // CraftBukkit start
-                Projectile projectile = (Projectile) this.getBukkitEntity();
-                ProjectileHitEvent phe = new ProjectileHitEvent(projectile);
-                this.worldObj.getServer().getPluginManager().callEvent(phe);
-                // CraftBukkit end
+                org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this); // CraftBukkit - Call event
 
                 if (movingobjectposition.entityHit != null)
                 {

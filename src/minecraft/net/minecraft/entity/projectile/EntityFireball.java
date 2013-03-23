@@ -13,8 +13,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import org.bukkit.event.entity.ProjectileHitEvent; // CraftBukkit
-
 public abstract class EntityFireball extends Entity
 {
     private int xTile = -1;
@@ -168,8 +166,7 @@ public abstract class EntityFireball extends Entity
                 // CraftBukkit start
                 if (this.isDead)
                 {
-                    ProjectileHitEvent phe = new ProjectileHitEvent((org.bukkit.entity.Projectile) this.getBukkitEntity());
-                    this.worldObj.getServer().getPluginManager().callEvent(phe);
+                    org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this);
                 }
 
                 // CraftBukkit end

@@ -14,8 +14,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import org.bukkit.event.entity.ProjectileHitEvent; // CraftBukkit
-
 public abstract class EntityThrowable extends Entity implements IProjectile
 {
     private int xTile = -1;
@@ -205,8 +203,7 @@ public abstract class EntityThrowable extends Entity implements IProjectile
                 // CraftBukkit start
                 if (this.isDead)
                 {
-                    ProjectileHitEvent hitEvent = new ProjectileHitEvent((org.bukkit.entity.Projectile) this.getBukkitEntity());
-                    org.bukkit.Bukkit.getPluginManager().callEvent(hitEvent);
+                    org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this);
                 }
 
                 // CraftBukkit end

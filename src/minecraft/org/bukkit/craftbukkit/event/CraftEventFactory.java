@@ -524,6 +524,12 @@ public class CraftEventFactory {
         return event;
     }
 
+    public static ProjectileHitEvent callProjectileHitEvent(net.minecraft.entity.Entity entity) {
+        ProjectileHitEvent event = new ProjectileHitEvent((Projectile) entity.getBukkitEntity());
+        entity.worldObj.getServer().getPluginManager().callEvent(event);
+        return event;
+    }
+
     public static ExpBottleEvent callExpBottleEvent(net.minecraft.entity.Entity entity, int exp) {
         ThrownExpBottle bottle = (ThrownExpBottle) entity.getBukkitEntity();
         ExpBottleEvent event = new ExpBottleEvent(bottle, exp);
