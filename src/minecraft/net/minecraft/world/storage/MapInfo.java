@@ -62,30 +62,36 @@ public class MapInfo
         {
             int i;
             int j;
-            org.bukkit.craftbukkit.map.RenderData render = this.mapDataObj.mapView.render((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayerObj.getBukkitEntity()); // CraftBukkit
+            // Spigot start
+            boolean custom = this.mapDataObj.mapView.renderers.size() > 1 || !(this.mapDataObj.mapView.renderers.get(0) instanceof org.bukkit.craftbukkit.map.CraftMapRenderer);
+            org.bukkit.craftbukkit.map.RenderData render = (custom) ? this.mapDataObj.mapView.render((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayerObj.getBukkitEntity()) : null; // CraftBukkit
 
             if (--this.ticksUntilPlayerLocationMapUpdate < 0)
             {
                 this.ticksUntilPlayerLocationMapUpdate = 4;
-                abyte = new byte[render.cursors.size() * 3 + 1]; // CraftBukkit
+                abyte = new byte[((custom) ? render.cursors.size() : this.mapDataObj.playersVisibleOnMap.size()) * 3 + 1]; // CraftBukkit
                 abyte[0] = 1;
                 i = 0;
 
                 // CraftBukkit start
-                for (i = 0; i < render.cursors.size(); ++i)
-                {
-                    org.bukkit.map.MapCursor cursor = render.cursors.get(i);
 
-                    if (!cursor.isVisible())
+                // Spigot start
+                for (Iterator iterator = ((custom) ? render.cursors.iterator() : this.mapDataObj.playersVisibleOnMap.values().iterator()); iterator.hasNext(); ++i)
+                {
+                    org.bukkit.map.MapCursor cursor = (custom) ? (org.bukkit.map.MapCursor) iterator.next() : null;
+
+                    if (cursor != null && !cursor.isVisible())
                     {
                         continue;
                     }
 
-                    abyte[i * 3 + 1] = (byte)(cursor.getRawType() << 4 | cursor.getDirection() & 15);
-                    abyte[i * 3 + 2] = (byte) cursor.getX();
-                    abyte[i * 3 + 3] = (byte) cursor.getY();
+                    MapCoord deco = (custom) ? null : (MapCoord) iterator.next();
+                    abyte[i * 3 + 1] = (byte)(((custom) ? cursor.getRawType() : deco.iconSize) << 4 | ((custom) ? cursor.getDirection() : deco.iconRotation) & 15);
+                    abyte[i * 3 + 2] = (byte)((custom) ? cursor.getX() : deco.centerX);
+                    abyte[i * 3 + 3] = (byte)((custom) ? cursor.getY() : deco.centerZ);
                 }
 
+                // Spigot end
                 // CraftBukkit end
                 boolean flag = !par1ItemStack.isOnItemFrame();
 
@@ -127,7 +133,7 @@ public class MapInfo
 
                     for (int i1 = 0; i1 < abyte1.length - 3; ++i1)
                     {
-                        abyte1[i1 + 3] = render.buffer[(i1 + j) * 128 + i]; // CraftBukkit
+                        abyte1[i1 + 3] = ((custom) ? render.buffer : this.mapDataObj.colors)[(i1 + j) * 128 + i]; // Spigot
                     }
 
                     this.field_76210_c[i] = -1;
