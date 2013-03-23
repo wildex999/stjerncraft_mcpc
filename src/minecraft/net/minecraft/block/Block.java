@@ -45,6 +45,7 @@ import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.RotationHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -2142,5 +2143,33 @@ public class Block
     public boolean isBeaconBase(World worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
     {
         return (blockID == blockEmerald.blockID || blockID == blockGold.blockID || blockID == blockDiamond.blockID || blockID == blockSteel.blockID);
+    }
+
+    /**
+     * Rotate the block around the specified axis by one rotation
+     *
+     * @param worldObj The world
+     * @param x X position
+     * @param y Y position
+     * @param z Z position
+     * @param axis The axis to rotate around
+     * @return True if the rotation was successful, False if the rotation failed, or is not possible
+     */
+    public boolean rotateBlock(World worldObj, int x, int y, int z, ForgeDirection axis)
+    {
+        return RotationHelper.rotateVanillaBlock(this, worldObj, x, y, z, axis);
+    }
+
+    /**
+     * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
+     * @param worldObj The world
+     * @param x X position
+     * @param y Y position
+     * @param z Z position
+     * @return An array of valid axes to rotate around, or null for none or unknown
+     */
+    public ForgeDirection[] getValidRotations(World worldObj, int x, int y, int z)
+    {
+        return RotationHelper.getValidVanillaBlockRotations(this);
     }
 }
