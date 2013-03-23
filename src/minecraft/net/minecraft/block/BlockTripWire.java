@@ -1,7 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -13,13 +11,14 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Direction;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import org.bukkit.event.entity.EntityInteractEvent; // CraftBukkit
 
 public class BlockTripWire extends Block
 {
     public BlockTripWire(int par1)
     {
-        super(par1, 173, Material.circuits);
+        super(par1, Material.circuits);
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.15625F, 1.0F);
         this.setTickRandomly(true);
     }
@@ -27,7 +26,7 @@ public class BlockTripWire extends Block
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 10;
     }
@@ -58,16 +57,6 @@ public class BlockTripWire extends Block
         return false;
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns which pass should this block be rendered on. 0 for solids and 1 for alpha
-     */
-    public int getRenderBlockPass()
-    {
-        return 1;
-    }
-
     /**
      * The type of render function that is called for this block
      */
@@ -80,16 +69,6 @@ public class BlockTripWire extends Block
      * Returns the ID of the items to drop on destruction.
      */
     public int idDropped(int par1, Random par2Random, int par3)
-    {
-        return Item.silk.itemID;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
     {
         return Item.silk.itemID;
     }
@@ -107,7 +86,7 @@ public class BlockTripWire extends Block
         if (flag != flag1)
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, i1, 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 
@@ -140,7 +119,7 @@ public class BlockTripWire extends Block
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
         int l = par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) ? 0 : 2;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, l);
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 3);
         this.func_72149_e(par1World, par2, par3, par4, l);
     }
 
@@ -161,7 +140,7 @@ public class BlockTripWire extends Block
         {
             if (par6EntityPlayer.getCurrentEquippedItem() != null && par6EntityPlayer.getCurrentEquippedItem().itemID == Item.shears.itemID)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, par5 | 8);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, par5 | 8, 4);
             }
         }
     }
@@ -237,7 +216,7 @@ public class BlockTripWire extends Block
         int l = par1World.getBlockMetadata(par2, par3, par4);
         boolean flag = (l & 1) == 1;
         boolean flag1 = false;
-        List list = par1World.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
+        List list = par1World.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().getAABB((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
 
         if (!list.isEmpty())
         {
@@ -255,43 +234,51 @@ public class BlockTripWire extends Block
             }
         }
 
-        // CraftBukkit start
-        org.bukkit.World bworld = par1World.getWorld();
-        org.bukkit.plugin.PluginManager manager = par1World.getServer().getPluginManager();
-
-        if (flag != flag1)
+        // CraftBukkit start - Call interact even when triggering connected tripwire
+        if (flag != flag1 && flag1 && (par1World.getBlockMetadata(par2, par3, par4) & 4) == 4)
         {
-            if (flag1)
+            org.bukkit.World bworld = par1World.getWorld();
+            org.bukkit.plugin.PluginManager manager = par1World.getServer().getPluginManager();
+            org.bukkit.block.Block block = bworld.getBlockAt(par2, par3, par4);
+            boolean allowed = false;
+
+            // If all of the events are cancelled block the tripwire trigger, else allow
+            for (Object object : list)
             {
-                for (Object object : list)
+                if (object != null)
                 {
-                    if (object != null)
+                    org.bukkit.event.Cancellable cancellable;
+
+                    if (object instanceof EntityPlayer)
                     {
-                        org.bukkit.event.Cancellable cancellable;
+                        cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) object, org.bukkit.event.block.Action.PHYSICAL, par2, par3, par4, -1, null);
+                    }
+                    else if (object instanceof Entity)
+                    {
+                        cancellable = new EntityInteractEvent(((Entity) object).getBukkitEntity(), block);
+                        manager.callEvent((EntityInteractEvent) cancellable);
+                    }
+                    else
+                    {
+                        continue;
+                    }
 
-                        if (object instanceof EntityPlayer)
-                        {
-                            cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) object, org.bukkit.event.block.Action.PHYSICAL, par2, par3, par4, -1, null);
-                        }
-                        else if (object instanceof Entity)
-                        {
-                            cancellable = new EntityInteractEvent(((Entity) object).getBukkitEntity(), bworld.getBlockAt(par2, par3, par4));
-                            manager.callEvent((EntityInteractEvent) cancellable);
-                        }
-                        else
-                        {
-                            continue;
-                        }
-
-                        if (cancellable.isCancelled())
-                        {
-                            return;
-                        }
+                    if (!cancellable.isCancelled())
+                    {
+                        allowed = true;
+                        break;
                     }
                 }
             }
+
+            if (!allowed)
+            {
+                return;
+            }
         }
+
         // CraftBukkit end
+
         if (flag1 && !flag)
         {
             l |= 1;
@@ -304,40 +291,13 @@ public class BlockTripWire extends Block
 
         if (flag1 != flag)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, l);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 3);
             this.func_72149_e(par1World, par2, par3, par4, l);
         }
 
         if (flag1)
         {
-            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static boolean func_72148_a(IBlockAccess par0IBlockAccess, int par1, int par2, int par3, int par4, int par5)
-    {
-        int j1 = par1 + Direction.offsetX[par5];
-        int k1 = par3 + Direction.offsetZ[par5];
-        int l1 = par0IBlockAccess.getBlockId(j1, par2, k1);
-        boolean flag = (par4 & 2) == 2;
-        int i2;
-
-        if (l1 == Block.tripWireSource.blockID)
-        {
-            i2 = par0IBlockAccess.getBlockMetadata(j1, par2, k1);
-            int j2 = i2 & 3;
-            return j2 == Direction.footInvisibleFaceRemap[par5];
-        }
-        else if (l1 == Block.tripWire.blockID)
-        {
-            i2 = par0IBlockAccess.getBlockMetadata(j1, par2, k1);
-            boolean flag1 = (i2 & 2) == 2;
-            return flag == flag1;
-        }
-        else
-        {
-            return false;
+            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
         }
     }
 }

@@ -4,10 +4,9 @@ import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 // CraftBukkit start
-import org.bukkit.Bukkit;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.block.BlockFromToEvent;
 // CraftBukkit end
 
@@ -42,8 +41,7 @@ public class BlockFlowing extends BlockFluid
     private void updateFlow(World par1World, int par2, int par3, int par4)
     {
         int l = par1World.getBlockMetadata(par2, par3, par4);
-        par1World.setBlockAndMetadata(par2, par3, par4, this.blockID + 1, l);
-        par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
+        par1World.setBlock(par2, par3, par4, this.blockID + 1, l, 2);
     }
 
     public boolean getBlocksMovement(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
@@ -101,22 +99,17 @@ public class BlockFlowing extends BlockFluid
                 }
             }
 
-            // MCPC+ start
-            if(((CraftServer)(Bukkit.getServer())).getInfiniteWaterSource())
+            if (this.numAdjacentSources >= 2 && this.blockMaterial == Material.water)
             {
-                if (this.numAdjacentSources >= 2 && this.blockMaterial == Material.water)
+                if (par1World.getBlockMaterial(par2, par3 - 1, par4).isSolid())
                 {
-                    if (par1World.getBlockMaterial(par2, par3 - 1, par4).isSolid())
-                    {
-                        i1 = 0;
-                    }
-                    else if (par1World.getBlockMaterial(par2, par3 - 1, par4) == this.blockMaterial && par1World.getBlockMetadata(par2, par3, par4) == 0)
-                    {
-                        i1 = 0;
-                    }
+                    i1 = 0;
+                }
+                else if (par1World.getBlockMaterial(par2, par3 - 1, par4) == this.blockMaterial && par1World.getBlockMetadata(par2, par3 - 1, par4) == 0)
+                {
+                    i1 = 0;
                 }
             }
-            // MCPC+ end
 
             if (this.blockMaterial == Material.lava && l < 8 && i1 < 8 && i1 > l && par5Random.nextInt(4) != 0)
             {
@@ -137,12 +130,12 @@ public class BlockFlowing extends BlockFluid
 
                 if (i1 < 0)
                 {
-                    par1World.setBlockWithNotify(par2, par3, par4, 0);
+                    par1World.setBlockToAir(par2, par3, par4);
                 }
                 else
                 {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, i1);
-                    par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, i1, 2);
+                    par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
                     par1World.notifyBlocksOfNeighborChange(par2, par3, par4, this.blockID);
                 }
             }
@@ -166,7 +159,7 @@ public class BlockFlowing extends BlockFluid
             {
                 if (this.blockMaterial == Material.lava && par1World.getBlockMaterial(par2, par3 - 1, par4) == Material.water)
                 {
-                    par1World.setBlockWithNotify(par2, par3 - 1, par4, Block.stone.blockID);
+                    par1World.setBlock(par2, par3 - 1, par4, Block.stone.blockID);
                     this.triggerLavaMixEffects(par1World, par2, par3 - 1, par4);
                     return;
                 }
@@ -248,7 +241,7 @@ public class BlockFlowing extends BlockFluid
                 }
             }
 
-            par1World.setBlockAndMetadataWithNotify(par2, par3, par4, this.blockID, par5);
+            par1World.setBlock(par2, par3, par4, this.blockID, par5, 3);
         }
     }
 
@@ -451,7 +444,7 @@ public class BlockFlowing extends BlockFluid
 
         if (par1World.getBlockId(par2, par3, par4) == this.blockID)
         {
-            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
         }
     }
 

@@ -1,7 +1,5 @@
 package net.minecraft.entity.projectile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -18,87 +16,55 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
 // CraftBukkit start
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Fish;
 import org.bukkit.event.player.PlayerFishEvent;
 // CraftBukkit end
 
 public class EntityFishHook extends Entity
 {
     /** The tile this entity is on, X position */
-    private int xTile;
+    private int xTile = -1;
 
     /** The tile this entity is on, Y position */
-    private int yTile;
+    private int yTile = -1;
 
     /** The tile this entity is on, Z position */
-    private int zTile;
-    private int inTile;
-    private boolean inGround;
-    public int shake;
+    private int zTile = -1;
+    private int inTile = 0;
+    private boolean inGround = false;
+    public int shake = 0;
     public EntityPlayer angler;
     private int ticksInGround;
-    private int ticksInAir;
+    private int ticksInAir = 0;
 
     /** the number of ticks remaining until this fish can no longer be caught */
-    private int ticksCatchable;
+    private int ticksCatchable = 0;
 
     /**
      * The entity that the fishing rod is connected to, if any. When you right click on the fishing rod and the hook
      * falls on to an entity, this it that entity.
      */
-    public Entity bobber;
+    public Entity bobber = null;
     private int fishPosRotationIncrements;
     private double fishX;
     private double fishY;
     private double fishZ;
     private double fishYaw;
     private double fishPitch;
-    @SideOnly(Side.CLIENT)
-    private double velocityX;
-    @SideOnly(Side.CLIENT)
-    private double velocityY;
-    @SideOnly(Side.CLIENT)
-    private double velocityZ;
 
     public EntityFishHook(World par1World)
     {
         super(par1World);
-        this.xTile = -1;
-        this.yTile = -1;
-        this.zTile = -1;
-        this.inTile = 0;
-        this.inGround = false;
-        this.shake = 0;
-        this.ticksInAir = 0;
-        this.ticksCatchable = 0;
-        this.bobber = null;
         this.setSize(0.25F, 0.25F);
         this.ignoreFrustumCheck = true;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public EntityFishHook(World par1World, double par2, double par4, double par6, EntityPlayer par8EntityPlayer)
-    {
-        this(par1World);
-        this.setPosition(par2, par4, par6);
-        this.ignoreFrustumCheck = true;
-        this.angler = par8EntityPlayer;
-        par8EntityPlayer.fishEntity = this;
     }
 
     public EntityFishHook(World par1World, EntityPlayer par2EntityPlayer)
     {
         super(par1World);
-        this.xTile = -1;
-        this.yTile = -1;
-        this.zTile = -1;
-        this.inTile = 0;
-        this.inGround = false;
-        this.shake = 0;
-        this.ticksInAir = 0;
-        this.ticksCatchable = 0;
-        this.bobber = null;
         this.ignoreFrustumCheck = true;
         this.angler = par2EntityPlayer;
         this.angler.fishEntity = this;
@@ -117,19 +83,6 @@ public class EntityFishHook extends Entity
     }
 
     protected void entityInit() {}
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
-     * length * 64 * renderDistanceWeight Args: distance
-     */
-    public boolean isInRangeToRenderDist(double par1)
-    {
-        double d1 = this.boundingBox.getAverageEdgeLength() * 4.0D;
-        d1 *= 64.0D;
-        return par1 < d1 * d1;
-    }
 
     public void calculateVelocity(double par1, double par3, double par5, float par7, float par8)
     {
@@ -150,37 +103,6 @@ public class EntityFishHook extends Entity
         this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(par1, par5) * 180.0D / Math.PI);
         this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(par3, (double)f3) * 180.0D / Math.PI);
         this.ticksInGround = 0;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,
-     * posY, posZ, yaw, pitch
-     */
-    public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9)
-    {
-        this.fishX = par1;
-        this.fishY = par3;
-        this.fishZ = par5;
-        this.fishYaw = (double)par7;
-        this.fishPitch = (double)par8;
-        this.fishPosRotationIncrements = par9;
-        this.motionX = this.velocityX;
-        this.motionY = this.velocityY;
-        this.motionZ = this.velocityZ;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the velocity to the args. Args: x, y, z
-     */
-    public void setVelocity(double par1, double par3, double par5)
-    {
-        this.velocityX = this.motionX = par1;
-        this.velocityY = this.motionY = par3;
-        this.velocityZ = this.motionZ = par5;
     }
 
     /**
@@ -363,7 +285,7 @@ public class EntityFishHook extends Entity
                 {
                     double d7 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (double)(k + 0) / (double)b0 - 0.125D + 0.125D;
                     double d8 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (double)(k + 1) / (double)b0 - 0.125D + 0.125D;
-                    AxisAlignedBB axisalignedbb1 = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(this.boundingBox.minX, d7, this.boundingBox.minZ, this.boundingBox.maxX, d8, this.boundingBox.maxZ);
+                    AxisAlignedBB axisalignedbb1 = AxisAlignedBB.getAABBPool().getAABB(this.boundingBox.minX, d7, this.boundingBox.minZ, this.boundingBox.maxX, d8, this.boundingBox.maxZ);
 
                     if (this.worldObj.isAABBInMaterial(axisalignedbb1, Material.water))
                     {
@@ -392,8 +314,8 @@ public class EntityFishHook extends Entity
                             this.motionY -= 0.20000000298023224D;
                             this.playSound("random.splash", 0.25F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
                             float f3 = (float)MathHelper.floor_double(this.boundingBox.minY);
-                            int l;
                             float f4;
+                            int l;
                             float f5;
 
                             for (l = 0; (float)l < 1.0F + this.width * 20.0F; ++l)
@@ -461,12 +383,6 @@ public class EntityFishHook extends Entity
         this.inGround = par1NBTTagCompound.getByte("inGround") == 1;
     }
 
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
-    {
-        return 0.0F;
-    }
-
     public int catchFish()
     {
         if (this.worldObj.isRemote)
@@ -480,7 +396,7 @@ public class EntityFishHook extends Entity
             if (this.bobber != null)
             {
                 // CraftBukkit start
-                PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.angler.getBukkitEntity(), this.bobber.getBukkitEntity(), PlayerFishEvent.State.CAUGHT_ENTITY);
+                PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.angler.getBukkitEntity(), this.bobber.getBukkitEntity(), (Fish) this.getBukkitEntity(), PlayerFishEvent.State.CAUGHT_ENTITY);
                 this.worldObj.getServer().getPluginManager().callEvent(playerFishEvent);
 
                 if (playerFishEvent.isCancelled())
@@ -505,7 +421,7 @@ public class EntityFishHook extends Entity
             {
                 EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, new ItemStack(Item.fishRaw));
                 // CraftBukkit start
-                PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.angler.getBukkitEntity(), entityitem.getBukkitEntity(), PlayerFishEvent.State.CAUGHT_FISH);
+                PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.angler.getBukkitEntity(), entityitem.getBukkitEntity(), (Fish) this.getBukkitEntity(), PlayerFishEvent.State.CAUGHT_FISH);
                 playerFishEvent.setExpToDrop(this.rand.nextInt(6) + 1);
                 this.worldObj.getServer().getPluginManager().callEvent(playerFishEvent);
 
@@ -535,7 +451,7 @@ public class EntityFishHook extends Entity
             if (this.inGround)
             {
                 // CraftBukkit start
-                PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.angler.getBukkitEntity(), null, PlayerFishEvent.State.IN_GROUND);
+                PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.angler.getBukkitEntity(), null, (Fish) this.getBukkitEntity(), PlayerFishEvent.State.IN_GROUND);
                 this.worldObj.getServer().getPluginManager().callEvent(playerFishEvent);
 
                 if (playerFishEvent.isCancelled())
@@ -552,7 +468,7 @@ public class EntityFishHook extends Entity
             // CraftBukkit start
             if (b0 == 0)
             {
-                PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.angler.getBukkitEntity(), null, PlayerFishEvent.State.FAILED_ATTEMPT);
+                PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.angler.getBukkitEntity(), null, (Fish) this.getBukkitEntity(), PlayerFishEvent.State.FAILED_ATTEMPT);
                 this.worldObj.getServer().getPluginManager().callEvent(playerFishEvent);
             }
 

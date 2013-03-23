@@ -1,7 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -9,6 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 
 public class BlockSign extends BlockContainer
@@ -22,7 +21,6 @@ public class BlockSign extends BlockContainer
     {
         super(par1, Material.wood);
         this.isFreestanding = par3;
-        this.blockIndexInTexture = 4;
         this.signEntityClass = par2Class;
         float f = 0.25F;
         float f1 = 1.0F;
@@ -36,17 +34,6 @@ public class BlockSign extends BlockContainer
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
         return null;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the bounding box of the wired rectangular prism to render.
-     */
-    public AxisAlignedBB getSelectedBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
-    {
-        this.setBlockBoundsBasedOnState(par1World, par2, par3, par4);
-        return super.getSelectedBoundingBoxFromPool(par1World, par2, par3, par4);
     }
 
     /**
@@ -183,7 +170,7 @@ public class BlockSign extends BlockContainer
         if (flag)
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
 
         super.onNeighborBlockChange(par1World, par2, par3, par4, par5);
@@ -196,16 +183,7 @@ public class BlockSign extends BlockContainer
             BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, power, power);
             par1World.getServer().getPluginManager().callEvent(eventRedstone);
         }
+
         // CraftBukkit end
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return Item.sign.itemID;
     }
 }

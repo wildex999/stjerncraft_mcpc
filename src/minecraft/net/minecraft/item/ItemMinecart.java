@@ -1,13 +1,15 @@
 package net.minecraft.item;
 
+import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockRail;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.dispenser.IBehaviorDispenseItem;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-
 public class ItemMinecart extends Item
 {
+    private static final IBehaviorDispenseItem dispenserMinecartBehavior = new BehaviorDispenseMinecart();
     public int minecartType;
 
     public ItemMinecart(int par1, int par2)
@@ -16,6 +18,7 @@ public class ItemMinecart extends Item
         this.maxStackSize = 1;
         this.minecartType = par2;
         this.setCreativeTab(CreativeTabs.tabTransport);
+        BlockDispenser.dispenseBehaviorRegistry.putObject(this, dispenserMinecartBehavior);
     }
 
     /**
@@ -39,7 +42,14 @@ public class ItemMinecart extends Item
                 }
 
                 // CraftBukkit end
-                par3World.spawnEntityInWorld(new EntityMinecart(par3World, (double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.minecartType));
+                EntityMinecart entityminecart = EntityMinecart.func_94090_a(par3World, (double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.minecartType);
+
+                if (par1ItemStack.hasDisplayName())
+                {
+                    entityminecart.func_96094_a(par1ItemStack.getDisplayName());
+                }
+
+                par3World.spawnEntityInWorld(entityminecart);
             }
 
             --par1ItemStack.stackSize;

@@ -1,30 +1,26 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.ArrayList;
 import java.util.Random;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
 public class BlockCrops extends BlockFlower
 {
-    protected BlockCrops(int par1, int par2)
+    protected BlockCrops(int par1)
     {
-        super(par1, par2);
-        this.blockIndexInTexture = par2;
+        super(par1);
         this.setTickRandomly(true);
         float f = 0.5F;
         this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, 0.25F, 0.5F + f);
         this.setCreativeTab((CreativeTabs)null);
         this.setHardness(0.0F);
-        this.setStepSound(soundGrassFootstep);
+        this.setStepSound(Block.soundGrassFootstep); // CraftBukkit - i -> Block.i, decompile error
         this.disableStats();
-        this.setRequiresSelfNotify();
     }
 
     /**
@@ -51,7 +47,7 @@ public class BlockCrops extends BlockFlower
             {
                 float f = this.getGrowthRate(par1World, par2, par3, par4);
 
-                if (par5Random.nextInt((int)(par1World.growthOdds / par1World.getWorld().wheatGrowthModifier * (25.0F / f)) + 1) == 0)    // Spigot
+                if (par5Random.nextInt((int)(25.0F / f) + 1) == 0)
                 {
                     org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, ++l); // CraftBukkit
                 }
@@ -64,7 +60,14 @@ public class BlockCrops extends BlockFlower
      */
     public void fertilize(World par1World, int par2, int par3, int par4)
     {
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, 7);
+        int l = par1World.getBlockMetadata(par2, par3, par4) + MathHelper.getRandomIntegerInRange(par1World.rand, 2, 5);
+
+        if (l > 7)
+        {
+            l = 7;
+        }
+
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 2);
     }
 
     /**
@@ -119,19 +122,6 @@ public class BlockCrops extends BlockFlower
         }
 
         return f;
-    }
-
-    /**
-     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
-     */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
-    {
-        if (par2 < 0)
-        {
-            par2 = 7;
-        }
-
-        return this.blockIndexInTexture + par2;
     }
 
     /**
@@ -199,15 +189,5 @@ public class BlockCrops extends BlockFlower
     public int quantityDropped(Random par1Random)
     {
         return 1;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return this.getSeedItem();
     }
 }

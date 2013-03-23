@@ -10,8 +10,8 @@ import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
-import guava10.com.google.common.collect.ImmutableMap;
-import guava10.com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorageMeta {
@@ -33,10 +33,10 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
         }
     }
 
-    CraftMetaEnchantedBook(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
+    CraftMetaEnchantedBook(net.minecraft.nbt.NBTTagCompound tag) {
         super(tag);
 
-        if (!tag.hasKey/*was:hasKey*/(STORED_ENCHANTMENTS.NBT)) {
+        if (!tag.hasKey(STORED_ENCHANTMENTS.NBT)) {
             return;
         }
 
@@ -50,7 +50,7 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
     }
 
     @Override
-    void applyToItem(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ itemTag) {
+    void applyToItem(net.minecraft.nbt.NBTTagCompound itemTag) {
         super.applyToItem(itemTag);
 
         applyEnchantments(enchantments, itemTag, STORED_ENCHANTMENTS);

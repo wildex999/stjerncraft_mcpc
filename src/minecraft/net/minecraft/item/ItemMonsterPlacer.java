@@ -1,13 +1,8 @@
 package net.minecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.Iterator;
-import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,7 +10,6 @@ import net.minecraft.util.Facing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-
 public class ItemMonsterPlacer extends Item
 {
     public ItemMonsterPlacer(int par1)
@@ -25,10 +19,13 @@ public class ItemMonsterPlacer extends Item
         this.setCreativeTab(CreativeTabs.tabMisc);
     }
 
-    public String getItemDisplayName(ItemStack par1ItemStack)
+    /**
+     * Gets the localized name of the given item stack.
+     */
+    public String getLocalizedName(ItemStack itemstack)
     {
-        String s = ("" + StatCollector.translateToLocal(this.getItemName() + ".name")).trim();
-        String s1 = EntityList.getStringFromID(par1ItemStack.getItemDamage());
+        String s = ("" + StatCollector.translateToLocal(this.getUnlocalizedName() + ".name")).trim();
+        String s1 = EntityList.getStringFromID(itemstack.getItemDamage());
 
         if (s1 != null)
         {
@@ -36,13 +33,6 @@ public class ItemMonsterPlacer extends Item
         }
 
         return s;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public int getColorFromItemStack(ItemStack par1ItemStack, int par2)
-    {
-        EntityEggInfo entityegginfo = (EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(par1ItemStack.getItemDamage()));
-        return entityegginfo != null ? (par2 == 0 ? entityegginfo.primaryColor : entityegginfo.secondaryColor) : 16777215;
     }
 
     /**
@@ -68,9 +58,19 @@ public class ItemMonsterPlacer extends Item
                 d0 = 0.5D;
             }
 
-            if (spawnCreature(par3World, par1ItemStack.getItemDamage(), (double)par4 + 0.5D, (double)par5 + d0, (double)par6 + 0.5D) != null && !par2EntityPlayer.capabilities.isCreativeMode)
+            Entity entity = spawnCreature(par3World, par1ItemStack.getItemDamage(), (double)par4 + 0.5D, (double)par5 + d0, (double)par6 + 0.5D);
+
+            if (entity != null)
             {
-                --par1ItemStack.stackSize;
+                if (entity instanceof EntityLiving && par1ItemStack.hasDisplayName())
+                {
+                    ((EntityLiving)entity).func_94058_c(par1ItemStack.getDisplayName());
+                }
+
+                if (!par2EntityPlayer.capabilities.isCreativeMode)
+                {
+                    --par1ItemStack.stackSize;
+                }
             }
 
             return true;
@@ -108,38 +108,6 @@ public class ItemMonsterPlacer extends Item
             }
 
             return entity;
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public boolean requiresMultipleRenderPasses()
-    {
-        return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Gets an icon index based on an item's damage value and the given render pass
-     */
-    public int getIconFromDamageForRenderPass(int par1, int par2)
-    {
-        return par2 > 0 ? super.getIconFromDamageForRenderPass(par1, par2) + 16 : super.getIconFromDamageForRenderPass(par1, par2);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
-     */
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
-    {
-        Iterator iterator = EntityList.entityEggs.values().iterator();
-
-        while (iterator.hasNext())
-        {
-            EntityEggInfo entityegginfo = (EntityEggInfo)iterator.next();
-            par3List.add(new ItemStack(par1, 1, entityegginfo.spawnedID));
         }
     }
 }

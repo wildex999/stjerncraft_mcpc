@@ -1,3 +1,15 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ *
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.relauncher;
 
 import java.applet.Applet;
@@ -13,7 +25,7 @@ public class FMLRelauncher
     private static FMLRelauncher INSTANCE;
     public static String logFileNamePattern;
     private static String side;
-    public RelaunchClassLoader classLoader;
+    private RelaunchClassLoader classLoader;
     private Object newApplet;
     private Class<? super Object> appletClass;
 
@@ -33,7 +45,7 @@ public class FMLRelauncher
         instance().relaunchServer(wrap);
     }
 
-    public static FMLRelauncher instance()
+    static FMLRelauncher instance()
     {
         if (INSTANCE == null)
         {
@@ -120,7 +132,9 @@ public class FMLRelauncher
     private Class<? super Object> setupNewClientHome(File minecraftHome)
     {
         Class<? super Object> client = ReflectionHelper.getClass(classLoader, "net.minecraft.client.Minecraft");
-        ReflectionHelper.setPrivateValue(client, null, minecraftHome, "minecraftDir", "an", "minecraftDir");
+        ReflectionHelper.setPrivateValue(client, null, minecraftHome,
+                "field_" + "71463_am" /*Separate that so that MCP's updatenames does not replace it*/,
+                "an", "minecraftDir");
         return client;
     }
 
@@ -149,6 +163,9 @@ public class FMLRelauncher
         FMLRelaunchLog.minecraftHome = minecraftHome;
         FMLRelaunchLog.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s loading", FMLInjectionData.major, FMLInjectionData.minor,
                 FMLInjectionData.rev, FMLInjectionData.build, FMLInjectionData.mccversion, FMLInjectionData.mcpversion);
+        FMLRelaunchLog.info("Java is %s, version %s, running on %s:%s:%s, installed at %s", System.getProperty("java.vm.name"), System.getProperty("java.version"), System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"), System.getProperty("java.home"));
+        FMLRelaunchLog.fine("Java classpath at launch is %s", System.getProperty("java.class.path"));
+        FMLRelaunchLog.fine("Java library path at launch is %s", System.getProperty("java.library.path"));
 
         try
         {
@@ -216,7 +233,6 @@ public class FMLRelauncher
     {
         showWindow(true);
 
-        appletClass = ReflectionHelper.getClass(classLoader, "net.minecraft.client.MinecraftApplet");
         if (minecraftApplet.getClass().getClassLoader() == classLoader)
         {
             if (popupWindow != null)
@@ -227,6 +243,7 @@ public class FMLRelauncher
             try
             {
                 newApplet = minecraftApplet;
+                appletClass = ReflectionHelper.getClass(classLoader, "net.minecraft.client.MinecraftApplet");
                 ReflectionHelper.findMethod(appletClass, newApplet, new String[] { "fmlInitReentry" }).invoke(newApplet);
                 return;
             }
@@ -246,6 +263,7 @@ public class FMLRelauncher
 
         try
         {
+            appletClass = ReflectionHelper.getClass(classLoader, "net.minecraft.client.MinecraftApplet");
             newApplet = appletClass.newInstance();
             Object appletContainer = ReflectionHelper.getPrivateValue(ReflectionHelper.getClass(getClass().getClassLoader(), "java.awt.Component"),
                     minecraftApplet, "parent");

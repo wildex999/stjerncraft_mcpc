@@ -13,9 +13,11 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class BlockNetherStalk extends BlockFlower
 {
+    private static final String[] field_94373_a = new String[] {"netherStalk_0", "netherStalk_1", "netherStalk_2"};
+
     protected BlockNetherStalk(int par1)
     {
-        super(par1, 226);
+        super(par1);
         this.setTickRandomly(true);
         float f = 0.5F;
         this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, 0.25F, 0.5F + f);
@@ -56,14 +58,6 @@ public class BlockNetherStalk extends BlockFlower
     }
 
     /**
-     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
-     */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
-    {
-        return par2 >= 3 ? this.blockIndexInTexture + 2 : (par2 > 0 ? this.blockIndexInTexture + 1 : this.blockIndexInTexture);
-    }
-
-    /**
      * The type of render function that is called for this block
      */
     public int getRenderType()
@@ -94,17 +88,7 @@ public class BlockNetherStalk extends BlockFlower
     {
         return 0;
     }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return Item.netherStalkSeeds.itemID;
-    }
-
+    
     @Override
     public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
     {
@@ -122,5 +106,5 @@ public class BlockNetherStalk extends BlockFlower
         }
 
         return ret;
-    }
+    }    
 }

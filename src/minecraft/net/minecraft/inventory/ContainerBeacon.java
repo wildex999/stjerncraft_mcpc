@@ -1,16 +1,14 @@
 package net.minecraft.inventory;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 // CraftBukkit start
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryBeacon;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-// CraftBukkit end
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityBeacon;
+// CraftBukkit end
 
 public class ContainerBeacon extends Container
 {
@@ -69,25 +67,6 @@ public class ContainerBeacon extends Container
     public void detectAndSendChanges()
     {
         super.detectAndSendChanges();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void updateProgressBar(int par1, int par2)
-    {
-        if (par1 == 0)
-        {
-            this.theBeacon.setLevels(par2);
-        }
-
-        if (par1 == 1)
-        {
-            this.theBeacon.func_82128_d(par2);
-        }
-
-        if (par1 == 2)
-        {
-            this.theBeacon.func_82127_e(par2);
-        }
     }
 
     /**

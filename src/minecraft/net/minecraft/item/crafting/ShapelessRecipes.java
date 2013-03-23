@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 // CraftBukkit start
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
@@ -71,7 +72,7 @@ public class ShapelessRecipes implements IRecipe
                     {
                         ItemStack itemstack1 = (ItemStack)iterator.next();
 
-                        if (itemstack.itemID == itemstack1.itemID && (itemstack1.getItemDamage() == -1 || itemstack.getItemDamage() == itemstack1.getItemDamage()))
+                        if (itemstack.itemID == itemstack1.itemID && (itemstack1.getItemDamage() == 32767 || itemstack.getItemDamage() == itemstack1.getItemDamage()))
                         {
                             flag = true;
                             arraylist.remove(itemstack1);

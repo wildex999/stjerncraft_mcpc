@@ -1,3 +1,15 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * 
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.common.network;
 
 import java.io.ByteArrayInputStream;
@@ -89,7 +101,7 @@ public class EntitySpawnPacket extends FMLPacket
         {
             ent.getDataWatcher().writeWatchableObjects(dos);
         }
-        catch (IOException e)
+        catch (Throwable e) // MCPC+ - change IOException to Throwable for binary compatibility
         {
             // unpossible
         }
@@ -148,7 +160,7 @@ public class EntitySpawnPacket extends FMLPacket
         {
             metadata = DataWatcher.readWatchableObjects(dis);
         }
-        catch (IOException e)
+        catch (Throwable e) // MCPC+ - change from IOException to Throwable for binary compatibility
         {
             // Nope
         }

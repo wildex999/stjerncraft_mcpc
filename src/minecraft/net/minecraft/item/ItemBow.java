@@ -1,5 +1,7 @@
 package net.minecraft.item;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -13,6 +15,8 @@ import net.minecraftforge.event.entity.player.ArrowNockEvent;
 
 public class ItemBow extends Item
 {
+    public static final String[] bowPullIconNameArray = new String[] {"bow_pull_0", "bow_pull_1", "bow_pull_2"};
+
     public ItemBow(int par1)
     {
         super(par1);
@@ -28,6 +32,7 @@ public class ItemBow extends Item
     {
         int j = this.getMaxItemUseDuration(par1ItemStack) - par4;
 
+        { // MCPC+ - scope
         ArrowLooseEvent event = new ArrowLooseEvent(par3EntityPlayer, par1ItemStack, j);
         MinecraftForge.EVENT_BUS.post(event);
         if (event.isCanceled())
@@ -35,6 +40,7 @@ public class ItemBow extends Item
             return;
         }
         j = event.charge;
+        } // MCPC+
 
         boolean flag = par3EntityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
 
@@ -78,16 +84,17 @@ public class ItemBow extends Item
             {
                 entityarrow.setFire(100);
             }
-            // CraftBukkit start
-            org.bukkit.event.entity.EntityShootBowEvent cbEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(par3EntityPlayer, par1ItemStack, entityarrow, f);
 
-            if (cbEvent.isCancelled())
+            // CraftBukkit start
+            org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(par3EntityPlayer, par1ItemStack, entityarrow, f);
+
+            if (event.isCancelled())
             {
-                cbEvent.getProjectile().remove();
+                event.getProjectile().remove();
                 return;
             }
 
-            if (cbEvent.getProjectile() == entityarrow.getBukkitEntity())
+            if (event.getProjectile() == entityarrow.getBukkitEntity())
             {
                 par2World.spawnEntityInWorld(entityarrow);
             }
@@ -109,7 +116,7 @@ public class ItemBow extends Item
         }
     }
 
-    public ItemStack onFoodEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+    public ItemStack onEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
         return par1ItemStack;
     }

@@ -11,7 +11,7 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import guava10.com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
@@ -29,12 +29,12 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
         this.color = armorMeta.color;
     }
 
-    CraftMetaLeatherArmor(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
+    CraftMetaLeatherArmor(net.minecraft.nbt.NBTTagCompound tag) {
         super(tag);
-        if (tag.hasKey/*was:hasKey*/(DISPLAY.NBT)) {
-            net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ display = tag.getCompoundTag/*was:getCompound*/(DISPLAY.NBT);
-            if (display.hasKey/*was:hasKey*/(COLOR.NBT)) {
-                color = Color.fromRGB(display.getInteger/*was:getInt*/(COLOR.NBT));
+        if (tag.hasKey(DISPLAY.NBT)) {
+            net.minecraft.nbt.NBTTagCompound display = tag.getCompoundTag(DISPLAY.NBT);
+            if (display.hasKey(COLOR.NBT)) {
+                color = Color.fromRGB(display.getInteger(COLOR.NBT));
             }
         }
     }
@@ -45,11 +45,11 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
     }
 
     @Override
-    void applyToItem(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ itemTag) {
+    void applyToItem(net.minecraft.nbt.NBTTagCompound itemTag) {
         super.applyToItem(itemTag);
 
         if (hasColor()) {
-            setDisplayTag(itemTag, COLOR.NBT, new net.minecraft.nbt.NBTTagInt/*was:NBTTagInt*/(COLOR.NBT, color.asRGB()));
+            setDisplayTag(itemTag, COLOR.NBT, new net.minecraft.nbt.NBTTagInt(COLOR.NBT, color.asRGB()));
         }
     }
 

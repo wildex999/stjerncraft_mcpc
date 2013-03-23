@@ -5,9 +5,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-
 public abstract class EntityAgeable extends EntityCreature
 {
+    private float field_98056_d = -1.0F;
+    private float field_98057_e;
     public boolean ageLocked = false; // CraftBukkit
 
     public EntityAgeable(World par1World)
@@ -38,11 +39,16 @@ public abstract class EntityAgeable extends EntityCreature
                     entityageable.setLocationAndAngles(this.posX, this.posY, this.posZ, 0.0F, 0.0F);
                     this.worldObj.addEntity(entityageable, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
 
+                    if (itemstack.hasDisplayName())
+                    {
+                        entityageable.func_94058_c(itemstack.getDisplayName());
+                    }
+
                     if (!par1EntityPlayer.capabilities.isCreativeMode)
                     {
                         --itemstack.stackSize;
 
-                        if (itemstack.stackSize == 0)   // CraftBukkit - allow less than 0 stacks as "infinit"
+                        if (itemstack.stackSize == 0)   // CraftBukkit - allow less than 0 stacks as "infinite"
                         {
                             par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
                         }
@@ -77,6 +83,7 @@ public abstract class EntityAgeable extends EntityCreature
     public void setGrowingAge(int par1)
     {
         this.dataWatcher.updateObject(12, Integer.valueOf(par1));
+        this.func_98054_a(this.isChild());
     }
 
     /**
@@ -106,22 +113,25 @@ public abstract class EntityAgeable extends EntityCreature
     public void onLivingUpdate()
     {
         super.onLivingUpdate();
-        int i = this.getGrowingAge();
 
-        if (ageLocked)
+        if (this.worldObj.isRemote || this.ageLocked)   // CraftBukkit
         {
-            return;    // CraftBukkit
+            this.func_98054_a(this.isChild());
         }
+        else
+        {
+            int i = this.getGrowingAge();
 
-        if (i < 0)
-        {
-            ++i;
-            this.setGrowingAge(i);
-        }
-        else if (i > 0)
-        {
-            --i;
-            this.setGrowingAge(i);
+            if (i < 0)
+            {
+                ++i;
+                this.setGrowingAge(i);
+            }
+            else if (i > 0)
+            {
+                --i;
+                this.setGrowingAge(i);
+            }
         }
     }
 
@@ -131,5 +141,30 @@ public abstract class EntityAgeable extends EntityCreature
     public boolean isChild()
     {
         return this.getGrowingAge() < 0;
+    }
+
+    public void func_98054_a(boolean par1)
+    {
+        this.func_98055_j(par1 ? 0.5F : 1.0F);
+    }
+
+    /**
+     * Sets the width and height of the entity. Args: width, height
+     */
+    protected final void setSize(float par1, float par2)
+    {
+        boolean flag = this.field_98056_d > 0.0F;
+        this.field_98056_d = par1;
+        this.field_98057_e = par2;
+
+        if (!flag)
+        {
+            this.func_98055_j(1.0F);
+        }
+    }
+
+    private void func_98055_j(float par1)
+    {
+        super.setSize(this.field_98056_d * par1, this.field_98057_e * par1);
     }
 }

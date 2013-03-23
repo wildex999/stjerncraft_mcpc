@@ -2,12 +2,11 @@ package net.minecraft.entity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-
+import java.util.concurrent.Callable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.StepSound;
@@ -18,10 +17,12 @@ import net.minecraft.enchantment.EnchantmentProtection;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,16 +43,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 // CraftBukkit start
-import java.util.concurrent.Callable;
-
-import net.minecraft.entity.passive.EntityTameable;
-import net.minecraft.entity.player.EntityPlayerMP;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.TravelAgent;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Vehicle;
@@ -62,8 +58,6 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftFakePlayer;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -98,6 +92,7 @@ public abstract class Entity
 
     /** The entity we are currently riding */
     public Entity ridingEntity;
+    public boolean field_98038_p;
 
     /** Reference to the World object. */
     public World worldObj;
@@ -230,14 +225,6 @@ public abstract class Entity
      */
     public int hurtResistantTime;
     private boolean firstUpdate;
-    @SideOnly(Side.CLIENT)
-
-    /** downloadable location of player's skin */
-    public String skinUrl;
-    @SideOnly(Side.CLIENT)
-
-    /** downloadable location of player's cloak */
-    public String cloakUrl;
     protected boolean isImmuneToFire;
     protected DataWatcher dataWatcher;
     private double entityRiderPitchDelta;
@@ -248,12 +235,6 @@ public abstract class Entity
     public int chunkCoordX;
     public int chunkCoordY;
     public int chunkCoordZ;
-    @SideOnly(Side.CLIENT)
-    public int serverPosX;
-    @SideOnly(Side.CLIENT)
-    public int serverPosY;
-    @SideOnly(Side.CLIENT)
-    public int serverPosZ;
 
     /**
      * Render entity even if it is outside the camera frustum. Only true in EntityFish for now. Used in RenderGlobal:
@@ -271,14 +252,15 @@ public abstract class Entity
     public int dimension;
     protected int field_82152_aq;
     private boolean invulnerable;
+    public UUID entityUniqueID; // CraftBukkit - private -> public
     public EnumEntitySize myEntitySize;
-    public UUID persistentID = UUID.randomUUID(); // CraftBukkit
     public boolean valid = false; // CraftBukkit
-
     /** Forge: Used to store custom data for each entity. */
     private NBTTagCompound customEntityData;
     public boolean captureDrops = false;
     public ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
+    private UUID persistentID;    
+
     public Entity(World par1World)
     {
         this.entityId = nextEntityID++;
@@ -314,6 +296,7 @@ public abstract class Entity
         this.addedToChunk = false;
         this.field_82152_aq = 0;
         this.invulnerable = false;
+        this.entityUniqueID = UUID.randomUUID();
         this.myEntitySize = EnumEntitySize.SIZE_2;
         this.worldObj = par1World;
         this.setPosition(0.0D, 0.0D, 0.0D);
@@ -345,33 +328,6 @@ public abstract class Entity
         return this.entityId;
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Keeps moving the entity up so it isn't colliding with blocks and other requirements for this entity to be spawned
-     * (only actually used on players though its also on Entity)
-     */
-    protected void preparePlayerToSpawn()
-    {
-        if (this.worldObj != null)
-        {
-            while (this.posY > 0.0D)
-            {
-                this.setPosition(this.posX, this.posY, this.posZ);
-
-                if (this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty())
-                {
-                    break;
-                }
-
-                ++this.posY;
-            }
-
-            this.motionX = this.motionY = this.motionZ = 0.0D;
-            this.rotationPitch = 0.0F;
-        }
-    }
-
     /**
      * Will get destroyed next tick.
      */
@@ -385,8 +341,15 @@ public abstract class Entity
      */
     protected void setSize(float par1, float par2)
     {
-        this.width = par1;
-        this.height = par2;
+        if (par1 != this.width || par2 != this.height)
+        {
+            this.width = par1;
+            this.height = par2;
+            this.boundingBox.maxX = this.boundingBox.minX + (double)this.width;
+            this.boundingBox.maxZ = this.boundingBox.minZ + (double)this.width;
+            this.boundingBox.maxY = this.boundingBox.minY + (double)this.height;
+        }
+
         float f2 = par1 % 2.0F;
 
         if ((double)f2 < 0.375D)
@@ -430,7 +393,7 @@ public abstract class Entity
         {
             if (this instanceof EntityPlayerMP)
             {
-                System.err.println(((CraftPlayer) this.getBukkitEntity()).getName() + " was caught trying to crash the server with an invalid yaw");
+                this.worldObj.getServer().getLogger().warning(((CraftPlayer) this.getBukkitEntity()).getName() + " was caught trying to crash the server with an invalid yaw");
                 ((CraftPlayer) this.getBukkitEntity()).kickPlayer("Nope");
             }
 
@@ -447,7 +410,7 @@ public abstract class Entity
         {
             if (this instanceof EntityPlayerMP)
             {
-                System.err.println(((CraftPlayer) this.getBukkitEntity()).getName() + " was caught trying to crash the server with an invalid pitch");
+                this.worldObj.getServer().getLogger().warning(((CraftPlayer) this.getBukkitEntity()).getName() + " was caught trying to crash the server with an invalid pitch");
                 ((CraftPlayer) this.getBukkitEntity()).kickPlayer("Nope");
             }
 
@@ -470,33 +433,6 @@ public abstract class Entity
         float f = this.width / 2.0F;
         float f1 = this.height;
         this.boundingBox.setBounds(par1 - (double)f, par3 - (double)this.yOffset + (double)this.ySize, par5 - (double)f, par1 + (double)f, par3 - (double)this.yOffset + (double)this.ySize + (double)f1, par5 + (double)f);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Adds par1*0.15 to the entity's yaw, and *subtracts* par2*0.15 from the pitch. Clamps pitch from -90 to 90. Both
-     * arguments in degrees.
-     */
-    public void setAngles(float par1, float par2)
-    {
-        float f2 = this.rotationPitch;
-        float f3 = this.rotationYaw;
-        this.rotationYaw = (float)((double)this.rotationYaw + (double)par1 * 0.15D);
-        this.rotationPitch = (float)((double)this.rotationPitch - (double)par2 * 0.15D);
-
-        if (this.rotationPitch < -90.0F)
-        {
-            this.rotationPitch = -90.0F;
-        }
-
-        if (this.rotationPitch > 90.0F)
-        {
-            this.rotationPitch = 90.0F;
-        }
-
-        this.prevRotationPitch += this.rotationPitch - f2;
-        this.prevRotationYaw += this.rotationYaw - f3;
     }
 
     /**
@@ -632,6 +568,7 @@ public abstract class Entity
 
                     // CraftBukkit end
                 }
+
                 --this.fire;
             }
         }
@@ -759,11 +696,6 @@ public abstract class Entity
      */
     public void moveEntity(double par1, double par3, double par5)
     {
-        if (par1 == 0 && par3 == 0 && par5 == 0)
-        {
-            return;    // Spigot
-        }
-
         if (this.noClip)
         {
             this.boundingBox.offset(par1, par3, par5);
@@ -931,7 +863,7 @@ public abstract class Entity
 
                 for (k = 0; k < list.size(); ++k)
                 {
-                    par3 = ((AxisAlignedBB) list.get(k)).calculateYOffset(this.boundingBox, par3);
+                    par3 = ((AxisAlignedBB)list.get(k)).calculateYOffset(this.boundingBox, par3);
                 }
 
                 this.boundingBox.offset(0.0D, par3, 0.0D);
@@ -945,7 +877,7 @@ public abstract class Entity
 
                 for (k = 0; k < list.size(); ++k)
                 {
-                    par1 = ((AxisAlignedBB) list.get(k)).calculateXOffset(this.boundingBox, par1);
+                    par1 = ((AxisAlignedBB)list.get(k)).calculateXOffset(this.boundingBox, par1);
                 }
 
                 this.boundingBox.offset(par1, 0.0D, 0.0D);
@@ -959,7 +891,7 @@ public abstract class Entity
 
                 for (k = 0; k < list.size(); ++k)
                 {
-                    par5 = ((AxisAlignedBB) list.get(k)).calculateZOffset(this.boundingBox, par5);
+                    par5 = ((AxisAlignedBB)list.get(k)).calculateZOffset(this.boundingBox, par5);
                 }
 
                 this.boundingBox.offset(0.0D, 0.0D, par5);
@@ -983,7 +915,7 @@ public abstract class Entity
 
                     for (k = 0; k < list.size(); ++k)
                     {
-                        par3 = ((AxisAlignedBB) list.get(k)).calculateYOffset(this.boundingBox, par3);
+                        par3 = ((AxisAlignedBB)list.get(k)).calculateYOffset(this.boundingBox, par3);
                     }
 
                     this.boundingBox.offset(0.0D, par3, 0.0D);
@@ -996,18 +928,6 @@ public abstract class Entity
                     par5 = d12;
                     this.boundingBox.setBB(axisalignedbb1);
                 }
-                /* Fixes a vanilla bug where the player view would dip when stepping between certain blocks
-                 * https://mojang.atlassian.net/browse/MC-1594
-                else
-                {
-                    double d13 = this.boundingBox.minY - (double)((int)this.boundingBox.minY);
-
-                    if (d13 > 0.0D)
-                    {
-                        this.ySize = (float)((double)this.ySize + d13 + 0.01D);
-                    }
-                }
-                */
             }
 
             this.worldObj.theProfiler.endSection();
@@ -1072,7 +992,7 @@ public abstract class Entity
             if (this.canTriggerWalking() && !flag && this.ridingEntity == null)
             {
                 int l = MathHelper.floor_double(this.posX);
-                k = MathHelper.floor_double(this.posY - 0.20000000298023224D - (double) this.yOffset);
+                k = MathHelper.floor_double(this.posY - 0.20000000298023224D - (double)this.yOffset);
                 int i1 = MathHelper.floor_double(this.posZ);
                 int j1 = this.worldObj.getBlockId(l, k, i1);
 
@@ -1423,24 +1343,6 @@ public abstract class Entity
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public int getBrightnessForRender(float par1)
-    {
-        int i = MathHelper.floor_double(this.posX);
-        int j = MathHelper.floor_double(this.posZ);
-
-        if (this.worldObj.blockExists(i, 0, j))
-        {
-            double d0 = (this.boundingBox.maxY - this.boundingBox.minY) * 0.66D;
-            int k = MathHelper.floor_double(this.posY - (double)this.yOffset + d0);
-            return this.worldObj.getLightBrightnessForSkyBlocks(i, k, j, 0);
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
     /**
      * Gets how bright this entity is.
      */
@@ -1659,10 +1561,7 @@ public abstract class Entity
      */
     public void addToPlayerScore(Entity par1Entity, int par2) {}
 
-    /**
-     * adds the ID of this entity to the NBT given
-     */
-    public boolean addEntityID(NBTTagCompound par1NBTTagCompound)
+    public boolean func_98035_c(NBTTagCompound par1NBTTagCompound)
     {
         String s = this.getEntityString();
 
@@ -1678,41 +1577,23 @@ public abstract class Entity
         }
     }
 
-    @SideOnly(Side.CLIENT)
-
     /**
-     * Checks using a Vec3d to determine if this entity is within range of that vector to be rendered. Args: vec3D
+     * adds the ID of this entity to the NBT given
      */
-    public boolean isInRangeToRenderVec3D(Vec3 par1Vec3)
+    public boolean addEntityID(NBTTagCompound par1NBTTagCompound)
     {
-        double d0 = this.posX - par1Vec3.xCoord;
-        double d1 = this.posY - par1Vec3.yCoord;
-        double d2 = this.posZ - par1Vec3.zCoord;
-        double d3 = d0 * d0 + d1 * d1 + d2 * d2;
-        return this.isInRangeToRenderDist(d3);
-    }
+        String s = this.getEntityString();
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
-     * length * 64 * renderDistanceWeight Args: distance
-     */
-    public boolean isInRangeToRenderDist(double par1)
-    {
-        double d1 = this.boundingBox.getAverageEdgeLength();
-        d1 *= 64.0D * this.renderDistanceWeight;
-        return par1 < d1 * d1;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the texture's file path as a String.
-     */
-    public String getTexture()
-    {
-        return null;
+        if (!this.isDead && s != null && this.riddenByEntity == null)
+        {
+            par1NBTTagCompound.setString("id", s);
+            this.writeToNBT(par1NBTTagCompound);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**
@@ -1736,6 +1617,7 @@ public abstract class Entity
             {
                 this.rotationPitch = 0;
             }
+
             // CraftBukkit end
             par1NBTTagCompound.setTag("Rotation", this.newFloatNBTList(new float[] {this.rotationYaw, this.rotationPitch}));
             par1NBTTagCompound.setFloat("FallDistance", this.fallDistance);
@@ -1745,18 +1627,28 @@ public abstract class Entity
             par1NBTTagCompound.setInteger("Dimension", this.dimension);
             par1NBTTagCompound.setBoolean("Invulnerable", this.invulnerable);
             par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
+            par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
+            par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
             // CraftBukkit start
             par1NBTTagCompound.setLong("WorldUUIDLeast", this.worldObj.getSaveHandler().getUUID().getLeastSignificantBits());
             par1NBTTagCompound.setLong("WorldUUIDMost", this.worldObj.getSaveHandler().getUUID().getMostSignificantBits());
-            par1NBTTagCompound.setLong("UUIDLeast", this.persistentID.getLeastSignificantBits());
-            par1NBTTagCompound.setLong("UUIDMost", this.persistentID.getMostSignificantBits());
             par1NBTTagCompound.setInteger("Bukkit.updateLevel", CURRENT_LEVEL);
             // CraftBukkit end
-            if (this.customEntityData != null)
+            if (customEntityData != null)
             {
-                par1NBTTagCompound.setCompoundTag("ForgeData", this.customEntityData);
-            }
+                par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
+            }            
             this.writeEntityToNBT(par1NBTTagCompound);
+
+            if (this.ridingEntity != null)
+            {
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound("Riding");
+
+                if (this.ridingEntity.func_98035_c(nbttagcompound1))
+                {
+                    par1NBTTagCompound.setTag("Riding", nbttagcompound1);
+                }
+            }
         }
         catch (Throwable throwable)
         {
@@ -1805,26 +1697,23 @@ public abstract class Entity
             this.dimension = par1NBTTagCompound.getInteger("Dimension");
             this.invulnerable = par1NBTTagCompound.getBoolean("Invulnerable");
             this.timeUntilPortal = par1NBTTagCompound.getInteger("PortalCooldown");
-            this.setPosition(this.posX, this.posY, this.posZ);
-            // CraftBukkit start
-            long least = par1NBTTagCompound.getLong("UUIDLeast");
-            long most = par1NBTTagCompound.getLong("UUIDMost");
 
-            if (least != 0L && most != 0L)
+            if (par1NBTTagCompound.hasKey("UUIDMost") && par1NBTTagCompound.hasKey("UUIDLeast"))
             {
-                this.persistentID = new UUID(most, least);
+                this.entityUniqueID = new UUID(par1NBTTagCompound.getLong("UUIDMost"), par1NBTTagCompound.getLong("UUIDLeast"));
             }
 
-            // CraftBukkit end
+            this.setPosition(this.posX, this.posY, this.posZ);
             this.setRotation(this.rotationYaw, this.rotationPitch);
-
-            // Forge start
             if (par1NBTTagCompound.hasKey("ForgeData"))
             {
-                this.customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
+                customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
             }
-
-            // Forge end
+            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly
+            if (par1NBTTagCompound.hasKey("PersistentIDMSB") && par1NBTTagCompound.hasKey("PersistentIDLSB"))
+            {
+                this.entityUniqueID = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
+            }
             this.readEntityFromNBT(par1NBTTagCompound);
 
             // CraftBukkit start
@@ -1930,13 +1819,13 @@ public abstract class Entity
     protected NBTTagList newDoubleNBTList(double ... par1ArrayOfDouble)
     {
         NBTTagList nbttaglist = new NBTTagList();
-        double[] adouble = par1ArrayOfDouble;
+        double[] adouble1 = par1ArrayOfDouble;
         int i = par1ArrayOfDouble.length;
 
         for (int j = 0; j < i; ++j)
         {
-            double d1 = adouble[j];
-            nbttaglist.appendTag(new NBTTagDouble((String)null, d1));
+            double d0 = adouble1[j];
+            nbttaglist.appendTag(new NBTTagDouble((String) null, d0));
         }
 
         return nbttaglist;
@@ -1948,22 +1837,16 @@ public abstract class Entity
     protected NBTTagList newFloatNBTList(float ... par1ArrayOfFloat)
     {
         NBTTagList nbttaglist = new NBTTagList();
-        float[] afloat = par1ArrayOfFloat;
+        float[] afloat1 = par1ArrayOfFloat;
         int i = par1ArrayOfFloat.length;
 
         for (int j = 0; j < i; ++j)
         {
-            float f1 = afloat[j];
-            nbttaglist.appendTag(new NBTTagFloat((String)null, f1));
+            float f = afloat1[j];
+            nbttaglist.appendTag(new NBTTagFloat((String) null, f));
         }
 
         return nbttaglist;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
-    {
-        return this.height / 2.0F;
     }
 
     /**
@@ -2123,14 +2006,17 @@ public abstract class Entity
 
     public void updateRiderPosition()
     {
-        if (!(this.riddenByEntity instanceof EntityPlayer) || !((EntityPlayer)this.riddenByEntity).func_71066_bF())
+        if (this.riddenByEntity != null)
         {
-            this.riddenByEntity.lastTickPosX = this.lastTickPosX;
-            this.riddenByEntity.lastTickPosY = this.lastTickPosY + this.getMountedYOffset() + this.riddenByEntity.getYOffset();
-            this.riddenByEntity.lastTickPosZ = this.lastTickPosZ;
-        }
+            if (!(this.riddenByEntity instanceof EntityPlayer) || !((EntityPlayer)this.riddenByEntity).func_71066_bF())
+            {
+                this.riddenByEntity.lastTickPosX = this.lastTickPosX;
+                this.riddenByEntity.lastTickPosY = this.lastTickPosY + this.getMountedYOffset() + this.riddenByEntity.getYOffset();
+                this.riddenByEntity.lastTickPosZ = this.lastTickPosZ;
+            }
 
-        this.riddenByEntity.setPosition(this.posX, this.posY + this.getMountedYOffset() + this.riddenByEntity.getYOffset(), this.posZ);
+            this.riddenByEntity.setPosition(this.posX, this.posY + this.getMountedYOffset() + this.riddenByEntity.getYOffset(), this.posZ);
+        }
     }
 
     /**
@@ -2158,7 +2044,7 @@ public abstract class Entity
         this.setPassengerOf(par1Entity);
     }
 
-    protected org.bukkit.craftbukkit.entity.CraftEntity bukkitEntity;
+    public CraftEntity bukkitEntity;
 
     public CraftEntity getBukkitEntity()
     {
@@ -2166,10 +2052,11 @@ public abstract class Entity
         {
             this.bukkitEntity = org.bukkit.craftbukkit.entity.CraftEntity.getEntity(this.worldObj.getServer(), this);
         }
+
         return this.bukkitEntity;
     }
 
-    public void setPassengerOf(Entity par1Entity)
+    public void setPassengerOf(Entity entity)
     {
         // b(null) doesn't really fly for overloaded methods,
         // so this method is needed
@@ -2179,7 +2066,7 @@ public abstract class Entity
         this.entityRiderPitchDelta = 0.0D;
         this.entityRiderYawDelta = 0.0D;
 
-        if (par1Entity == null)
+        if (entity == null)
         {
             if (this.ridingEntity != null)
             {
@@ -2197,26 +2084,12 @@ public abstract class Entity
 
             this.ridingEntity = null;
         }
-        else if (this.ridingEntity == par1Entity)
-        {
-            // CraftBukkit start
-            if ((this.bukkitEntity instanceof LivingEntity) && (this.ridingEntity.getBukkitEntity() instanceof Vehicle))
-            {
-                VehicleExitEvent event = new VehicleExitEvent((Vehicle) this.ridingEntity.getBukkitEntity(), (LivingEntity) this.bukkitEntity);
-                pluginManager.callEvent(event);
-            }
-
-            // CraftBukkit end
-            this.unmountEntity(par1Entity);
-            this.ridingEntity.riddenByEntity = null;
-            this.ridingEntity = null;
-        }
         else
         {
             // CraftBukkit start
-            if ((this.bukkitEntity instanceof LivingEntity) && (par1Entity.getBukkitEntity() instanceof Vehicle))
+            if ((this.bukkitEntity instanceof LivingEntity) && (entity.getBukkitEntity() instanceof Vehicle))
             {
-                VehicleEnterEvent event = new VehicleEnterEvent((Vehicle) par1Entity.getBukkitEntity(), this.bukkitEntity);
+                VehicleEnterEvent event = new VehicleEnterEvent((Vehicle) entity.getBukkitEntity(), this.bukkitEntity);
                 pluginManager.callEvent(event);
 
                 if (event.isCancelled())
@@ -2232,13 +2105,8 @@ public abstract class Entity
                 this.ridingEntity.riddenByEntity = null;
             }
 
-            if (par1Entity.riddenByEntity != null)
-            {
-                par1Entity.riddenByEntity.ridingEntity = null;
-            }
-
-            this.ridingEntity = par1Entity;
-            par1Entity.riddenByEntity = this;
+            this.ridingEntity = entity;
+            entity.riddenByEntity = this;
         }
     }
 
@@ -2247,9 +2115,16 @@ public abstract class Entity
      */
     public void unmountEntity(Entity par1Entity)
     {
-        double d0 = par1Entity.posX;
-        double d1 = par1Entity.boundingBox.minY + (double)par1Entity.height;
-        double d2 = par1Entity.posZ;
+        double d0 = this.posX;
+        double d1 = this.posY;
+        double d2 = this.posZ;
+
+        if (par1Entity != null)
+        {
+            d0 = par1Entity.posX;
+            d1 = par1Entity.boundingBox.minY + (double)par1Entity.height;
+            d2 = par1Entity.posZ;
+        }
 
         for (double d3 = -1.5D; d3 < 2.0D; ++d3)
         {
@@ -2281,37 +2156,6 @@ public abstract class Entity
         }
 
         this.setLocationAndAngles(d0, d1, d2, this.rotationYaw, this.rotationPitch);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,
-     * posY, posZ, yaw, pitch
-     */
-    public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9)
-    {
-        this.setPosition(par1, par3, par5);
-        this.setRotation(par7, par8);
-        List list = this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox.contract(0.03125D, 0.0D, 0.03125D));
-
-        if (!list.isEmpty())
-        {
-            double d3 = 0.0D;
-
-            for (int j = 0; j < list.size(); ++j)
-            {
-                AxisAlignedBB axisalignedbb = (AxisAlignedBB)list.get(j);
-
-                if (axisalignedbb.maxY > d3)
-                {
-                    d3 = axisalignedbb.maxY;
-                }
-            }
-
-            par3 += d3 - this.boundingBox.minY;
-            this.setPosition(par1, par3, par5);
-        }
     }
 
     public float getCollisionBorderSize()
@@ -2357,31 +2201,6 @@ public abstract class Entity
     {
         return 900;
     }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the velocity to the args. Args: x, y, z
-     */
-    public void setVelocity(double par1, double par3, double par5)
-    {
-        this.motionX = par1;
-        this.motionY = par3;
-        this.motionZ = par5;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleHealthUpdate(byte par1) {}
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Setups the entity to do the hurt animation. Only used by packets in multiplayer.
-     */
-    public void performHurtAnimation() {}
-
-    @SideOnly(Side.CLIENT)
-    public void updateCloak() {}
 
     public ItemStack[] getLastActiveItems()
     {
@@ -2450,12 +2269,6 @@ public abstract class Entity
     public void setHasActivePotion(boolean par1)
     {
         this.setFlag(5, par1);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public boolean isEating()
-    {
-        return this.getFlag(4);
     }
 
     public void setEating(boolean par1)
@@ -2687,17 +2500,10 @@ public abstract class Entity
         return this == par1Entity;
     }
 
-    public float setRotationYawHead()
+    public float getRotationYawHead()
     {
         return 0.0F;
     }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the head's yaw rotation of the entity.
-     */
-    public void setHeadRotationYaw(float par1) {}
 
     /**
      * If returns false, the item will not inflict any damage against entities.
@@ -2747,51 +2553,60 @@ public abstract class Entity
     /**
      * Teleports the entity to another dimension. Params: Dimension number to teleport to
      */
-    public void travelToDimension(int i)
+    public void travelToDimension(int par1)
     {
-        if (!this.worldObj.isRemote && !this.isDead)  // CraftBukkit - disable entity portal support for now.
+        if (!this.worldObj.isRemote && !this.isDead)
         {
-            this.worldObj.theProfiler.startSection("transferPlayerToDimension");
+            this.worldObj.theProfiler.startSection("changeDimension");
             MinecraftServer minecraftserver = MinecraftServer.getServer();
             // CraftBukkit start - move logic into new function "teleportToLocation"
+            // int j = this.dimension;
             WorldServer exitWorld = null;
-            if (this.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET) { // plugins must specify exit from custom Bukkit worlds
+
+            if (this.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET)   // plugins must specify exit from custom Bukkit worlds
+            {
                 // only target existing worlds (compensate for allow-nether/allow-end as false)
-                for (WorldServer world : minecraftserver.worlds) {
-                    if (world.dimension == i) {
+                for (WorldServer world : minecraftserver.worlds)
+                {
+                    if (world.dimension == par1)
+                    {
                         exitWorld = world;
                     }
                 }
             }
 
-            Location enter = this.getBukkitEntity().getLocation(); 
-            Location exit = exitWorld != null ? minecraftserver.getConfigurationManager().calculateTarget(enter, minecraftserver.worldServerForDimension(i)) : null;
+            Location enter = this.getBukkitEntity().getLocation();
+            Location exit = exitWorld != null ? minecraftserver.getConfigurationManager().calculateTarget(enter, minecraftserver.worldServerForDimension(par1)) : null;
             boolean useTravelAgent = exitWorld != null && !(this.dimension == 1 && exitWorld.dimension == 1); // don't use agent for custom worlds or return from THE_END
-
-            TravelAgent agent = exit != null ? (TravelAgent)((CraftWorld) exit.getWorld()).getHandle().func_85176_s() : org.bukkit.craftbukkit.CraftTravelAgent.DEFAULT;  // return arbitrary TA to compensate for implementation dependent plugins
+            TravelAgent agent = exit != null ? (TravelAgent)((CraftWorld) exit.getWorld()).getHandle().getDefaultTeleporter() : org.bukkit.craftbukkit.CraftTravelAgent.DEFAULT;  // return arbitrary TA to compensate for implementation dependent plugins
             EntityPortalEvent event = new EntityPortalEvent(this.getBukkitEntity(), enter, exit, agent);
             event.useTravelAgent(useTravelAgent);
-            event.getEntity().getServer().getPluginManager().callEvent(event); 
-            if (event.isCancelled() || event.getTo() == null || !this.isEntityAlive()) { 
-                return;
-            } 
-            exit = event.useTravelAgent() ? event.getPortalTravelAgent().findOrCreate(event.getTo()) : event.getTo();
-            this.teleportTo(exit, true);  
-         }
-     }
+            event.getEntity().getServer().getPluginManager().callEvent(event);
 
-    public void teleportTo(Location exit, boolean portal) {
-        if (true) {
+            if (event.isCancelled() || event.getTo() == null || !this.isEntityAlive())
+            {
+                return;
+            }
+
+            exit = event.useTravelAgent() ? event.getPortalTravelAgent().findOrCreate(event.getTo()) : event.getTo();
+            this.teleportTo(exit, true);
+        }
+    }
+
+    public void teleportTo(Location exit, boolean portal)
+    {
+        if (true)
+        {
             WorldServer worldserver = ((CraftWorld) this.getBukkitEntity().getLocation().getWorld()).getHandle();
             WorldServer worldserver1 = ((CraftWorld) exit.getWorld()).getHandle();
             int i = worldserver1.dimension;
             // CraftBukkit end
-
             this.dimension = i;
             this.worldObj.removeEntity(this);
             this.isDead = false;
             this.worldObj.theProfiler.startSection("reposition");
             // CraftBukkit start - ensure chunks are loaded in case TravelAgent is not used which would initially cause chunks to load during find/create
+            // minecraftserver.getPlayerList().a(this, j, worldserver, worldserver1);
             boolean before = worldserver1.theChunkProviderServer.loadChunkOnProvideRequest;
             worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = true;
             worldserver1.getMinecraftServer().getConfigurationManager().repositionEntity(this, exit, portal);
@@ -2800,7 +2615,8 @@ public abstract class Entity
             this.worldObj.theProfiler.endStartSection("reloading");
             Entity entity = EntityList.createEntityByName(EntityList.getEntityString(this), worldserver1);
 
-            if (entity != null) {
+            if (entity != null)
+            {
                 entity.copyDataFrom(this, true);
                 worldserver1.spawnEntityInWorld(entity);
                 // CraftBukkit start - forward the CraftEntity to the new entity
@@ -2817,9 +2633,14 @@ public abstract class Entity
         }
     }
 
-    public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
+    public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
     {
-        return par2Block.getExplosionResistance(this, worldObj, par3, par4, par5, posX, posY + (double)getEyeHeight(), posZ);
+        return par6Block.getExplosionResistance(this, par2World, par3, par4, par5, posX, posY + (double)getEyeHeight(), posZ);
+    }
+
+    public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
+    {
+        return true;
     }
 
     public int func_82143_as()
@@ -2842,24 +2663,24 @@ public abstract class Entity
 
     public void func_85029_a(CrashReportCategory par1CrashReportCategory)
     {
-        par1CrashReportCategory.addCrashSectionCallable("Entity Type", new CallableEntityType(this));
+        par1CrashReportCategory.addCrashSectionCallable("Entity Type", (Callable)(new CallableEntityType(this)));
         par1CrashReportCategory.addCrashSection("Entity ID", Integer.valueOf(this.entityId));
-        par1CrashReportCategory.addCrashSection("Name", this.getEntityName());
-        par1CrashReportCategory.addCrashSection("Exact location", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.posX), Double.valueOf(this.posY), Double.valueOf(this.posZ)}));
-        par1CrashReportCategory.addCrashSection("Block location", CrashReportCategory.func_85071_a(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)));
-        par1CrashReportCategory.addCrashSection("Momentum", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.motionX), Double.valueOf(this.motionY), Double.valueOf(this.motionZ)}));
+        par1CrashReportCategory.addCrashSectionCallable("Entity Name", (Callable)(new CallableEntityName(this)));
+        par1CrashReportCategory.addCrashSection("Entity\'s Exact location", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.posX), Double.valueOf(this.posY), Double.valueOf(this.posZ)}));
+        par1CrashReportCategory.addCrashSection("Entity\'s Block location", CrashReportCategory.func_85071_a(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)));
+        par1CrashReportCategory.addCrashSection("Entity\'s Momentum", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.motionX), Double.valueOf(this.motionY), Double.valueOf(this.motionZ)}));
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Return whether this entity should be rendered as on fire.
-     */
-    public boolean canRenderOnFire()
+    public boolean func_96092_aw()
     {
-        return this.isBurning();
+        return true;
     }
 
+    public String func_96090_ax()
+    {
+        return this.getEntityName();
+    }
+    
     /* ================================== Forge Start =====================================*/
     /**
      * Returns a NBTTagCompound that can be used to store custom data for this entity.
@@ -2922,22 +2743,14 @@ public abstract class Entity
             if (id > 0 && EntityList.entityEggs.containsKey(id))
             {
                 return new ItemStack(Item.monsterPlacer, 1, id);
+            }
         }
-    }
         return null;
     }
 
     public UUID getPersistentID()
     {
-        return this.persistentID;
-    }
-
-    public synchronized void generatePersistentID()
-    {
-        if (this.persistentID == null)
-        {
-            this.persistentID = UUID.randomUUID();
-        }
+        return entityUniqueID;
     }
 
     /**
@@ -2952,4 +2765,15 @@ public abstract class Entity
     {
         return pass == 0;
     }
+
+    /**
+     * Returns true if the entity is of the @link{EnumCreatureType} provided
+     * @param type The EnumCreatureType type this entity is evaluating
+     * @param forSpawnCount If this is being invoked to check spawn count caps.
+     * @return If the creature is of the type provided
+     */
+    public boolean isCreatureType(EnumCreatureType type, boolean forSpawnCount)
+    {
+        return type.getCreatureClass().isAssignableFrom(this.getClass());
+    }    
 }

@@ -2,6 +2,7 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.world.World;
+
 import org.bukkit.BlockChangeDelegate; // CraftBukkit
 
 public abstract class WorldGenerator
@@ -11,7 +12,6 @@ public abstract class WorldGenerator
      * this is false, when saplings grow, this is true.
      */
     private final boolean doBlockNotify;
-    private int field_82631_b = 1;
 
     public WorldGenerator()
     {
@@ -45,32 +45,7 @@ public abstract class WorldGenerator
         }
         else
         {
-            world.setRawTypeIdAndData(i, j, k, l, i1);
+            world.setTypeIdAndData(i, j, k, l, i1);
         }
     }
-
-    // MCPC+ start - vanilla compatibility
-    /**
-     * Sets the block without metadata in the world, notifying neighbors if enabled.
-     */
-    protected void setBlock(World par1World, int par2, int par3, int par4, int par5)
-    {
-        this.setBlockAndMetadata(par1World, par2, par3, par4, par5, 0);
-    }
-
-    /**
-     * Sets the block in the world, notifying neighbors if enabled.
-     */
-    protected void setBlockAndMetadata(World par1World, int par2, int par3, int par4, int par5, int par6)
-    {
-        if (this.doBlockNotify)
-        {
-            par1World.setBlockAndMetadataWithNotify(par2, par3, par4, par5, par6);
-        }
-        else
-        {
-            par1World.setBlockAndMetadata(par2, par3, par4, par5, par6);
-        }
-    }
-    // MCPC+ end
 }

@@ -18,6 +18,7 @@ public class RecipesArmorDyes extends ShapelessRecipes implements IRecipe   // C
         super(new ItemStack(Item.helmetLeather, 0, 0), java.util.Arrays.asList(new ItemStack(Item.dyePowder, 0, 5)));
     }
     // CraftBukkit end
+
     /**
      * Used to check if a recipe matches current crafting inventory
      */
@@ -90,6 +91,7 @@ public class RecipesArmorDyes extends ShapelessRecipes implements IRecipe   // C
                     }
 
                     itemstack = itemstack1.copy();
+                    itemstack.stackSize = 1;
 
                     if (itemarmor.hasColor(itemstack1))
                     {

@@ -2,12 +2,13 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSapling.TreeGenerator;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
-import net.minecraft.block.BlockSapling.TreeGenerator;
+
 import org.bukkit.BlockChangeDelegate; // CraftBukkit
 
-public class WorldGenSwamp extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
+public class WorldGenSwamp extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
 {
     public WorldGenSwamp() {}
 
@@ -17,55 +18,54 @@ public class WorldGenSwamp extends WorldGenerator implements net.minecraft.block
         return this.generate((BlockChangeDelegate) par1World, par2Random, par3, par4, par5);
     }
 
-    public boolean generate(BlockChangeDelegate world, Random random, int i, int j, int k)
+    public boolean generate(BlockChangeDelegate par1World, Random par2Random, int par3, int par4, int par5)
     {
         // CraftBukkit end
         int l;
-        World w = world instanceof World ? (World)world : null; // MCPC
 
-        for (l = random.nextInt(4) + 5; world.getTypeId(i, j - 1, k) != 0 && Block.blocksList[world.getTypeId(i, j - 1, k)].blockMaterial == Material.water; --j)   // CraftBukkit - bypass world.getMaterial
+        for (l = par2Random.nextInt(4) + 5; par1World.getTypeId(par3, par4 - 1, par5) != 0 && Block.blocksList[par1World.getTypeId(par3, par4 - 1, par5)].blockMaterial == Material.water; --par4)   // CraftBukkit - bypass world.getMaterial
         {
             ;
         }
 
         boolean flag = true;
 
-        if (j >= 1 && j + l + 1 <= 128)
+        if (par4 >= 1 && par4 + l + 1 <= 128)
         {
             int i1;
             int j1;
             int k1;
             int l1;
 
-            for (i1 = j; i1 <= j + 1 + l; ++i1)
+            for (i1 = par4; i1 <= par4 + 1 + l; ++i1)
             {
                 byte b0 = 1;
 
-                if (i1 == j)
+                if (i1 == par4)
                 {
                     b0 = 0;
                 }
 
-                if (i1 >= j + 1 + l - 2)
+                if (i1 >= par4 + 1 + l - 2)
                 {
                     b0 = 3;
                 }
 
-                for (j1 = i - b0; j1 <= i + b0 && flag; ++j1)
+                for (j1 = par3 - b0; j1 <= par3 + b0 && flag; ++j1)
                 {
-                    for (k1 = k - b0; k1 <= k + b0 && flag; ++k1)
+                    for (k1 = par5 - b0; k1 <= par5 + b0 && flag; ++k1)
                     {
                         if (i1 >= 0 && i1 < 128)
                         {
-                            l1 = world.getTypeId(j1, i1, k1);
+                            l1 = par1World.getTypeId(j1, i1, k1);
 
-                            if (l1 != 0 && Block.blocksList[l1] != null && !Block.blocksList[l1].isLeaves(w, j1, i1, k1))   // Forge
+                            if (l1 != 0 && l1 != Block.leaves.blockID)
                             {
                                 if (l1 != Block.waterStill.blockID && l1 != Block.waterMoving.blockID)
                                 {
                                     flag = false;
                                 }
-                                else if (i1 > j)
+                                else if (i1 > par4)
                                 {
                                     flag = false;
                                 }
@@ -85,31 +85,30 @@ public class WorldGenSwamp extends WorldGenerator implements net.minecraft.block
             }
             else
             {
-                i1 = world.getTypeId(i, j - 1, k);
+                i1 = par1World.getTypeId(par3, par4 - 1, par5);
 
-                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && j < 128 - l - 1)
+                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 128 - l - 1)
                 {
-                    this.setType(world, i, j - 1, k, Block.dirt.blockID);
+                    this.setType(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
                     int i2;
                     int j2;
 
-                    for (j2 = j - 3 + l; j2 <= j + l; ++j2)
+                    for (j2 = par4 - 3 + l; j2 <= par4 + l; ++j2)
                     {
-                        j1 = j2 - (j + l);
+                        j1 = j2 - (par4 + l);
                         k1 = 2 - j1 / 2;
 
-                        for (l1 = i - k1; l1 <= i + k1; ++l1)
+                        for (l1 = par3 - k1; l1 <= par3 + k1; ++l1)
                         {
-                            i2 = l1 - i;
+                            i2 = l1 - par3;
 
-                            for (int k2 = k - k1; k2 <= k + k1; ++k2)
+                            for (int k2 = par5 - k1; k2 <= par5 + k1; ++k2)
                             {
-                                int l2 = k2 - k;
-                                Block block = Block.blocksList[world.getTypeId(l1, j2, k2)]; // Forge
+                                int l2 = k2 - par5;
 
-                                if ((Math.abs(i2) != k1 || Math.abs(l2) != k1 || random.nextInt(2) != 0 && j1 != 0) && (block == null || block.canBeReplacedByLeaves(w, l1, j2, k2)))  // Forge
+                                if ((Math.abs(i2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && !Block.opaqueCubeLookup[par1World.getTypeId(l1, j2, k2)])
                                 {
-                                    this.setType(world, l1, j2, k2, Block.leaves.blockID);
+                                    this.setType(par1World, l1, j2, k2, Block.leaves.blockID);
                                 }
                             }
                         }
@@ -117,50 +116,43 @@ public class WorldGenSwamp extends WorldGenerator implements net.minecraft.block
 
                     for (j2 = 0; j2 < l; ++j2)
                     {
-                        j1 = world.getTypeId(i, j + j2, k);
-                        // Forge start
-                        Block block = Block.blocksList[j1];
+                        j1 = par1World.getTypeId(par3, par4 + j2, par5);
 
-                        if (j1 == 0 || block != null && block.isLeaves(w, i, j + j2, k) || j1 == Block.waterMoving.blockID || j1 == Block.waterStill.blockID)
+                        if (j1 == 0 || j1 == Block.leaves.blockID || j1 == Block.waterMoving.blockID || j1 == Block.waterStill.blockID)
                         {
-                            // Forge end
-                            this.setType(world, i, j + j2, k, Block.wood.blockID);
+                            this.setType(par1World, par3, par4 + j2, par5, Block.wood.blockID);
                         }
                     }
 
-                    for (j2 = j - 3 + l; j2 <= j + l; ++j2)
+                    for (j2 = par4 - 3 + l; j2 <= par4 + l; ++j2)
                     {
-                        j1 = j2 - (j + l);
+                        j1 = j2 - (par4 + l);
                         k1 = 2 - j1 / 2;
 
-                        for (l1 = i - k1; l1 <= i + k1; ++l1)
+                        for (l1 = par3 - k1; l1 <= par3 + k1; ++l1)
                         {
-                            for (i2 = k - k1; i2 <= k + k1; ++i2)
+                            for (i2 = par5 - k1; i2 <= par5 + k1; ++i2)
                             {
-                                // Forge start
-                                Block block = Block.blocksList[world.getTypeId(l1, j2, i2)];
-
-                                if (block != null && block.isLeaves(w, l1, j2, i2))
+                                if (par1World.getTypeId(l1, j2, i2) == Block.leaves.blockID)
                                 {
-                                    // Forge end
-                                    if (random.nextInt(4) == 0 && world.getTypeId(l1 - 1, j2, i2) == 0)
+                                    if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1 - 1, j2, i2) == 0)
                                     {
-                                        this.generateVines(world, l1 - 1, j2, i2, 8);
+                                        this.b(par1World, l1 - 1, j2, i2, 8);
                                     }
 
-                                    if (random.nextInt(4) == 0 && world.getTypeId(l1 + 1, j2, i2) == 0)
+                                    if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1 + 1, j2, i2) == 0)
                                     {
-                                        this.generateVines(world, l1 + 1, j2, i2, 2);
+                                        this.b(par1World, l1 + 1, j2, i2, 2);
                                     }
 
-                                    if (random.nextInt(4) == 0 && world.getTypeId(l1, j2, i2 - 1) == 0)
+                                    if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1, j2, i2 - 1) == 0)
                                     {
-                                        this.generateVines(world, l1, j2, i2 - 1, 1);
+                                        this.b(par1World, l1, j2, i2 - 1, 1);
                                     }
 
-                                    if (random.nextInt(4) == 0 && world.getTypeId(l1, j2, i2 + 1) == 0)
+                                    if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1, j2, i2 + 1) == 0)
                                     {
-                                        this.generateVines(world, l1, j2, i2 + 1, 4);
+                                        this.b(par1World, l1, j2, i2 + 1, 4);
                                     }
                                 }
                             }
@@ -181,10 +173,8 @@ public class WorldGenSwamp extends WorldGenerator implements net.minecraft.block
         }
     }
 
-    /**
-     * Generates vines at the given position until it hits a block.
-     */
-    private void generateVines(BlockChangeDelegate world, int i, int j, int k, int l) // CraftBukkit - change signature
+    // CraftBukkit - change signature
+    private void b(BlockChangeDelegate world, int i, int j, int k, int l)
     {
         this.setTypeAndData(world, i, j, k, Block.vine.blockID, l);
         int i1 = 4;
@@ -202,11 +192,4 @@ public class WorldGenSwamp extends WorldGenerator implements net.minecraft.block
             --i1;
         }
     }
-
-    // MCPC+ start - vanilla compatibility
-    private void generateVines(World par1World, int par2, int par3, int par4, int par5)
-    {
-        generateVines((BlockChangeDelegate) par1World, par2, par3, par4, par5);
-    }
-    // MCPC+ end
 }

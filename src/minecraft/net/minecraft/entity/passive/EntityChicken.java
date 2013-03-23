@@ -14,7 +14,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 public class EntityChicken extends EntityAnimal
 {
     public boolean field_70885_d = false;

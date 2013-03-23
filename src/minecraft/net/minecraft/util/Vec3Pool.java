@@ -1,7 +1,5 @@
 package net.minecraft.util;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +25,9 @@ public class Vec3Pool
         this.minimumSize = par2;
     }
 
+    /**
+     * extends the pool if all vecs are currently "out"
+     */
     public final Vec3 getVecFromPool(double par1, double par3, double par5)   // CraftBukkit - add final
     {
         if (this.resetCount == 0)
@@ -132,16 +133,6 @@ public class Vec3Pool
 
         // CraftBukkit end
         this.nextFreeSpace = 0;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void clearAndFreeCache()
-    {
-        if (!this.func_82589_e())
-        {
-            this.nextFreeSpace = 0;
-           // this.vec3Cache.clear();
-        }
     }
 
     public int getPoolSize()

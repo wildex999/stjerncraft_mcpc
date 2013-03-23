@@ -1,13 +1,10 @@
 package org.bukkit.craftbukkit;
 
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.Teleporter;
-import net.minecraft.world.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.TravelAgent;
 
-public class CraftTravelAgent extends Teleporter implements TravelAgent {
+public class CraftTravelAgent extends net.minecraft.world.Teleporter implements TravelAgent {
 
     public static TravelAgent DEFAULT = null;
 
@@ -15,7 +12,7 @@ public class CraftTravelAgent extends Teleporter implements TravelAgent {
     private int creationRadius = 16;
     private boolean canCreatePortal = true;
 
-    public CraftTravelAgent(WorldServer worldserver) {
+    public CraftTravelAgent(net.minecraft.world.WorldServer worldserver) {
         super(worldserver);
         if (DEFAULT == null && worldserver.dimension == 0) {
             DEFAULT = this;
@@ -23,7 +20,7 @@ public class CraftTravelAgent extends Teleporter implements TravelAgent {
     }
 
     public Location findOrCreate(Location target) {
-        WorldServer worldServer = ((CraftWorld) target.getWorld()).getHandle();
+        net.minecraft.world.WorldServer worldServer = ((CraftWorld) target.getWorld()).getHandle();
         boolean before = worldServer.theChunkProviderServer.loadChunkOnProvideRequest;
         worldServer.theChunkProviderServer.loadChunkOnProvideRequest = true;
 
@@ -41,13 +38,13 @@ public class CraftTravelAgent extends Teleporter implements TravelAgent {
     }
 
     public Location findPortal(Location location) {
-        Teleporter pta = ((CraftWorld) location.getWorld()).getHandle().func_85176_s();
-        ChunkCoordinates found = pta.findPortal(location.getX(), location.getY(), location.getZ(), this.getSearchRadius());
+        net.minecraft.world.Teleporter pta = ((CraftWorld) location.getWorld()).getHandle().getDefaultTeleporter();
+        net.minecraft.util.ChunkCoordinates found = pta.findPortal(location.getX(), location.getY(), location.getZ(), this.getSearchRadius());
         return found != null ? new Location(location.getWorld(), found.posX, found.posY, found.posZ, location.getYaw(), location.getPitch()) : null;
     }
 
     public boolean createPortal(Location location) {
-        Teleporter pta = ((CraftWorld) location.getWorld()).getHandle().func_85176_s();
+        net.minecraft.world.Teleporter pta = ((CraftWorld) location.getWorld()).getHandle().getDefaultTeleporter();
         return pta.createPortal(location.getX(), location.getY(), location.getZ(), this.getCreationRadius());
     }
 

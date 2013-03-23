@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-
 public class ItemRedstone extends Item
 {
     public ItemRedstone(int par1)
@@ -67,10 +66,9 @@ public class ItemRedstone extends Item
         {
             if (Block.redstoneWire.canPlaceBlockAt(par3World, par4, par5, par6))
             {
-
                 // CraftBukkit start
                 // --itemstack.count;
-                // world.setTypeId(i, j, k, Block.REDSTONE_WIRE.id);
+                // world.setTypeIdUpdate(i, j, k, Block.REDSTONE_WIRE.id);
                 if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, Block.redstoneWire.blockID, 0, clickedX, clickedY, clickedZ))
                 {
                     return false;

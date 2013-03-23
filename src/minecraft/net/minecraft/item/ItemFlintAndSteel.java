@@ -1,10 +1,6 @@
 package net.minecraft.item;
 
-// CraftBukkit start
-import org.bukkit.craftbukkit.block.CraftBlockState;
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockIgniteEvent;
-// CraftBukkit end
+import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -69,12 +65,7 @@ public class ItemFlintAndSteel extends Item
             if (i1 == 0)
             {
                 // CraftBukkit start - store the clicked block
-                org.bukkit.block.Block blockClicked = par3World.getWorld().getBlockAt(par4, par5, par6);
-                Player thePlayer = (Player) par2EntityPlayer.getBukkitEntity();
-                BlockIgniteEvent eventIgnite = new BlockIgniteEvent(blockClicked, BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, thePlayer);
-                par3World.getServer().getPluginManager().callEvent(eventIgnite);
-
-                if (eventIgnite.isCancelled())
+                if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(par3World, par4, par5, par6, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, par2EntityPlayer).isCancelled())
                 {
                     par1ItemStack.damageItem(1, par2EntityPlayer);
                     return false;
@@ -83,7 +74,7 @@ public class ItemFlintAndSteel extends Item
                 CraftBlockState blockState = CraftBlockState.getBlockState(par3World, par4, par5, par6);
                 // CraftBukkit end
                 par3World.playSoundEffect((double)par4 + 0.5D, (double)par5 + 0.5D, (double)par6 + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
-                par3World.setBlockWithNotify(par4, par5, par6, Block.fire.blockID);
+                par3World.setBlock(par4, par5, par6, Block.fire.blockID);
                 // CraftBukkit start
                 org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockState, clickedX, clickedY, clickedZ);
 

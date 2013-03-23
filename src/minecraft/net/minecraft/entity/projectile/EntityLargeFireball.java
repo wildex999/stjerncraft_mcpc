@@ -1,8 +1,5 @@
 package net.minecraft.entity.projectile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.entity.Entity;
 import org.bukkit.event.entity.ExplosionPrimeEvent; // CraftBukkit
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,12 +14,6 @@ public class EntityLargeFireball extends EntityFireball
     public EntityLargeFireball(World par1World)
     {
         super(par1World);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public EntityLargeFireball(World par1World, double par2, double par4, double par6, double par8, double par10, double par12)
-    {
-        super(par1World, par2, par4, par6, par8, par10, par12);
     }
 
     public EntityLargeFireball(World par1World, EntityLiving par2EntityLiving, double par3, double par5, double par7)

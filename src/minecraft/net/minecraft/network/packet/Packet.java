@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.item.ItemStack;
+import net.minecraft.logging.ILogAgent;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IntHashMap;
@@ -27,6 +28,7 @@ public abstract class Packet
 
     /** List of the server's packet IDs. */
     private static Set serverPacketIdList = new HashSet();
+    protected ILogAgent field_98193_m;
 
     /** the system time in milliseconds when this packet was created. */
     public final long creationTimeMillis = System.currentTimeMillis();
@@ -54,7 +56,7 @@ public abstract class Packet
     /**
      * Adds a two way mapping between the packet ID and packet class.
      */
-    public static void addIdClassMapping(int par0, boolean par1, boolean par2, Class par3Class)
+    static void addIdClassMapping(int par0, boolean par1, boolean par2, Class par3Class)
     {
         if (packetIdToClassMap.containsItem(par0))
         {
@@ -84,17 +86,17 @@ public abstract class Packet
     /**
      * Returns a new instance of the specified Packet class.
      */
-    public static Packet getNewPacket(int par0)
+    public static Packet getNewPacket(ILogAgent par0ILogAgent, int par1)
     {
         try
         {
-            Class oclass = (Class)packetIdToClassMap.lookup(par0);
+            Class oclass = (Class)packetIdToClassMap.lookup(par1);
             return oclass == null ? null : (Packet)oclass.newInstance();
         }
         catch (Exception exception)
         {
             exception.printStackTrace();
-            System.out.println("Skipping packet with id " + par0);
+            par0ILogAgent.func_98232_c("Skipping packet with id " + par1);
             return null;
         }
     }
@@ -102,7 +104,7 @@ public abstract class Packet
     /**
      * Writes a byte array to the DataOutputStream
      */
-    public static void writeByteArray(DataOutputStream par0DataOutputStream, byte[] par1ArrayOfByte) throws IOException
+    public static void writeByteArray(DataOutputStream par0DataOutputStream, byte[] par1ArrayOfByte) throws IOException   // CraftBukkit - throws IOException
     {
         par0DataOutputStream.writeShort(par1ArrayOfByte.length);
         par0DataOutputStream.write(par1ArrayOfByte);
@@ -111,7 +113,7 @@ public abstract class Packet
     /**
      * the first short in the stream indicates the number of bytes to read
      */
-    public static byte[] readBytesFromStream(DataInputStream par0DataInputStream) throws IOException
+    public static byte[] readBytesFromStream(DataInputStream par0DataInputStream) throws IOException   // CraftBukkit - throws IOException
     {
         short short1 = par0DataInputStream.readShort();
 
@@ -122,7 +124,7 @@ public abstract class Packet
         else
         {
             byte[] abyte = new byte[short1];
-            par0DataInputStream.read(abyte);
+            par0DataInputStream.readFully(abyte);
             return abyte;
         }
     }
@@ -138,57 +140,59 @@ public abstract class Packet
     /**
      * Read a packet, prefixed by its ID, from the data stream.
      */
-    public static Packet readPacket(DataInputStream par0DataInputStream, boolean par1, Socket par2Socket) throws IOException
+    public static Packet readPacket(ILogAgent par0ILogAgent, DataInputStream par1DataInputStream, boolean par2, Socket par3Socket) throws IOException   // CraftBukkit - throws IOException
     {
         boolean flag1 = false;
         Packet packet = null;
-        int i = par2Socket.getSoTimeout();
+        int i = par3Socket.getSoTimeout();
         int j;
 
         try
         {
-            j = par0DataInputStream.read();
+            j = par1DataInputStream.read();
 
             if (j == -1)
             {
                 return null;
             }
 
-            if (par1 && !serverPacketIdList.contains(Integer.valueOf(j)) || !par1 && !clientPacketIdList.contains(Integer.valueOf(j)))
+            if (par2 && !serverPacketIdList.contains(Integer.valueOf(j)) || !par2 && !clientPacketIdList.contains(Integer.valueOf(j)))
             {
                 throw new IOException("Bad packet id " + j);
             }
 
-            packet = getNewPacket(j);
+            packet = getNewPacket(par0ILogAgent, j);
 
             if (packet == null)
             {
                 throw new IOException("Bad packet id " + j);
             }
 
+            packet.field_98193_m = par0ILogAgent;
+
             if (packet instanceof Packet254ServerPing)
             {
-                par2Socket.setSoTimeout(1500);
+                par3Socket.setSoTimeout(1500);
             }
 
-            packet.readPacketData(par0DataInputStream);
+            packet.readPacketData(par1DataInputStream);
             ++receivedID;
             receivedSize += (long)packet.getPacketSize();
         }
         catch (EOFException eofexception)
         {
-            System.out.println("Reached end of stream");
+            par0ILogAgent.func_98232_c("Reached end of stream");
             return null;
         }
         // CraftBukkit start
         catch (java.net.SocketTimeoutException exception)
         {
-            System.out.println("Read timed out");
+            par0ILogAgent.logInfo("Read timed out");
             return null;
         }
         catch (java.net.SocketException exception)
         {
-            System.out.println("Connection reset");
+            par0ILogAgent.logInfo("Connection reset");
             return null;
         }
 
@@ -196,14 +200,14 @@ public abstract class Packet
         PacketCount.countPacket(j, (long)packet.getPacketSize());
         ++receivedID;
         receivedSize += (long)packet.getPacketSize();
-        par2Socket.setSoTimeout(i);
+        par3Socket.setSoTimeout(i);
         return packet;
     }
 
     /**
      * Writes a packet, prefixed by its ID, to the data stream.
      */
-    public static void writePacket(Packet par0Packet, DataOutputStream par1DataOutputStream) throws IOException
+    public static void writePacket(Packet par0Packet, DataOutputStream par1DataOutputStream) throws IOException   // CraftBukkit - throws IOException
     {
         par1DataOutputStream.write(par0Packet.getPacketId());
         par0Packet.writePacketData(par1DataOutputStream);
@@ -214,7 +218,7 @@ public abstract class Packet
     /**
      * Writes a String to the DataOutputStream
      */
-    public static void writeString(String par0Str, DataOutputStream par1DataOutputStream) throws IOException
+    public static void writeString(String par0Str, DataOutputStream par1DataOutputStream) throws IOException   // CraftBukkit - throws IOException
     {
         if (par0Str.length() > 32767)
         {
@@ -230,7 +234,7 @@ public abstract class Packet
     /**
      * Reads a string from a packet
      */
-    public static String readString(DataInputStream par0DataInputStream, int par1) throws IOException
+    public static String readString(DataInputStream par0DataInputStream, int par1) throws IOException   // CraftBukkit - throws IOException
     {
         short short1 = par0DataInputStream.readShort();
 
@@ -258,17 +262,17 @@ public abstract class Packet
     /**
      * Abstract. Reads the raw packet data from the data stream.
      */
-    public abstract void readPacketData(DataInputStream datainputstream) throws IOException;
+    public abstract void readPacketData(DataInputStream datainputstream) throws IOException; // CraftBukkit - throws IOException
 
     /**
      * Abstract. Writes the raw packet data to the data stream.
      */
-    public abstract void writePacketData(DataOutputStream dataoutputstream) throws IOException;
+    public abstract void writePacketData(DataOutputStream dataoutputstream) throws IOException; // CraftBukkit - throws IOException
 
     /**
      * Passes this Packet on to the NetHandler for processing.
      */
-    public abstract void processPacket(NetHandler nethandler);
+    public abstract void processPacket(NetHandler connection);
 
     /**
      * Abstract. Return the size of the packet (not counting the header).
@@ -310,7 +314,7 @@ public abstract class Packet
     /**
      * Reads a ItemStack from the InputStream
      */
-    public static ItemStack readItemStack(DataInputStream par0DataInputStream) throws IOException
+    public static ItemStack readItemStack(DataInputStream par0DataInputStream) throws IOException   // CraftBukkit - throws IOException
     {
         ItemStack itemstack = null;
         short short1 = par0DataInputStream.readShort();
@@ -329,7 +333,7 @@ public abstract class Packet
     /**
      * Writes the ItemStack's ID (short), then size (byte), then damage. (short)
      */
-    public static void writeItemStack(ItemStack par0ItemStack, DataOutputStream par1DataOutputStream) throws IOException
+    public static void writeItemStack(ItemStack par0ItemStack, DataOutputStream par1DataOutputStream) throws IOException   // CraftBukkit - throws IOException
     {
         if (par0ItemStack == null || par0ItemStack.getItem() == null)   // CraftBukkit - NPE fix itemstack.getItem()
         {
@@ -354,7 +358,7 @@ public abstract class Packet
     /**
      * Reads a compressed NBTTagCompound from the InputStream
      */
-    public static NBTTagCompound readNBTTagCompound(DataInputStream par0DataInputStream) throws IOException
+    public static NBTTagCompound readNBTTagCompound(DataInputStream par0DataInputStream) throws IOException   // CraftBukkit - throws IOException
     {
         short short1 = par0DataInputStream.readShort();
 
@@ -373,7 +377,7 @@ public abstract class Packet
     /**
      * Writes a compressed NBTTagCompound to the OutputStream
      */
-    protected static void writeNBTTagCompound(NBTTagCompound par0NBTTagCompound, DataOutputStream par1DataOutputStream) throws IOException
+    protected static void writeNBTTagCompound(NBTTagCompound par0NBTTagCompound, DataOutputStream par1DataOutputStream) throws IOException   // CraftBukkit - throws IOException
     {
         if (par0NBTTagCompound == null)
         {
@@ -438,6 +442,7 @@ public abstract class Packet
         addIdClassMapping(60, true, false, Packet60Explosion.class);
         addIdClassMapping(61, true, false, Packet61DoorChange.class);
         addIdClassMapping(62, true, false, Packet62LevelSound.class);
+        addIdClassMapping(63, true, false, Packet63WorldParticles.class);
         addIdClassMapping(70, true, false, Packet70GameEvent.class);
         addIdClassMapping(71, true, false, Packet71Weather.class);
         addIdClassMapping(100, true, false, Packet100OpenWindow.class);
@@ -458,6 +463,10 @@ public abstract class Packet
         addIdClassMapping(203, true, true, Packet203AutoComplete.class);
         addIdClassMapping(204, false, true, Packet204ClientInfo.class);
         addIdClassMapping(205, false, true, Packet205ClientCommand.class);
+        addIdClassMapping(206, true, false, Packet206SetObjective.class);
+        addIdClassMapping(207, true, false, Packet207SetScore.class);
+        addIdClassMapping(208, true, false, Packet208SetDisplayObjective.class);
+        addIdClassMapping(209, true, false, Packet209SetPlayerTeam.class);
         addIdClassMapping(250, true, true, Packet250CustomPayload.class);
         addIdClassMapping(252, true, true, Packet252SharedKey.class);
         addIdClassMapping(253, true, false, Packet253ServerAuthData.class);

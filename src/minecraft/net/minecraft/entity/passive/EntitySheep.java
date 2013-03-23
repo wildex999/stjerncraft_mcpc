@@ -1,8 +1,5 @@
 package net.minecraft.entity.passive;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.ArrayList;
 import java.util.Random;
 import net.minecraft.block.Block;
@@ -18,6 +15,7 @@ import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -27,11 +25,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.IShearable;
-// CraftBukkit start
 import org.bukkit.event.entity.SheepRegrowWoolEvent;
-import org.bukkit.event.player.PlayerShearEntityEvent;
-import net.minecraft.inventory.InventoryCraftResult;
-// CraftBukkit end
 
 public class EntitySheep extends EntityAnimal implements IShearable
 {
@@ -137,45 +131,13 @@ public class EntitySheep extends EntityAnimal implements IShearable
         return Block.cloth.blockID;
     }
 
-    @SideOnly(Side.CLIENT)
-    public void handleHealthUpdate(byte par1)
-    {
-        if (par1 == 10)
-        {
-            this.sheepTimer = 40;
-        }
-        else
-        {
-            super.handleHealthUpdate(par1);
-        }
-    }
-
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
     public boolean interact(EntityPlayer par1EntityPlayer)
     {
         return super.interact(par1EntityPlayer);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float func_70894_j(float par1)
-    {
-        return this.sheepTimer <= 0 ? 0.0F : (this.sheepTimer >= 4 && this.sheepTimer <= 36 ? 1.0F : (this.sheepTimer < 4 ? ((float)this.sheepTimer - par1) / 4.0F : -((float)(this.sheepTimer - 40) - par1) / 4.0F));
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float func_70890_k(float par1)
-    {
-        if (this.sheepTimer > 4 && this.sheepTimer <= 36)
-        {
-            float f1 = ((float)(this.sheepTimer - 4) - par1) / 32.0F;
-            return ((float)Math.PI / 5F) + ((float)Math.PI * 7F / 100F) * MathHelper.sin(f1 * 28.7F);
-        }
-        else
-        {
-            return this.sheepTimer > 0 ? ((float)Math.PI / 5F) : this.rotationPitch / (180F / (float)Math.PI);
-        }
+        // MCPC+ - TODO: missing PlayerShearEvent!
     }
 
     /**
@@ -298,6 +260,7 @@ public class EntitySheep extends EntityAnimal implements IShearable
         {
             this.setSheared(false);
         }
+
         // CraftBukkit end
 
         if (this.isChild())
@@ -351,7 +314,7 @@ public class EntitySheep extends EntityAnimal implements IShearable
     {
         return this.func_90015_b(par1EntityAgeable);
     }
-
+    
     @Override
     public boolean isShearable(ItemStack item, World world, int X, int Y, int Z)
     {

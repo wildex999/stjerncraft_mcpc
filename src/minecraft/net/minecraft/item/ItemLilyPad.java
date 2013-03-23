@@ -1,14 +1,11 @@
 package net.minecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-
 public class ItemLilyPad extends ItemColored
 {
     public ItemLilyPad(int par1)
@@ -49,7 +46,7 @@ public class ItemLilyPad extends ItemColored
                 if (par2World.getBlockMaterial(i, j, k) == Material.water && par2World.getBlockMetadata(i, j, k) == 0 && par2World.isAirBlock(i, j + 1, k))
                 {
                     // CraftBukkit start - waterlily
-                    // par2World.setBlockWithNotify(i, j + 1, k, Block.waterlily.blockID);
+                    // world.setTypeIdUpdate(i, j + 1, k, Block.WATER_LILY.id);
                     if (!processBlockPlace(par2World, par3EntityPlayer, null, i, j + 1, k, Block.waterlily.blockID, 0, clickedX, clickedY, clickedZ))
                     {
                         return par1ItemStack;
@@ -66,11 +63,5 @@ public class ItemLilyPad extends ItemColored
 
             return par1ItemStack;
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public int getColorFromItemStack(ItemStack par1ItemStack, int par2)
-    {
-        return Block.waterlily.getRenderColor(par1ItemStack.getItemDamage());
     }
 }

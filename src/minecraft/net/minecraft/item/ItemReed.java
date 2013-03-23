@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-
 public class ItemReed extends Item
 {
     /** The ID of the block the reed will spawn when used from inventory bar. */
@@ -25,7 +24,7 @@ public class ItemReed extends Item
         final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
         int i1 = par3World.getBlockId(par4, par5, par6);
 
-        if (i1 == Block.snow.blockID)
+        if (i1 == Block.snow.blockID && (par3World.getBlockMetadata(par4, par5, par6) & 7) < 1)
         {
             par7 = 1;
         }
@@ -72,24 +71,21 @@ public class ItemReed extends Item
         }
         else
         {
-            if (par3World.canPlaceEntityOnSide(this.spawnID, par4, par5, par6, false, par7, (Entity)null))
+            if (par3World.canPlaceEntityOnSide(this.spawnID, par4, par5, par6, false, par7, (Entity)null, par1ItemStack))
             {
                 Block block = Block.blocksList[this.spawnID];
                 int j1 = block.onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, 0);
-
                 // CraftBukkit start - redirect to common handler
                 ItemBlock.processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.spawnID, j1, clickedX, clickedY, clickedZ);
                 /*
-                if (par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.spawnID, i1))
-                {
-                    if (par3World.getBlockId(par4, par5, par6) == this.spawnID)
-                    {
-                        Block.blocksList[this.spawnID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer);
-                        Block.blocksList[this.spawnID].onPostBlockPlaced(par3World, par4, par5, par6, i1);
+                if (world.setTypeIdAndData(i, j, k, this.id, j1, 3)) {
+                    if (world.getTypeId(i, j, k) == this.id) {
+                        Block.byId[this.id].postPlace(world, i, j, k, entityhuman, itemstack);
+                        Block.byId[this.id].postPlace(world, i, j, k, j1);
                     }
 
-                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
-                    --par1ItemStack.stackSize;
+                    world.makeSound((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume1() + 1.0F) / 2.0F, block.stepSound.getVolume2() * 0.8F);
+                    --itemstack.count;
                 }
                 */
                 // CraftBukkit end

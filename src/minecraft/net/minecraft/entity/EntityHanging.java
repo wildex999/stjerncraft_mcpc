@@ -3,14 +3,15 @@ package net.minecraft.entity;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 // CraftBukkit start
-import net.minecraft.entity.item.EntityPainting;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Painting;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -291,7 +292,7 @@ public abstract class EntityHanging extends Entity
                         paintingEvent = new org.bukkit.event.painting.PaintingBreakByEntityEvent((Painting) this.getBukkitEntity(), par1DamageSource.getEntity() == null ? null : par1DamageSource.getEntity().getBukkitEntity());
                     }
                 }
-                else if (par1DamageSource == DamageSource.explosion || par1DamageSource == DamageSource.explosion2)
+                else if (par1DamageSource.isExplosion())
                 {
                     event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), HangingBreakEvent.RemoveCause.EXPLOSION);
                 }
@@ -342,6 +343,7 @@ public abstract class EntityHanging extends Entity
             {
                 return;    // CraftBukkit
             }
+
             this.setDead();
             this.dropItemStack();
         }

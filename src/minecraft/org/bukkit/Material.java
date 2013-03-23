@@ -1,5 +1,8 @@
 package org.bukkit;
 
+import java.lang.reflect.Constructor;
+import java.util.Map;
+// MCPC+ start
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -7,15 +10,62 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+// MCPC+ end
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.map.MapView;
-import org.bukkit.material.*;
+import org.bukkit.material.Bed;
+import org.bukkit.material.Button;
+import org.bukkit.material.Cake;
+import org.bukkit.material.Cauldron;
+import org.bukkit.material.Chest;
+import org.bukkit.material.Coal;
+import org.bukkit.material.CocoaPlant;
+import org.bukkit.material.Command;
+import org.bukkit.material.Crops;
+import org.bukkit.material.DetectorRail;
+import org.bukkit.material.Diode;
+import org.bukkit.material.Dispenser;
+import org.bukkit.material.Door;
+import org.bukkit.material.Dye;
+import org.bukkit.material.EnderChest;
+import org.bukkit.material.FlowerPot;
+import org.bukkit.material.Furnace;
+import org.bukkit.material.Gate;
+import org.bukkit.material.Ladder;
+import org.bukkit.material.Lever;
+import org.bukkit.material.LongGrass;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.MonsterEggs;
+import org.bukkit.material.Mushroom;
+import org.bukkit.material.NetherWarts;
+import org.bukkit.material.PistonBaseMaterial;
+import org.bukkit.material.PistonExtensionMaterial;
+import org.bukkit.material.PoweredRail;
+import org.bukkit.material.PressurePlate;
+import org.bukkit.material.Pumpkin;
+import org.bukkit.material.Rails;
+import org.bukkit.material.RedstoneTorch;
+import org.bukkit.material.RedstoneWire;
+import org.bukkit.material.Sandstone;
+import org.bukkit.material.Sign;
+import org.bukkit.material.Skull;
+import org.bukkit.material.SmoothBrick;
+import org.bukkit.material.SpawnEgg;
+import org.bukkit.material.Stairs;
+import org.bukkit.material.Step;
+import org.bukkit.material.Torch;
+import org.bukkit.material.TrapDoor;
+import org.bukkit.material.Tree;
+import org.bukkit.material.Tripwire;
+import org.bukkit.material.TripwireHook;
+import org.bukkit.material.Vine;
+import org.bukkit.material.WoodenStep;
+import org.bukkit.material.Wool;
 import org.bukkit.potion.Potion;
 import org.bukkit.util.Java15Compat;
 
-import guava10.com.google.common.collect.Maps;
+import guava10.com.google.common.collect.Maps; // MCPC+ - guava10
 
 /**
  * An enum of all material ids accepted by the official server + client
@@ -136,7 +186,7 @@ public enum Material {
     NETHER_BRICK(112),
     NETHER_FENCE(113),
     NETHER_BRICK_STAIRS(114, Stairs.class),
-    NETHER_WARTS(115, MaterialData.class),
+    NETHER_WARTS(115, NetherWarts.class),
     ENCHANTMENT_TABLE(116),
     BREWING_STAND(117, MaterialData.class),
     CAULDRON(118, Cauldron.class),
@@ -167,6 +217,19 @@ public enum Material {
     WOOD_BUTTON(143, Button.class),
     SKULL(144, Skull.class),
     ANVIL(145),
+    TRAPPED_CHEST(146),
+    GOLD_PLATE(147),
+    IRON_PLATE(148),
+    REDSTONE_COMPARATOR_OFF(149),
+    REDSTONE_COMPARATOR_ON(150),
+    DAYLIGHT_DETECTOR(151),
+    REDSTONE_BLOCK(152),
+    QUARTZ_ORE(153),
+    HOPPER(154),
+    QUARTZ_BLOCK(155),
+    QUARTZ_STAIRS(156, Stairs.class),
+    ACTIVATOR_RAIL(157),
+    DROPPER(158),
     // ----- Item Separator -----
     IRON_SPADE(256, 1, 250),
     IRON_PICKAXE(257, 1, 250),
@@ -322,6 +385,11 @@ public enum Material {
     FIREWORK(401),
     FIREWORK_CHARGE(402),
     ENCHANTED_BOOK(403, 1),
+    REDSTONE_COMPARATOR(404),
+    NETHER_BRICK_ITEM(405),
+    QUARTZ(406),
+    EXPLOSIVE_MINECART(407, 1),
+    HOPPER_MINECART(408, 1),
     GOLD_RECORD(2256, 1),
     GREEN_RECORD(2257, 1),
     RECORD_3(2258, 1),
@@ -339,37 +407,39 @@ public enum Material {
     private final int id;
     private final Constructor<? extends MaterialData> ctor;
     private static Material[] byId = new Material[383];
-    private static final Map<String, Material> BY_NAME;
+    private static Map<String, Material> BY_NAME = Maps.newHashMap(); // MCPC+ - remove final
     private final int maxStack;
     private final short durability;
+    // MCPC+ start
     private static Object reflectionFactory;
     private static Method newConstructorAccessor;
     private static Method newInstance;
     private static Method newFieldAccessor;
     private static Method fieldAccessorSet;
     private static boolean isSetup;
+    // MCPC+ end
 
-    private Material(int id) {
+    private Material(final int id) {
         this(id, 64);
     }
 
-    private Material(int id, int stack) {
+    private Material(final int id, final int stack) {
         this(id, stack, MaterialData.class);
     }
 
-    private Material(int id, int stack, int durability) {
+    private Material(final int id, final int stack, final int durability) {
         this(id, stack, durability, MaterialData.class);
     }
 
-    private Material(int id, Class<? extends MaterialData> data) {
+    private Material(final int id, final Class<? extends MaterialData> data) {
         this(id, 64, data);
     }
 
-    private Material(int id, int stack, Class<? extends MaterialData> data) {
+    private Material(final int id, final int stack, final Class<? extends MaterialData> data) {
         this(id, stack, 0, data);
     }
 
-    private Material(int id, int stack, int durability, Class<? extends MaterialData> data) {
+    private Material(final int id, final int stack, final int durability, final Class<? extends MaterialData> data) {
         this.id = id;
         this.durability = (short) durability;
         this.maxStack = stack;
@@ -426,7 +496,7 @@ public enum Material {
      * @param raw Initial data to construct the MaterialData with
      * @return New MaterialData with the given data
      */
-    public MaterialData getNewData(byte raw) {
+    public MaterialData getNewData(final byte raw) {
         try {
             return ctor.newInstance(id, raw);
         } catch (InstantiationException ex) {
@@ -493,8 +563,8 @@ public enum Material {
      * @param id ID of the material to get
      * @return Material if found, or null
      */
-    public static Material getMaterial(int id) {
-        if (byId.length > id) {
+    public static Material getMaterial(final int id) {
+        if (byId.length > id && id >= 0) {
             return byId[id];
         } else {
             return null;
@@ -509,7 +579,7 @@ public enum Material {
      * @param name Name of the material to get
      * @return Material if found, or null
      */
-    public static Material getMaterial(String name) {
+    public static Material getMaterial(final String name) {
         return BY_NAME.get(name);
     }
 
@@ -521,7 +591,7 @@ public enum Material {
      * @param name Name of the material to get
      * @return Material if found, or null
      */
-    public static Material matchMaterial(String name) {
+    public static Material matchMaterial(final String name) {
         Validate.notNull(name, "Name cannot be null");
 
         Material result = null;
@@ -539,7 +609,7 @@ public enum Material {
 
         return result;
     }
-    
+
     /* ===============================  MCPC+ START ============================= */
     public static void addMaterial(int id)
     {
@@ -722,6 +792,7 @@ public enum Material {
     /* ===============================  MCPC+ END============================= */
 
     static {
+        // MCPC+ start
     	byId = new Material[32000];
     	BY_NAME = Maps.newHashMap();
 
@@ -731,6 +802,7 @@ public enum Material {
     	newFieldAccessor = null;
     	fieldAccessorSet = null;
     	isSetup = false;
+    	// MCPC+ end
         for (Material material : values()) {
             if (byId.length > material.id) {
                 byId[material.id] = material;
@@ -861,6 +933,16 @@ public enum Material {
             case BEACON:
             case COBBLE_WALL:
             case ANVIL:
+            case TRAPPED_CHEST:
+            case GOLD_PLATE:
+            case IRON_PLATE:
+            case DAYLIGHT_DETECTOR:
+            case REDSTONE_BLOCK:
+            case QUARTZ_ORE:
+            case HOPPER:
+            case QUARTZ_BLOCK:
+            case QUARTZ_STAIRS:
+            case DROPPER:
                 return true;
             default:
                 return false;
@@ -916,6 +998,9 @@ public enum Material {
             case POTATO:
             case WOOD_BUTTON:
             case SKULL:
+            case REDSTONE_COMPARATOR_OFF:
+            case REDSTONE_COMPARATOR_ON:
+            case ACTIVATOR_RAIL:
                 return true;
             default:
                 return false;
@@ -962,6 +1047,8 @@ public enum Material {
             case SPRUCE_WOOD_STAIRS:
             case BIRCH_WOOD_STAIRS:
             case JUNGLE_WOOD_STAIRS:
+            case TRAPPED_CHEST:
+            case DAYLIGHT_DETECTOR:
                 return true;
             default:
                 return false;
@@ -1066,10 +1153,29 @@ public enum Material {
             case EMERALD_ORE:
             case EMERALD_BLOCK:
             case COMMAND:
+            case QUARTZ_ORE:
+            case QUARTZ_BLOCK:
+            case DROPPER:
                 return true;
             default:
                 return false;
         }
     }
 
+    /**
+     * @return True if this material is affected by gravity.
+     */
+    public boolean hasGravity() {
+        if (!isBlock()) {
+            return false;
+        }
+        switch (this) {
+            case SAND:
+            case GRAVEL:
+            case ANVIL:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

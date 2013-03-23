@@ -2,17 +2,22 @@ package net.minecraft.inventory;
 
 // CraftBukkit start
 import java.util.List;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 // CraftBukkit end
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 public class InventoryLargeChest implements IInventory
 {
     /** Name of the chest. */
     private String name;
+
+    /** Inventory object corresponding to double chest upper part */
     public IInventory upperChest; // CraftBukkit - private -> public
+
+    /** Inventory object corresponding to double chest lower part */
     public IInventory lowerChest; // CraftBukkit - private -> public
 
     // CraftBukkit start
@@ -100,7 +105,16 @@ public class InventoryLargeChest implements IInventory
      */
     public String getInvName()
     {
-        return this.name;
+        return this.upperChest.isInvNameLocalized() ? this.upperChest.getInvName() : (this.lowerChest.isInvNameLocalized() ? this.lowerChest.getInvName() : this.name);
+    }
+
+    /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.upperChest.isInvNameLocalized() || this.lowerChest.isInvNameLocalized();
     }
 
     /**
@@ -180,5 +194,13 @@ public class InventoryLargeChest implements IInventory
     {
         this.upperChest.closeChest();
         this.lowerChest.closeChest();
+    }
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
     }
 }

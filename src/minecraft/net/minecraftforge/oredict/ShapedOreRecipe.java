@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+// MCPC+ start
 import org.bukkit.craftbukkit.inventory.CustomModRecipe;
 import org.bukkit.inventory.Recipe;
+// MCPC+ end
 
 import net.minecraft.block.Block;
 import net.minecraft.item.crafting.IRecipe;
@@ -16,12 +18,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.world.World;
 
-public class ShapedOreRecipe implements IRecipe 
+public class ShapedOreRecipe implements IRecipe
 {
     //Added in for future ease of change, but hard coded for now.
     private static final int MAX_CRAFT_GRID_WIDTH = 3;
     private static final int MAX_CRAFT_GRID_HEIGHT = 3;
-    
+
     private ItemStack output = null;
     private Object[] input = null;
     private int width = 0;
@@ -59,7 +61,7 @@ public class ShapedOreRecipe implements IRecipe
                 width = s.length();
                 shape += s;
             }
-            
+
             height = parts.length;
         }
         else
@@ -101,7 +103,7 @@ public class ShapedOreRecipe implements IRecipe
             }
             else if (in instanceof Block)
             {
-                itemMap.put(chr, new ItemStack((Block)in, 1, -1));
+                itemMap.put(chr, new ItemStack((Block)in, 1, OreDictionary.WILDCARD_VALUE));
             }
             else if (in instanceof String)
             {
@@ -123,7 +125,7 @@ public class ShapedOreRecipe implements IRecipe
         int x = 0;
         for (char chr : shape.toCharArray())
         {
-            input[x++] = itemMap.get(chr);   
+            input[x++] = itemMap.get(chr);
         }
     }
 
@@ -165,26 +167,26 @@ public class ShapedOreRecipe implements IRecipe
 
     @Override
     public boolean matches(InventoryCrafting inv, World world)
-    {        
+    {
         for (int x = 0; x <= MAX_CRAFT_GRID_WIDTH - width; x++)
         {
             for (int y = 0; y <= MAX_CRAFT_GRID_HEIGHT - height; ++y)
             {
-                if (checkMatch(inv, x, y, true))
+                if (checkMatch(inv, x, y, false))
                 {
                     return true;
                 }
-    
-                if (mirrored && checkMatch(inv, x, y, false))
+
+                if (mirrored && checkMatch(inv, x, y, true))
                 {
                     return true;
                 }
             }
         }
-    
+
         return false;
     }
-    
+
     private boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
     {
         for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++)
@@ -208,7 +210,7 @@ public class ShapedOreRecipe implements IRecipe
                 }
 
                 ItemStack slot = inv.getStackInRowAndColumn(x, y);
-                
+
                 if (target instanceof ItemStack)
                 {
                     if (!checkItemEquals((ItemStack)target, slot))
@@ -219,12 +221,12 @@ public class ShapedOreRecipe implements IRecipe
                 else if (target instanceof ArrayList)
                 {
                     boolean matched = false;
-                    
+
                     for (ItemStack item : (ArrayList<ItemStack>)target)
                     {
                         matched = matched || checkItemEquals(item, slot);
                     }
-                    
+
                     if (!matched)
                     {
                         return false;
@@ -246,7 +248,7 @@ public class ShapedOreRecipe implements IRecipe
         {
             return false;
         }
-        return (target.itemID == input.itemID && (target.getItemDamage() == -1 || target.getItemDamage() == input.getItemDamage()));
+        return (target.itemID == input.itemID && (target.getItemDamage() == OreDictionary.WILDCARD_VALUE|| target.getItemDamage() == input.getItemDamage()));
     }
 
     public ShapedOreRecipe setMirrored(boolean mirror)
@@ -268,7 +270,6 @@ public class ShapedOreRecipe implements IRecipe
     // MCPC+ start - required for Bukkit API
     @Override
     public Recipe toBukkitRecipe() {
-        // TODO: implement a Bukkit API wrapper?
         return new CustomModRecipe(this);
     }
     // MCPC+ end

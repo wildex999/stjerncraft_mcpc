@@ -2,66 +2,73 @@ package net.minecraft.command;
 
 import java.util.Iterator;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.scoreboard.ServerCommandScoreboard;
+import net.minecraft.scoreboard.ServerCommandTestFor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntityCommandBlock;
+import net.minecraft.util.EnumChatFormatting;
 
 public class ServerCommandManager extends CommandHandler implements IAdminCommand
 {
+    // MCPC+ start - moved commands to it's own method to be executed further in server startup + changed to registerVanillaCommand
     public ServerCommandManager()
     {
         CommandBase.setAdminCommander(this);
     }
 
-    // MCPC+ start - moved commands to it's own method to be executed further in server startup + changed to registerVanillaCommand
     public void registerVanillaCommands()
     {
-        // MCPC+ - do not register vanilla commands replaced by Bukkit (TODO: option to choose vanilla or Bukkit?)
-        /*
-        this.registerCommand("vanilla.command", new CommandTime());
-        this.registerCommand("vanilla.command", new CommandGameMode());
-        this.registerCommand("vanilla.command", new CommandDifficulty());
-        this.registerCommand("vanilla.command", new CommandDefaultGameMode());
-        this.registerCommand("vanilla.command", new CommandKill());
-        this.registerCommand("vanilla.command", new CommandToggleDownfall());
-        this.registerCommand("vanilla.command", new CommandWeather());
-        this.registerCommand("vanilla.command", new CommandXP());
-        this.registerCommand("vanilla.command", new CommandServerTp());
-        this.registerCommand("vanilla.command", new CommandGive());
-        this.registerCommand("vanilla.command", new CommandEnchant());
-        this.registerCommand("vanilla.command", new CommandServerEmote());
-        this.registerCommand("vanilla.command", new CommandShowSeed());
-        this.registerCommand("vanilla.command", new CommandHelp());
+        // MCPC+ - do not register vanilla commands replaced by Bukkit
+        /*    
+        this.registerCommand(new CommandTime());
+        this.registerCommand(new CommandGameMode());
+        this.registerCommand(new CommandDifficulty());
+        this.registerCommand(new CommandDefaultGameMode());
+        this.registerCommand(new CommandKill());
+        this.registerCommand(new CommandToggleDownfall());
+        this.registerCommand(new CommandWeather());
+        this.registerCommand(new CommandXP());
+        this.registerCommand(new CommandServerTp());
+        this.registerCommand(new CommandGive());
+        this.registerCommand(new CommandEffect());
+        this.registerCommand(new CommandEnchant());
+        this.registerCommand(new CommandServerEmote());
+        this.registerCommand(new CommandShowSeed());
+        this.registerCommand(new CommandHelp());
+        */        
+        this.registerCommand(new CommandDebug());
+        /*        
+        this.registerCommand(new CommandServerMessage());
+        this.registerCommand(new CommandServerSay());
+        this.registerCommand(new CommandSetSpawnpoint());
+        this.registerCommand(new CommandGameRule());
+        this.registerCommand(new CommandClearInventory());
+        this.registerCommand(new ServerCommandTestFor());
         */
-        this.registerCommand("vanilla.command", new CommandDebug());
-        /*
-        this.registerCommand("vanilla.command", new CommandServerMessage());
-        this.registerCommand("vanilla.command", new CommandServerSay());
-        this.registerCommand("vanilla.command", new CommandSetSpawnpoint());
-        this.registerCommand("vanilla.command", new CommandGameRule());
-        this.registerCommand("vanilla.command", new CommandClearInventory());
-        */
+        this.registerCommand(new ServerCommandScoreboard()); // TODO: remove once Bukkit implements
+
         if (MinecraftServer.getServer().isDedicatedServer())
         {
             /*
-            this.registerCommand("vanilla.command", new CommandServerOp());
-            this.registerCommand("vanilla.command", new CommandServerDeop());
-            this.registerCommand("vanilla.command", new CommandServerStop());
-            this.registerCommand("vanilla.command", new CommandServerSaveAll());
-            this.registerCommand("vanilla.command", new CommandServerSaveOff());
-            this.registerCommand("vanilla.command", new CommandServerSaveOn());
-            this.registerCommand("vanilla.command", new CommandServerBanIp());
-            this.registerCommand("vanilla.command", new CommandServerPardonIp());
-            this.registerCommand("vanilla.command", new CommandServerBan());
-            this.registerCommand("vanilla.command", new CommandServerBanlist());
-            this.registerCommand("vanilla.command", new CommandServerPardon());
-            this.registerCommand("vanilla.command", new CommandServerKick());
-            this.registerCommand("vanilla.command", new CommandServerList());
-            this.registerCommand("vanilla.command", new CommandServerWhitelist());
+            this.registerCommand(new CommandServerOp());
+            this.registerCommand(new CommandServerDeop());
+            this.registerCommand(new CommandServerStop());
+            this.registerCommand(new CommandServerSaveAll());
+            this.registerCommand(new CommandServerSaveOff());
+            this.registerCommand(new CommandServerSaveOn());
+            this.registerCommand(new CommandServerBanIp());
+            this.registerCommand(new CommandServerPardonIp());
+            this.registerCommand(new CommandServerBan());
+            this.registerCommand(new CommandServerBanlist());
+            this.registerCommand(new CommandServerPardon());
+            this.registerCommand(new CommandServerKick());
+            this.registerCommand(new CommandServerList());
+            this.registerCommand(new CommandServerWhitelist());
             */
         }
         else
         {
-            this.registerCommand("vanilla.command", new CommandServerPublishLocal());
+            this.registerCommand(new CommandServerPublishLocal());
         }
     }
     // MCPC+ end
@@ -89,14 +96,14 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
 
                 if (entityplayermp != par1ICommandSender && MinecraftServer.getServer().getConfigurationManager().areCommandsAllowed(entityplayermp.username))
                 {
-                    entityplayermp.sendChatToPlayer("\u00a77\u00a7o[" + par1ICommandSender.getCommandSenderName() + ": " + entityplayermp.translateString(par3Str, par4ArrayOfObj) + "]");
+                    entityplayermp.sendChatToPlayer("" + EnumChatFormatting.GRAY + "" + EnumChatFormatting.ITALIC + "[" + par1ICommandSender.getCommandSenderName() + ": " + entityplayermp.translateString(par3Str, par4ArrayOfObj) + "]");
                 }
             }
         }
 
         if (par1ICommandSender != MinecraftServer.getServer())
         {
-            MinecraftServer.logger.info("[" + par1ICommandSender.getCommandSenderName() + ": " + MinecraftServer.getServer().translateString(par3Str, par4ArrayOfObj) + "]");
+            MinecraftServer.getServer().getLogAgent().logInfo("[" + par1ICommandSender.getCommandSenderName() + ": " + MinecraftServer.getServer().translateString(par3Str, par4ArrayOfObj) + "]");
         }
 
         if ((par2 & 1) != 1)

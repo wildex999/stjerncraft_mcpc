@@ -1,20 +1,18 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.item.EntityFallingSand;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import org.bukkit.event.block.BlockFromToEvent; // CraftBukkit
 
 public class BlockDragonEgg extends Block
 {
-    public BlockDragonEgg(int par1, int par2)
+    public BlockDragonEgg(int par1)
     {
-        super(par1, par2, Material.dragonEgg);
+        super(par1, Material.dragonEgg);
         this.setBlockBounds(0.0625F, 0.0F, 0.0625F, 0.9375F, 1.0F, 0.9375F);
     }
 
@@ -23,7 +21,7 @@ public class BlockDragonEgg extends Block
      */
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
-        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
     }
 
     /**
@@ -32,7 +30,7 @@ public class BlockDragonEgg extends Block
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
     }
 
     /**
@@ -60,7 +58,7 @@ public class BlockDragonEgg extends Block
             }
             else
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
 
                 while (BlockSand.canFallBelow(par1World, par2, par3 - 1, par4) && par3 > 0)
                 {
@@ -69,7 +67,7 @@ public class BlockDragonEgg extends Block
 
                 if (par3 > 0)
                 {
-                    par1World.setBlockWithNotify(par2, par3, par4, this.blockID);
+                    par1World.setBlock(par2, par3, par4, this.blockID, 0, 2);
                 }
             }
         }
@@ -122,10 +120,11 @@ public class BlockDragonEgg extends Block
                     j1 = event.getToBlock().getY();
                     k1 = event.getToBlock().getZ();
                     // CraftBukkit end
+
                     if (!par1World.isRemote)
                     {
-                        par1World.setBlockAndMetadataWithNotify(i1, j1, k1, this.blockID, par1World.getBlockMetadata(par2, par3, par4));
-                        par1World.setBlockWithNotify(par2, par3, par4, 0);
+                        par1World.setBlock(i1, j1, k1, this.blockID, par1World.getBlockMetadata(par2, par3, par4), 2);
+                        par1World.setBlockToAir(par2, par3, par4);
                     }
                     else
                     {
@@ -153,7 +152,7 @@ public class BlockDragonEgg extends Block
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 5;
     }
@@ -175,32 +174,11 @@ public class BlockDragonEgg extends Block
         return false;
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns true if the given side of this block type should be rendered, if the adjacent block is at the given
-     * coordinates.  Args: blockAccess, x, y, z, side
-     */
-    public boolean shouldSideBeRendered(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
-    {
-        return true;
-    }
-
     /**
      * The type of render function that is called for this block
      */
     public int getRenderType()
     {
         return 27;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return 0;
     }
 }

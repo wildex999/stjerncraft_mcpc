@@ -1,20 +1,18 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProviderEnd;
 
 import net.minecraftforge.common.ForgeDirection;
-import static net.minecraftforge.common.ForgeDirection.*;
-// CraftBukkit start
-import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
-// CraftBukkit end
+
+import static net.minecraftforge.common.ForgeDirection.*;
 
 public class BlockFire extends Block
 {
@@ -27,9 +25,9 @@ public class BlockFire extends Block
      */
     private int[] abilityToCatchFire = new int[256];
 
-    protected BlockFire(int par1, int par2)
+    protected BlockFire(int par1)
     {
-        super(par1, par2, Material.fire);
+        super(par1, Material.fire);
         this.setTickRandomly(true);
     }
 
@@ -45,7 +43,7 @@ public class BlockFire extends Block
         this.setBurnRate(Block.woodDoubleSlab.blockID, 5, 20);
         this.setBurnRate(Block.woodSingleSlab.blockID, 5, 20);
         this.setBurnRate(Block.fence.blockID, 5, 20);
-        this.setBurnRate(Block.stairCompactPlanks.blockID, 5, 20);
+        this.setBurnRate(Block.stairsWoodOak.blockID, 5, 20);
         this.setBurnRate(Block.stairsWoodBirch.blockID, 5, 20);
         this.setBurnRate(Block.stairsWoodSpruce.blockID, 5, 20);
         this.setBurnRate(Block.stairsWoodJungle.blockID, 5, 20);
@@ -113,7 +111,7 @@ public class BlockFire extends Block
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 30;
     }
@@ -143,19 +141,19 @@ public class BlockFire extends Block
 
                 if (l < 15)
                 {
-                    par1World.setBlockMetadata(par2, par3, par4, l + par5Random.nextInt(3) / 2);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, l + par5Random.nextInt(3) / 2, 4);
                 }
 
-                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate() + par5Random.nextInt(10));
+                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World) + par5Random.nextInt(10));
 
                 if (!flag && !this.canNeighborBurn(par1World, par2, par3, par4))
                 {
                     if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) || l > 3)
                     {
-                        par1World.setBlockWithNotify(par2, par3, par4, 0);
+                        par1World.setBlockToAir(par2, par3, par4);
                     }
                 }
-                else if (!flag && !this.canBlockCatchFire((IBlockAccess) par1World, par2, par3 - 1, par4, UP) && l == 15 && par5Random.nextInt(4) == 0)     // Forge
+                else if (!flag && !this.canBlockCatchFire((IBlockAccess) par1World, par2, par3 - 1, par4) && l == 15 && par5Random.nextInt(4) == 0)
                 {
                     fireExtinguished(par1World, par2, par3, par4); // CraftBukkit - burn out
                 }
@@ -169,18 +167,12 @@ public class BlockFire extends Block
                         b0 = -50;
                     }
 
-                    this.tryToCatchBlockOnFire(par1World, par2 + 1, par3, par4, 300 + b0, par5Random, l, WEST);
-                    this.tryToCatchBlockOnFire(par1World, par2 - 1, par3, par4, 300 + b0, par5Random, l, EAST);
-                    this.tryToCatchBlockOnFire(par1World, par2, par3 - 1, par4, 250 + b0, par5Random, l, UP);
-                    this.tryToCatchBlockOnFire(par1World, par2, par3 + 1, par4, 250 + b0, par5Random, l, DOWN);
+                    this.tryToCatchBlockOnFire(par1World, par2 + 1, par3, par4, 300 + b0, par5Random, l, WEST );
+                    this.tryToCatchBlockOnFire(par1World, par2 - 1, par3, par4, 300 + b0, par5Random, l, EAST );
+                    this.tryToCatchBlockOnFire(par1World, par2, par3 - 1, par4, 250 + b0, par5Random, l, UP   );
+                    this.tryToCatchBlockOnFire(par1World, par2, par3 + 1, par4, 250 + b0, par5Random, l, DOWN );
                     this.tryToCatchBlockOnFire(par1World, par2, par3, par4 - 1, 300 + b0, par5Random, l, SOUTH);
                     this.tryToCatchBlockOnFire(par1World, par2, par3, par4 + 1, 300 + b0, par5Random, l, NORTH);
-                    // CraftBukkit start - call to stop spread of fire
-                    org.bukkit.Server server = par1World.getServer();
-                    org.bukkit.World bworld = par1World.getWorld();
-                    BlockIgniteEvent.IgniteCause igniteCause = BlockIgniteEvent.IgniteCause.SPREAD;
-                    org.bukkit.block.Block fromBlock = bworld.getBlockAt(par2, par3, par4);
-                    // CraftBukkit end
 
                     for (int i1 = par2 - 1; i1 <= par2 + 1; ++i1)
                     {
@@ -218,22 +210,19 @@ public class BlockFire extends Block
                                             }
 
                                             // CraftBukkit start - call to stop spread of fire
-                                            org.bukkit.block.Block block = bworld.getBlockAt(i1, k1, j1);
-
-                                            if (block.getTypeId() != Block.fire.blockID)
+                                            if (par1World.getBlockId(i1, k1, j1) != Block.fire.blockID)
                                             {
-                                                BlockIgniteEvent event = new BlockIgniteEvent(block, igniteCause, null);
-                                                server.getPluginManager().callEvent(event);
-
-                                                if (event.isCancelled())
+                                                if (CraftEventFactory.callBlockIgniteEvent(par1World, i1, k1, j1, par2, par3, par4).isCancelled())
                                                 {
                                                     continue;
                                                 }
 
+                                                org.bukkit.Server server = par1World.getServer();
+                                                org.bukkit.World bworld = par1World.getWorld();
                                                 org.bukkit.block.BlockState blockState = bworld.getBlockAt(i1, k1, j1).getState();
                                                 blockState.setTypeId(this.blockID);
                                                 blockState.setData(new org.bukkit.material.MaterialData(this.blockID, (byte) k2));
-                                                BlockSpreadEvent spreadEvent = new BlockSpreadEvent(blockState.getBlock(), fromBlock, blockState);
+                                                BlockSpreadEvent spreadEvent = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(par2, par3, par4), blockState);
                                                 server.getPluginManager().callEvent(spreadEvent);
 
                                                 if (!spreadEvent.isCancelled())
@@ -262,27 +251,25 @@ public class BlockFire extends Block
     @Deprecated
     private void tryToCatchBlockOnFire(World par1World, int par2, int par3, int par4, int par5, Random par6Random, int par7)
     {
-        this.tryToCatchBlockOnFire(par1World, par2, par3, par4, par5, par6Random, par7, UP); // Forge
+        tryToCatchBlockOnFire(par1World, par2, par3, par4, par5, par6Random, par7, UP);
     }
-    // Forge start
-    private void tryToCatchBlockOnFire(World world, int i, int j, int k, int l, Random random, int i1, ForgeDirection face)
+
+    private void tryToCatchBlockOnFire(World par1World, int par2, int par3, int par4, int par5, Random par6Random, int par7, ForgeDirection face)
     {
         int j1 = 0;
-        Block block = Block.blocksList[world.getBlockId(i, j, k)];
-
+        Block block = Block.blocksList[par1World.getBlockId(par2, par3, par4)];
         if (block != null)
         {
-            j1 = block.getFlammability(world, i, j, k, world.getBlockMetadata(i, j, k), face);
+            j1 = block.getFlammability(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), face);
         }
 
-        // Forge end
-        if (random.nextInt(l) < j1)
-        {
-            boolean flag = world.getBlockId(i, j, k) == Block.tnt.blockID;
+        if (par6Random.nextInt(par5) < j1)
+        {    
+            boolean flag = par1World.getBlockId(par2, par3, par4) == Block.tnt.blockID;
             // CraftBukkit start
-            org.bukkit.block.Block theBlock = world.getWorld().getBlockAt(i, j, k);
+            org.bukkit.block.Block theBlock = par1World.getWorld().getBlockAt(par2, par3, par4);
             BlockBurnEvent event = new BlockBurnEvent(theBlock);
-            world.getServer().getPluginManager().callEvent(event);
+            par1World.getServer().getPluginManager().callEvent(event);
 
             if (event.isCancelled())
             {
@@ -291,25 +278,25 @@ public class BlockFire extends Block
 
             // CraftBukkit end
 
-            if (random.nextInt(i1 + 10) < 5 && !world.canLightningStrikeAt(i, j, k))
+            if (par6Random.nextInt(par7 + 10) < 5 && !par1World.canLightningStrikeAt(par2, par3, par4))
             {
-                int k1 = i1 + random.nextInt(5) / 4;
+                int k1 = par7 + par6Random.nextInt(5) / 4;
 
                 if (k1 > 15)
                 {
                     k1 = 15;
                 }
 
-                world.setBlockAndMetadataWithNotify(i, j, k, this.blockID, k1);
+                par1World.setBlock(par2, par3, par4, this.blockID, k1, 3);
             }
             else
             {
-                world.setBlockWithNotify(i, j, k, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
 
             if (flag)
             {
-                Block.tnt.onBlockDestroyedByPlayer(world, i, j, k, 1);
+                Block.tnt.onBlockDestroyedByPlayer(par1World, par2, par3, par4, 1);
             }
         }
     }
@@ -413,93 +400,7 @@ public class BlockFire extends Block
             }
             else
             {
-                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate() + par1World.rand.nextInt(10));
-            }
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * A randomly called display update to be able to add particles or other items for display
-     */
-    public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
-    {
-        if (par5Random.nextInt(24) == 0)
-        {
-            par1World.playSound((double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F), "fire.fire", 1.0F + par5Random.nextFloat(), par5Random.nextFloat() * 0.7F + 0.3F, false);
-        }
-
-        int l;
-        float f;
-        float f1;
-        float f2;
-
-        if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(par1World, par2, par3 - 1, par4, UP))
-        {
-            if (Block.fire.canBlockCatchFire(par1World, par2 - 1, par3, par4, EAST))
-            {
-                for (l = 0; l < 2; ++l)
-                {
-                    f = (float)par2 + par5Random.nextFloat() * 0.1F;
-                    f1 = (float)par3 + par5Random.nextFloat();
-                    f2 = (float)par4 + par5Random.nextFloat();
-                    par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
-                }
-            }
-
-            if (Block.fire.canBlockCatchFire(par1World, par2 + 1, par3, par4, WEST))
-            {
-                for (l = 0; l < 2; ++l)
-                {
-                    f = (float)(par2 + 1) - par5Random.nextFloat() * 0.1F;
-                    f1 = (float)par3 + par5Random.nextFloat();
-                    f2 = (float)par4 + par5Random.nextFloat();
-                    par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
-                }
-            }
-
-            if (Block.fire.canBlockCatchFire(par1World, par2, par3, par4 - 1, SOUTH))
-            {
-                for (l = 0; l < 2; ++l)
-                {
-                    f = (float)par2 + par5Random.nextFloat();
-                    f1 = (float)par3 + par5Random.nextFloat();
-                    f2 = (float)par4 + par5Random.nextFloat() * 0.1F;
-                    par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
-                }
-            }
-
-            if (Block.fire.canBlockCatchFire(par1World, par2, par3, par4 + 1, NORTH))
-            {
-                for (l = 0; l < 2; ++l)
-                {
-                    f = (float)par2 + par5Random.nextFloat();
-                    f1 = (float)par3 + par5Random.nextFloat();
-                    f2 = (float)(par4 + 1) - par5Random.nextFloat() * 0.1F;
-                    par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
-                }
-            }
-
-            if (Block.fire.canBlockCatchFire(par1World, par2, par3 + 1, par4, DOWN))
-            {
-                for (l = 0; l < 2; ++l)
-                {
-                    f = (float)par2 + par5Random.nextFloat();
-                    f1 = (float)(par3 + 1) - par5Random.nextFloat() * 0.1F;
-                    f2 = (float)par4 + par5Random.nextFloat();
-                    par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
-                }
-            }
-        }
-        else
-        {
-            for (l = 0; l < 3; ++l)
-            {
-                f = (float)par2 + par5Random.nextFloat();
-                f1 = (float)par3 + par5Random.nextFloat() * 0.5F + 0.5F;
-                f2 = (float)par4 + par5Random.nextFloat();
-                par1World.spawnParticle("largesmoke", (double)f, (double)f1, (double)f2, 0.0D, 0.0D, 0.0D);
+                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World) + par1World.rand.nextInt(10));
             }
         }
     }
@@ -509,14 +410,14 @@ public class BlockFire extends Block
     {
         if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(world.getWorld().getBlockAt(x, y, z), 0).isCancelled() == false)
         {
-            world.setBlockWithNotify(x, y, z, 0);
+            world.setBlockToAir(x, y, z);
         }
     }
     // CraftBukkit end
-
+    
     /**
      * Side sensitive version that calls the block function.
-     *
+     * 
      * @param world The current world
      * @param x X Position
      * @param y Y Position
@@ -536,7 +437,7 @@ public class BlockFire extends Block
 
     /**
      * Side sensitive version that calls the block function.
-     *
+     * 
      * @param world The current world
      * @param x X Position
      * @param y Y Position
@@ -554,5 +455,5 @@ public class BlockFire extends Block
             newChance = block.getFireSpreadSpeed(world, x, y, z, world.getBlockMetadata(x, y, z), face);
         }
         return (newChance > oldChance ? newChance : oldChance);
-    }
+    }    
 }

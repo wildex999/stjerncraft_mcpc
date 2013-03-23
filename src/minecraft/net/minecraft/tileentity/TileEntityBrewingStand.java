@@ -1,10 +1,8 @@
 package net.minecraft.tileentity;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
@@ -12,31 +10,33 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.PotionHelper;
 
-import net.minecraftforge.common.ISidedInventory;
-import net.minecraftforge.common.ForgeDirection;
 // CraftBukkit start
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.BrewEvent;
 // CraftBukkit end
 
-public class TileEntityBrewingStand extends TileEntity implements IInventory, ISidedInventory
+public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
 {
+    private static final int[] field_102017_a = new int[] {3};
+    private static final int[] field_102016_b = new int[] {0, 1, 2};
+
     /** The itemstacks currently placed in the slots of the brewing stand */
-    public ItemStack[] brewingItemStacks = new ItemStack[4]; // CraftBukkit private -> public
-    public int brewTime; // CraftBukkit private -> public
+    public ItemStack[] brewingItemStacks = new ItemStack[4]; // CraftBukkit - private -> public
+    public int brewTime; // CraftBukkit - private -> public
 
     /**
      * an integer with each bit specifying whether that slot of the stand contains a potion
      */
     private int filledSlots;
     private int ingredientID;
+    private String field_94132_e;
 
     public TileEntityBrewingStand() {}
 
     // CraftBukkit start
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
-    private int maxStack = 1;
+    private int maxStack = 64;
 
     public void onOpen(CraftHumanEntity who)
     {
@@ -69,7 +69,21 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
      */
     public String getInvName()
     {
-        return "container.brewing";
+        return this.isInvNameLocalized() ? this.field_94132_e : "container.brewing";
+    }
+
+    /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.field_94132_e != null && this.field_94132_e.length() > 0;
+    }
+
+    public void func_94131_a(String par1Str)
+    {
+        this.field_94132_e = par1Str;
     }
 
     /**
@@ -117,7 +131,7 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
         if (i != this.filledSlots)
         {
             this.filledSlots = i;
-            this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, i);
+            this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, i, 2);
         }
 
         super.updateEntity();
@@ -134,7 +148,7 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
         {
             ItemStack itemstack = this.brewingItemStacks[3];
 
-            if (!Item.itemsList[itemstack.itemID].isPotionIngredient(itemstack))
+            if (!Item.itemsList[itemstack.itemID].isPotionIngredient())
             {
                 return false;
             }
@@ -239,7 +253,7 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
      */
     private int getPotionResult(int par1, ItemStack par2ItemStack)
     {
-        return par2ItemStack == null ? par1 : (Item.itemsList[par2ItemStack.itemID].isPotionIngredient(par2ItemStack) ? PotionHelper.applyIngredient(par1, Item.itemsList[par2ItemStack.itemID].getPotionEffect(par2ItemStack)) : par1);
+        return par2ItemStack == null ? par1 : (Item.itemsList[par2ItemStack.itemID].isPotionIngredient() ? PotionHelper.applyIngredient(par1, Item.itemsList[par2ItemStack.itemID].getPotionEffect()) : par1);
     }
 
     /**
@@ -263,6 +277,11 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
         }
 
         this.brewTime = par1NBTTagCompound.getShort("BrewTime");
+
+        if (par1NBTTagCompound.hasKey("CustomName"))
+        {
+            this.field_94132_e = par1NBTTagCompound.getString("CustomName");
+        }
     }
 
     /**
@@ -286,6 +305,11 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
         }
 
         par1NBTTagCompound.setTag("Items", nbttaglist);
+
+        if (this.isInvNameLocalized())
+        {
+            par1NBTTagCompound.setString("CustomName", this.field_94132_e);
+        }
     }
 
     /**
@@ -364,10 +388,12 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
 
     public void closeChest() {}
 
-    @SideOnly(Side.CLIENT)
-    public void setBrewTime(int par1)
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
     {
-        this.brewTime = par1;
+        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.itemID == Item.potion.itemID || par2ItemStack.itemID == Item.glassBottle.itemID;
     }
 
     /**
@@ -388,15 +414,21 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory, IS
         return i;
     }
 
-    @Override
-    public int getStartInventorySide(ForgeDirection side)
+    /**
+     * Get the size of the side inventory.
+     */
+    public int[] getSizeInventorySide(int par1)
     {
-        return (side == ForgeDirection.UP ? 3 : 0);
+        return par1 == 1 ? field_102017_a : field_102016_b;
     }
 
-    @Override
-    public int getSizeInventorySide(ForgeDirection side)
+    public boolean func_102007_a(int par1, ItemStack par2ItemStack, int par3)
     {
-        return (side == ForgeDirection.UP ? 1 : 3);
+        return this.isStackValidForSlot(par1, par2ItemStack);
+    }
+
+    public boolean func_102008_b(int par1, ItemStack par2ItemStack, int par3)
+    {
+        return true;
     }
 }

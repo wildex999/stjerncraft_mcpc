@@ -8,13 +8,13 @@ import org.bukkit.entity.FallingSand;
 
 public class CraftFallingSand extends CraftEntity implements FallingSand {
 
-    public CraftFallingSand(CraftServer server, net.minecraft.entity.item.EntityFallingSand/*was:EntityFallingBlock*/ entity) {
+    public CraftFallingSand(CraftServer server, net.minecraft.entity.item.EntityFallingSand entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.item.EntityFallingSand/*was:EntityFallingBlock*/ getHandle() {
-        return (net.minecraft.entity.item.EntityFallingSand/*was:EntityFallingBlock*/) entity;
+    public net.minecraft.entity.item.EntityFallingSand getHandle() {
+        return (net.minecraft.entity.item.EntityFallingSand) entity;
     }
 
     @Override
@@ -31,18 +31,18 @@ public class CraftFallingSand extends CraftEntity implements FallingSand {
     }
 
     public int getBlockId() {
-        return getHandle().blockID/*was:id*/;
+        return getHandle().blockID;
     }
 
     public byte getBlockData() {
-        return (byte) getHandle().metadata/*was:data*/;
+        return (byte) getHandle().metadata;
     }
 
     public boolean getDropItem() {
-        return getHandle().shouldDropItem/*was:dropItem*/;
+        return getHandle().shouldDropItem;
     }
 
     public void setDropItem(boolean drop) {
-        getHandle().shouldDropItem/*was:dropItem*/ = drop;
+        getHandle().shouldDropItem = drop;
     }
 }

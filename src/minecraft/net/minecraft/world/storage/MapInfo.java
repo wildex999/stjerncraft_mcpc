@@ -62,19 +62,19 @@ public class MapInfo
         {
             int i;
             int j;
-            org.bukkit.craftbukkit.map.RenderData renderdata = this.mapDataObj.mapView.render((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayerObj.getBukkitEntity()); // CraftBukkit
+            org.bukkit.craftbukkit.map.RenderData render = this.mapDataObj.mapView.render((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayerObj.getBukkitEntity()); // CraftBukkit
 
             if (--this.ticksUntilPlayerLocationMapUpdate < 0)
             {
                 this.ticksUntilPlayerLocationMapUpdate = 4;
-                abyte = new byte[renderdata.cursors.size() * 3 + 1]; // CraftBukkit
+                abyte = new byte[render.cursors.size() * 3 + 1]; // CraftBukkit
                 abyte[0] = 1;
                 i = 0;
 
                 // CraftBukkit start
-                for (i = 0; i < renderdata.cursors.size(); ++i)
+                for (i = 0; i < render.cursors.size(); ++i)
                 {
-                    org.bukkit.map.MapCursor cursor = renderdata.cursors.get(i);
+                    org.bukkit.map.MapCursor cursor = render.cursors.get(i);
 
                     if (!cursor.isVisible())
                     {
@@ -122,12 +122,12 @@ public class MapInfo
                     j = this.field_76209_b[i];
                     byte[] abyte1 = new byte[l + 3];
                     abyte1[0] = 0;
-                    abyte1[1] = (byte) i;
-                    abyte1[2] = (byte) j;
+                    abyte1[1] = (byte)i;
+                    abyte1[2] = (byte)j;
 
                     for (int i1 = 0; i1 < abyte1.length - 3; ++i1)
                     {
-                        abyte1[i1 + 3] = renderdata.buffer[(i1 + j) * 128 + i]; // CraftBukkit
+                        abyte1[i1 + 3] = render.buffer[(i1 + j) * 128 + i]; // CraftBukkit
                     }
 
                     this.field_76210_c[i] = -1;

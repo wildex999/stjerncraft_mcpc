@@ -1,11 +1,8 @@
 package net.minecraft.entity.projectile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 // CraftBukkit start
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
-// CraftBukkit end
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.potion.Potion;
@@ -14,6 +11,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class EntityWitherSkull extends EntityFireball
 {
@@ -37,13 +35,6 @@ public class EntityWitherSkull extends EntityFireball
         return this.isInvulnerable() ? 0.73F : super.getMotionFactor();
     }
 
-    @SideOnly(Side.CLIENT)
-    public EntityWitherSkull(World par1World, double par2, double par4, double par6, double par8, double par10, double par12)
-    {
-        super(par1World, par2, par4, par6, par8, par10, par12);
-        this.setSize(0.3125F, 0.3125F);
-    }
-
     /**
      * Returns true if the entity is on fire. Used by render to add the fire effect on rendering.
      */
@@ -52,11 +43,11 @@ public class EntityWitherSkull extends EntityFireball
         return false;
     }
 
-    public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
+    public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
     {
-        float f = super.func_82146_a(par1Explosion, par2Block, par3, par4, par5);
+        float f = super.func_82146_a(par1Explosion, par2World, par3, par4, par5, par6Block);
 
-        if (this.isInvulnerable() && par2Block != Block.bedrock && par2Block != Block.endPortal && par2Block != Block.endPortalFrame)
+        if (this.isInvulnerable() && par6Block != Block.bedrock && par6Block != Block.endPortal && par6Block != Block.endPortalFrame)
         {
             f = Math.min(0.8F, f);
         }

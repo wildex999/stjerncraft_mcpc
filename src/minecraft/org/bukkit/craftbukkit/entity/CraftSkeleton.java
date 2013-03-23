@@ -8,13 +8,13 @@ import org.bukkit.entity.Skeleton;
 
 public class CraftSkeleton extends CraftMonster implements Skeleton {
 
-    public CraftSkeleton(CraftServer server, net.minecraft.entity.monster.EntitySkeleton/*was:EntitySkeleton*/ entity) {
+    public CraftSkeleton(CraftServer server, net.minecraft.entity.monster.EntitySkeleton entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.monster.EntitySkeleton/*was:EntitySkeleton*/ getHandle() {
-        return (net.minecraft.entity.monster.EntitySkeleton/*was:EntitySkeleton*/) entity;
+    public net.minecraft.entity.monster.EntitySkeleton getHandle() {
+        return (net.minecraft.entity.monster.EntitySkeleton) entity;
     }
 
     @Override
@@ -27,11 +27,11 @@ public class CraftSkeleton extends CraftMonster implements Skeleton {
     }
 
     public SkeletonType getSkeletonType() {
-        return SkeletonType.getType(getHandle().getSkeletonType/*was:getSkeletonType*/());
+        return SkeletonType.getType(getHandle().getSkeletonType());
     }
 
     public void setSkeletonType(SkeletonType type) {
         Validate.notNull(type);
-        getHandle().setSkeletonType/*was:setSkeletonType*/(type.getId());
+        getHandle().setSkeletonType(type.getId());
     }
 }

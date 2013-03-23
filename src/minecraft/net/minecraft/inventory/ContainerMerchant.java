@@ -1,7 +1,5 @@
 package net.minecraft.inventory;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,7 +39,7 @@ public class ContainerMerchant extends Container
         this.merchantInventory = new InventoryMerchant(par1InventoryPlayer.player, par2IMerchant);
         this.addSlotToContainer(new Slot(this.merchantInventory, 0, 36, 53));
         this.addSlotToContainer(new Slot(this.merchantInventory, 1, 62, 53));
-        this.addSlotToContainer(new SlotMerchantResult(par1InventoryPlayer.player, par2IMerchant, this.merchantInventory, 2, 120, 53));
+        this.addSlotToContainer((Slot)(new SlotMerchantResult(par1InventoryPlayer.player, par2IMerchant, this.merchantInventory, 2, 120, 53)));
         this.player = par1InventoryPlayer; // CraftBukkit - save player
         int i;
 
@@ -90,9 +88,6 @@ public class ContainerMerchant extends Container
     {
         this.merchantInventory.setCurrentRecipeIndex(par1);
     }
-
-    @SideOnly(Side.CLIENT)
-    public void updateProgressBar(int par1, int par2) {}
 
     public boolean canInteractWith(EntityPlayer par1EntityPlayer)
     {

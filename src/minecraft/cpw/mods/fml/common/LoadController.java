@@ -1,3 +1,15 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ *
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.common;
 
 import java.lang.reflect.InvocationTargetException;
@@ -117,8 +129,8 @@ public class LoadController
             else
             {
                 FMLLog.severe("The ForgeModLoader state engine has become corrupted. Probably, a state was missed by and invalid modification to a base class" +
-                       "ForgeModLoader depends on. This is a critical error and not recoverable. Investigate any modifications to base classes outside of" +
-                       "ForgeModLoader, especially Optifine, to see if there are fixes available.");
+                		"ForgeModLoader depends on. This is a critical error and not recoverable. Investigate any modifications to base classes outside of" +
+                		"ForgeModLoader, especially Optifine, to see if there are fixes available.");
                 throw new RuntimeException("The ForgeModLoader state engine is invalid");
             }
             if (toThrow != null && toThrow instanceof RuntimeException)
@@ -250,4 +262,9 @@ public class LoadController
 	boolean hasReachedState(LoaderState state) {
 		return this.state.ordinal()>=state.ordinal() && this.state!=LoaderState.ERRORED;
 	}
+
+    void forceState(LoaderState newState)
+    {
+        this.state = newState;
+    }
 }

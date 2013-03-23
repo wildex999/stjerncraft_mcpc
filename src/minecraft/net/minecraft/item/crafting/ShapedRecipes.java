@@ -3,11 +3,11 @@ package net.minecraft.item.crafting;
 // CraftBukkit start
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
-// CraftBukkit end
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class ShapedRecipes implements IRecipe
 {
@@ -50,47 +50,39 @@ public class ShapedRecipes implements IRecipe
                     case 1:
                         recipe.shape("a");
                         break;
-
                     case 2:
                         recipe.shape("ab");
                         break;
-
                     case 3:
                         recipe.shape("abc");
                         break;
                 }
 
                 break;
-
             case 2:
                 switch (this.recipeWidth)
                 {
                     case 1:
                         recipe.shape("a", "b");
                         break;
-
                     case 2:
                         recipe.shape("ab", "cd");
                         break;
-
                     case 3:
                         recipe.shape("abc", "def");
                         break;
                 }
 
                 break;
-
             case 3:
                 switch (this.recipeWidth)
                 {
                     case 1:
                         recipe.shape("a", "b", "c");
                         break;
-
                     case 2:
                         recipe.shape("ab", "cd", "ef");
                         break;
-
                     case 3:
                         recipe.shape("abc", "def", "ghi");
                         break;
@@ -183,7 +175,7 @@ public class ShapedRecipes implements IRecipe
                         return false;
                     }
 
-                    if (itemstack.getItemDamage() != -1 && itemstack.getItemDamage() != itemstack1.getItemDamage())
+                    if (itemstack.getItemDamage() != 32767 && itemstack.getItemDamage() != itemstack1.getItemDamage())
                     {
                         return false;
                     }

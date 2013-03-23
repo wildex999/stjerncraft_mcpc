@@ -1,15 +1,14 @@
 package net.minecraft.network.packet;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.List;
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
+
+import java.io.IOException; // CraftBukkit
 
 public class Packet20NamedEntitySpawn extends Packet
 {
@@ -54,6 +53,7 @@ public class Packet20NamedEntitySpawn extends Packet
         {
             this.name = par1EntityPlayer.username;
         }
+
         // CraftBukkit end
         this.xPosition = MathHelper.floor_double(par1EntityPlayer.posX * 32.0D);
         this.yPosition = MathHelper.floor_double(par1EntityPlayer.posY * 32.0D);
@@ -68,7 +68,7 @@ public class Packet20NamedEntitySpawn extends Packet
     /**
      * Abstract. Reads the raw packet data from the data stream.
      */
-    public void readPacketData(DataInputStream par1DataInputStream) throws IOException
+    public void readPacketData(DataInputStream par1DataInputStream) throws IOException   // CraftBukkit
     {
         this.entityId = par1DataInputStream.readInt();
         this.name = readString(par1DataInputStream, 16);
@@ -84,7 +84,7 @@ public class Packet20NamedEntitySpawn extends Packet
     /**
      * Abstract. Writes the raw packet data to the data stream.
      */
-    public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
+    public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException   // CraftBukkit
     {
         par1DataOutputStream.writeInt(this.entityId);
         writeString(this.name, par1DataOutputStream);
@@ -111,16 +111,5 @@ public class Packet20NamedEntitySpawn extends Packet
     public int getPacketSize()
     {
         return 28;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public List func_73509_c()
-    {
-        if (this.field_73517_j == null)
-        {
-            this.field_73517_j = this.metadata.func_75685_c();
-        }
-
-        return this.field_73517_j;
     }
 }

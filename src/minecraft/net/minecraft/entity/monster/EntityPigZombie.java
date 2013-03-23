@@ -1,7 +1,5 @@
 package net.minecraft.entity.monster;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+
 // CraftBukkit start
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -52,16 +51,6 @@ public class EntityPigZombie extends EntityZombie
         }
 
         super.onUpdate();
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the texture's file path as a String.
-     */
-    public String getTexture()
-    {
-        return "/mob/pigzombie.png";
     }
 
     /**
@@ -215,7 +204,7 @@ public class EntityPigZombie extends EntityZombie
 
             if (k < 5)
             {
-                ItemStack itemstack = this.l(k <= 0 ? 1 : 0);
+                ItemStack itemstack = this.dropRareDrop(k <= 0 ? 1 : 0);
 
                 if (itemstack != null)
                 {
@@ -237,18 +226,10 @@ public class EntityPigZombie extends EntityZombie
     }
 
     // CraftBukkit start - return rare dropped item instead of dropping it
-    protected ItemStack l(int i)
+    protected ItemStack dropRareDrop(int i)
     {
         return new ItemStack(Item.ingotGold.itemID, 1, 0);
     }
-
-    // MCPC+ start - vanilla compatibility
-    protected void dropRareDrop(int par1)
-    {
-        ItemStack itemStack = this.l(par1);
-        this.dropItem(itemStack.itemID, itemStack.stackSize);
-    }
-    // MCPC+ end
 
     /**
      * Returns the item ID for the item the mob drops on death.
@@ -258,7 +239,10 @@ public class EntityPigZombie extends EntityZombie
         return Item.rottenFlesh.itemID;
     }
 
-    protected void func_82164_bB()
+    /**
+     * Makes entity wear random armor based on difficulty
+     */
+    protected void addRandomArmor()
     {
         this.setCurrentItemOrArmor(0, new ItemStack(Item.swordGold));
     }
@@ -282,7 +266,7 @@ public class EntityPigZombie extends EntityZombie
 
         if (itemstack != null)
         {
-            i += itemstack.getDamageVsEntity(this);
+            i += itemstack.getDamageVsEntity((Entity) this);
         }
 
         return i;

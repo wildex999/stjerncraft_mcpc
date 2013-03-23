@@ -10,10 +10,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
+import java.util.concurrent.Callable;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.ServerCommand;
 import net.minecraft.crash.CrashReport;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.logging.ILogAgent;
+import net.minecraft.logging.LogAgent;
 import net.minecraft.network.NetworkListenThread;
 import net.minecraft.network.rcon.IServer;
 import net.minecraft.network.rcon.RConThreadMain;
@@ -22,15 +25,18 @@ import net.minecraft.profiler.PlayerUsageSnooper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.gui.ServerGUI;
 import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.CryptManager;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumGameType;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
+import net.minecraft.world.chunk.storage.AnvilSaveConverter;
+
 // CraftBukkit start
 import java.io.PrintStream;
-import java.util.concurrent.Callable;
-import net.minecraft.world.chunk.storage.AnvilSaveConverter;
+import java.util.logging.Level;
 
 import org.bukkit.craftbukkit.LoggerOutputStream;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -39,6 +45,7 @@ import org.bukkit.event.server.ServerCommandEvent;
 public class DedicatedServer extends MinecraftServer implements IServer
 {
     private final List pendingCommandList = Collections.synchronizedList(new ArrayList());
+    private final ILogAgent field_98131_l;
     private RConThreadQuery theRConThreadQuery;
     private RConThreadMain theRConThreadMain;
     public PropertyManager settings; // CraftBukkit - private -> public
@@ -47,19 +54,12 @@ public class DedicatedServer extends MinecraftServer implements IServer
     private NetworkListenThread networkThread;
     private boolean guiIsEnabled = false;
 
-    // MCPC+ start - vanilla compatibility
-    public DedicatedServer(File par1File)
-    {
-        super(par1File);
-        new DedicatedServerSleepThread(this);
-    }
-    // MCPC+ end
-
     // CraftBukkit start - Signature changed
     public DedicatedServer(joptsimple.OptionSet options)
     {
         super(options);
         // CraftBukkit end
+        this.field_98131_l = new LogAgent("Minecraft-Server", (String) null, (String) null); // CraftBukkit - null last argument
         new DedicatedServerSleepThread(this);
     }
 
@@ -71,21 +71,21 @@ public class DedicatedServer extends MinecraftServer implements IServer
         DedicatedServerCommandThread dedicatedservercommandthread = new DedicatedServerCommandThread(this);
         dedicatedservercommandthread.setDaemon(true);
         dedicatedservercommandthread.start();
-        ConsoleLogManager.init(this); // CraftBukkit
         // CraftBukkit start
-        System.setOut(new PrintStream(new LoggerOutputStream(logger, Level.INFO), true));
-        System.setErr(new PrintStream(new LoggerOutputStream(logger, Level.SEVERE), true));
+        System.setOut(new PrintStream(new LoggerOutputStream(this.getLogAgent().func_98076_a(), Level.INFO), true));
+        System.setErr(new PrintStream(new LoggerOutputStream(this.getLogAgent().func_98076_a(), Level.SEVERE), true));
         // CraftBukkit end
-        logger.info("Starting minecraft server version 1.4.7");
+        this.getLogAgent().logInfo("Starting minecraft server version 1.5.1");
 
         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
         {
-            logger.warning("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+            this.getLogAgent().logWarning("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
         }
 
-        FMLCommonHandler.instance().onServerStart(this); // Forge
-        logger.info("Loading properties");
-        this.settings = new PropertyManager(this.options); // CraftBukkit - CLI argument support
+        FMLCommonHandler.instance().onServerStart(this);
+
+        this.getLogAgent().logInfo("Loading properties");
+        this.settings = new PropertyManager(this.options, this.getLogAgent()); // CraftBukkit - CLI argument support
 
         if (this.isSinglePlayer())
         {
@@ -116,7 +116,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         this.canSpawnStructures = this.settings.getBooleanProperty("generate-structures", true);
         int i = this.settings.getIntProperty("gamemode", EnumGameType.SURVIVAL.getID());
         this.gameType = WorldSettings.getGameTypeById(i);
-        logger.info("Default game type: " + this.gameType);
+        this.getLogAgent().logInfo("Default game type: " + this.gameType);
         InetAddress inetaddress = null;
 
         if (this.getServerHostname().length() > 0)
@@ -129,19 +129,19 @@ public class DedicatedServer extends MinecraftServer implements IServer
             this.setServerPort(this.settings.getIntProperty("server-port", 25565));
         }
 
-        logger.info("Generating keypair");
+        this.getLogAgent().logInfo("Generating keypair");
         this.setKeyPair(CryptManager.createNewKeyPair());
-        logger.info("Starting Minecraft server on " + (this.getServerHostname().length() == 0 ? "*" : this.getServerHostname()) + ":" + this.getServerPort());
+        this.getLogAgent().logInfo("Starting Minecraft server on " + (this.getServerHostname().length() == 0 ? "*" : this.getServerHostname()) + ":" + this.getServerPort());
 
         try
         {
             this.networkThread = new DedicatedServerListenThread(this, inetaddress, this.getServerPort());
         }
-        catch (Throwable throwable)     // CraftBukkit - IOException -> Throwable
+        catch (Throwable ioexception)     // CraftBukkit - IOException -> Throwable
         {
-            logger.warning("**** FAILED TO BIND TO PORT!");
-            logger.log(Level.WARNING, "The exception was: " + throwable.toString());
-            logger.warning("Perhaps a server is already running on that port?");
+            this.getLogAgent().logWarning("**** FAILED TO BIND TO PORT!");
+            this.getLogAgent().func_98231_b("The exception was: {0}", new Object[] {ioexception.toString()});
+            this.getLogAgent().logWarning("Perhaps a server is already running on that port?");
             return false;
         }
 
@@ -149,13 +149,14 @@ public class DedicatedServer extends MinecraftServer implements IServer
 
         if (!this.isServerInOnlineMode())
         {
-            logger.warning("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
-            logger.warning("The server will make no attempt to authenticate usernames. Beware.");
-            logger.warning("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
-            logger.warning("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
+            this.getLogAgent().logWarning("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+            this.getLogAgent().logWarning("The server will make no attempt to authenticate usernames. Beware.");
+            this.getLogAgent().logWarning("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
+            this.getLogAgent().logWarning("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
         }
+        
+        FMLCommonHandler.instance().onServerStarted();        
 
-        FMLCommonHandler.instance().onServerStarted();
         // this.a((PlayerList) (new DedicatedPlayerList(this))); // CraftBukkit - moved up
         this.anvilConverterForAnvilFile = new AnvilSaveConverter(server.getWorldContainer()); // CraftBukkit - moved from MinecraftServer constructor
         long j = System.nanoTime();
@@ -199,22 +200,22 @@ public class DedicatedServer extends MinecraftServer implements IServer
         this.setBuildLimit(MathHelper.clamp_int(this.getBuildLimit(), 64, 256));
         this.settings.setProperty("max-build-height", Integer.valueOf(this.getBuildLimit()));
         if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
-        logger.info("Preparing level \"" + this.getFolderName() + "\"");
+        this.getLogAgent().logInfo("Preparing level \"" + this.getFolderName() + "\"");
         this.loadAllWorlds(this.getFolderName(), this.getFolderName(), k, worldtype, s2);
         long i1 = System.nanoTime() - j;
         String s3 = String.format("%.3fs", new Object[] {Double.valueOf((double)i1 / 1.0E9D)});
-        logger.info("Done (" + s3 + ")! For help, type \"help\" or \"?\"");
+        this.getLogAgent().logInfo("Done (" + s3 + ")! For help, type \"help\" or \"?\"");
 
         if (this.settings.getBooleanProperty("enable-query", false))
         {
-            logger.info("Starting GS4 status listener");
+            this.getLogAgent().logInfo("Starting GS4 status listener");
             this.theRConThreadQuery = new RConThreadQuery(this);
             this.theRConThreadQuery.startThread();
         }
 
         if (this.settings.getBooleanProperty("enable-rcon", false))
         {
-            logger.info("Starting remote control listener");
+            this.getLogAgent().logInfo("Starting remote control listener");
             this.theRConThreadMain = new RConThreadMain(this);
             this.theRConThreadMain.startThread();
             this.remoteConsole = new org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender(); // CraftBukkit
@@ -223,7 +224,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         // CraftBukkit start
         if (this.server.getBukkitSpawnRadius() > -1)
         {
-            logger.info("'settings.spawn-radius' in bukkit.yml has been moved to 'spawn-protection' in server.properties. I will move your config for you.");
+            this.getLogAgent().logInfo("'settings.spawn-radius' in bukkit.yml has been moved to 'spawn-protection' in server.properties. I will move your config for you.");
             this.settings.properties.remove("spawn-protection");
             this.settings.getIntProperty("spawn-protection", this.server.getBukkitSpawnRadius());
             this.server.removeBukkitSpawnRadius();
@@ -291,8 +292,8 @@ public class DedicatedServer extends MinecraftServer implements IServer
     public CrashReport addServerInfoToCrashReport(CrashReport par1CrashReport)
     {
         par1CrashReport = super.addServerInfoToCrashReport(par1CrashReport);
-        par1CrashReport.func_85056_g().addCrashSectionCallable("Is Modded", new CallableType(this));
-        par1CrashReport.func_85056_g().addCrashSectionCallable("Type", new CallableServerType(this));
+        par1CrashReport.func_85056_g().addCrashSectionCallable("Is Modded", (Callable)(new CallableType(this)));
+        par1CrashReport.func_85056_g().addCrashSectionCallable("Type", (Callable)(new CallableServerType(this)));
         return par1CrashReport;
     }
 
@@ -304,7 +305,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         System.exit(0);
     }
 
-    public void updateTimeLightAndEntities()
+    public void updateTimeLightAndEntities()   // CraftBukkit - protected -> public
     {
         super.updateTimeLightAndEntities();
         this.executePendingCommands();
@@ -349,7 +350,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
             ServerCommandEvent event = new ServerCommandEvent(this.console, servercommand.command);
             this.server.getPluginManager().callEvent(event);
             servercommand = new ServerCommand(event.getCommand(), servercommand.sender);
-            // this.getCommandManager().executeCommand(servercommand.sender, servercommand.command); // Called in dispatchServerCommand
+            // this.getCommandHandler().a(servercommand.source, servercommand.command); // Called in dispatchServerCommand
             this.server.dispatchServerCommand(this.console, servercommand);
             // CraftBukkit end
         }
@@ -419,6 +420,12 @@ public class DedicatedServer extends MinecraftServer implements IServer
         return file1 != null ? file1.getAbsolutePath() : "No settings file";
     }
 
+    public void enableGui()
+    {
+        ServerGUI.initGUI(this);
+        this.guiIsEnabled = true;
+    }
+
     public boolean getGuiEnabled()
     {
         return this.guiIsEnabled;
@@ -448,15 +455,41 @@ public class DedicatedServer extends MinecraftServer implements IServer
         return this.settings.getIntProperty("spawn-protection", super.getSpawnProtectionSize());
     }
 
+    public boolean func_96290_a(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer)
+    {
+        if (par1World.provider.dimensionId != 0)
+        {
+            return false;
+        }
+        else if (this.getDedicatedPlayerList().getOps().isEmpty())
+        {
+            return false;
+        }
+        else if (this.getDedicatedPlayerList().areCommandsAllowed(par5EntityPlayer.username))
+        {
+            return false;
+        }
+        else if (this.getSpawnProtectionSize() <= 0)
+        {
+            return false;
+        }
+        else
+        {
+            ChunkCoordinates chunkcoordinates = par1World.getSpawnPoint();
+            int l = MathHelper.abs_int(par2 - chunkcoordinates.posX);
+            int i1 = MathHelper.abs_int(par4 - chunkcoordinates.posZ);
+            int j1 = Math.max(l, i1);
+            return j1 <= this.getSpawnProtectionSize();
+        }
+    }
+
+    public ILogAgent getLogAgent()
+    {
+        return this.field_98131_l;
+    }
+
     public ServerConfigurationManager getConfigurationManager()
     {
         return this.getDedicatedPlayerList();
-    }
-
-    @SideOnly(Side.SERVER)
-    public void enableGui()
-    {
-        ServerGUI.initGUI(this);
-        this.guiIsEnabled = true;
     }
 }

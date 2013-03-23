@@ -1,10 +1,9 @@
 package net.minecraft.network.packet;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
+
+import java.io.IOException; // CraftBukkit
 
 public class Packet2ClientProtocol extends Packet
 {
@@ -15,19 +14,10 @@ public class Packet2ClientProtocol extends Packet
 
     public Packet2ClientProtocol() {}
 
-    @SideOnly(Side.CLIENT)
-    public Packet2ClientProtocol(int par1, String par2Str, String par3Str, int par4)
-    {
-        this.protocolVersion = par1;
-        this.username = par2Str;
-        this.serverHost = par3Str;
-        this.serverPort = par4;
-    }
-
     /**
      * Abstract. Reads the raw packet data from the data stream.
      */
-    public void readPacketData(DataInputStream par1DataInputStream) throws IOException
+    public void readPacketData(DataInputStream par1DataInputStream) throws IOException   // CraftBukkit - throws IOException
     {
         this.protocolVersion = par1DataInputStream.readByte();
         this.username = readString(par1DataInputStream, 16);
@@ -38,7 +28,7 @@ public class Packet2ClientProtocol extends Packet
     /**
      * Abstract. Writes the raw packet data to the data stream.
      */
-    public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
+    public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException   // CraftBukkit - throws IOException
     {
         par1DataOutputStream.writeByte(this.protocolVersion);
         writeString(this.username, par1DataOutputStream);

@@ -3,11 +3,11 @@ package net.minecraft.entity.ai;
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.Material;
-// CraftBukkit end
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class EntityAIEatGrass extends EntityAIBase
 {
@@ -91,8 +91,7 @@ public class EntityAIEatGrass extends EntityAIBase
                 // CraftBukkit start
                 if (!CraftEventFactory.callEntityChangeBlockEvent(this.theEntity.getBukkitEntity(), this.theEntity.worldObj.getWorld().getBlockAt(i, j, k), Material.AIR).isCancelled())
                 {
-                    this.theWorld.playAuxSFX(2001, i, j, k, Block.tallGrass.blockID + 4096);
-                    this.theWorld.setBlockWithNotify(i, j, k, 0);
+                    this.theWorld.destroyBlock(i, j, k, false);
                     this.theEntity.eatGrassBonus();
                 }
 
@@ -104,9 +103,10 @@ public class EntityAIEatGrass extends EntityAIBase
                 if (!CraftEventFactory.callEntityChangeBlockEvent(this.theEntity.getBukkitEntity(), this.theEntity.worldObj.getWorld().getBlockAt(i, j - 1, k), Material.DIRT).isCancelled())
                 {
                     this.theWorld.playAuxSFX(2001, i, j - 1, k, Block.grass.blockID);
-                    this.theWorld.setBlockWithNotify(i, j - 1, k, Block.dirt.blockID);
+                    this.theWorld.setBlock(i, j - 1, k, Block.dirt.blockID, 0, 2);
                     this.theEntity.eatGrassBonus();
                 }
+
                 // CraftBukkit end
             }
         }

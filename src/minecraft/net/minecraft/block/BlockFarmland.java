@@ -1,7 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -9,19 +7,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.IPlantable;
 // CraftBukkit start
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 // CraftBukkit end
+
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.IPlantable;
 
 public class BlockFarmland extends Block
 {
     protected BlockFarmland(int par1)
     {
         super(par1, Material.ground);
-        this.blockIndexInTexture = 87;
         this.setTickRandomly(true);
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.9375F, 1.0F);
         this.setLightOpacity(255);
@@ -33,7 +31,7 @@ public class BlockFarmland extends Block
      */
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
-        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)(par2 + 0), (double)(par3 + 0), (double)(par4 + 0), (double)(par2 + 1), (double)(par3 + 1), (double)(par4 + 1));
+        return AxisAlignedBB.getAABBPool().getAABB((double)(par2 + 0), (double)(par3 + 0), (double)(par4 + 0), (double)(par2 + 1), (double)(par3 + 1), (double)(par4 + 1));
     }
 
     /**
@@ -54,14 +52,6 @@ public class BlockFarmland extends Block
     }
 
     /**
-     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
-     */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
-    {
-        return par1 == 1 && par2 > 0 ? this.blockIndexInTexture - 1 : (par1 == 1 ? this.blockIndexInTexture : 2);
-    }
-
-    /**
      * Ticks the block if it's been scheduled
      */
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
@@ -72,7 +62,7 @@ public class BlockFarmland extends Block
 
             if (l > 0)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, l - 1);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, l - 1, 2);
             }
             else if (!this.isCropsNearby(par1World, par2, par3, par4))
             {
@@ -85,12 +75,12 @@ public class BlockFarmland extends Block
                 }
 
                 // CraftBukkit end
-                par1World.setBlockWithNotify(par2, par3, par4, Block.dirt.blockID);
+                par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
             }
         }
         else
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 7);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 7, 2);
         }
     }
 
@@ -125,7 +115,7 @@ public class BlockFarmland extends Block
             }
 
             // CraftBukkit end
-            par1World.setBlockWithNotify(par2, par3, par4, Block.dirt.blockID);
+            par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
         }
     }
 
@@ -186,7 +176,7 @@ public class BlockFarmland extends Block
 
         if (material.isSolid())
         {
-            par1World.setBlockWithNotify(par2, par3, par4, Block.dirt.blockID);
+            par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
         }
     }
 
@@ -196,15 +186,5 @@ public class BlockFarmland extends Block
     public int idDropped(int par1, Random par2Random, int par3)
     {
         return Block.dirt.idDropped(0, par2Random, par3);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return Block.dirt.blockID;
     }
 }

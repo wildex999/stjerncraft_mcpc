@@ -9,9 +9,9 @@ import net.minecraft.world.World;
 
 public class BlockOre extends Block
 {
-    public BlockOre(int par1, int par2)
+    public BlockOre(int par1)
     {
-        super(par1, par2, Material.rock);
+        super(par1, Material.rock);
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 
@@ -20,7 +20,7 @@ public class BlockOre extends Block
      */
     public int idDropped(int par1, Random par2Random, int par3)
     {
-        return this.blockID == Block.oreCoal.blockID ? Item.coal.itemID : (this.blockID == Block.oreDiamond.blockID ? Item.diamond.itemID : (this.blockID == Block.oreLapis.blockID ? Item.dyePowder.itemID : (this.blockID == Block.oreEmerald.blockID ? Item.emerald.itemID : this.blockID)));
+        return this.blockID == Block.oreCoal.blockID ? Item.coal.itemID : (this.blockID == Block.oreDiamond.blockID ? Item.diamond.itemID : (this.blockID == Block.oreLapis.blockID ? Item.dyePowder.itemID : (this.blockID == Block.oreEmerald.blockID ? Item.emerald.itemID : (this.blockID == Block.oreNetherQuartz.blockID ? Item.field_94583_ca.itemID : this.blockID))));
     }
 
     /**
@@ -71,9 +71,11 @@ public class BlockOre extends Block
                 j1 = MathHelper.nextInt(world.random, 3, 7);
             } else if (this.id == Block.LAPIS_ORE.id) {
                 j1 = MathHelper.nextInt(world.random, 2, 5);
+            } else if (this.id == Block.QUARTZ_ORE.id) {
+                j1 = MathHelper.nextInt(world.random, 2, 5);
             }
 
-            this.f(world, i, j, k, j1);
+            this.j(world, i, j, k, j1);
         } */
     }
 
@@ -96,6 +98,10 @@ public class BlockOre extends Block
                 j1 = MathHelper.getRandomIntegerInRange(world.rand, 3, 7);
             }
             else if (this.blockID == Block.oreLapis.blockID)
+            {
+                j1 = MathHelper.getRandomIntegerInRange(world.rand, 2, 5);
+            }
+            else if (this.blockID == Block.oreNetherQuartz.blockID)
             {
                 j1 = MathHelper.getRandomIntegerInRange(world.rand, 2, 5);
             }

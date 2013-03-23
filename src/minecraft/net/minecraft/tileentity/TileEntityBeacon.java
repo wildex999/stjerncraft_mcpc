@@ -1,12 +1,11 @@
 package net.minecraft.tileentity;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
@@ -14,9 +13,8 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.AxisAlignedBB;
-// CraftBukkit start
-import java.util.List;
 
+// CraftBukkit start
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 // CraftBukkit end
@@ -25,11 +23,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory
 {
     /** List of effects that Beacon can apply */
     public static final Potion[][] effectsList = new Potion[][] {{Potion.moveSpeed, Potion.digSpeed}, {Potion.resistance, Potion.jump}, {Potion.damageBoost}, {Potion.regeneration}};
-    @SideOnly(Side.CLIENT)
-    private long field_82137_b;
-    @SideOnly(Side.CLIENT)
-    private float field_82138_c;
-    private boolean field_82135_d;
+    private boolean isBeaconActive;
 
     /** Level of this beacon's pyramid. */
     private int levels = -1;
@@ -42,6 +36,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory
 
     /** Item given to this beacon as payment. */
     private ItemStack payment;
+    private String field_94048_i;
     // CraftBukkit start
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     private int maxStack = MAX_STACK;
@@ -82,16 +77,16 @@ public class TileEntityBeacon extends TileEntity implements IInventory
     {
         if (this.worldObj.getTotalWorldTime() % 80L == 0L)
         {
-            this.func_82131_u();
-            this.func_82124_t();
+            this.updateState();
+            this.addEffectsToPlayers();
         }
     }
 
-    private void func_82124_t()
+    private void addEffectsToPlayers()
     {
-        if (this.field_82135_d && this.levels > 0 && !this.worldObj.isRemote && this.primaryEffect > 0)
+        if (this.isBeaconActive && this.levels > 0 && !this.worldObj.isRemote && this.primaryEffect > 0)
         {
-            double d0 = (double)(this.levels * 8 + 8);
+            double d0 = (double)(this.levels * 10 + 10);
             byte b0 = 0;
 
             if (this.levels >= 4 && this.primaryEffect == this.secondaryEffect)
@@ -99,7 +94,8 @@ public class TileEntityBeacon extends TileEntity implements IInventory
                 b0 = 1;
             }
 
-            AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)this.xCoord, (double)this.yCoord, (double)this.zCoord, (double)(this.xCoord + 1), (double)(this.yCoord + 1), (double)(this.zCoord + 1)).expand(d0, d0, d0);
+            AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB((double)this.xCoord, (double)this.yCoord, (double)this.zCoord, (double)(this.xCoord + 1), (double)(this.yCoord + 1), (double)(this.zCoord + 1)).expand(d0, d0, d0);
+            axisalignedbb.maxY = (double)this.worldObj.getHeight();
             List list = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, axisalignedbb);
             Iterator iterator = list.iterator();
             EntityPlayer entityplayer;
@@ -123,23 +119,26 @@ public class TileEntityBeacon extends TileEntity implements IInventory
         }
     }
 
-    private void func_82131_u()
+    /**
+     * Checks if the Beacon has a valid pyramid underneath and direct sunlight above
+     */
+    private void updateState()
     {
         if (!this.worldObj.canBlockSeeTheSky(this.xCoord, this.yCoord + 1, this.zCoord))
         {
-            this.field_82135_d = false;
+            this.isBeaconActive = false;
             this.levels = 0;
         }
         else
         {
-            this.field_82135_d = true;
+            this.isBeaconActive = true;
             this.levels = 0;
 
             for (int i = 1; i <= 4; this.levels = i++)
             {
                 int j = this.yCoord - i;
 
-                if (j < 0)
+                if (j < 1)
                 {
                     break;
                 }
@@ -169,41 +168,8 @@ public class TileEntityBeacon extends TileEntity implements IInventory
 
             if (this.levels == 0)
             {
-                this.field_82135_d = false;
+                this.isBeaconActive = false;
             }
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float func_82125_v_()
-    {
-        if (!this.field_82135_d)
-        {
-            return 0.0F;
-        }
-        else
-        {
-            int i = (int)(this.worldObj.getTotalWorldTime() - this.field_82137_b);
-            this.field_82137_b = this.worldObj.getTotalWorldTime();
-
-            if (i > 1)
-            {
-                this.field_82138_c -= (float)i / 40.0F;
-
-                if (this.field_82138_c < 0.0F)
-                {
-                    this.field_82138_c = 0.0F;
-                }
-            }
-
-            this.field_82138_c += 0.025F;
-
-            if (this.field_82138_c > 1.0F)
-            {
-                this.field_82138_c = 1.0F;
-            }
-
-            return this.field_82138_c;
         }
     }
 
@@ -231,17 +197,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory
         return this.levels;
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Set the levels of this beacon's pyramid.
-     */
-    public void setLevels(int par1)
-    {
-        this.levels = par1;
-    }
-
-    public void func_82128_d(int par1)
+    public void setPrimaryEffect(int par1)
     {
         this.primaryEffect = 0;
 
@@ -263,7 +219,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory
         }
     }
 
-    public void func_82127_e(int par1)
+    public void setSecondaryEffect(int par1)
     {
         this.secondaryEffect = 0;
 
@@ -296,12 +252,6 @@ public class TileEntityBeacon extends TileEntity implements IInventory
         NBTTagCompound nbttagcompound = new NBTTagCompound();
         this.writeToNBT(nbttagcompound);
         return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 3, nbttagcompound);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public double func_82115_m()
-    {
-        return 65536.0D;
     }
 
     /**
@@ -402,7 +352,21 @@ public class TileEntityBeacon extends TileEntity implements IInventory
      */
     public String getInvName()
     {
-        return "container.beacon";
+        return this.isInvNameLocalized() ? this.field_94048_i : "container.beacon";
+    }
+
+    /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.field_94048_i != null && this.field_94048_i.length() > 0;
+    }
+
+    public void func_94047_a(String par1Str)
+    {
+        this.field_94048_i = par1Str;
     }
 
     /**
@@ -425,4 +389,12 @@ public class TileEntityBeacon extends TileEntity implements IInventory
     public void openChest() {}
 
     public void closeChest() {}
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return par2ItemStack.itemID == Item.emerald.itemID || par2ItemStack.itemID == Item.diamond.itemID || par2ItemStack.itemID == Item.ingotGold.itemID || par2ItemStack.itemID == Item.ingotIron.itemID;
+    }
 }

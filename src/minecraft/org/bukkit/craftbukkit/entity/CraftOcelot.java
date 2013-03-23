@@ -6,22 +6,22 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ocelot;
 
 public class CraftOcelot extends CraftTameableAnimal implements Ocelot {
-    public CraftOcelot(CraftServer server, net.minecraft.entity.passive.EntityOcelot/*was:EntityOcelot*/ wolf) {
+    public CraftOcelot(CraftServer server, net.minecraft.entity.passive.EntityOcelot wolf) {
         super(server, wolf);
     }
 
     @Override
-    public net.minecraft.entity.passive.EntityOcelot/*was:EntityOcelot*/ getHandle() {
-        return (net.minecraft.entity.passive.EntityOcelot/*was:EntityOcelot*/) entity;
+    public net.minecraft.entity.passive.EntityOcelot getHandle() {
+        return (net.minecraft.entity.passive.EntityOcelot) entity;
     }
 
     public Type getCatType() {
-        return Type.getType(getHandle().getTameSkin/*was:getCatType*/());
+        return Type.getType(getHandle().getTameSkin());
     }
 
     public void setCatType(Type type) {
         Validate.notNull(type, "Cat type cannot be null");
-        getHandle().setTameSkin/*was:setCatType*/(type.getId());
+        getHandle().setTameSkin(type.getId());
     }
 
     @Override

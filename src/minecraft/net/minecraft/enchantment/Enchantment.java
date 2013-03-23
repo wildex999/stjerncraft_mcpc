@@ -37,7 +37,7 @@ public abstract class Enchantment
 
     /** Increases underwater mining rate */
     public static final Enchantment aquaAffinity = new EnchantmentWaterWorker(6, 2);
-    public static final Enchantment field_92091_k = new EnchantmentThorns(7, 1);
+    public static final Enchantment thorns = new EnchantmentThorns(7, 1);
 
     /** Extra damage to mobs */
     public static final Enchantment sharpness = new EnchantmentDamage(16, 10, 0);
@@ -115,6 +115,7 @@ public abstract class Enchantment
         {
             enchantmentsList[par1] = this;
         }
+
         org.bukkit.enchantments.Enchantment.registerEnchantment(new org.bukkit.craftbukkit.enchantments.CraftEnchantment(this)); // CraftBukkit
     }
 
@@ -211,11 +212,11 @@ public abstract class Enchantment
     }
 
     /**
-    * This applies specifically to applying at the enchanting table. The other method {@link #func_92089_a(ItemStack)}
-    * applies for <i>all possible</i> enchantments.
-    * @param stack
-    * @return
-    */
+     * This applies specifically to applying at the enchanting table. The other method {@link #func_92037_a(ItemStack)}
+     * applies for <i>all possible</i> enchantments.
+     * @param stack
+     * @return
+     */
     public boolean canApplyAtEnchantingTable(ItemStack stack)
     {
         return this.type.canEnchantItem(stack.getItem());

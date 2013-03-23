@@ -19,25 +19,13 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.block.BlockDispenser;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.dispenser.BehaviorArrowDispense;
-import net.minecraft.dispenser.BehaviorBucketEmptyDispense;
-import net.minecraft.dispenser.BehaviorBucketFullDispense;
-import net.minecraft.dispenser.BehaviorDispenseBoat;
-import net.minecraft.dispenser.BehaviorDispenseFireball;
-import net.minecraft.dispenser.BehaviorDispenseFirework;
-import net.minecraft.dispenser.BehaviorDispenseMinecart;
-import net.minecraft.dispenser.BehaviorEggDispense;
-import net.minecraft.dispenser.BehaviorExpBottleDispense;
-import net.minecraft.dispenser.BehaviorMobEggDispense;
-import net.minecraft.dispenser.BehaviorPotionDispense;
-import net.minecraft.dispenser.BehaviorSnowballDispense;
-import net.minecraft.item.Item;
+import net.minecraft.dispenser.DispenserBehaviors;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.logging.ILogAgent;
 import net.minecraft.network.NetworkListenThread;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet4UpdateTime;
@@ -278,23 +266,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     private void registerDispenseBehaviors()
     {
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.arrow, new BehaviorArrowDispense(this));
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.egg, new BehaviorEggDispense(this));
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.snowball, new BehaviorSnowballDispense(this));
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.expBottle, new BehaviorExpBottleDispense(this));
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.potion, new BehaviorPotionDispense(this));
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.monsterPlacer, new BehaviorMobEggDispense(this));
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.firework, new BehaviorDispenseFirework(this));
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.fireballCharge, new BehaviorDispenseFireball(this));
-        BehaviorDispenseMinecart behaviordispenseminecart = new BehaviorDispenseMinecart(this);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.minecartEmpty, behaviordispenseminecart);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.minecartCrate, behaviordispenseminecart);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.minecartPowered, behaviordispenseminecart);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.boat, new BehaviorDispenseBoat(this));
-        BehaviorBucketFullDispense behaviorbucketfulldispense = new BehaviorBucketFullDispense(this);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.bucketLava, behaviorbucketfulldispense);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.bucketWater, behaviorbucketfulldispense);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(Item.bucketEmpty, new BehaviorBucketEmptyDispense(this));
+        DispenserBehaviors.func_96467_a();
     }
 
     /**
@@ -306,7 +278,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     {
         if (this.getActiveAnvilConverter().isOldMapFormat(par1Str))
         {
-            logger.info("Converting map!");
+            this.getLogAgent().logInfo("Converting map!");
             this.setUserMessage("menu.convertingLevel");
             this.getActiveAnvilConverter().convertMapFormat(par1Str, new ConvertingProgressUpdate(this));
         }
@@ -335,7 +307,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         // MCPC+ end
         this.convertMapIfNeeded(par1Str);
         this.setUserMessage("menu.loadingLevel");
-        // CraftBukkit - removed world and ticktime arrays
+        // CraftBukkit - removed ticktime arrays
         ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
         WorldInfo worldinfo = isavehandler.loadWorldInfo();
         // CraftBukkit start - removed worldsettings
@@ -376,21 +348,22 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
             if ((!newWorld.isDirectory()) && (oldWorld.isDirectory()))
             {
-                logger.info("---- Migration of old " + worldType + " folder required ----");
-                logger.info("Unfortunately due to the way that Minecraft implemented multiworld support in 1.6, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
-                logger.info("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
-                logger.info("Attempting to move " + oldWorld + " to " + newWorld + "...");
+                    final ILogAgent log = this.getLogAgent();
+                    log.logInfo("---- Migration of old " + worldType + " folder required ----");
+                    log.logInfo("Unfortunately due to the way that Minecraft implemented multiworld support in 1.6, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
+                    log.logInfo("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
+                    log.logInfo("Attempting to move " + oldWorld + " to " + newWorld + "...");
 
                 if (newWorld.exists())
                 {
-                    logger.severe("A file or folder already exists at " + newWorld + "!");
-                    logger.info("---- Migration of old " + worldType + " folder failed ----");
+                        log.func_98232_c("A file or folder already exists at " + newWorld + "!");
+                        log.logInfo("---- Migration of old " + worldType + " folder failed ----");
                 }
                 else if (newWorld.getParentFile().mkdirs())
                 {
                     if (oldWorld.renameTo(newWorld))
                     {
-                        logger.info("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
+                            log.logInfo("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
 
                         // Migrate world data too.
                         try
@@ -399,27 +372,27 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                         }
                         catch (IOException exception)
                         {
-                            logger.severe("Unable to migrate world data.");
+                                log.func_98232_c("Unable to migrate world data.");
                         }
 
-                        logger.info("---- Migration of old " + worldType + " folder complete ----");
+                            log.logInfo("---- Migration of old " + worldType + " folder complete ----");
                     }
                     else
                     {
-                        logger.severe("Could not move folder " + oldWorld + " to " + newWorld + "!");
-                        logger.info("---- Migration of old " + worldType + " folder failed ----");
+                            log.func_98232_c("Could not move folder " + oldWorld + " to " + newWorld + "!");
+                            log.logInfo("---- Migration of old " + worldType + " folder failed ----");
                     }
                 }
                 else
                 {
-                    logger.severe("Could not create path for " + newWorld + "!");
-                    logger.info("---- Migration of old " + worldType + " folder failed ----");
+                        log.func_98232_c("Could not create path for " + newWorld + "!");
+                        log.logInfo("---- Migration of old " + worldType + " folder failed ----");
                 }
             }
 
             this.setUserMessage(name);
             // CraftBukkit
-            world = new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, overWorld, this.theProfiler, env, gen);
+            world = new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, this.worlds.get(0), this.theProfiler, this.getLogAgent(), Environment.getEnvironment(dimension), gen);
             // MCPC+ end
             if (gen != null)
             {
@@ -450,8 +423,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     // MCPC+ start - move overWorld initialization to it's own method for easier use above.
     protected WorldServer initOverWorld(String par1Str, String par2Str, WorldSettings worldsettings)
     {
-        org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(par1Str);
-        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, theProfiler) : new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, worldsettings, theProfiler,  Environment.getEnvironment(0), gen));
+        org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(par1Str);    
+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, theProfiler, this.getLogAgent()) : new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, worldsettings, theProfiler, this.getLogAgent(), Environment.getEnvironment(0), gen));
         if (gen != null)
         {
             overWorld.getWorld().getPopulators().addAll(gen.getDefaultPopulators(overWorld.getWorld()));
@@ -589,7 +562,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     {
         this.currentTask = par1Str;
         this.percentDone = par2;
-        logger.info(par1Str + ": " + par2 + "%");
+        this.getLogAgent().logInfo(par1Str + ": " + par2 + "%");
     }
 
     /**
@@ -615,7 +588,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 {
                     if (!par1)
                     {
-                        logger.info("Saving chunks for level \'" + worldserver.getWorldInfo().getWorldName() + "\'/" + worldserver.provider.getDimensionName());
+                        this.getLogAgent().logInfo("Saving chunks for level \'" + worldserver.getWorldInfo().getWorldName() + "\'/" + worldserver.provider.getDimensionName());
                     }
 
                     worldserver.saveAllChunks(true, (IProgressUpdate) null);
@@ -629,19 +602,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         }
     }
 
-    public void stopServer() //throws MinecraftException   // CraftBukkit - added throws
+    public void stopServer() throws MinecraftException   // CraftBukkit - added throws
     {
         if (!this.worldIsBeingDeleted)
         {
-            logger.info("Stopping server");
-
-            // CraftBukkit start
-            if (this.server != null)
-            {
-                this.server.disablePlugins();
-            }
-
-            // CraftBukkit end
+            this.getLogAgent().logInfo("Stopping server");
 
             if (this.getNetworkThread() != null)
             {
@@ -650,13 +615,13 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
             if (this.serverConfigManager != null)
             {
-                logger.info("Saving players");
+                this.getLogAgent().logInfo("Saving players");
                 this.serverConfigManager.saveAllPlayerData();
                 this.serverConfigManager.removeAllPlayers();
             }
 
-            logger.info("Saving worlds");
-            try {
+            this.getLogAgent().logInfo("Saving worlds");
+            try {            
                 this.saveAllWorlds(false);
             } catch (MinecraftException e) {
                 // TODO Auto-generated catch block
@@ -760,7 +725,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             }
 
             throwable.printStackTrace();
-            logger.log(Level.SEVERE, "Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
+            this.getLogAgent().func_98234_c("Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
             CrashReport crashreport = null;
 
             if (throwable instanceof ReportedException)
@@ -774,13 +739,13 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
             File file1 = new File(new File(this.getDataDirectory(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
 
-            if (crashreport.saveToFile(file1))
+            if (crashreport.saveToFile(file1, this.getLogAgent()))
             {
-                logger.severe("This crash report has been saved to: " + file1.getAbsolutePath());
+                this.getLogAgent().func_98232_c("This crash report has been saved to: " + file1.getAbsolutePath());
             }
             else
             {
-                logger.severe("We were unable to save this crash report to disk.");
+                this.getLogAgent().func_98232_c("We were unable to save this crash report to disk.");
             }
 
             this.finalTick(crashreport);
@@ -815,6 +780,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 }
 
                 // CraftBukkit end
+                FMLCommonHandler.instance().handleServerStopped();                
                 this.systemExitNow();
             }
         }
@@ -838,7 +804,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     /**
      * Main function called by run() every loop.
      */
-    protected void tick() throws MinecraftException   // CraftBukkit - added throws
+    public void tick() throws MinecraftException   // CraftBukkit - added throws // MCPC+ - protected -> public for Forge
     {
         FMLCommonHandler.instance().rescheduleTicks(Side.SERVER); // Forge
         long i = System.nanoTime();
@@ -930,10 +896,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             worldserver.getWorldVec3Pool().clear();
             this.theProfiler.endSection();
             /* Drop global time updates
-            if (this.ticks % 20 == 0) {
-                this.methodProfiler.a("timeSync");
-                this.t.a(new Packet4UpdateTime(worldserver.getTime(), worldserver.getDayTime()), worldserver.worldProvider.dimension);
-                this.methodProfiler.b();
+            if (this.tickCounter % 20 == 0)
+            {
+                this.theProfiler.startSection("timeSync");
+                this.serverConfigManager.sendPacketToAllPlayersInDimension(new Packet4UpdateTime(worldserver.getTotalWorldTime(), worldserver.getWorldTime()), worldserver.provider.dimensionId);
+                this.theProfiler.endSection();
             }
             // CraftBukkit end */
             this.theProfiler.startSection("tick");
@@ -1017,7 +984,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     public void logInfo(String par1Str)
     {
-        logger.info(par1Str);
+        this.getLogAgent().logInfo(par1Str);
     }
 
     /**
@@ -1025,7 +992,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     public void logWarning(String par1Str)
     {
-        logger.warning(par1Str);
+        this.getLogAgent().logWarning(par1Str);
     }
 
     /**
@@ -1085,7 +1052,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     public String getMinecraftVersion()
     {
-        return "1.4.7";
+        return "1.5.1";
     }
 
     /**
@@ -1196,7 +1163,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     public void logSevere(String par1Str)
     {
-        logger.log(Level.SEVERE, par1Str);
+        this.getLogAgent().func_98232_c(par1Str);
     }
 
     /**
@@ -1206,7 +1173,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     {
         if (this.isDebuggingEnabled())
         {
-            logger.log(Level.INFO, par1Str);
+            this.getLogAgent().logInfo(par1Str);
         }
     }
 
@@ -1303,7 +1270,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
     public void sendChatToPlayer(String par1Str)
     {
-        logger.info(StringUtils.stripControlCodes(par1Str));
+        this.getLogAgent().logInfo(StringUtils.stripControlCodes(par1Str));
     }
 
     /**
@@ -1709,6 +1676,13 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         return 16;
     }
 
+    public boolean func_96290_a(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer)
+    {
+        return false;
+    }
+
+    public abstract ILogAgent getLogAgent();
+
     /**
      * Gets the current player count, maximum player count, and player entity list.
      */
@@ -1724,11 +1698,10 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     }
 
     @SideOnly(Side.SERVER)
-    public static void fmlReentry(ArgsWrapper var1)   // CraftBukkit - replaces main(String[] astring)
+    public static void fmlReentry(ArgsWrapper wrap)   // CraftBukkit - replaces main(String[] astring)
     {
-
-        logger.severe(var1.args.getClass().getName());
-        OptionSet options = org.bukkit.craftbukkit.Main.loadOptions(var1.args);
+        logger.severe(wrap.args.getClass().getName());
+        OptionSet options = org.bukkit.craftbukkit.Main.loadOptions(wrap.args);
 
         if (options == null)
         {

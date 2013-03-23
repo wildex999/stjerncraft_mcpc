@@ -1,10 +1,7 @@
 package net.minecraft.world.chunk.storage;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.world.chunk.NibbleArray;
-
 public class ExtendedBlockStorage
 {
     /**
@@ -362,12 +359,6 @@ public class ExtendedBlockStorage
         return this.blockLSBArray;
     }
 
-    @SideOnly(Side.CLIENT)
-    public void clearMSBArray()
-    {
-        this.blockMSBArray = null;
-    }
-
     /**
      * Returns the block ID MSB (bits 11..8) array for this storage array's Chunk.
      */
@@ -415,8 +406,8 @@ public class ExtendedBlockStorage
 
         // Spigot start
         if ((!par1NibbleArray.isTrivialArray()) || (par1NibbleArray.getTrivialArrayValue() != 0))
-        {
-            empty = false;
+            {
+                empty = false;
         }
         // Spigot end
 
@@ -452,19 +443,7 @@ public class ExtendedBlockStorage
     {
         this.skylightArray = validateNibbleArray(par1NibbleArray); // Spigot - validate
     }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Called by a Chunk to initialize the MSB array if getBlockMSBArray returns null. Returns the newly-created
-     * NibbleArray instance.
-     */
-    public NibbleArray createBlockMSBArray()
-    {
-        this.blockMSBArray = new NibbleArray(this.blockLSBArray.length, 4);
-        return this.blockMSBArray;
-    }
-
+    
     // Spigot start - validate/correct nibble array
     private static final NibbleArray validateNibbleArray(NibbleArray na)
     {
@@ -487,5 +466,5 @@ public class ExtendedBlockStorage
 
         return ba;
     }
-    // Spigot end
+    // Spigot end    
 }

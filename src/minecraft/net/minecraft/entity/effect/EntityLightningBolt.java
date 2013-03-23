@@ -1,16 +1,14 @@
 package net.minecraft.entity.effect;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import org.bukkit.event.block.BlockIgniteEvent; // CraftBukkit
+
+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
 
 public class EntityLightningBolt extends EntityWeatherEffect
 {
@@ -30,7 +28,6 @@ public class EntityLightningBolt extends EntityWeatherEffect
     private int boltLivingTime;
 
     // CraftBukkit start
-    private org.bukkit.craftbukkit.CraftWorld cworld;
     public boolean isEffect = false;
 
     public EntityLightningBolt(World par1World, double par2, double par4, double par6)
@@ -38,35 +35,31 @@ public class EntityLightningBolt extends EntityWeatherEffect
         this(par1World, par2, par4, par6, false);
     }
 
-    public EntityLightningBolt(World world, double d0, double d1, double d2, boolean isEffect)
+    public EntityLightningBolt(World par1World, double par2, double par4, double par6, boolean isEffect)
     {
         // CraftBukkit end
-        super(world);
+        super(par1World);
         // CraftBukkit start
         this.isEffect = isEffect;
-        this.cworld = world.getWorld();
         // CraftBukkit end
-        this.setLocationAndAngles(d0, d1, d2, 0.0F, 0.0F);
+        this.setLocationAndAngles(par2, par4, par6, 0.0F, 0.0F);
         this.lightningState = 2;
         this.boltVertex = this.rand.nextLong();
         this.boltLivingTime = this.rand.nextInt(3) + 1;
 
         // CraftBukkit
-        if (!isEffect && !world.isRemote && world.difficultySetting >= 2 && world.doChunksNearChunkExist(MathHelper.floor_double(d0), MathHelper.floor_double(d1), MathHelper.floor_double(d2), 10))
+        if (!isEffect && !par1World.isRemote && par1World.difficultySetting >= 2 && par1World.doChunksNearChunkExist(MathHelper.floor_double(par2), MathHelper.floor_double(par4), MathHelper.floor_double(par6), 10))
         {
-            int i = MathHelper.floor_double(d0);
-            int j = MathHelper.floor_double(d1);
-            int k = MathHelper.floor_double(d2);
+            int i = MathHelper.floor_double(par2);
+            int j = MathHelper.floor_double(par4);
+            int k = MathHelper.floor_double(par6);
 
-            if (world.getBlockId(i, j, k) == 0 && Block.fire.canPlaceBlockAt(world, i, j, k))
+            if (par1World.getBlockId(i, j, k) == 0 && Block.fire.canPlaceBlockAt(par1World, i, j, k))
             {
                 // CraftBukkit start
-                BlockIgniteEvent event = new BlockIgniteEvent(this.cworld.getBlockAt(i, j, k), BlockIgniteEvent.IgniteCause.LIGHTNING, null);
-                world.getServer().getPluginManager().callEvent(event);
-
-                if (!event.isCancelled())
+                if (!CraftEventFactory.callBlockIgniteEvent(par1World, i, j, k, this).isCancelled())
                 {
-                    world.setBlockWithNotify(i, j, k, Block.fire.blockID);
+                    par1World.setBlock(i, j, k, Block.fire.blockID);
                 }
 
                 // CraftBukkit end
@@ -74,19 +67,16 @@ public class EntityLightningBolt extends EntityWeatherEffect
 
             for (i = 0; i < 4; ++i)
             {
-                j = MathHelper.floor_double(d0) + this.rand.nextInt(3) - 1;
-                k = MathHelper.floor_double(d1) + this.rand.nextInt(3) - 1;
-                int l = MathHelper.floor_double(d2) + this.rand.nextInt(3) - 1;
+                j = MathHelper.floor_double(par2) + this.rand.nextInt(3) - 1;
+                k = MathHelper.floor_double(par4) + this.rand.nextInt(3) - 1;
+                int l = MathHelper.floor_double(par6) + this.rand.nextInt(3) - 1;
 
-                if (world.getBlockId(j, k, l) == 0 && Block.fire.canPlaceBlockAt(world, j, k, l))
+                if (par1World.getBlockId(j, k, l) == 0 && Block.fire.canPlaceBlockAt(par1World, j, k, l))
                 {
                     // CraftBukkit start
-                    BlockIgniteEvent event = new BlockIgniteEvent(this.cworld.getBlockAt(j, k, l), BlockIgniteEvent.IgniteCause.LIGHTNING, null);
-                    world.getServer().getPluginManager().callEvent(event);
-
-                    if (!event.isCancelled())
+                    if (!CraftEventFactory.callBlockIgniteEvent(par1World, j, k, l, this).isCancelled())
                     {
-                        world.setBlockWithNotify(j, k, l, Block.fire.blockID);
+                        par1World.setBlock(i, j, k, Block.fire.blockID);
                     }
 
                     // CraftBukkit end
@@ -132,12 +122,9 @@ public class EntityLightningBolt extends EntityWeatherEffect
                     if (this.worldObj.getBlockId(i, j, k) == 0 && Block.fire.canPlaceBlockAt(this.worldObj, i, j, k))
                     {
                         // CraftBukkit start
-                        BlockIgniteEvent event = new BlockIgniteEvent(this.cworld.getBlockAt(i, j, k), BlockIgniteEvent.IgniteCause.LIGHTNING, null);
-                        this.worldObj.getServer().getPluginManager().callEvent(event);
-
-                        if (!event.isCancelled())
+                        if (!CraftEventFactory.callBlockIgniteEvent(worldObj, i, j, k, this).isCancelled())
                         {
-                            this.worldObj.setBlockWithNotify(i, j, k, Block.fire.blockID);
+                            worldObj.setBlock(i, j, k, Block.fire.blockID);
                         }
 
                         // CraftBukkit end
@@ -155,7 +142,7 @@ public class EntityLightningBolt extends EntityWeatherEffect
             else
             {
                 double d0 = 3.0D;
-                List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(this.posX - d0, this.posY - d0, this.posZ - d0, this.posX + d0, this.posY + 6.0D + d0, this.posZ + d0));
+                List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getAABBPool().getAABB(this.posX - d0, this.posY - d0, this.posZ - d0, this.posX + d0, this.posY + 6.0D + d0, this.posZ + d0));
 
                 for (int l = 0; l < list.size(); ++l)
                 {
@@ -177,14 +164,4 @@ public class EntityLightningBolt extends EntityWeatherEffect
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
     protected void writeEntityToNBT(NBTTagCompound par1NBTTagCompound) {}
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Checks using a Vec3d to determine if this entity is within range of that vector to be rendered. Args: vec3D
-     */
-    public boolean isInRangeToRenderVec3D(Vec3 par1Vec3)
-    {
-        return this.lightningState >= 0;
-    }
 }

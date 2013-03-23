@@ -22,6 +22,7 @@ public class TileEntityDispenser extends TileEntity implements IInventory
      * random number generator for instance. Used in random item stack selection.
      */
     private Random dispenserRandom = new Random();
+    protected String field_94050_c;
 
     // CraftBukkit start
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
@@ -170,7 +171,7 @@ public class TileEntityDispenser extends TileEntity implements IInventory
         {
             if (this.dispenserContents[i] == null || this.dispenserContents[i].itemID == 0)
             {
-                this.dispenserContents[i] = par1ItemStack;
+                this.setInventorySlotContents(i, par1ItemStack);
                 return i;
             }
         }
@@ -183,7 +184,21 @@ public class TileEntityDispenser extends TileEntity implements IInventory
      */
     public String getInvName()
     {
-        return "container.dispenser";
+        return this.isInvNameLocalized() ? this.field_94050_c : "container.dispenser";
+    }
+
+    public void func_94049_a(String par1Str)
+    {
+        this.field_94050_c = par1Str;
+    }
+
+    /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.field_94050_c != null;
     }
 
     /**
@@ -204,6 +219,11 @@ public class TileEntityDispenser extends TileEntity implements IInventory
             {
                 this.dispenserContents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
             }
+        }
+
+        if (par1NBTTagCompound.hasKey("CustomName"))
+        {
+            this.field_94050_c = par1NBTTagCompound.getString("CustomName");
         }
     }
 
@@ -227,6 +247,11 @@ public class TileEntityDispenser extends TileEntity implements IInventory
         }
 
         par1NBTTagCompound.setTag("Items", nbttaglist);
+
+        if (this.isInvNameLocalized())
+        {
+            par1NBTTagCompound.setString("CustomName", this.field_94050_c);
+        }
     }
 
     /**
@@ -249,4 +274,12 @@ public class TileEntityDispenser extends TileEntity implements IInventory
     public void openChest() {}
 
     public void closeChest() {}
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
+    }
 }

@@ -1,7 +1,6 @@
 package net.minecraft.entity.ai;
 
 import net.minecraft.entity.EntityLiving;
-
 public class EntityAIBreakDoor extends EntityAIDoorInteract
 {
     private int breakingTime;
@@ -78,7 +77,7 @@ public class EntityAIBreakDoor extends EntityAIDoorInteract
             }
 
             // CraftBukkit end
-            this.theEntity.worldObj.setBlockWithNotify(this.entityPosX, this.entityPosY, this.entityPosZ, 0);
+            this.theEntity.worldObj.setBlockToAir(this.entityPosX, this.entityPosY, this.entityPosZ);
             this.theEntity.worldObj.playAuxSFX(1012, this.entityPosX, this.entityPosY, this.entityPosZ, 0);
             this.theEntity.worldObj.playAuxSFX(2001, this.entityPosX, this.entityPosY, this.entityPosZ, this.targetDoor.blockID);
         }

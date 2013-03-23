@@ -1,7 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,95 +9,30 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 
 public class BlockDoor extends Block
 {
+    private static final String[] field_94467_a = new String[] {"doorWood_lower", "doorWood_upper", "doorIron_lower", "doorIron_upper"};
+    private final int field_94465_b;
+
     protected BlockDoor(int par1, Material par2Material)
     {
         super(par1, par2Material);
-        this.blockIndexInTexture = 97;
 
         if (par2Material == Material.iron)
         {
-            ++this.blockIndexInTexture;
+            this.field_94465_b = 2;
+        }
+        else
+        {
+            this.field_94465_b = 0;
         }
 
         float f = 0.5F;
         float f1 = 1.0F;
         this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, f1, 0.5F + f);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Retrieves the block texture to use based on the display side. Args: iBlockAccess, x, y, z, side
-     */
-    public int getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
-    {
-        if (par5 != 0 && par5 != 1)
-        {
-            int i1 = this.getFullMetadata(par1IBlockAccess, par2, par3, par4);
-            int j1 = this.blockIndexInTexture;
-
-            if ((i1 & 8) != 0)
-            {
-                j1 -= 16;
-            }
-
-            int k1 = i1 & 3;
-            boolean flag = (i1 & 4) != 0;
-
-            if (flag)
-            {
-                if (k1 == 0 && par5 == 2)
-                {
-                    j1 = -j1;
-                }
-                else if (k1 == 1 && par5 == 5)
-                {
-                    j1 = -j1;
-                }
-                else if (k1 == 2 && par5 == 3)
-                {
-                    j1 = -j1;
-                }
-                else if (k1 == 3 && par5 == 4)
-                {
-                    j1 = -j1;
-                }
-            }
-            else
-            {
-                if (k1 == 0 && par5 == 5)
-                {
-                    j1 = -j1;
-                }
-                else if (k1 == 1 && par5 == 3)
-                {
-                    j1 = -j1;
-                }
-                else if (k1 == 2 && par5 == 4)
-                {
-                    j1 = -j1;
-                }
-                else if (k1 == 3 && par5 == 2)
-                {
-                    j1 = -j1;
-                }
-
-                if ((i1 & 16) != 0)
-                {
-                    j1 = -j1;
-                }
-            }
-
-            return j1;
-        }
-        else
-        {
-            return this.blockIndexInTexture;
-        }
     }
 
     /**
@@ -131,17 +64,6 @@ public class BlockDoor extends Block
     public int getRenderType()
     {
         return 7;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the bounding box of the wired rectangular prism to render.
-     */
-    public AxisAlignedBB getSelectedBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
-    {
-        this.setBlockBoundsBasedOnState(par1World, par2, par3, par4);
-        return super.getSelectedBoundingBoxFromPool(par1World, par2, par3, par4);
     }
 
     /**
@@ -279,12 +201,12 @@ public class BlockDoor extends Block
 
             if ((i1 & 8) == 0)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, j1);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, j1, 2);
                 par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
             }
             else
             {
-                par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, j1);
+                par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, j1, 2);
                 par1World.markBlockRangeForRenderUpdate(par2, par3 - 1, par4, par2, par3, par4);
             }
 
@@ -308,12 +230,12 @@ public class BlockDoor extends Block
 
             if ((l & 8) == 0)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, i1);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, i1, 2);
                 par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
             }
             else
             {
-                par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, i1);
+                par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, i1, 2);
                 par1World.markBlockRangeForRenderUpdate(par2, par3 - 1, par4, par2, par3, par4);
             }
 
@@ -335,18 +257,18 @@ public class BlockDoor extends Block
 
             if (par1World.getBlockId(par2, par3 + 1, par4) != this.blockID)
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
                 flag = true;
             }
 
             if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4))
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
                 flag = true;
 
                 if (par1World.getBlockId(par2, par3 + 1, par4) == this.blockID)
                 {
-                    par1World.setBlockWithNotify(par2, par3 + 1, par4, 0);
+                    par1World.setBlockToAir(par2, par3 + 1, par4);
                 }
             }
 
@@ -388,7 +310,7 @@ public class BlockDoor extends Block
         {
             if (par1World.getBlockId(par2, par3 - 1, par4) != this.blockID)
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
             else if (par5 > 0 && par5 != this.blockID)   // CraftBukkit
             {
@@ -457,16 +379,6 @@ public class BlockDoor extends Block
         return i1 & 7 | (flag ? 8 : 0) | (flag1 ? 16 : 0);
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return this.blockMaterial == Material.iron ? Item.doorSteel.itemID : Item.doorWood.itemID;
-    }
-
     /**
      * Called when the block is attempted to be harvested
      */
@@ -474,7 +386,7 @@ public class BlockDoor extends Block
     {
         if (par6EntityPlayer.capabilities.isCreativeMode && (par5 & 8) != 0 && par1World.getBlockId(par2, par3 - 1, par4) == this.blockID)
         {
-            par1World.setBlockWithNotify(par2, par3 - 1, par4, 0);
+            par1World.setBlockToAir(par2, par3 - 1, par4);
         }
     }
 }

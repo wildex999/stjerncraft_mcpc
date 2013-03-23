@@ -1,16 +1,9 @@
 package net.minecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.List;
-import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-
 public class ItemBlock extends Item
 {
     /** The block ID of the Block associated with this ItemBlock */
@@ -20,8 +13,6 @@ public class ItemBlock extends Item
     {
         super(par1);
         this.blockID = par1 + 256;
-        this.setIconIndex(Block.blocksList[par1 + 256].getBlockTextureFromSide(2));
-        isDefaultTexture = Block.blocksList[par1 + 256].isDefaultTexture;
     }
 
     /**
@@ -43,9 +34,10 @@ public class ItemBlock extends Item
         par3World.curPlacedItemHitX = par8;
         par3World.curPlacedItemHitY = par9;
         par3World.curPlacedItemHitZ = par10;
-        // MCPC+ end
+        // MCPC+ end        
         int i1 = par3World.getBlockId(par4, par5, par6);
-        if (i1 == Block.snow.blockID)
+
+        if (i1 == Block.snow.blockID && (par3World.getBlockMetadata(par4, par5, par6) & 7) < 1)
         {
             par7 = 1;
         }
@@ -95,7 +87,7 @@ public class ItemBlock extends Item
         {
             return false;
         }
-        else if (par3World.canPlaceEntityOnSide(this.blockID, par4, par5, par6, false, par7, par2EntityPlayer))
+        else if (par3World.canPlaceEntityOnSide(this.blockID, par4, par5, par6, false, par7, par2EntityPlayer, par1ItemStack))
         {
             Block block = Block.blocksList[this.blockID];
             int j1 = this.getMetadata(par1ItemStack.getItemDamage());
@@ -122,26 +114,21 @@ public class ItemBlock extends Item
         }
     }
 
-    // CraftBukkit start - add method to process block placement // MCPC+ note: see above + World#trySetBlockAndMetadata
-    static public boolean processBlockPlace(final World world, final EntityPlayer entityhuman, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data, final int clickedX, final int clickedY, final int clickedZ)
+    // CraftBukkit start - add method to process block placement
+    static boolean processBlockPlace(final World world, final EntityPlayer entityplayer, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data, final int clickedX, final int clickedY, final int clickedZ)
     {
         org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
-
-        world.editingBlocks = true;
         world.callingPlaceEvent = true;
-        world.setBlockAndMetadata(x, y, z, id, data);
-
-        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockstate, clickedX, clickedY, clickedZ);
+        world.setBlock(x, y, z, id, data, 3);
+        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, entityplayer, blockstate, clickedX, clickedY, clickedZ);
 
         if (event.isCancelled() || !event.canBuild())
         {
             blockstate.update(true);
-            world.editingBlocks = false;
             world.callingPlaceEvent = false;
             return false;
         }
 
-        world.editingBlocks = false;
         world.callingPlaceEvent = false;
         int newId = world.getBlockId(x, y, z);
         int newData = world.getBlockMetadata(x, y, z);
@@ -157,7 +144,7 @@ public class ItemBlock extends Item
         // Skulls don't get block data applied to them
         if (block != null && block != Block.skull)
         {
-            block.onBlockPlacedBy(world, x, y, z, entityhuman);
+            block.onBlockPlacedBy(world, x, y, z, entityplayer, itemstack);
             block.onPostBlockPlaced(world, x, y, z, newData);
             world.playSoundEffect((double)((float) x + 0.5F), (double)((float) y + 0.5F), (double)((float) z + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
         }
@@ -171,86 +158,23 @@ public class ItemBlock extends Item
     }
     // CraftBukkit end
 
-    @SideOnly(Side.CLIENT)
+    /**
+     * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
+     * different names based on their damage or NBT.
+     */
+    public String getUnlocalizedName(ItemStack par1ItemStack)
+    {
+        return Block.blocksList[this.blockID].getUnlocalizedName();
+    }
 
     /**
-     * Returns true if the given ItemBlock can be placed on the given side of the given block position.
+     * Returns the unlocalized name of this item.
      */
-    public boolean canPlaceItemBlockOnSide(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer, ItemStack par7ItemStack)
+    public String getUnlocalizedName()
     {
-        int i1 = par1World.getBlockId(par2, par3, par4);
-
-        if (i1 == Block.snow.blockID)
-        {
-            par5 = 1;
-        }
-        else if (i1 != Block.vine.blockID && i1 != Block.tallGrass.blockID && i1 != Block.deadBush.blockID
-                && (Block.blocksList[i1] == null || !Block.blocksList[i1].isBlockReplaceable(par1World, par2, par3, par4)))
-        {
-            if (par5 == 0)
-            {
-                --par3;
-            }
-
-            if (par5 == 1)
-            {
-                ++par3;
-            }
-
-            if (par5 == 2)
-            {
-                --par4;
-            }
-
-            if (par5 == 3)
-            {
-                ++par4;
-            }
-
-            if (par5 == 4)
-            {
-                --par2;
-            }
-
-            if (par5 == 5)
-            {
-                ++par2;
-            }
-        }
-
-        return par1World.canPlaceEntityOnSide(this.getBlockID(), par2, par3, par4, false, par5, (Entity)null);
+        return Block.blocksList[this.blockID].getUnlocalizedName();
     }
-
-    public String getItemNameIS(ItemStack par1ItemStack)
-    {
-        return Block.blocksList[this.blockID].getBlockName();
-    }
-
-    public String getItemName()
-    {
-        return Block.blocksList[this.blockID].getBlockName();
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * gets the CreativeTab this item is displayed on
-     */
-    public CreativeTabs getCreativeTab()
-    {
-        return Block.blocksList[this.blockID].getCreativeTabToDisplayOn();
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
-     */
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
-    {
-        Block.blocksList[this.blockID].getSubBlocks(par1, par2CreativeTabs, par3List);
-    }
-
+    
     /**
      * Called to actually place the block, after the location is determined
      * and all permission checks have been made.
@@ -261,17 +185,17 @@ public class ItemBlock extends Item
      */
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
     {
-        if (world.setBlockAndMetadataWithNotify(x, y, z, this.blockID, metadata))
-        {
-            if (world.getBlockId(x, y, z) == this.blockID)
-            {
-                Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player);
-                Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
-            }
+       if (!world.setBlock(x, y, z, this.blockID, metadata, 3))
+       {
+           return false;
+       }
 
-            return true;
-        }
+       if (world.getBlockId(x, y, z) == this.blockID)
+       {
+           Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player, stack);
+           Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
+       }
 
-        return false;
-    }
+       return true;
+    }    
 }

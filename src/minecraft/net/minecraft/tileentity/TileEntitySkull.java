@@ -1,11 +1,8 @@
 package net.minecraft.tileentity;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
-
 public class TileEntitySkull extends TileEntity
 {
     /** Entity type for this skull. */
@@ -16,6 +13,8 @@ public class TileEntitySkull extends TileEntity
 
     /** Extra data for this skull, used as player username by player heads */
     private String extraType = "";
+
+    public TileEntitySkull() {}
 
     /**
      * Writes a tile entity to NBT.
@@ -84,12 +83,6 @@ public class TileEntitySkull extends TileEntity
         return this.skullRotation;
     }
     // CraftBukkit end
-
-    @SideOnly(Side.CLIENT)
-    public int func_82119_b()
-    {
-        return this.skullRotation;
-    }
 
     /**
      * Get the extra data foor this skull, used as player username by player heads

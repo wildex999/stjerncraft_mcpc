@@ -1,14 +1,14 @@
 package net.minecraft.entity.projectile;
 
 // CraftBukkit start
-import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
-// CraftBukkit end
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class EntitySmallFireball extends EntityFireball
 {
@@ -83,14 +83,11 @@ public class EntitySmallFireball extends EntityFireball
                 if (this.worldObj.isAirBlock(i, j, k))
                 {
                     // CraftBukkit start
-                    org.bukkit.block.Block block = worldObj.getWorld().getBlockAt(i, j, k);
-                    BlockIgniteEvent event = new BlockIgniteEvent(block, BlockIgniteEvent.IgniteCause.FIREBALL, null);
-                    worldObj.getServer().getPluginManager().callEvent(event);
-
-                    if (!event.isCancelled())
+                    if (!CraftEventFactory.callBlockIgniteEvent(worldObj, i, j, k, this).isCancelled())
                     {
-                        this.worldObj.setBlockWithNotify(i, j, k, Block.fire.blockID);
+                        this.worldObj.setBlock(i, j, k, Block.fire.blockID);
                     }
+
                     // CraftBukkit end
                 }
             }

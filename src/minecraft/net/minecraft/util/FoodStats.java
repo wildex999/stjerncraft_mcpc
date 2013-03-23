@@ -1,23 +1,21 @@
 package net.minecraft.util;
 
 import org.bukkit.event.entity.EntityDamageEvent; // CraftBukkit
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.packet.Packet8UpdateHealth;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemFood;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.packet.Packet8UpdateHealth;
 
 public class FoodStats
 {
     // CraftBukkit start - all made public
+
     /** The player's food level. */
     public int foodLevel = 20;
 
     /** The player's food saturation. */
     public float foodSaturationLevel = 5.0F;
-
 
     /** The player's food exhaustion. */
     public float foodExhaustionLevel;
@@ -26,6 +24,8 @@ public class FoodStats
     public int foodTimer = 0;
     // CraftBukkit end
     private int prevFoodLevel = 20;
+
+    public FoodStats() {}
 
     /**
      * Args: int foodLevel, float foodSaturationModifier
@@ -149,12 +149,6 @@ public class FoodStats
         return this.foodLevel;
     }
 
-    @SideOnly(Side.CLIENT)
-    public int getPrevFoodLevel()
-    {
-        return this.prevFoodLevel;
-    }
-
     /**
      * If foodLevel is not max.
      */
@@ -177,17 +171,5 @@ public class FoodStats
     public float getSaturationLevel()
     {
         return this.foodSaturationLevel;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void setFoodLevel(int par1)
-    {
-        this.foodLevel = par1;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void setFoodSaturationLevel(float par1)
-    {
-        this.foodSaturationLevel = par1;
     }
 }

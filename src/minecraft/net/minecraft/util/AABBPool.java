@@ -1,7 +1,5 @@
 package net.minecraft.util;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +36,10 @@ public class AABBPool
     }
 
     /**
-     * Adds a AABB to the pool, or if there is an available AABB, updates an existing AABB entry to specified
-     * coordinates
+     * Creates a new AABB, or reuses one that's no longer in use. Parameters: minX, minY, minZ, maxX, maxY, maxZ. AABBs
+     * returned from this function should only be used for one frame or tick, as after that they will be reused.
      */
-    public AxisAlignedBB addOrModifyAABBInPool(double par1, double par3, double par5, double par7, double par9, double par11)
+    public AxisAlignedBB getAABB(double par1, double par3, double par5, double par7, double par9, double par11)
     {
         // CraftBukkit - don't pool objects indefinitely if thread doesn't adhere to contract
         if (this.numCleans == 0)
@@ -98,17 +96,6 @@ public class AABBPool
 
         // CraftBukkit end
         this.nextPoolIndex = 0;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Clears the AABBPool
-     */
-    public void clearPool()
-    {
-        this.nextPoolIndex = 0;
-        this.listAABB.clear();
     }
 
     public int getlistAABBsize()

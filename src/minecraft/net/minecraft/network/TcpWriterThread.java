@@ -38,7 +38,7 @@ class TcpWriterThread extends Thread
                 {
                     if (!TcpConnection.isTerminating(this.theTcpConnection))
                     {
-                        TcpConnection.sendError(this.theTcpConnection, ioexception);
+                        TcpConnection.sendError(this.theTcpConnection, (Exception) ioexception);
                     }
 
                     // ioexception.printStackTrace(); // CraftBukkit - Don't spam console on unexpected disconnect

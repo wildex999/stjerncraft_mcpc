@@ -3,18 +3,19 @@ package net.minecraft.inventory;
 // CraftBukkit start
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.packet.Packet103SetSlot;
-// CraftBukkit end
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.network.packet.Packet103SetSlot;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class ContainerWorkbench extends Container
 {
+    /** The crafting matrix inventory (3x3). */
     public InventoryCrafting craftMatrix; // CraftBukkit - move initialization into constructor
     public IInventory craftResult; // CraftBukkit - move initialization into constructor
     private World worldObj;
@@ -38,7 +39,7 @@ public class ContainerWorkbench extends Container
         this.posX = par3;
         this.posY = par4;
         this.posZ = par5;
-        this.addSlotToContainer(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35));
+        this.addSlotToContainer((Slot)(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35)));
         int l;
         int i1;
 
@@ -176,6 +177,11 @@ public class ContainerWorkbench extends Container
         }
 
         return itemstack;
+    }
+
+    public boolean func_94530_a(ItemStack par1ItemStack, Slot par2Slot)
+    {
+        return par2Slot.inventory != this.craftResult && super.func_94530_a(par1ItemStack, par2Slot);
     }
 
     // CraftBukkit start

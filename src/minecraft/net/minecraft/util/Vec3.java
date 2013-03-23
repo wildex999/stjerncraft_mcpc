@@ -1,11 +1,11 @@
 package net.minecraft.util;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 public class Vec3
 {
-    public static final Vec3Pool vec3dPool = new Vec3Pool(-1, -1);
+    /**
+     * A global Vec3Pool that always creates new vectors instead of reusing them and is thread-safe.
+     */
+    public static final Vec3Pool fakePool = new Vec3Pool(-1, -1);
     public final Vec3Pool myVec3LocalPool;
 
     /** X coordinate of Vec3D */
@@ -24,7 +24,7 @@ public class Vec3
      */
     public static Vec3 createVectorHelper(double par0, double par2, double par4)
     {
-        return new Vec3(vec3dPool, par0, par2, par4);
+        return new Vec3(fakePool, par0, par2, par4);
     }
 
     protected Vec3(Vec3Pool par1Vec3Pool, double par2, double par4, double par6)
@@ -53,22 +53,12 @@ public class Vec3
     /**
      * Sets the x,y,z components of the vector as specified.
      */
-    public Vec3 setComponents(double par1, double par3, double par5) // MCPC
+    protected Vec3 setComponents(double par1, double par3, double par5)
     {
         this.xCoord = par1;
         this.yCoord = par3;
         this.zCoord = par5;
         return this;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns a new vector with the result of the specified vector minus this.
-     */
-    public Vec3 subtract(Vec3 par1Vec3)
-    {
-        return this.myVec3LocalPool.getVecFromPool(par1Vec3.xCoord - this.xCoord, par1Vec3.yCoord - this.yCoord, par1Vec3.zCoord - this.zCoord);
     }
 
     /**
@@ -83,16 +73,6 @@ public class Vec3
     public double dotProduct(Vec3 par1Vec3)
     {
         return this.xCoord * par1Vec3.xCoord + this.yCoord * par1Vec3.yCoord + this.zCoord * par1Vec3.zCoord;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns a new vector with the result of this vector x the specified vector.
-     */
-    public Vec3 crossProduct(Vec3 par1Vec3)
-    {
-        return this.myVec3LocalPool.getVecFromPool(this.yCoord * par1Vec3.zCoord - this.zCoord * par1Vec3.yCoord, this.zCoord * par1Vec3.xCoord - this.xCoord * par1Vec3.zCoord, this.xCoord * par1Vec3.yCoord - this.yCoord * par1Vec3.xCoord);
     }
 
     /**
@@ -242,21 +222,7 @@ public class Vec3
         this.yCoord = d1;
         this.zCoord = d2;
     }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Rotates the vector around the z axis by the specified angle.
-     */
-    public void rotateAroundZ(float par1)
-    {
-        float f1 = MathHelper.cos(par1);
-        float f2 = MathHelper.sin(par1);
-        double d0 = this.xCoord * (double)f1 + this.yCoord * (double)f2;
-        double d1 = this.yCoord * (double)f1 - this.xCoord * (double)f2;
-        double d2 = this.zCoord;
-        this.xCoord = d0;
-        this.yCoord = d1;
-        this.zCoord = d2;
+    public Vec3 func_72439_b_CodeFix_Public(double a, double b, double c){
+        return setComponents(a, b, c);
     }
 }

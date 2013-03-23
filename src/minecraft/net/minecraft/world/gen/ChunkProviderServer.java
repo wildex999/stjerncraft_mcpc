@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.block.BlockSand;
 
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -26,7 +27,9 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.EmptyChunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.chunk.storage.IChunkLoader;
+
 // CraftBukkit start
 import java.util.Random;
 
@@ -76,7 +79,7 @@ public class ChunkProviderServer implements IChunkProvider
      */
     public void unloadChunksIfNotNearSpawn(int par1, int par2)
     {
-        if (this.worldObj.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(this.worldObj.dimension))   // Forge
+        if (this.worldObj.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId))
         {
             ChunkCoordinates chunkcoordinates = this.worldObj.getSpawnPoint();
             int k = par1 * 16 + 8 - chunkcoordinates.posX;
@@ -159,15 +162,8 @@ public class ChunkProviderServer implements IChunkProvider
 
         if (chunk == null)
         {
-            // Forge start
-            chunk =  ForgeChunkManager.fetchDormantChunk(LongHash.toLong(i, j), this.worldObj);
-
-            if (chunk == null)
-            {
-                chunk = this.safeLoadChunk(i, j);
-            }
-
-            // Forge end
+            chunk = this.safeLoadChunk(i, j);
+            
             if (chunk == null)
             {
                 if (this.currentChunkProvider == null)
@@ -183,10 +179,10 @@ public class ChunkProviderServer implements IChunkProvider
                     catch (Throwable throwable)
                     {
                         CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception generating new chunk");
-                        CrashReportCategory crashreportsystemdetails = crashreport.makeCategory("Chunk to be generated");
-                        crashreportsystemdetails.addCrashSection("Location", String.format("%d,%d", new Object[] { Integer.valueOf(i), Integer.valueOf(j)}));
-                        crashreportsystemdetails.addCrashSection("Position hash", Long.valueOf(LongHash.toLong(i, j)));
-                        crashreportsystemdetails.addCrashSection("Generator", this.currentChunkProvider.makeString());
+                        CrashReportCategory crashreportcategory = crashreport.makeCategory("Chunk to be generated");
+                        crashreportcategory.addCrashSection("Location", String.format("%d,%d", new Object[] { Integer.valueOf(i), Integer.valueOf(j)}));
+                        crashreportcategory.addCrashSection("Position hash", Long.valueOf(LongHash.toLong(i, j)));
+                        crashreportcategory.addCrashSection("Generator", this.currentChunkProvider.makeString());
                         throw new ReportedException(crashreport);
                     }
                 }
@@ -224,6 +220,7 @@ public class ChunkProviderServer implements IChunkProvider
         {
             runnable.run();
         }
+
         // CraftBukkit end
         return chunk;
     }
@@ -245,8 +242,8 @@ public class ChunkProviderServer implements IChunkProvider
 
         if (par1 != chunk.xPosition || par2 != chunk.zPosition)
         {
-            MinecraftServer.logger.severe("Chunk (" + chunk.xPosition + ", " + chunk.zPosition + ") stored at  (" + par1 + ", " + par2 + ") in world '" + worldObj.getWorld().getName() + "'");
-            MinecraftServer.logger.severe(chunk.getClass().getName());
+            this.worldObj.getWorldLogAgent().func_98232_c("Chunk (" + chunk.xPosition + ", " + chunk.zPosition + ") stored at  (" + par1 + ", " + par2 + ") in world '" + worldObj.getWorld().getName() + "'");
+            this.worldObj.getWorldLogAgent().func_98232_c(chunk.getClass().getName());
             Throwable ex = new Throwable();
             ex.fillInStackTrace();
             ex.printStackTrace();
@@ -256,6 +253,9 @@ public class ChunkProviderServer implements IChunkProvider
         // CraftBukkit end
     }
 
+    /**
+     * used by loadChunk, but catches any exceptions if the load fails.
+     */
     public Chunk safeLoadChunk(int par1, int par2)   // CraftBukkit - private -> public
     {
         if (this.currentChunkLoader == null)
@@ -288,6 +288,9 @@ public class ChunkProviderServer implements IChunkProvider
         }
     }
 
+    /**
+     * used by saveChunks, but catches any exceptions if the save fails.
+     */
     public void safeSaveExtraChunkData(Chunk par1Chunk)   // CraftBukkit - private -> public
     {
         if (this.currentChunkLoader != null)
@@ -303,6 +306,9 @@ public class ChunkProviderServer implements IChunkProvider
         }
     }
 
+    /**
+     * used by saveChunks, but catches any exceptions if the save fails.
+     */
     public void safeSaveChunk(Chunk par1Chunk)   // CraftBukkit - private -> public
     {
         if (this.currentChunkLoader != null)
@@ -312,9 +318,9 @@ public class ChunkProviderServer implements IChunkProvider
                 par1Chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
                 this.currentChunkLoader.saveChunk(this.worldObj, par1Chunk);
             }
-            catch (Exception exception)     // CraftBukkit - IOException -> Exception
+            catch (Exception ioexception)     // CraftBukkit - IOException -> Exception
             {
-                exception.printStackTrace();
+                ioexception.printStackTrace();
                 // CraftBukkit start - remove extra exception
             }
 
@@ -377,7 +383,7 @@ public class ChunkProviderServer implements IChunkProvider
 
         while (iterator.hasNext())
         {
-            Chunk chunk = (Chunk) iterator.next();
+            Chunk chunk = (Chunk)iterator.next();
             // CraftBukkit end
 
             if (par1)
@@ -412,10 +418,9 @@ public class ChunkProviderServer implements IChunkProvider
     }
 
     /**
-     * Unloads the 100 oldest chunks from memory, due to a bug with chunkSet.add() never being called it thinks the list
-     * is always empty and will not remove any chunks.
+     * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.
      */
-    public boolean unload100OldestChunks()
+    public boolean unloadQueuedChunks()
     {
         if (!this.worldObj.canNotSave)
         {
@@ -427,7 +432,7 @@ public class ChunkProviderServer implements IChunkProvider
                     this.chunksToUnload.remove(forcedChunk.chunkXPos, forcedChunk.chunkZPos);
                 }
             }
-            // MCPC+ end
+            // MCPC+ end        
             // CraftBukkit start
             Server server = this.worldObj.getServer();
 
@@ -440,6 +445,7 @@ public class ChunkProviderServer implements IChunkProvider
                 {
                     continue;
                 }
+
                 ChunkUnloadEvent event = new ChunkUnloadEvent(chunk.bukkitChunk);
                 server.getPluginManager().callEvent(event);
 
@@ -448,8 +454,9 @@ public class ChunkProviderServer implements IChunkProvider
                     chunk.onChunkUnload();
                     this.safeSaveChunk(chunk);
                     this.safeSaveExtraChunkData(chunk);
+                    // this.unloadQueue.remove(integer);
                     this.loadedChunkHashMap.remove(chunkcoordinates); // CraftBukkit
-                    loadedChunks.remove(chunk); // MCPC+ - vanilla compatibility
+                    loadedChunks.remove(chunk); // MCPC+ - vanilla compatibility   
                     ForgeChunkManager.putDormantChunk(chunkcoordinates, chunk);
 
                     if (this.loadedChunkHashMap.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId))
@@ -457,11 +464,12 @@ public class ChunkProviderServer implements IChunkProvider
                         if (this.currentChunkProvider.makeString().equals(MinecraftServer.getServer().worlds.get(0).chunkProvider.makeString()))
                         {
                             DimensionManager.unloadWorld(this.worldObj.dimension);
-                            return this.currentChunkProvider.unload100OldestChunks();
+                            return this.currentChunkProvider.unloadQueuedChunks();
                         }
                     }
                 }
             }
+
             // CraftBukkit end
 
             if (this.currentChunkLoader != null)
@@ -470,7 +478,7 @@ public class ChunkProviderServer implements IChunkProvider
             }
         }
 
-        return this.currentChunkProvider.unload100OldestChunks();
+        return this.currentChunkProvider.unloadQueuedChunks();
     }
 
     /**

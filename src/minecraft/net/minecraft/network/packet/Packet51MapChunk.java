@@ -204,7 +204,7 @@ public class Packet51MapChunk extends Packet
 
         if (par1)
         {
-            par0Chunk.deferRender = true;
+            par0Chunk.sendUpdates = true;
         }
 
         int l;

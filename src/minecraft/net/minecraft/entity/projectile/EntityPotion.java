@@ -1,7 +1,5 @@
 package net.minecraft.entity.projectile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.entity.EntityLiving;
@@ -14,6 +12,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+
 // CraftBukkit start
 import java.util.HashMap;
 
@@ -26,7 +25,7 @@ public class EntityPotion extends EntityThrowable
     /**
      * The damage value of the thrown potion that this EntityPotion represents.
      */
-    private ItemStack potionDamage;
+    public ItemStack potionDamage; // CraftBukkit private --> public
 
     public EntityPotion(World par1World)
     {
@@ -42,12 +41,6 @@ public class EntityPotion extends EntityThrowable
     {
         super(par1World, par2EntityLiving);
         this.potionDamage = par3ItemStack;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public EntityPotion(World par1World, double par2, double par4, double par6, int par8)
-    {
-        this(par1World, par2, par4, par6, new ItemStack(Item.potion, 1, par8));
     }
 
     public EntityPotion(World par1World, double par2, double par4, double par6, ItemStack par8ItemStack)
@@ -115,11 +108,11 @@ public class EntityPotion extends EntityThrowable
                 {
                     Iterator iterator = list1.iterator();
                     // CraftBukkit
-                    HashMap<LivingEntity, Double> var6 = new HashMap<LivingEntity, Double>();
+                    HashMap<LivingEntity, Double> affected = new HashMap<LivingEntity, Double>();
 
                     while (iterator.hasNext())
                     {
-                        EntityLiving entityliving = (EntityLiving) iterator.next();
+                        EntityLiving entityliving = (EntityLiving)iterator.next();
                         double d0 = this.getDistanceSqToEntity(entityliving);
 
                         if (d0 < 16.0D)
@@ -132,11 +125,11 @@ public class EntityPotion extends EntityThrowable
                             }
 
                             // CraftBukkit start
-                            var6.put((LivingEntity) entityliving.getBukkitEntity(), d1);
+                            affected.put((LivingEntity) entityliving.getBukkitEntity(), d1);
                         }
                     }
 
-                    org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPotionSplashEvent(this, var6);
+                    org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPotionSplashEvent(this, affected);
 
                     if (!event.isCancelled())
                     {
@@ -154,7 +147,7 @@ public class EntityPotion extends EntityThrowable
 
                             while (iterator1.hasNext())
                             {
-                                PotionEffect potioneffect = (PotionEffect) iterator1.next();
+                                PotionEffect potioneffect = (PotionEffect)iterator1.next();
                                 int i = potioneffect.getPotionID();
 
                                 // CraftBukkit start - abide by PVP settings - for players only!
@@ -176,7 +169,7 @@ public class EntityPotion extends EntityThrowable
                                 }
                                 else
                                 {
-                                    int j = (int)(d1 * (double) potioneffect.getDuration() + 0.5D);
+                                    int j = (int)(d1 * (double)potioneffect.getDuration() + 0.5D);
 
                                     if (j > 20)
                                     {

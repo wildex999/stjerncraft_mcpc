@@ -41,15 +41,15 @@ public class Teleporter
         {
             if (!this.placeInExistingPortal(par1Entity, par2, par4, par6, par8))
             {
-                this.func_85188_a(par1Entity);
+                this.makePortal(par1Entity);
                 this.placeInExistingPortal(par1Entity, par2, par4, par6, par8);
             }
         }
         else
         {
             // CraftBukkit start - modularize end portal creation
-            ChunkCoordinates chunkcoordinates = this.createEndPortal(par2, par4, par6);
-            par1Entity.setLocationAndAngles((double) chunkcoordinates.posX, (double) chunkcoordinates.posY, (double) chunkcoordinates.posZ, par1Entity.rotationYaw, 0.0F);
+            ChunkCoordinates created = this.createEndPortal(par2, par4, par6);
+            par1Entity.setLocationAndAngles((double) created.posX, (double) created.posY, (double) created.posZ, par1Entity.rotationYaw, 0.0F);
             par1Entity.motionX = par1Entity.motionY = par1Entity.motionZ = 0.0D;
         }
     }
@@ -74,7 +74,7 @@ public class Teleporter
                     int l1 = j + j1;
                     int i2 = k + i1 * b1 - l * b0;
                     boolean flag = j1 < 0;
-                    this.worldServerInstance.setBlockWithNotify(k1, l1, i2, flag ? Block.obsidian.blockID : 0);
+                    this.worldServerInstance.setBlock(k1, l1, i2, flag ? Block.obsidian.blockID : 0);
                 }
             }
         }
@@ -121,21 +121,21 @@ public class Teleporter
     public boolean placeInExistingPortal(Entity par1Entity, double par2, double par4, double par6, float par8)
     {
         // CraftBukkit start - modularize portal search process and entity teleportation
-        ChunkCoordinates chunkcoordinates = this.findPortal(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 128);
+        ChunkCoordinates found = this.findPortal(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 128);
 
-        if (chunkcoordinates == null)
+        if (found == null)
         {
             return false;
         }
 
-        Location location = new Location(this.worldServerInstance.getWorld(), chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, par8, par1Entity.rotationPitch);
-        Vector vector = par1Entity.getBukkitEntity().getVelocity();
-        this.adjustExit(par1Entity, location, vector);
-        par1Entity.setLocationAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        Location exit = new Location(this.worldServerInstance.getWorld(), found.posX, found.posY, found.posZ, par8, par1Entity.rotationPitch);
+        Vector velocity = par1Entity.getBukkitEntity().getVelocity();
+        this.adjustExit(par1Entity, exit, velocity);
+        par1Entity.setLocationAndAngles(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch());
 
-        if (par1Entity.motionX != vector.getX() || par1Entity.motionY != vector.getY() || par1Entity.motionZ != vector.getZ())
+        if (par1Entity.motionX != velocity.getX() || par1Entity.motionY != velocity.getY() || par1Entity.motionZ != velocity.getZ())
         {
-            par1Entity.getBukkitEntity().setVelocity(vector);
+            par1Entity.getBukkitEntity().setVelocity(velocity);
         }
 
         return true;
@@ -164,12 +164,12 @@ public class Teleporter
 
         if (this.field_85191_c.containsItem(j1))
         {
-            PortalPosition chunkcoordinatesportal = (PortalPosition) this.field_85191_c.getValueByKey(j1);
+            PortalPosition portalposition = (PortalPosition)this.field_85191_c.getValueByKey(j1);
             d3 = 0.0D;
-            i = chunkcoordinatesportal.posX;
-            j = chunkcoordinatesportal.posY;
-            k = chunkcoordinatesportal.posZ;
-            chunkcoordinatesportal.field_85087_d = this.worldServerInstance.getTotalWorldTime();
+            i = portalposition.posX;
+            j = portalposition.posY;
+            k = portalposition.posZ;
+            portalposition.field_85087_d = this.worldServerInstance.getTotalWorldTime();
             flag = false;
         }
         else
@@ -247,9 +247,9 @@ public class Teleporter
             double d4;
             int k1;
             // CraftBukkit end
-            double d8 = (double) i + 0.5D;
-            double d9 = (double) j + 0.5D;
-            d4 = (double) k + 0.5D;
+            double d8 = (double)i + 0.5D;
+            double d9 = (double)j + 0.5D;
+            d4 = (double)k + 0.5D;
             int j2 = -1;
 
             if (this.worldServerInstance.getBlockId(i - 1, j, k) == Block.portal.blockID)
@@ -293,9 +293,9 @@ public class Teleporter
                     k3 = Direction.offsetX[l2];
                     l3 = Direction.offsetZ[l2];
                     k1 = i - k3;
-                    d8 -= (double) k3;
+                    d8 -= (double)k3;
                     int i4 = k - l3;
-                    d4 -= (double) l3;
+                    d4 -= (double)l3;
                     flag1 = !this.worldServerInstance.isAirBlock(k1 + i3 + k3, j, i4 + j3 + l3) || !this.worldServerInstance.isAirBlock(k1 + i3 + k3, j + 1, i4 + j3 + l3);
                     flag2 = !this.worldServerInstance.isAirBlock(k1 + i3, j, i4 + j3) || !this.worldServerInstance.isAirBlock(k1 + i3, j + 1, i4 + j3);
                 }
@@ -316,8 +316,8 @@ public class Teleporter
                     f2 = 0.0F;
                 }
 
-                d8 += (double)((float) k3 * f1 + f2 * (float) i3);
-                d4 += (double)((float) l3 * f1 + f2 * (float) j3);
+                d8 += (double)((float)k3 * f1 + f2 * (float)i3);
+                d4 += (double)((float)l3 * f1 + f2 * (float)j3);
                 float f3 = 0.0F;
                 float f4 = 0.0F;
                 float f5 = 0.0F;
@@ -394,7 +394,7 @@ public class Teleporter
         // CraftBukkit end
     }
 
-    public boolean func_85188_a(Entity par1Entity)
+    public boolean makePortal(Entity par1Entity)
     {
         // CraftBukkit start - allow for portal creation to be based on coordinates instead of entity
         return this.createPortal(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 16);
@@ -596,7 +596,7 @@ public class Teleporter
                         j3 = j5 + l2;
                         i4 = j2 + (i3 - 1) * l5 - k2 * k5;
                         flag = l2 < 0;
-                        this.worldServerInstance.setBlockWithNotify(k3, j3, i4, flag ? Block.obsidian.blockID : 0);
+                        this.worldServerInstance.setBlock(k3, j3, i4, flag ? Block.obsidian.blockID : 0);
                     }
                 }
             }
@@ -604,8 +604,6 @@ public class Teleporter
 
         for (k2 = 0; k2 < 4; ++k2)
         {
-            this.worldServerInstance.editingBlocks = true;
-
             for (i3 = 0; i3 < 4; ++i3)
             {
                 for (l2 = -1; l2 < 4; ++l2)
@@ -614,11 +612,9 @@ public class Teleporter
                     j3 = j5 + l2;
                     i4 = j2 + (i3 - 1) * l5;
                     flag = i3 == 0 || i3 == 3 || l2 == -1 || l2 == 3;
-                    this.worldServerInstance.setBlockWithNotify(k3, j3, i4, flag ? Block.obsidian.blockID : Block.portal.blockID);
+                    this.worldServerInstance.setBlock(k3, j3, i4, flag ? Block.obsidian.blockID : Block.portal.blockID, 0, 2);
                 }
             }
-
-            this.worldServerInstance.editingBlocks = false;
 
             for (i3 = 0; i3 < 4; ++i3)
             {

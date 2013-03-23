@@ -6,13 +6,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
-// CraftBukkit end
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class EntityEgg extends EntityThrowable
 {
@@ -75,9 +74,10 @@ public class EntityEgg extends EntityThrowable
                 }
             }
         }
+
         // CraftBukkit end
 
-        for (int i = 0; i < 8; ++i)
+        for (int j = 0; j < 8; ++j)
         {
             this.worldObj.spawnParticle("snowballpoof", this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D);
         }

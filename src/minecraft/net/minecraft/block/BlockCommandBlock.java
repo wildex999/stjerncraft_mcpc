@@ -2,17 +2,20 @@ package net.minecraft.block;
 
 import java.util.Random;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.world.World;
+
 import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 
 public class BlockCommandBlock extends BlockContainer
 {
     public BlockCommandBlock(int par1)
     {
-        super(par1, 184, Material.iron);
+        super(par1, Material.iron);
     }
 
     /**
@@ -36,20 +39,20 @@ public class BlockCommandBlock extends BlockContainer
             boolean flag1 = (i1 & 1) != 0;
             // CraftBukkit start
             org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
-            int old = flag1 ? 1 : 0;
-            int current = flag ? 1 : 0;
+            int old = flag1 ? 15 : 0;
+            int current = flag ? 15 : 0;
             BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
             par1World.getServer().getPluginManager().callEvent(eventRedstone);
             // CraftBukkit end
 
             if (eventRedstone.getNewCurrent() > 0 && !(eventRedstone.getOldCurrent() > 0))   // CraftBukkit
             {
-                par1World.setBlockMetadata(par2, par3, par4, i1 | 1);
-                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 | 1, 4);
+                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
             }
             else if (!(eventRedstone.getNewCurrent() > 0) && eventRedstone.getOldCurrent() > 0)     // CraftBukkit
             {
-                par1World.setBlockMetadata(par2, par3, par4, i1 & -2);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 & -2, 4);
             }
         }
     }
@@ -63,14 +66,16 @@ public class BlockCommandBlock extends BlockContainer
 
         if (tileentity != null && tileentity instanceof TileEntityCommandBlock)
         {
-            ((TileEntityCommandBlock)tileentity).executeCommandOnPowered(par1World);
+            TileEntityCommandBlock tileentitycommandblock = (TileEntityCommandBlock)tileentity;
+            tileentitycommandblock.func_96102_a(tileentitycommandblock.executeCommandOnPowered(par1World));
+            par1World.func_96440_m(par2, par3, par4, this.blockID);
         }
     }
 
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 1;
     }
@@ -84,9 +89,41 @@ public class BlockCommandBlock extends BlockContainer
 
         if (tileentitycommandblock != null)
         {
-            par5EntityPlayer.displayGUIEditSign(tileentitycommandblock);
+            par5EntityPlayer.displayGUIEditSign((TileEntity) tileentitycommandblock);
         }
 
         return true;
+    }
+
+    /**
+     * If this returns true, then comparators facing away from this block will use the value from
+     * getComparatorInputOverride instead of the actual redstone signal strength.
+     */
+    public boolean hasComparatorInputOverride()
+    {
+        return true;
+    }
+
+    /**
+     * If hasComparatorInputOverride returns true, the return value from this is used instead of the redstone signal
+     * strength when this block inputs to a comparator.
+     */
+    public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
+    {
+        TileEntity tileentity = par1World.getBlockTileEntity(par2, par3, par4);
+        return tileentity != null && tileentity instanceof TileEntityCommandBlock ? ((TileEntityCommandBlock)tileentity).func_96103_d() : 0;
+    }
+
+    /**
+     * Called when the block is placed in the world.
+     */
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
+    {
+        TileEntityCommandBlock tileentitycommandblock = (TileEntityCommandBlock)par1World.getBlockTileEntity(par2, par3, par4);
+
+        if (par6ItemStack.hasDisplayName())
+        {
+            tileentitycommandblock.func_96104_c(par6ItemStack.getDisplayName());
+        }
     }
 }

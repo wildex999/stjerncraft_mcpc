@@ -1,3 +1,15 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ *
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.relauncher;
 
 import java.io.ByteArrayOutputStream;
@@ -19,7 +31,7 @@ import java.util.logging.Logger;
 public class FMLRelaunchLog
 {
 
-    public static boolean useOnlyThisLogger = false;
+    public static boolean useOnlyThisLogger = false; // MCPC+ - FML logger vs. CB logger
 
     private static class ConsoleLogWrapper extends Handler
     {
@@ -100,15 +112,17 @@ public class FMLRelaunchLog
                 super.reset();
 
                 currentMessage.append(record.replace(FMLLogFormatter.LINE_SEPARATOR, "\n"));
-                if (currentMessage.lastIndexOf("\n")>=0)
+                // Are we longer than just the line separator?
+                int lastIdx = -1;
+                int idx = currentMessage.indexOf("\n",lastIdx+1);
+                while (idx > 0)
                 {
-                    // Are we longer than just the line separator?
-                    if (currentMessage.length()>1)
-                    {
-                        // Trim the line separator
-                        currentMessage.setLength(currentMessage.length()-1);
-                        log.log(Level.INFO, currentMessage.toString());
-                    }
+                    log.log(Level.INFO, currentMessage.substring(lastIdx+1,idx));
+                    lastIdx = idx;
+                    idx = currentMessage.indexOf("\n",lastIdx+1);
+                }
+                if (lastIdx >= 0)
+                {
                     currentMessage.setLength(0);
                 }
             }
@@ -158,6 +172,7 @@ public class FMLRelaunchLog
         log.myLog.setLevel(Level.ALL);
         log.myLog.setUseParentHandlers(false);
         consoleLogThread = new Thread(new ConsoleLogThread());
+        consoleLogThread.setDaemon(true);
         consoleLogThread.start();
         formatter = new FMLLogFormatter();
         try
@@ -182,8 +197,8 @@ public class FMLRelaunchLog
         // MCPC+ start - conditional
         if (useOnlyThisLogger)
         {
-            System.setOut(new PrintStream(new LoggingOutStream(stdOut), true));
-            System.setErr(new PrintStream(new LoggingOutStream(stdErr), true));
+        System.setOut(new PrintStream(new LoggingOutStream(stdOut), true));
+        System.setErr(new PrintStream(new LoggingOutStream(stdErr), true));
         }
         // MCPC+ end
 

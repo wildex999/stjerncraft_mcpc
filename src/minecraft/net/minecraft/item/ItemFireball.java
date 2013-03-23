@@ -1,14 +1,9 @@
 package net.minecraft.item;
 
-// CraftBukkit start
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockIgniteEvent;
-// CraftBukkit end
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-
 public class ItemFireball extends Item
 {
     public ItemFireball(int par1)
@@ -70,12 +65,7 @@ public class ItemFireball extends Item
                 if (i1 == 0)
                 {
                     // CraftBukkit start
-                    org.bukkit.block.Block blockClicked = par3World.getWorld().getBlockAt(par4, par5, par6);
-                    Player thePlayer = (Player) par2EntityPlayer.getBukkitEntity();
-                    BlockIgniteEvent eventIgnite = new BlockIgniteEvent(blockClicked, BlockIgniteEvent.IgniteCause.FIREBALL, thePlayer);
-                    par3World.getServer().getPluginManager().callEvent(eventIgnite);
-
-                    if (eventIgnite.isCancelled())
+                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(par3World, par4, par5, par6, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, par2EntityPlayer).isCancelled())
                     {
                         if (!par2EntityPlayer.capabilities.isCreativeMode)
                         {
@@ -87,7 +77,7 @@ public class ItemFireball extends Item
 
                     // CraftBukkit end
                     par3World.playSoundEffect((double)par4 + 0.5D, (double)par5 + 0.5D, (double)par6 + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
-                    par3World.setBlockWithNotify(par4, par5, par6, Block.fire.blockID);
+                    par3World.setBlock(par4, par5, par6, Block.fire.blockID);
                 }
 
                 if (!par2EntityPlayer.capabilities.isCreativeMode)

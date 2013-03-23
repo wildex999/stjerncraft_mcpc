@@ -1,10 +1,9 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
+
 import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
 
 public class BlockRedstoneLight extends Block
@@ -14,13 +13,12 @@ public class BlockRedstoneLight extends Block
 
     public BlockRedstoneLight(int par1, boolean par2)
     {
-        super(par1, 211, Material.redstoneLight);
+        super(par1, Material.redstoneLight);
         this.powered = par2;
 
         if (par2)
         {
             this.setLightValue(1.0F);
-            ++this.blockIndexInTexture;
         }
     }
 
@@ -44,7 +42,7 @@ public class BlockRedstoneLight extends Block
                 }
 
                 // CraftBukkit end
-                par1World.setBlockWithNotify(par2, par3, par4, Block.redstoneLampActive.blockID);
+                par1World.setBlock(par2, par3, par4, Block.redstoneLampActive.blockID, 0, 2);
             }
         }
     }
@@ -70,7 +68,7 @@ public class BlockRedstoneLight extends Block
                 }
 
                 // CraftBukkit end
-                par1World.setBlockWithNotify(par2, par3, par4, Block.redstoneLampActive.blockID);
+                par1World.setBlock(par2, par3, par4, Block.redstoneLampActive.blockID, 0, 2);
             }
         }
     }
@@ -89,7 +87,7 @@ public class BlockRedstoneLight extends Block
             }
 
             // CraftBukkit end
-            par1World.setBlockWithNotify(par2, par3, par4, Block.redstoneLampIdle.blockID);
+            par1World.setBlock(par2, par3, par4, Block.redstoneLampIdle.blockID, 0, 2);
         }
     }
 
@@ -97,16 +95,6 @@ public class BlockRedstoneLight extends Block
      * Returns the ID of the items to drop on destruction.
      */
     public int idDropped(int par1, Random par2Random, int par3)
-    {
-        return Block.redstoneLampIdle.blockID;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
     {
         return Block.redstoneLampIdle.blockID;
     }

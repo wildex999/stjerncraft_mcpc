@@ -1,8 +1,8 @@
 package net.minecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.List;
+// CraftBukkit start
+import org.bukkit.Bukkit;
+import org.bukkit.event.server.MapInitializeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.Entity;
@@ -11,14 +11,11 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet131MapData;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.MapData;
 import net.minecraft.world.storage.MapInfo;
-// CraftBukkit start
-import net.minecraft.world.WorldSavedData;
-import net.minecraft.world.WorldServer;
-import org.bukkit.Bukkit;
-import org.bukkit.event.server.MapInitializeEvent;
 // CraftBukkit end
 
 public class ItemMap extends ItemMapBase
@@ -27,21 +24,6 @@ public class ItemMap extends ItemMapBase
     {
         super(par1);
         this.setHasSubtypes(true);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static MapData getMPMapData(short par0, World par1World)
-    {
-        String s = "map_" + par0;
-        MapData mapdata = (MapData)par1World.loadItemData(MapData.class, s);
-
-        if (mapdata == null)
-        {
-            mapdata = new MapData(s);
-            par1World.setItemData(s, mapdata);
-        }
-
-        return mapdata;
     }
 
     public MapData getMapData(ItemStack par1ItemStack, World par2World)
@@ -58,7 +40,8 @@ public class ItemMap extends ItemMapBase
             int i = 128 * (1 << mapdata.scale);
             mapdata.xCenter = Math.round((float)par2World.getWorldInfo().getSpawnX() / (float)i) * i;
             mapdata.zCenter = Math.round((float)(par2World.getWorldInfo().getSpawnZ() / i)) * i;
-            mapdata.dimension = (byte)((WorldServer) par2World).dimension;  // CraftBukkit - fixes Bukkit multiworld maps
+            //mapdata.dimension = (byte)((WorldServer) par2World).dimension;  // CraftBukkit - fixes Bukkit multiworld maps
+            mapdata.dimension = par2World.provider.dimensionId;            // MCPC+ - note - from FML, needed?
             mapdata.markDirty();
             par2World.setItemData(s, (WorldSavedData) mapdata);
             // CraftBukkit start
@@ -345,29 +328,6 @@ public class ItemMap extends ItemMapBase
             MapInitializeEvent event = new MapInitializeEvent(mapdata1.mapView);
             Bukkit.getServer().getPluginManager().callEvent(event);
             // CraftBukkit end
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * allows items to add custom lines of information to the mouseover description
-     */
-    public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4)
-    {
-        MapData mapdata = this.getMapData(par1ItemStack, par2EntityPlayer.worldObj);
-
-        if (par4)
-        {
-            if (mapdata == null)
-            {
-                par3List.add("Unknown map");
-            }
-            else
-            {
-                par3List.add("Scaling at 1:" + (1 << mapdata.scale));
-                par3List.add("(Level " + mapdata.scale + "/" + 4 + ")");
-            }
         }
     }
 }

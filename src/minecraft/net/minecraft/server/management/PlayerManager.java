@@ -7,6 +7,7 @@ import net.minecraft.util.LongHashMap;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
+
 // CraftBukkit start
 import java.util.Collections;
 import java.util.Queue;
@@ -286,7 +287,7 @@ public class PlayerManager
             int i1 = this.playerViewRadius;
             int j1 = i - k;
             int k1 = j - l;
-            List<ChunkCoordIntPair> var15 = new LinkedList<ChunkCoordIntPair>(); // CraftBukkit
+            List<ChunkCoordIntPair> chunksToLoad = new LinkedList<ChunkCoordIntPair>(); // CraftBukkit
 
             if (j1 != 0 || k1 != 0)
             {
@@ -296,16 +297,16 @@ public class PlayerManager
                     {
                         if (!this.func_72684_a(l1, i2, k, l, i1))
                         {
-                            var15.add(new ChunkCoordIntPair(l1, i2)); // CraftBukkit
+                            chunksToLoad.add(new ChunkCoordIntPair(l1, i2)); // CraftBukkit
                         }
 
                         if (!this.func_72684_a(l1 - j1, i2 - k1, i, j, i1))
                         {
-                            PlayerInstance playerchunk = this.getOrCreateChunkWatcher(l1 - j1, i2 - k1, false);
+                            PlayerInstance playerinstance = this.getOrCreateChunkWatcher(l1 - j1, i2 - k1, false);
 
-                            if (playerchunk != null)
+                            if (playerinstance != null)
                             {
-                                playerchunk.sendThisChunkToPlayer(par1EntityPlayerMP);
+                                playerinstance.sendThisChunkToPlayer(par1EntityPlayerMP);
                             }
                         }
                     }
@@ -315,9 +316,9 @@ public class PlayerManager
                 par1EntityPlayerMP.managedPosX = par1EntityPlayerMP.posX;
                 par1EntityPlayerMP.managedPosZ = par1EntityPlayerMP.posZ;
                 // CraftBukkit start - send nearest chunks first
-                Collections.sort(var15, new ChunkCoordComparator(par1EntityPlayerMP));
+                Collections.sort(chunksToLoad, new ChunkCoordComparator(par1EntityPlayerMP));
 
-                for (ChunkCoordIntPair pair : var15)
+                for (ChunkCoordIntPair pair : chunksToLoad)
                 {
                     this.getOrCreateChunkWatcher(pair.chunkXPos, pair.chunkZPos, true).addPlayerToChunkWatchingList(par1EntityPlayerMP);
                 }
@@ -356,7 +357,7 @@ public class PlayerManager
         return par0PlayerManager.playerInstances;
     }
 
-    static Queue getChunkWatchersWithPlayers(PlayerManager playermanager)   // CraftBukkit List -> Queue
+    static Queue c(PlayerManager playermanager)   // CraftBukkit List -> Queue
     {
         return playermanager.chunkWatcherWithPlayers;
     }

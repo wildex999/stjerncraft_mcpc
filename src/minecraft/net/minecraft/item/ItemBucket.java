@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
-// CraftBukkit end
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -50,13 +49,14 @@ public class ItemBucket extends Item
         }
         else
         {
-            FillBucketEvent event = new FillBucketEvent(par3EntityPlayer, par1ItemStack, par2World, movingobjectposition);
-            if (MinecraftForge.EVENT_BUS.post(event))
+            // MCPC+ start - rename to forgeEvent fixing naming clash
+            FillBucketEvent forgeEvent = new FillBucketEvent(par3EntityPlayer, par1ItemStack, par2World, movingobjectposition);
+            if (MinecraftForge.EVENT_BUS.post(forgeEvent))
             {
                 return par1ItemStack;
             }
 
-            if (event.getResult() == Event.Result.ALLOW)
+            if (forgeEvent.getResult() == Event.Result.ALLOW)
             {
                 if (par3EntityPlayer.capabilities.isCreativeMode)
                 {
@@ -65,16 +65,17 @@ public class ItemBucket extends Item
 
                 if (--par1ItemStack.stackSize <= 0)
                 {
-                    return event.result;
+                    return forgeEvent.result;
                 }
 
-                if (!par3EntityPlayer.inventory.addItemStackToInventory(event.result))
-                    {
-                    par3EntityPlayer.dropPlayerItem(event.result);
-                    }
-
-                    return par1ItemStack;
+                if (!par3EntityPlayer.inventory.addItemStackToInventory(forgeEvent.result))
+                {
+                    par3EntityPlayer.dropPlayerItem(forgeEvent.result);
                 }
+
+                return par1ItemStack;
+            }
+            // MCPC+ end
 
             if (movingobjectposition.typeOfHit == EnumMovingObjectType.TILE)
             {
@@ -97,22 +98,22 @@ public class ItemBucket extends Item
                     if (par2World.getBlockMaterial(i, j, k) == Material.water && par2World.getBlockMetadata(i, j, k) == 0)
                     {
                         // CraftBukkit start
-                        PlayerBucketFillEvent cbEvent = CraftEventFactory.callPlayerBucketFillEvent(par3EntityPlayer, i, j, k, -1, par1ItemStack, Item.bucketWater);
+                        PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(par3EntityPlayer, i, j, k, -1, par1ItemStack, Item.bucketWater);
 
-                        if (cbEvent.isCancelled())
+                        if (event.isCancelled())
                         {
                             return par1ItemStack;
                         }
 
                         // CraftBukkit end
-                        par2World.setBlockWithNotify(i, j, k, 0);
+                        par2World.setBlockToAir(i, j, k);
 
                         if (par3EntityPlayer.capabilities.isCreativeMode)
                         {
                             return par1ItemStack;
                         }
 
-                        ItemStack result = CraftItemStack.asNMSCopy(cbEvent.getItemStack()); // CraftBukkit - TODO: Check this stuff later... Not sure how this behavior should work
+                        ItemStack result = CraftItemStack.asNMSCopy(event.getItemStack()); // CraftBukkit - TODO: Check this stuff later... Not sure how this behavior should work
 
                         if (--par1ItemStack.stackSize <= 0)
                         {
@@ -121,7 +122,7 @@ public class ItemBucket extends Item
 
                         if (!par3EntityPlayer.inventory.addItemStackToInventory(result))   // CraftBukkit
                         {
-                            par3EntityPlayer.dropPlayerItem(CraftItemStack.asNMSCopy(cbEvent.getItemStack())); // CraftBukkit
+                            par3EntityPlayer.dropPlayerItem(CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
                         }
 
                         return par1ItemStack;
@@ -130,22 +131,22 @@ public class ItemBucket extends Item
                     if (par2World.getBlockMaterial(i, j, k) == Material.lava && par2World.getBlockMetadata(i, j, k) == 0)
                     {
                         // CraftBukkit start
-                        PlayerBucketFillEvent cbEvent = CraftEventFactory.callPlayerBucketFillEvent(par3EntityPlayer, i, j, k, -1, par1ItemStack, Item.bucketLava);
+                        PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(par3EntityPlayer, i, j, k, -1, par1ItemStack, Item.bucketLava);
 
-                        if (cbEvent.isCancelled())
+                        if (event.isCancelled())
                         {
                             return par1ItemStack;
                         }
 
                         // CraftBukkit end
-                        par2World.setBlockWithNotify(i, j, k, 0);
+                        par2World.setBlockToAir(i, j, k);
 
                         if (par3EntityPlayer.capabilities.isCreativeMode)
                         {
                             return par1ItemStack;
                         }
 
-                        ItemStack result = CraftItemStack.asNMSCopy(cbEvent.getItemStack()); // CraftBukkit - TODO: Check this stuff later... Not sure how this behavior should work
+                        ItemStack result = CraftItemStack.asNMSCopy(event.getItemStack()); // CraftBukkit - TODO: Check this stuff later... Not sure how this behavior should work
 
                         if (--par1ItemStack.stackSize <= 0)
                         {
@@ -154,7 +155,7 @@ public class ItemBucket extends Item
 
                         if (!par3EntityPlayer.inventory.addItemStackToInventory(result))   // CraftBukkit
                         {
-                            par3EntityPlayer.dropPlayerItem(CraftItemStack.asNMSCopy(cbEvent.getItemStack())); // CraftBukkit
+                            par3EntityPlayer.dropPlayerItem(CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
                         }
 
                         return par1ItemStack;
@@ -165,14 +166,14 @@ public class ItemBucket extends Item
                     if (this.isFull < 0)
                     {
                         // CraftBukkit start
-                        PlayerBucketEmptyEvent cbEvent = CraftEventFactory.callPlayerBucketEmptyEvent(par3EntityPlayer, i, j, k, movingobjectposition.sideHit, par1ItemStack);
+                        PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(par3EntityPlayer, i, j, k, movingobjectposition.sideHit, par1ItemStack);
 
-                        if (cbEvent.isCancelled())
+                        if (event.isCancelled())
                         {
                             return par1ItemStack;
                         }
 
-                        return CraftItemStack.asNMSCopy(cbEvent.getItemStack());
+                        return CraftItemStack.asNMSCopy(event.getItemStack());
                     }
 
                     int clickedX = i, clickedY = j, clickedZ = k;
@@ -214,9 +215,9 @@ public class ItemBucket extends Item
                     }
 
                     // CraftBukkit start
-                    PlayerBucketEmptyEvent cbEvent = CraftEventFactory.callPlayerBucketEmptyEvent(par3EntityPlayer, clickedX, clickedY, clickedZ, movingobjectposition.sideHit, par1ItemStack);
+                    PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(par3EntityPlayer, clickedX, clickedY, clickedZ, movingobjectposition.sideHit, par1ItemStack);
 
-                    if (cbEvent.isCancelled())
+                    if (event.isCancelled())
                     {
                         return par1ItemStack;
                     }
@@ -225,7 +226,7 @@ public class ItemBucket extends Item
 
                     if (this.tryPlaceContainedLiquid(par2World, d0, d1, d2, i, j, k) && !par3EntityPlayer.capabilities.isCreativeMode)
                     {
-                        return CraftItemStack.asNMSCopy(cbEvent.getItemStack()); // CraftBukkit
+                        return CraftItemStack.asNMSCopy(event.getItemStack()); // CraftBukkit
                     }
                 }
             }
@@ -233,14 +234,14 @@ public class ItemBucket extends Item
             {
                 // CraftBukkit start - This codepath seems to be *NEVER* called
                 org.bukkit.Location loc = movingobjectposition.entityHit.getBukkitEntity().getLocation();
-                PlayerBucketFillEvent cbEvent = CraftEventFactory.callPlayerBucketFillEvent(par3EntityPlayer, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), -1, par1ItemStack, Item.bucketMilk);
+                PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(par3EntityPlayer, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), -1, par1ItemStack, Item.bucketMilk);
 
-                if (cbEvent.isCancelled())
+                if (event.isCancelled())
                 {
                     return par1ItemStack;
                 }
 
-                return CraftItemStack.asNMSCopy(cbEvent.getItemStack());
+                return CraftItemStack.asNMSCopy(event.getItemStack());
                 // CraftBukkit end
             }
 
@@ -274,7 +275,7 @@ public class ItemBucket extends Item
             }
             else
             {
-                par1World.setBlockAndMetadataWithNotify(par8, par9, par10, this.isFull, 0);
+                par1World.setBlock(par8, par9, par10, this.isFull, 0, 3);
             }
 
             return true;

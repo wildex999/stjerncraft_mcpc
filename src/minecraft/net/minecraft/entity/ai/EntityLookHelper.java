@@ -88,19 +88,19 @@ public class EntityLookHelper
         }
         else
         {
-            this.entity.rotationYawHead = this.updateRotation(this.entity.rotationYawHead, this.entity.renderYawOffset, 10.0F);
+            this.entity.rotationYawHead = this.updateRotation(this.entity.rotationYawHead, this.entity.field_70770_ap, 10.0F);
         }
 
-        float f = MathHelper.wrapAngleTo180_float(this.entity.rotationYawHead - this.entity.renderYawOffset);
+        float f2 = MathHelper.wrapAngleTo180_float(this.entity.rotationYawHead - this.entity.renderYawOffset);
 
         if (!this.entity.getNavigator().noPath())
         {
-            if (f < -75.0F)
+            if (f2 < -75.0F)
             {
                 this.entity.rotationYawHead = this.entity.renderYawOffset - 75.0F;
             }
 
-            if (f > 75.0F)
+            if (f2 > 75.0F)
             {
                 this.entity.rotationYawHead = this.entity.renderYawOffset + 75.0F;
             }

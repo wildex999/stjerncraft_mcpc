@@ -27,16 +27,13 @@ import cpw.mods.fml.common.FMLLog;
 // MCPC+ end
 
 public class CraftBlock implements Block {
-
     private final CraftChunk chunk;
     private final int x;
     private final int y;
     private final int z;
-    // MCPC+ start - add support for custom biomes
-    private static final Biome[] BIOME_MAPPING = new Biome[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.biomeList/*was:biomes*/.length];
-    private static final net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/[] BIOMEBASE_MAPPING = new net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.biomeList/*was:biomes*/.length];
-    // MCPC+ end
-
+    private static final Biome BIOME_MAPPING[];
+    private static final net.minecraft.world.biome.BiomeGenBase BIOMEBASE_MAPPING[];
+    
     public CraftBlock(CraftChunk chunk, int x, int y, int z) {
         this.x = x;
         this.y = y;
@@ -86,19 +83,19 @@ public class CraftBlock implements Block {
     }
 
     public void setData(final byte data) {
-        chunk.getHandle().worldObj/*was:world*/.setBlockMetadataWithNotify/*was:setData*/(x, y, z, data);
+        chunk.getHandle().worldObj.setBlockMetadataWithNotify(x, y, z, data, 3);
     }
 
     public void setData(final byte data, boolean applyPhysics) {
         if (applyPhysics) {
-            chunk.getHandle().worldObj/*was:world*/.setBlockMetadataWithNotify/*was:setData*/(x, y, z, data);
+            chunk.getHandle().worldObj.setBlockMetadataWithNotify(x, y, z, data, 3);
         } else {
-            chunk.getHandle().worldObj/*was:world*/.setBlockMetadata/*was:setRawData*/(x, y, z, data);
+            chunk.getHandle().worldObj.setBlockMetadataWithNotify(x, y, z, data, 4);
         }
     }
 
     public byte getData() {
-        return (byte) chunk.getHandle().getBlockMetadata/*was:getData*/(this.x & 0xF, this.y & 0xFF, this.z & 0xF);
+        return (byte) chunk.getHandle().getBlockMetadata(this.x & 0xF, this.y & 0xFF, this.z & 0xF);
     }
 
     public void setType(final Material type) {
@@ -106,24 +103,24 @@ public class CraftBlock implements Block {
     }
 
     public boolean setTypeId(final int type) {
-        return chunk.getHandle().worldObj/*was:world*/.setBlockWithNotify/*was:setTypeId*/(x, y, z, type);
+        return chunk.getHandle().worldObj.setBlock(x, y, z, type, getData(), 3);
     }
 
     public boolean setTypeId(final int type, final boolean applyPhysics) {
         if (applyPhysics) {
             return setTypeId(type);
         } else {
-            return chunk.getHandle().worldObj/*was:world*/.setBlock/*was:setRawTypeId*/(x, y, z, type);
+            return chunk.getHandle().worldObj.setBlock(x, y, z, type, getData(), 4);
         }
     }
 
     public boolean setTypeIdAndData(final int type, final byte data, final boolean applyPhysics) {
         if (applyPhysics) {
-            return chunk.getHandle().worldObj/*was:world*/.setBlockAndMetadataWithNotify/*was:setTypeIdAndData*/(x, y, z, type, data);
+            return chunk.getHandle().worldObj.setBlock(x, y, z, type, data, 3);
         } else {
-            boolean success = chunk.getHandle().worldObj/*was:world*/.setBlockAndMetadata/*was:setRawTypeIdAndData*/(x, y, z, type, data);
+            boolean success = chunk.getHandle().worldObj.setBlock(x, y, z, type, data, 4);
             if (success) {
-                chunk.getHandle().worldObj/*was:world*/.markBlockForUpdate/*was:notify*/(x, y, z);
+                chunk.getHandle().worldObj.markBlockForUpdate(x, y, z);
             }
             return success;
         }
@@ -134,20 +131,21 @@ public class CraftBlock implements Block {
     }
 
     public int getTypeId() {
-        return chunk.getHandle().getBlockID/*was:getTypeId*/(this.x & 0xF, this.y & 0xFF, this.z & 0xF);
+        return chunk.getHandle().getBlockID(this.x & 0xF, this.y & 0xFF, this.z & 0xF);
     }
 
     public byte getLightLevel() {
-        return (byte) chunk.getHandle().worldObj/*was:world*/.getBlockLightValue/*was:getLightLevel*/(this.x, this.y, this.z);
+        return (byte) chunk.getHandle().worldObj.getBlockLightValue(this.x, this.y, this.z);
     }
 
     public byte getLightFromSky() {
-        return (byte) chunk.getHandle().getSavedLightValue/*was:getBrightness*/(net.minecraft.world.EnumSkyBlock/*was:EnumSkyBlock*/.Sky/*was:SKY*/, this.x & 0xF, this.y & 0xFF, this.z & 0xF);
+        return (byte) chunk.getHandle().getSavedLightValue(net.minecraft.world.EnumSkyBlock.Sky, this.x & 0xF, this.y & 0xFF, this.z & 0xF);
     }
 
     public byte getLightFromBlocks() {
-        return (byte) chunk.getHandle().getSavedLightValue/*was:getBrightness*/(net.minecraft.world.EnumSkyBlock/*was:EnumSkyBlock*/.Block/*was:BLOCK*/, this.x & 0xF, this.y & 0xFF, this.z & 0xF);
+        return (byte) chunk.getHandle().getSavedLightValue(net.minecraft.world.EnumSkyBlock.Block, this.x & 0xF, this.y & 0xFF, this.z & 0xF);
     }
+
 
     public Block getFace(final BlockFace face) {
         return getRelative(face, 1);
@@ -173,7 +171,10 @@ public class CraftBlock implements Block {
         BlockFace[] values = BlockFace.values();
 
         for (BlockFace face : values) {
-            if ((this.getX() + face.getModX() == block.getX()) && (this.getY() + face.getModY() == block.getY()) && (this.getZ() + face.getModZ() == block.getZ())) {
+            if ((this.getX() + face.getModX() == block.getX()) &&
+                (this.getY() + face.getModY() == block.getY()) &&
+                (this.getZ() + face.getModZ() == block.getZ())
+            ) {
                 return face;
             }
         }
@@ -242,12 +243,17 @@ public class CraftBlock implements Block {
         case WALL_SIGN:
             return new CraftSign(this);
         case CHEST:
+        case TRAPPED_CHEST:
             return new CraftChest(this);
         case BURNING_FURNACE:
         case FURNACE:
             return new CraftFurnace(this);
         case DISPENSER:
             return new CraftDispenser(this);
+        case DROPPER:
+            return new CraftDropper(this);
+        case HOPPER:
+            return new CraftHopper(this);
         case MOB_SPAWNER:
             return new CraftCreatureSpawner(this);
         case NOTE_BLOCK:
@@ -258,6 +264,8 @@ public class CraftBlock implements Block {
             return new CraftBrewingStand(this);
         case SKULL:
             return new CraftSkull(this);
+        case COMMAND:
+            return new CraftCommandBlock(this);
         default:
             return new CraftBlockState(this);
         }
@@ -271,15 +279,15 @@ public class CraftBlock implements Block {
         getWorld().setBiome(x, z, bio);
     }
 
-    public static Biome biomeBaseToBiome(net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/ base) {
+    public static Biome biomeBaseToBiome(net.minecraft.world.biome.BiomeGenBase base) {
         if (base == null) {
             return null;
         }
 
-        return BIOME_MAPPING[base.biomeID/*was:id*/];
+        return BIOME_MAPPING[base.biomeID];
     }
 
-    public static net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/ biomeToBiomeBase(Biome bio) {
+    public static net.minecraft.world.biome.BiomeGenBase biomeToBiomeBase(Biome bio) {
         if (bio == null) {
             return null;
         }
@@ -295,19 +303,17 @@ public class CraftBlock implements Block {
     }
 
     public boolean isBlockPowered() {
-        return chunk.getHandle().worldObj/*was:world*/.isBlockGettingPowered/*was:isBlockPowered*/(x, y, z);
+        return chunk.getHandle().worldObj.getBlockPowerInput(x, y, z) > 0;
     }
 
     public boolean isBlockIndirectlyPowered() {
-        return chunk.getHandle().worldObj/*was:world*/.isBlockIndirectlyGettingPowered/*was:isBlockIndirectlyPowered*/(x, y, z);
+        return chunk.getHandle().worldObj.isBlockIndirectlyGettingPowered(x, y, z);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof CraftBlock))
-            return false;
+        if (o == this) return true;
+        if (!(o instanceof CraftBlock)) return false;
         CraftBlock other = (CraftBlock) o;
 
         return this.x == other.x && this.y == other.y && this.z == other.z && this.getWorld().equals(other.getWorld());
@@ -319,29 +325,30 @@ public class CraftBlock implements Block {
     }
 
     public boolean isBlockFacePowered(BlockFace face) {
-        return chunk.getHandle().worldObj/*was:world*/.isBlockProvidingPowerTo/*was:isBlockFacePowered*/(x, y, z, blockFaceToNotch(face));
+        return chunk.getHandle().worldObj.getIndirectPowerOutput(x, y, z, blockFaceToNotch(face));
     }
 
     public boolean isBlockFaceIndirectlyPowered(BlockFace face) {
-        return chunk.getHandle().worldObj/*was:world*/.isBlockIndirectlyProvidingPowerTo/*was:isBlockFaceIndirectlyPowered*/(x, y, z, blockFaceToNotch(face));
+        int power = chunk.getHandle().worldObj.getIndirectPowerLevelTo(x, y, z, blockFaceToNotch(face));
+
+        Block relative = getRelative(face);
+        if (relative.getType() == Material.REDSTONE_WIRE) {
+            return Math.max(power, relative.getData()) > 0;
+        }
+
+        return power > 0;
     }
 
     public int getBlockPower(BlockFace face) {
         int power = 0;
-        net.minecraft.block.BlockRedstoneWire/*was:BlockRedstoneWire*/ wire = (net.minecraft.block.BlockRedstoneWire/*was:BlockRedstoneWire*/) net.minecraft.block.Block/*was:Block*/.redstoneWire/*was:REDSTONE_WIRE*/;
-        /*was:net.minecraft.server.*/net.minecraft.world.World/*was:World*/ world = chunk.getHandle().worldObj/*was:world*/;
-        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.isBlockProvidingPowerTo/*was:isBlockFacePowered*/(x, y - 1, z, 0))
-            power = wire.getMaxCurrentStrength/*was:getPower*/(world, x, y - 1, z, power);
-        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.isBlockProvidingPowerTo/*was:isBlockFacePowered*/(x, y + 1, z, 1))
-            power = wire.getMaxCurrentStrength/*was:getPower*/(world, x, y + 1, z, power);
-        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.isBlockProvidingPowerTo/*was:isBlockFacePowered*/(x + 1, y, z, 2))
-            power = wire.getMaxCurrentStrength/*was:getPower*/(world, x + 1, y, z, power);
-        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.isBlockProvidingPowerTo/*was:isBlockFacePowered*/(x - 1, y, z, 3))
-            power = wire.getMaxCurrentStrength/*was:getPower*/(world, x - 1, y, z, power);
-        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.isBlockProvidingPowerTo/*was:isBlockFacePowered*/(x, y, z - 1, 4))
-            power = wire.getMaxCurrentStrength/*was:getPower*/(world, x, y, z - 1, power);
-        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.isBlockProvidingPowerTo/*was:isBlockFacePowered*/(x, y, z + 1, 5))
-            power = wire.getMaxCurrentStrength/*was:getPower*/(world, x, y, z - 1, power);
+        net.minecraft.block.BlockRedstoneWire wire = (net.minecraft.block.BlockRedstoneWire) net.minecraft.block.Block.redstoneWire;
+        net.minecraft.world.World world = chunk.getHandle().worldObj;
+        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.getIndirectPowerOutput(x, y - 1, z, 0)) power = wire.getMaxCurrentStrength(world, x, y - 1, z, power);
+        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.getIndirectPowerOutput(x, y + 1, z, 1)) power = wire.getMaxCurrentStrength(world, x, y + 1, z, power);
+        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.getIndirectPowerOutput(x + 1, y, z, 2)) power = wire.getMaxCurrentStrength(world, x + 1, y, z, power);
+        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.getIndirectPowerOutput(x - 1, y, z, 3)) power = wire.getMaxCurrentStrength(world, x - 1, y, z, power);
+        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.getIndirectPowerOutput(x, y, z - 1, 4)) power = wire.getMaxCurrentStrength(world, x, y, z - 1, power);
+        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.getIndirectPowerOutput(x, y, z + 1, 5)) power = wire.getMaxCurrentStrength(world, x, y, z - 1, power);
         return power > 0 ? power : (face == BlockFace.SELF ? isBlockIndirectlyPowered() : isBlockFaceIndirectlyPowered(face)) ? 15 : 0;
     }
 
@@ -358,23 +365,23 @@ public class CraftBlock implements Block {
     }
 
     public PistonMoveReaction getPistonMoveReaction() {
-        return PistonMoveReaction.getById(net.minecraft.block.Block/*was:Block*/.blocksList/*was:byId*/[this.getTypeId()].blockMaterial/*was:material*/.getMaterialMobility/*was:getPushReaction*/());
+        return PistonMoveReaction.getById(net.minecraft.block.Block.blocksList[this.getTypeId()].blockMaterial.getMaterialMobility());
     }
 
     private boolean itemCausesDrops(ItemStack item) {
-        /*was:net.minecraft.server.*/net.minecraft.block.Block/*was:Block*/ block = net.minecraft.block.Block/*was:Block*/.blocksList/*was:byId*/[this.getTypeId()];
-        /*was:net.minecraft.server.*/net.minecraft.item.Item/*was:Item*/ itemType = item != null ? net.minecraft.item.Item/*was:Item*/.itemsList/*was:byId*/[item.getTypeId()] : null;
-        return block != null && (block.blockMaterial/*was:material*/.isToolNotRequired/*was:isAlwaysDestroyable*/() || (itemType != null && itemType.canHarvestBlock/*was:canDestroySpecialBlock*/(block)));
+        net.minecraft.block.Block block = net.minecraft.block.Block.blocksList[this.getTypeId()];
+        net.minecraft.item.Item itemType = item != null ? net.minecraft.item.Item.itemsList[item.getTypeId()] : null;
+        return block != null && (block.blockMaterial.isToolNotRequired() || (itemType != null && itemType.canHarvestBlock(block)));
     }
 
     public boolean breakNaturally() {
         // Order matters here, need to drop before setting to air so skulls can get their data
-        /*was:net.minecraft.server.*/net.minecraft.block.Block/*was:Block*/ block = net.minecraft.block.Block/*was:Block*/.blocksList/*was:byId*/[this.getTypeId()];
+        net.minecraft.block.Block block = net.minecraft.block.Block.blocksList[this.getTypeId()];
         byte data = getData();
         boolean result = false;
 
         if (block != null) {
-            block.dropBlockAsItemWithChance/*was:dropNaturally*/(chunk.getHandle().worldObj/*was:world*/, x, y, z, data, 1.0F, 0);
+            block.dropBlockAsItemWithChance(chunk.getHandle().worldObj, x, y, z, data, 1.0F, 0);
             result = true;
         }
 
@@ -393,27 +400,27 @@ public class CraftBlock implements Block {
     public Collection<ItemStack> getDrops() {
         List<ItemStack> drops = new ArrayList<ItemStack>();
 
-        /*was:net.minecraft.server.*/net.minecraft.block.Block/*was:Block*/ block = net.minecraft.block.Block/*was:Block*/.blocksList/*was:byId*/[this.getTypeId()];
+        net.minecraft.block.Block block = net.minecraft.block.Block.blocksList[this.getTypeId()];
         if (block != null) {
             byte data = getData();
             // based on nms.Block.dropNaturally
-            int count = block.quantityDroppedWithBonus/*was:getDropCount*/(0, chunk.getHandle().worldObj/*was:world*/.rand/*was:random*/);
+            int count = block.quantityDroppedWithBonus(0, chunk.getHandle().worldObj.rand);
             for (int i = 0; i < count; ++i) {
-                int item = block.idDropped/*was:getDropType*/(data, chunk.getHandle().worldObj/*was:world*/.rand/*was:random*/, 0);
+                int item = block.idDropped(data, chunk.getHandle().worldObj.rand, 0);
                 if (item > 0) {
                     // Skulls are special, their data is based on the tile entity
-                    if (net.minecraft.block.Block/*was:Block*/.skull/*was:SKULL*/.blockID/*was:id*/ == this.getTypeId()) {
-                        /*was:net.minecraft.server.*/net.minecraft.item.ItemStack/*was:ItemStack*/ nmsStack = new net.minecraft.item.ItemStack/*was:ItemStack*/(item, 1, block.getDamageValue/*was:getDropData*/(chunk.getHandle().worldObj/*was:world*/, x, y, z));
-                        net.minecraft.tileentity.TileEntitySkull/*was:TileEntitySkull*/ tileentityskull = (net.minecraft.tileentity.TileEntitySkull/*was:TileEntitySkull*/) chunk.getHandle().worldObj/*was:world*/.getBlockTileEntity/*was:getTileEntity*/(x, y, z);
+                    if (net.minecraft.block.Block.skull.blockID == this.getTypeId()) {
+                        net.minecraft.item.ItemStack nmsStack = new net.minecraft.item.ItemStack(item, 1, block.getDamageValue(chunk.getHandle().worldObj, x, y, z));
+                        net.minecraft.tileentity.TileEntitySkull tileentityskull = (net.minecraft.tileentity.TileEntitySkull) chunk.getHandle().worldObj.getBlockTileEntity(x, y, z);
 
-                        if (tileentityskull.getSkullType/*was:getSkullType*/() == 3 && tileentityskull.getExtraType/*was:getExtraType*/() != null && tileentityskull.getExtraType/*was:getExtraType*/().length() > 0) {
-                            nmsStack.setTagCompound/*was:setTag*/(new net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/());
-                            nmsStack.getTagCompound/*was:getTag*/().setString/*was:setString*/("SkullOwner", tileentityskull.getExtraType/*was:getExtraType*/());
+                        if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0) {
+                            nmsStack.setTagCompound(new net.minecraft.nbt.NBTTagCompound());
+                            nmsStack.getTagCompound().setString("SkullOwner", tileentityskull.getExtraType());
                         }
 
                         drops.add(CraftItemStack.asBukkitCopy(nmsStack));
                     } else {
-                        drops.add(new ItemStack(item, 1, (short) block.damageDropped/*was:getDropData*/(data)));
+                        drops.add(new ItemStack(item, 1, (short) block.damageDropped(data)));
                     }
                 }
             }
@@ -431,42 +438,40 @@ public class CraftBlock implements Block {
 
     /* Build biome index based lookup table for BiomeBase to Biome mapping */
     static {
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.swampland/*was:SWAMPLAND*/.biomeID/*was:id*/] = Biome.SWAMPLAND;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.forest/*was:FOREST*/.biomeID/*was:id*/] = Biome.FOREST;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.taiga/*was:TAIGA*/.biomeID/*was:id*/] = Biome.TAIGA;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.desert/*was:DESERT*/.biomeID/*was:id*/] = Biome.DESERT;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.plains/*was:PLAINS*/.biomeID/*was:id*/] = Biome.PLAINS;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.hell/*was:HELL*/.biomeID/*was:id*/] = Biome.HELL;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.sky/*was:SKY*/.biomeID/*was:id*/] = Biome.SKY;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.river/*was:RIVER*/.biomeID/*was:id*/] = Biome.RIVER;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.extremeHills/*was:EXTREME_HILLS*/.biomeID/*was:id*/] = Biome.EXTREME_HILLS;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.ocean/*was:OCEAN*/.biomeID/*was:id*/] = Biome.OCEAN;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.frozenOcean/*was:FROZEN_OCEAN*/.biomeID/*was:id*/] = Biome.FROZEN_OCEAN;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.frozenRiver/*was:FROZEN_RIVER*/.biomeID/*was:id*/] = Biome.FROZEN_RIVER;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.icePlains/*was:ICE_PLAINS*/.biomeID/*was:id*/] = Biome.ICE_PLAINS;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.iceMountains/*was:ICE_MOUNTAINS*/.biomeID/*was:id*/] = Biome.ICE_MOUNTAINS;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.mushroomIsland/*was:MUSHROOM_ISLAND*/.biomeID/*was:id*/] = Biome.MUSHROOM_ISLAND;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.mushroomIslandShore/*was:MUSHROOM_SHORE*/.biomeID/*was:id*/] = Biome.MUSHROOM_SHORE;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.beach/*was:BEACH*/.biomeID/*was:id*/] = Biome.BEACH;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.desertHills/*was:DESERT_HILLS*/.biomeID/*was:id*/] = Biome.DESERT_HILLS;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.forestHills/*was:FOREST_HILLS*/.biomeID/*was:id*/] = Biome.FOREST_HILLS;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.taigaHills/*was:TAIGA_HILLS*/.biomeID/*was:id*/] = Biome.TAIGA_HILLS;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.extremeHillsEdge/*was:SMALL_MOUNTAINS*/.biomeID/*was:id*/] = Biome.SMALL_MOUNTAINS;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.jungle/*was:JUNGLE*/.biomeID/*was:id*/] = Biome.JUNGLE;
-        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.jungleHills/*was:JUNGLE_HILLS*/.biomeID/*was:id*/] = Biome.JUNGLE_HILLS;
+        BIOME_MAPPING = new Biome[net.minecraft.world.biome.BiomeGenBase.biomeList.length];
+        BIOMEBASE_MAPPING = new net.minecraft.world.biome.BiomeGenBase[Biome.values().length];
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.swampland.biomeID] = Biome.SWAMPLAND;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.forest.biomeID] = Biome.FOREST;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.taiga.biomeID] = Biome.TAIGA;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.desert.biomeID] = Biome.DESERT;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.plains.biomeID] = Biome.PLAINS;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.hell.biomeID] = Biome.HELL;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.sky.biomeID] = Biome.SKY;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.river.biomeID] = Biome.RIVER;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.extremeHills.biomeID] = Biome.EXTREME_HILLS;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.ocean.biomeID] = Biome.OCEAN;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.frozenOcean.biomeID] = Biome.FROZEN_OCEAN;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.frozenRiver.biomeID] = Biome.FROZEN_RIVER;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.icePlains.biomeID] = Biome.ICE_PLAINS;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.iceMountains.biomeID] = Biome.ICE_MOUNTAINS;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.mushroomIsland.biomeID] = Biome.MUSHROOM_ISLAND;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.mushroomIslandShore.biomeID] = Biome.MUSHROOM_SHORE;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.beach.biomeID] = Biome.BEACH;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.desertHills.biomeID] = Biome.DESERT_HILLS;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.forestHills.biomeID] = Biome.FOREST_HILLS;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.taigaHills.biomeID] = Biome.TAIGA_HILLS;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.extremeHillsEdge.biomeID] = Biome.SMALL_MOUNTAINS;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.jungle.biomeID] = Biome.JUNGLE;
+        BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.jungleHills.biomeID] = Biome.JUNGLE_HILLS;
         /* Sanity check - we should have a record for each record in the BiomeBase.a table */
         /* Helps avoid missed biomes when we upgrade bukkit to new code with new biomes */
         for (int i = 0; i < BIOME_MAPPING.length; i++) {
-            if ((net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.biomeList/*was:biomes*/[i] != null) && (BIOME_MAPPING[i] == null)) {
-                String name = net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.biomeList/*was:biomes*/[i].biomeName/*was:y*/;
-                int id = net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.biomeList/*was:biomes*/[i].biomeID/*was:id*/;
-
-                System.out.println("Adding biome mapping " + net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.biomeList/*was:biomes*/[i].biomeID/*was:id*/ + " " + name + " at BiomeBase[" + i + "]");
-                net.minecraftforge.common.EnumHelper.addBukkitBiome(name); // Forge
-                BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.biomeList/*was:biomes*/[i].biomeID/*was:id*/] = ((Biome) Enum.valueOf(Biome.class, name));
+            if ((net.minecraft.world.biome.BiomeGenBase.biomeList[i] != null) && (BIOME_MAPPING[i] == null)) {
+                throw new IllegalArgumentException("Missing Biome mapping for BiomeBase[" + i + "]");
             }
-            if (BIOME_MAPPING[i] != null)
-                BIOMEBASE_MAPPING[BIOME_MAPPING[i].ordinal()] = net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/.biomeList/*was:biomes*/[i];
+            if (BIOME_MAPPING[i] != null) {  /* Build reverse mapping for setBiome */
+                BIOMEBASE_MAPPING[BIOME_MAPPING[i].ordinal()] = net.minecraft.world.biome.BiomeGenBase.biomeList[i];
+            }
         }
         // MCPC+ start - if mcpc.dump-materials is true, dump all materials with their corresponding id's
         if (FMLCommonHandler.instance().getMinecraftServerInstance().server.getDumpMaterials())
@@ -483,7 +488,7 @@ public class CraftBlock implements Block {
             FMLLog.info("MCPC Dump Materials complete.");
             FMLLog.info("To disable these dumps, set mcpc.dump-materials to false in bukkit.yml.");
         }
-        // MCPC+ end
+        // MCPC+ end        
     }
 
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {

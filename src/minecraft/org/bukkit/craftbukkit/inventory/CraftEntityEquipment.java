@@ -75,11 +75,11 @@ public class CraftEntityEquipment implements EntityEquipment {
     }
 
     private ItemStack getEquipment(int slot) {
-        return CraftItemStack.asBukkitCopy(entity.getHandle().getCurrentItemOrArmor/*was:getEquipment*/(slot));
+        return CraftItemStack.asBukkitCopy(entity.getHandle().getCurrentItemOrArmor(slot));
     }
 
     private void setEquipment(int slot, ItemStack stack) {
-        entity.getHandle().setCurrentItemOrArmor/*was:setEquipment*/(slot, CraftItemStack.asNMSCopy(stack));
+        entity.getHandle().setCurrentItemOrArmor(slot, CraftItemStack.asNMSCopy(stack));
     }
 
     public void clear() {
@@ -133,10 +133,10 @@ public class CraftEntityEquipment implements EntityEquipment {
     }
 
     private void setDropChance(int slot, float chance) {
-        entity.getHandle().equipmentDropChances/*was:dropChances*/[slot] = chance - 0.1F;
+        entity.getHandle().equipmentDropChances[slot] = chance - 0.1F;
     }
 
     private float getDropChance(int slot) {
-        return entity.getHandle().equipmentDropChances/*was:dropChances*/[slot] + 0.1F;
+        return entity.getHandle().equipmentDropChances[slot] + 0.1F;
     }
 }

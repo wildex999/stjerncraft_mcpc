@@ -1,13 +1,10 @@
 package net.minecraft.entity.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
 public class EntityFireworkRocket extends Entity
 {
     /** The age of the firework in ticks. */
@@ -27,17 +24,6 @@ public class EntityFireworkRocket extends Entity
     protected void entityInit()
     {
         this.dataWatcher.addObjectByDataType(8, 5);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
-     * length * 64 * renderDistanceWeight Args: distance
-     */
-    public boolean isInRangeToRenderDist(double par1)
-    {
-        return par1 < 4096.0D;
     }
 
     public EntityFireworkRocket(World par1World, double par2, double par4, double par6, ItemStack par8ItemStack)
@@ -65,25 +51,6 @@ public class EntityFireworkRocket extends Entity
         this.motionZ = this.rand.nextGaussian() * 0.001D;
         this.motionY = 0.05D;
         this.lifetime = 10 * i + this.rand.nextInt(6) + this.rand.nextInt(7);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the velocity to the args. Args: x, y, z
-     */
-    public void setVelocity(double par1, double par3, double par5)
-    {
-        this.motionX = par1;
-        this.motionY = par3;
-        this.motionZ = par5;
-
-        if (this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F)
-        {
-            float f = MathHelper.sqrt_double(par1 * par1 + par5 * par5);
-            this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(par1, par5) * 180.0D / Math.PI);
-            this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(par3, (double)f) * 180.0D / Math.PI);
-        }
     }
 
     /**
@@ -144,25 +111,6 @@ public class EntityFireworkRocket extends Entity
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public void handleHealthUpdate(byte par1)
-    {
-        if (par1 == 17 && this.worldObj.isRemote)
-        {
-            ItemStack itemstack = this.dataWatcher.getWatchableObjectItemStack(8);
-            NBTTagCompound nbttagcompound = null;
-
-            if (itemstack != null && itemstack.hasTagCompound())
-            {
-                nbttagcompound = itemstack.getTagCompound().getCompoundTag("Fireworks");
-            }
-
-            this.worldObj.func_92088_a(this.posX, this.posY, this.posZ, this.motionX, this.motionY, this.motionZ, nbttagcompound);
-        }
-
-        super.handleHealthUpdate(par1);
-    }
-
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
@@ -200,24 +148,12 @@ public class EntityFireworkRocket extends Entity
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
-    {
-        return 0.0F;
-    }
-
     /**
      * Gets how bright this entity is.
      */
     public float getBrightness(float par1)
     {
         return super.getBrightness(par1);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public int getBrightnessForRender(float par1)
-    {
-        return super.getBrightnessForRender(par1);
     }
 
     /**

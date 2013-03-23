@@ -3,10 +3,10 @@ package net.minecraft.inventory;
 // CraftBukkit start
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-import net.minecraft.entity.player.InventoryPlayer;
-// CraftBukkit end
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+// CraftBukkit end
 
 public class ContainerChest extends Container
 {

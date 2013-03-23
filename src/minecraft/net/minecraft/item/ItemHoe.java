@@ -1,7 +1,5 @@
 package net.minecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -68,7 +66,7 @@ public class ItemHoe extends Item
                 else
                 {
                     // CraftBukkit start - Hoes - blockface -1 for 'SELF'
-                    // world.setTypeId(i, j, k, block.id);
+                    // world.setTypeIdUpdate(i, j, k, block.id);
                     if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, block.blockID, 0, clickedX, clickedY, clickedZ))
                     {
                         return false;
@@ -80,16 +78,6 @@ public class ItemHoe extends Item
                 }
             }
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns True is the item is renderer in full 3D when hold.
-     */
-    public boolean isFull3D()
-    {
-        return true;
     }
 
     public String func_77842_f()

@@ -3,6 +3,7 @@ package net.minecraft.tileentity;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
@@ -47,6 +48,8 @@ public class TileEntityChest extends TileEntity implements IInventory
 
     /** Server sync counter (once per 20 ticks) */
     private int ticksSinceSync;
+    private int field_94046_i = -1;
+    private String field_94045_s;
 
     public TileEntityChest() {}
 
@@ -170,7 +173,21 @@ public class TileEntityChest extends TileEntity implements IInventory
      */
     public String getInvName()
     {
-        return "container.chest";
+        return this.isInvNameLocalized() ? this.field_94045_s : "container.chest";
+    }
+
+    /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.field_94045_s != null && this.field_94045_s.length() > 0;
+    }
+
+    public void func_94043_a(String par1Str)
+    {
+        this.field_94045_s = par1Str;
     }
 
     /**
@@ -181,6 +198,11 @@ public class TileEntityChest extends TileEntity implements IInventory
         super.readFromNBT(par1NBTTagCompound);
         NBTTagList nbttaglist = par1NBTTagCompound.getTagList("Items");
         this.chestContents = new ItemStack[this.getSizeInventory()];
+
+        if (par1NBTTagCompound.hasKey("CustomName"))
+        {
+            this.field_94045_s = par1NBTTagCompound.getString("CustomName");
+        }
 
         for (int i = 0; i < nbttaglist.tagCount(); ++i)
         {
@@ -214,6 +236,11 @@ public class TileEntityChest extends TileEntity implements IInventory
         }
 
         par1NBTTagCompound.setTag("Items", nbttaglist);
+
+        if (this.isInvNameLocalized())
+        {
+            par1NBTTagCompound.setString("CustomName", this.field_94045_s);
+        }
     }
 
     /**
@@ -301,22 +328,22 @@ public class TileEntityChest extends TileEntity implements IInventory
             this.adjacentChestXNeg = null;
             this.adjacentChestZPosition = null;
 
-            if (this.worldObj.getBlockId(this.xCoord - 1, this.yCoord, this.zCoord) == Block.chest.blockID)
+            if (this.func_94044_a(this.xCoord - 1, this.yCoord, this.zCoord))
             {
                 this.adjacentChestXNeg = (TileEntityChest)this.worldObj.getBlockTileEntity(this.xCoord - 1, this.yCoord, this.zCoord);
             }
 
-            if (this.worldObj.getBlockId(this.xCoord + 1, this.yCoord, this.zCoord) == Block.chest.blockID)
+            if (this.func_94044_a(this.xCoord + 1, this.yCoord, this.zCoord))
             {
                 this.adjacentChestXPos = (TileEntityChest)this.worldObj.getBlockTileEntity(this.xCoord + 1, this.yCoord, this.zCoord);
             }
 
-            if (this.worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord - 1) == Block.chest.blockID)
+            if (this.func_94044_a(this.xCoord, this.yCoord, this.zCoord - 1))
             {
                 this.adjacentChestZNeg = (TileEntityChest)this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord - 1);
             }
 
-            if (this.worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord + 1) == Block.chest.blockID)
+            if (this.func_94044_a(this.xCoord, this.yCoord, this.zCoord + 1))
             {
                 this.adjacentChestZPosition = (TileEntityChest)this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord + 1);
             }
@@ -343,6 +370,12 @@ public class TileEntityChest extends TileEntity implements IInventory
         }
     }
 
+    private boolean func_94044_a(int par1, int par2, int par3)
+    {
+        Block block = Block.blocksList[this.worldObj.getBlockId(par1, par2, par3)];
+        return block != null && block instanceof BlockChest ? ((BlockChest)block).field_94443_a == this.func_98041_l() : false;
+    }
+
     /**
      * Allows the entity to update its state. Overridden in most subclasses, e.g. the mob spawner uses this to count
      * ticks and creates a new spawn inside its implementation.
@@ -364,7 +397,7 @@ public class TileEntityChest extends TileEntity implements IInventory
         {
             this.numUsingPlayers = 0;
             f = 5.0F;
-            List list = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)this.xCoord - f), (double)((float)this.yCoord - f), (double)((float)this.zCoord - f), (double)((float)(this.xCoord + 1) + f), (double)((float)(this.yCoord + 1) + f), (double)((float)(this.zCoord + 1) + f)));
+            List list = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getAABBPool().getAABB((double)((float)this.xCoord - f), (double)((float)this.yCoord - f), (double)((float)this.zCoord - f), (double)((float)(this.xCoord + 1) + f), (double)((float)(this.yCoord + 1) + f), (double)((float)(this.zCoord + 1) + f)));
             Iterator iterator = list.iterator();
 
             while (iterator.hasNext())
@@ -375,7 +408,7 @@ public class TileEntityChest extends TileEntity implements IInventory
                 {
                     IInventory iinventory = ((ContainerChest)entityplayer.openContainer).getLowerChestInventory();
 
-                    if (iinventory == this || iinventory instanceof InventoryLargeChest && ((InventoryLargeChest)iinventory).isPartOfLargeChest(this))
+                    if (iinventory == this || iinventory instanceof InventoryLargeChest && ((InventoryLargeChest) iinventory).isPartOfLargeChest((IInventory) this))
                     {
                         ++this.numUsingPlayers;
                     }
@@ -453,16 +486,26 @@ public class TileEntityChest extends TileEntity implements IInventory
     /**
      * Called when a client event is received with the event number and argument, see World.sendClientEvent
      */
-    public void receiveClientEvent(int par1, int par2)
+    public boolean receiveClientEvent(int par1, int par2)
     {
         if (par1 == 1)
         {
             this.numUsingPlayers = par2;
+            return true;
+        }
+        else
+        {
+            return super.receiveClientEvent(par1, par2);
         }
     }
 
     public void openChest()
     {
+        if (this.numUsingPlayers < 0)
+        {
+            this.numUsingPlayers = 0;
+        }
+
         ++this.numUsingPlayers;
 
         if (this.worldObj == null)
@@ -470,19 +513,34 @@ public class TileEntityChest extends TileEntity implements IInventory
             return;    // CraftBukkit
         }
 
-        this.worldObj.addBlockEvent(this.xCoord, this.yCoord, this.zCoord, Block.chest.blockID, 1, this.numUsingPlayers);
+        this.worldObj.addBlockEvent(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID, 1, this.numUsingPlayers);
+        this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID);
+        this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord - 1, this.zCoord, this.getBlockType().blockID);
     }
 
     public void closeChest()
     {
-        --this.numUsingPlayers;
-
-        if (this.worldObj == null)
+        if (this.getBlockType() != null && this.getBlockType() instanceof BlockChest)
         {
-            return;    // CraftBukkit
-        }
+            --this.numUsingPlayers;
 
-        this.worldObj.addBlockEvent(this.xCoord, this.yCoord, this.zCoord, Block.chest.blockID, 1, this.numUsingPlayers);
+            if (this.worldObj == null)
+            {
+                return;    // CraftBukkit
+            }
+
+            this.worldObj.addBlockEvent(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID, 1, this.numUsingPlayers);
+            this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID);
+            this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord - 1, this.zCoord, this.getBlockType().blockID);
+        }
+    }
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
     }
 
     /**
@@ -493,5 +551,20 @@ public class TileEntityChest extends TileEntity implements IInventory
         super.invalidate();
         this.updateContainingBlockInfo();
         this.checkForAdjacentChests();
+    }
+
+    public int func_98041_l()
+    {
+        if (this.field_94046_i == -1)
+        {
+            if (this.worldObj == null || !(this.getBlockType() instanceof BlockChest))
+            {
+                return 0;
+            }
+
+            this.field_94046_i = ((BlockChest)this.getBlockType()).field_94443_a;
+        }
+
+        return this.field_94046_i;
     }
 }

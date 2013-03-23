@@ -2,7 +2,6 @@ package net.minecraft.entity.ai;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.MathHelper;
-
 public class EntityMoveHelper
 {
     /** The EntityLiving that is being moved */
@@ -60,7 +59,8 @@ public class EntityMoveHelper
 
             if (d3 >= 2.500000277905201E-7D)
             {
-                float f = (float)(org.bukkit.craftbukkit.TrigMath.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F; // CraftBukkit - Math -> TrigMath
+                // CraftBukkit - Math -> TrigMath
+                float f = (float)(org.bukkit.craftbukkit.TrigMath.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
                 this.entity.rotationYaw = this.limitAngle(this.entity.rotationYaw, f, 30.0F);
                 this.entity.setAIMoveSpeed(this.speed * this.entity.getSpeedModifier());
 

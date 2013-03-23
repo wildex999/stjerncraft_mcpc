@@ -1,19 +1,19 @@
 package net.minecraft.inventory;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 // CraftBukkit start
+import cpw.mods.fml.common.registry.GameRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
-import net.minecraft.stats.StatBase;
-import net.minecraft.tileentity.TileEntityFurnace;
-// CraftBukkit end
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.stats.AchievementList;
+import net.minecraft.stats.StatBase;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.MathHelper;
+// CraftBukkit end
 
 public class SlotFurnace extends Slot
 {
@@ -94,20 +94,14 @@ public class SlotFurnace extends Slot
                 i = j;
             }
 
-            // MCPC start - fix IC2 crash
-            if (this.inventory instanceof TileEntityFurnace)
-            {
-                // CraftBukkit start
-                Player player = (Player) thePlayer.getBukkitEntity();
-                TileEntityFurnace furnace = ((TileEntityFurnace) this.inventory);
-                org.bukkit.block.Block block = thePlayer.worldObj.getWorld().getBlockAt(furnace.xCoord, furnace.yCoord, furnace.zCoord);
-                FurnaceExtractEvent event = new FurnaceExtractEvent(player, block, org.bukkit.Material.getMaterial(par1ItemStack.itemID), par1ItemStack.stackSize, i);
-                thePlayer.worldObj.getServer().getPluginManager().callEvent(event);
-                i = event.getExpToDrop();
-                // CraftBukkit end
-            }
-
-            // MCPC end
+            // CraftBukkit start
+            Player player = (Player) thePlayer.getBukkitEntity();
+            TileEntityFurnace furnace = ((TileEntityFurnace) this.inventory);
+            org.bukkit.block.Block block = thePlayer.worldObj.getWorld().getBlockAt(furnace.xCoord, furnace.yCoord, furnace.zCoord);
+            FurnaceExtractEvent event = new FurnaceExtractEvent(player, block, org.bukkit.Material.getMaterial(par1ItemStack.itemID), par1ItemStack.stackSize, i);
+            thePlayer.worldObj.getServer().getPluginManager().callEvent(event);
+            i = event.getExpToDrop();
+            // CraftBukkit end
 
             while (i > 0)
             {
@@ -123,12 +117,12 @@ public class SlotFurnace extends Slot
 
         if (par1ItemStack.itemID == Item.ingotIron.itemID)
         {
-            this.thePlayer.addStat(AchievementList.acquireIron, 1);
+            this.thePlayer.addStat((StatBase) AchievementList.acquireIron, 1);
         }
 
         if (par1ItemStack.itemID == Item.fishCooked.itemID)
         {
-            this.thePlayer.addStat(AchievementList.cookFish, 1);
+            this.thePlayer.addStat((StatBase) AchievementList.cookFish, 1);
         }
     }
 }

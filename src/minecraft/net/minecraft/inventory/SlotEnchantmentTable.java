@@ -48,9 +48,9 @@ public class SlotEnchantmentTable extends InventoryBasic   // CraftBukkit -> pub
     }
     // CraftBukkit end
 
-    SlotEnchantmentTable(ContainerEnchantment par1ContainerEnchantment, String par2Str, int par3)
+    SlotEnchantmentTable(ContainerEnchantment par1ContainerEnchantment, String par2Str, boolean par3, int par4)
     {
-        super(par2Str, par3);
+        super(par2Str, par3, par4);
         this.container = par1ContainerEnchantment;
         this.setMaxStackSize(1); // CraftBukkit
     }
@@ -70,6 +70,14 @@ public class SlotEnchantmentTable extends InventoryBasic   // CraftBukkit -> pub
     public void onInventoryChanged()
     {
         super.onInventoryChanged();
-        this.container.onCraftMatrixChanged(this);
+        this.container.onCraftMatrixChanged((IInventory) this);
+    }
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
     }
 }

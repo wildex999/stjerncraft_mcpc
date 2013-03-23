@@ -1,7 +1,5 @@
 package net.minecraft.entity.monster;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Calendar;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -26,6 +24,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 import org.bukkit.event.entity.EntityCombustEvent; // CraftBukkit
 
 public class EntityZombie extends EntityMob
@@ -50,9 +49,14 @@ public class EntityZombie extends EntityMob
         this.tasks.addTask(6, new EntityAIWander(this, this.moveSpeed));
         this.tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(7, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, 16.0F, 0, false));
+    }
+
+    protected int func_96121_ay()
+    {
+        return 40;
     }
 
     /**
@@ -70,16 +74,6 @@ public class EntityZombie extends EntityMob
         this.getDataWatcher().addObject(12, Byte.valueOf((byte)0));
         this.getDataWatcher().addObject(13, Byte.valueOf((byte)0));
         this.getDataWatcher().addObject(14, Byte.valueOf((byte)0));
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the texture's file path as a String.
-     */
-    public String getTexture()
-    {
-        return this.isVillager() ? "/mob/zombie_villager.png" : "/mob/zombie.png";
     }
 
     public int getMaxHealth()
@@ -211,17 +205,30 @@ public class EntityZombie extends EntityMob
         super.onUpdate();
     }
 
+    public boolean attackEntityAsMob(Entity par1Entity)
+    {
+        boolean flag = super.attackEntityAsMob(par1Entity);
+
+        if (flag && this.getHeldItem() == null && this.isBurning() && this.rand.nextFloat() < (float)this.worldObj.difficultySetting * 0.3F)
+        {
+            par1Entity.setFire(2 * this.worldObj.difficultySetting);
+        }
+
+        return flag;
+    }
+
     /**
      * Returns the amount of damage a mob should deal.
      */
     public int getAttackStrength(Entity par1Entity)
     {
         ItemStack itemstack = this.getHeldItem();
-        int i = 4;
+        float f = (float)(this.getMaxHealth() - this.getHealth()) / (float)this.getMaxHealth();
+        int i = 3 + MathHelper.floor_float(f * 4.0F);
 
         if (itemstack != null)
         {
-            i += itemstack.getDamageVsEntity(this);
+            i += itemstack.getDamageVsEntity((Entity) this);
         }
 
         return i;
@@ -276,7 +283,7 @@ public class EntityZombie extends EntityMob
     }
 
     // CraftBukkit start - return rare dropped item instead of dropping it
-    protected ItemStack l(int i)
+    protected ItemStack dropRareDrop(int i)
     {
         switch (this.rand.nextInt(3))
         {
@@ -292,17 +299,12 @@ public class EntityZombie extends EntityMob
     }
     // CraftBukkit end
 
-    // MCPC+ start - vanilla compatibility
-    protected void dropRareDrop(int par1)
+    /**
+     * Makes entity wear random armor based on difficulty
+     */
+    protected void addRandomArmor()
     {
-        ItemStack itemStack = this.l(par1);
-        this.dropItem(itemStack.itemID, itemStack.stackSize);
-    }
-    // MCPC+ end
-
-    protected void func_82164_bB()
-    {
-        super.func_82164_bB();
+        super.addRandomArmor();
 
         if (this.rand.nextFloat() < (this.worldObj.difficultySetting == 3 ? 0.05F : 0.01F))
         {
@@ -397,14 +399,14 @@ public class EntityZombie extends EntityMob
      */
     public void initCreature()
     {
-        this.canPickUpLoot = this.rand.nextFloat() < pickUpLootProability[this.worldObj.difficultySetting];
+        this.setCanPickUpLoot(this.rand.nextFloat() < pickUpLootProability[this.worldObj.difficultySetting]);
 
         if (this.worldObj.rand.nextFloat() < 0.05F)
         {
             this.setVillager(true);
         }
 
-        this.func_82164_bB();
+        this.addRandomArmor();
         this.func_82162_bC();
 
         if (this.getCurrentItemOrArmor(4) == null)
@@ -462,19 +464,6 @@ public class EntityZombie extends EntityMob
         this.removePotionEffect(Potion.weakness.id);
         this.addPotionEffect(new PotionEffect(Potion.damageBoost.id, par1, Math.min(this.worldObj.difficultySetting - 1, 0)));
         this.worldObj.setEntityState(this, (byte)16);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleHealthUpdate(byte par1)
-    {
-        if (par1 == 16)
-        {
-            this.worldObj.playSound(this.posX + 0.5D, this.posY + 0.5D, this.posZ + 0.5D, "mob.zombie.remedy", 1.0F + this.rand.nextFloat(), this.rand.nextFloat() * 0.7F + 0.3F, false);
-        }
-        else
-        {
-            super.handleHealthUpdate(par1);
-        }
     }
 
     /**

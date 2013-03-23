@@ -4,7 +4,6 @@ package net.minecraft.entity.monster;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityTeleportEvent;
-// CraftBukkit end
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,6 +15,7 @@ import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class EntityEnderman extends EntityMob
 {
@@ -160,7 +160,7 @@ public class EntityEnderman extends EntityMob
                         {
                             this.setCarried(this.worldObj.getBlockId(i, j, k));
                             this.setCarryingData(this.worldObj.getBlockMetadata(i, j, k));
-                            this.worldObj.setBlockWithNotify(i, j, k, 0);
+                            this.worldObj.setBlock(i, j, k, 0);
                         }
 
                         // CraftBukkit end
@@ -180,9 +180,10 @@ public class EntityEnderman extends EntityMob
                     // CraftBukkit start - place event
                     if (!CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, this.getCarried(), this.getCarryingData()).isCancelled())
                     {
-                        this.worldObj.setBlockAndMetadataWithNotify(i, j, k, this.getCarried(), this.getCarryingData());
+                        this.worldObj.setBlock(i, j, k, this.getCarried(), this.getCarryingData(), 3);
                         this.setCarried(0);
                     }
+
                     // CraftBukkit end
                 }
             }
@@ -228,14 +229,14 @@ public class EntityEnderman extends EntityMob
                     this.moveStrafing = this.moveForward = 0.0F;
                     this.moveSpeed = 0.0F;
 
-                    if (this.entityToAttack.getDistanceSqToEntity(this) < 16.0D)
+                    if (this.entityToAttack.getDistanceSqToEntity((Entity) this) < 16.0D)
                     {
                         this.teleportRandomly();
                     }
 
                     this.teleportDelay = 0;
                 }
-                else if (this.entityToAttack.getDistanceSqToEntity(this) > 256.0D && this.teleportDelay++ >= 30 && this.teleportToEntity(this.entityToAttack))
+                else if (this.entityToAttack.getDistanceSqToEntity((Entity) this) > 256.0D && this.teleportDelay++ >= 30 && this.teleportToEntity(this.entityToAttack))
                 {
                     this.teleportDelay = 0;
                 }

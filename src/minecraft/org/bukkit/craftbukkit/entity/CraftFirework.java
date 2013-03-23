@@ -16,14 +16,14 @@ public class CraftFirework extends CraftEntity implements Firework {
     private final Random random = new Random();
     private final CraftItemStack item;
 
-    public CraftFirework(CraftServer server, net.minecraft.entity.item.EntityFireworkRocket/*was:EntityFireworks*/ entity) {
+    public CraftFirework(CraftServer server, net.minecraft.entity.item.EntityFireworkRocket entity) {
         super(server, entity);
 
-        net.minecraft.item.ItemStack/*was:ItemStack*/ item = getHandle().getDataWatcher/*was:getDataWatcher*/().getWatchableObjectItemStack/*was:getItemStack*/(FIREWORK_ITEM_INDEX);
+        net.minecraft.item.ItemStack item = getHandle().getDataWatcher().getWatchableObjectItemStack(FIREWORK_ITEM_INDEX);
 
         if (item == null) {
-            item = new net.minecraft.item.ItemStack/*was:ItemStack*/(net.minecraft.item.Item/*was:Item*/.firework/*was:FIREWORKS*/);
-            getHandle().getDataWatcher/*was:getDataWatcher*/().updateObject/*was:watch*/(FIREWORK_ITEM_INDEX, item);
+            item = new net.minecraft.item.ItemStack(net.minecraft.item.Item.firework);
+            getHandle().getDataWatcher().updateObject(FIREWORK_ITEM_INDEX, item);
         }
 
         this.item = CraftItemStack.asCraftMirror(item);
@@ -35,8 +35,8 @@ public class CraftFirework extends CraftEntity implements Firework {
     }
 
     @Override
-    public net.minecraft.entity.item.EntityFireworkRocket/*was:EntityFireworks*/ getHandle() {
-        return (net.minecraft.entity.item.EntityFireworkRocket/*was:EntityFireworks*/) entity;
+    public net.minecraft.entity.item.EntityFireworkRocket getHandle() {
+        return (net.minecraft.entity.item.EntityFireworkRocket) entity;
     }
 
     @Override
@@ -56,8 +56,8 @@ public class CraftFirework extends CraftEntity implements Firework {
         item.setItemMeta(meta);
 
         // Copied from EntityFireworks constructor, update firework lifetime/power
-        getHandle().lifetime/*was:expectedLifespan*/ = 10 * (1 + meta.getPower()) + random.nextInt(6) + random.nextInt(7);
+        getHandle().lifetime = 10 * (1 + meta.getPower()) + random.nextInt(6) + random.nextInt(7);
 
-        getHandle().getDataWatcher/*was:getDataWatcher*/().func_82708_h/*was:h*/(FIREWORK_ITEM_INDEX); // Update
+        getHandle().getDataWatcher().setObjectWatched(FIREWORK_ITEM_INDEX); // Update
     }
 }

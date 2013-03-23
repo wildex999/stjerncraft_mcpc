@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import cpw.mods.fml.common.registry.EntityRegistry;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityBoat;
@@ -34,6 +37,7 @@ import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.util.IntHashMap;
+import net.minecraft.util.ReportedException;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
@@ -50,12 +54,11 @@ public class EntityTracker
         this.entityViewDistance = par1WorldServer.getMinecraftServer().getConfigurationManager().getEntityViewDistance();
     }
 
-    // CraftBukkit - synchronized
     /**
      * if entity is a player sends all tracked events to the player, otherwise, adds with a visibility and update arate
      * based on the class type
      */
-    public synchronized void addEntityToTracker(Entity par1Entity)
+    public void addEntityToTracker(Entity par1Entity)
     {
         if (EntityRegistry.instance().tryTrackingEntity(this, par1Entity))
         {
@@ -185,30 +188,48 @@ public class EntityTracker
         this.addEntityToTracker(par1Entity, par2, par3, false);
     }
 
-    // CraftBukkit - synchronized
-    public synchronized void addEntityToTracker(Entity par1Entity, int par2, int par3, boolean par4)
+    public void addEntityToTracker(Entity par1Entity, int par2, int par3, boolean par4)
     {
         if (par2 > this.entityViewDistance)
         {
             par2 = this.entityViewDistance;
         }
 
-        if (this.trackedEntityIDs.containsItem(par1Entity.entityId))
+        try
         {
-            // CraftBukkit - removed exception throw as tracking an already tracked entity theoretically shouldn't cause any issues.
-            // throw new IllegalStateException("Entity is already tracked!");
-        }
-        else
-        {
+            if (this.trackedEntityIDs.containsItem(par1Entity.entityId))
+            {
+                throw new IllegalStateException("Entity is already tracked!");
+            }
+
             EntityTrackerEntry entitytrackerentry = new EntityTrackerEntry(par1Entity, par2, par3, par4);
             this.trackedEntities.add(entitytrackerentry);
             this.trackedEntityIDs.addKey(par1Entity.entityId, entitytrackerentry);
             entitytrackerentry.sendEventsToPlayers(this.theWorld.playerEntities);
         }
+        catch (Throwable throwable)
+        {
+            CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Adding entity to track");
+            CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity To Track");
+            crashreportcategory.addCrashSection("Tracking range", (par2 + " blocks"));
+            crashreportcategory.addCrashSectionCallable("Update interval", (Callable)(new CallableEntityTracker(this, par3)));
+            par1Entity.func_85029_a(crashreportcategory);
+            CrashReportCategory crashreportcategory1 = crashreport.makeCategory("Entity That Is Already Tracked");
+            ((EntityTrackerEntry)this.trackedEntityIDs.lookup(par1Entity.entityId)).myEntity.func_85029_a(crashreportcategory1);
+
+            try
+            {
+                throw new ReportedException(crashreport);
+            }
+            catch (ReportedException reportedexception)
+            {
+                System.err.println("\"Silently\" catching entity tracking error.");
+                reportedexception.printStackTrace();
+            }
+        }
     }
 
-    // CraftBukkit - synchronized
-    public synchronized void removeEntityFromAllTrackingPlayers(Entity par1Entity)
+    public void removeEntityFromAllTrackingPlayers(Entity par1Entity)
     {
         if (par1Entity instanceof EntityPlayerMP)
         {
@@ -231,8 +252,7 @@ public class EntityTracker
         }
     }
 
-    // CraftBukkit - synchronized
-    public synchronized void updateTrackedEntities()
+    public void updateTrackedEntities()
     {
         ArrayList arraylist = new ArrayList();
         Iterator iterator = this.trackedEntities.iterator();
@@ -265,11 +285,10 @@ public class EntityTracker
         }
     }
 
-    // CraftBukkit - synchronized
     /**
      * does not send the packet to the entity if the entity is a player
      */
-    public synchronized void sendPacketToAllPlayersTrackingEntity(Entity par1Entity, Packet par2Packet)
+    public void sendPacketToAllPlayersTrackingEntity(Entity par1Entity, Packet par2Packet)
     {
         EntityTrackerEntry entitytrackerentry = (EntityTrackerEntry)this.trackedEntityIDs.lookup(par1Entity.entityId);
 
@@ -279,11 +298,10 @@ public class EntityTracker
         }
     }
 
-    // CraftBukkit - synchronized
     /**
      * sends to the entity if the entity is a player
      */
-    public synchronized void sendPacketToAllAssociatedPlayers(Entity par1Entity, Packet par2Packet)
+    public void sendPacketToAllAssociatedPlayers(Entity par1Entity, Packet par2Packet)
     {
         EntityTrackerEntry entitytrackerentry = (EntityTrackerEntry)this.trackedEntityIDs.lookup(par1Entity.entityId);
 
@@ -293,8 +311,7 @@ public class EntityTracker
         }
     }
 
-    // CraftBukkit - synchronized
-    public synchronized void removeAllTrackingPlayers(EntityPlayerMP par1EntityPlayerMP)
+    public void removePlayerFromTrackers(EntityPlayerMP par1EntityPlayerMP)
     {
         Iterator iterator = this.trackedEntities.iterator();
 

@@ -1,7 +1,5 @@
 package net.minecraft.entity.monster;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import org.bukkit.craftbukkit.inventory.CraftItemStack; // CraftBukkit
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -190,30 +188,6 @@ public class EntityIronGolem extends EntityGolem
     public Village getVillage()
     {
         return this.villageObj;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleHealthUpdate(byte par1)
-    {
-        if (par1 == 4)
-        {
-            this.attackTimer = 10;
-            this.playSound("mob.irongolem.throw", 1.0F, 1.0F);
-        }
-        else if (par1 == 11)
-        {
-            this.holdRoseTick = 400;
-        }
-        else
-        {
-            super.handleHealthUpdate(par1);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public int getAttackTimer()
-    {
-        return this.attackTimer;
     }
 
     public void setHoldingRose(boolean par1)

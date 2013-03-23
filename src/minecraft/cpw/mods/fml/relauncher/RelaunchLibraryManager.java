@@ -1,3 +1,15 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ *
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.relauncher;
 
 import java.io.File;
@@ -26,6 +38,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 import cpw.mods.fml.common.CertificateHelper;
+import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 public class RelaunchLibraryManager
@@ -35,8 +48,28 @@ public class RelaunchLibraryManager
     private static Map<IFMLLoadingPlugin, File> pluginLocations;
     private static List<IFMLLoadingPlugin> loadPlugins;
     private static List<ILibrarySet> libraries;
+    private static boolean deobfuscatedEnvironment;
+
     public static void handleLaunch(File mcDir, RelaunchClassLoader actualClassLoader)
     {
+        try
+        {
+            // Are we in a 'decompiled' environment?
+            byte[] bs = actualClassLoader.getClassBytes("net.minecraft.world.World");
+            if (bs != null)
+            {
+                FMLRelaunchLog.info("Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation");
+                deobfuscatedEnvironment = true;
+            }
+        }
+        catch (IOException e1)
+        {
+        }
+
+        if (!deobfuscatedEnvironment)
+        {
+            FMLRelaunchLog.fine("Enabling runtime deobfuscation");
+        }
         pluginLocations = new HashMap<IFMLLoadingPlugin, File>();
         loadPlugins = new ArrayList<IFMLLoadingPlugin>();
         libraries = new ArrayList<ILibrarySet>();
@@ -239,11 +272,16 @@ public class RelaunchLibraryManager
                 }
             }
         }
-
+        // Deobfuscation transformer, always last
+        if (!deobfuscatedEnvironment)
+        {
+            actualClassLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer");
+        }
         downloadMonitor.updateProgressString("Running coremod plugins");
         Map<String,Object> data = new HashMap<String,Object>();
         data.put("mcLocation", mcDir);
         data.put("coremodList", loadPlugins);
+        data.put("runtimeDeobfuscationEnabled", !deobfuscatedEnvironment);
         for (IFMLLoadingPlugin plugin : loadPlugins)
         {
             downloadMonitor.updateProgressString("Running coremod plugin %s", plugin.getClass().getSimpleName());
@@ -256,7 +294,10 @@ public class RelaunchLibraryManager
                 {
                     IFMLCallHook call = (IFMLCallHook) Class.forName(setupClass, true, actualClassLoader).newInstance();
                     Map<String,Object> callData = new HashMap<String, Object>();
+                    callData.put("mcLocation", mcDir);
                     callData.put("classLoader", actualClassLoader);
+                    callData.put("coremodLocation", pluginLocations.get(plugin));
+                    callData.put("deobfuscationFileName", FMLInjectionData.debfuscationDataName());
                     call.injectData(callData);
                     call.call();
                 }
@@ -315,6 +356,11 @@ public class RelaunchLibraryManager
             try
             {
                 jar = new JarFile(coreMod);
+                if (jar.getManifest() == null)
+                {
+                    FMLRelaunchLog.warning("Found an un-manifested jar file in the coremods folder : %s, it will be ignored.", coreMod.getName());
+                    continue;
+                }
                 mfAttributes = jar.getManifest().getMainAttributes();
             }
             catch (IOException ioe)
@@ -361,6 +407,25 @@ public class RelaunchLibraryManager
                 downloadMonitor.updateProgressString("Loading coremod %s", coreMod.getName());
                 classLoader.addTransformerExclusion(fmlCorePlugin);
                 Class<?> coreModClass = Class.forName(fmlCorePlugin, true, classLoader);
+                MCVersion requiredMCVersion = coreModClass.getAnnotation(IFMLLoadingPlugin.MCVersion.class);
+                String version = "";
+                if (requiredMCVersion == null)
+                {
+                    FMLRelaunchLog.log(Level.WARNING, "The coremod %s does not have a MCVersion annotation, it may cause issues with this version of Minecraft", fmlCorePlugin);
+                }
+                else
+                {
+                    version = requiredMCVersion.value();
+                }
+                if (!"".equals(version) && !FMLInjectionData.mccversion.equals(version))
+                {
+                    FMLRelaunchLog.log(Level.SEVERE, "The coremod %s is requesting minecraft version %s and minecraft is %s. It will be ignored.", fmlCorePlugin, version, FMLInjectionData.mccversion);
+                    continue;
+                }
+                else if (!"".equals(version))
+                {
+                    FMLRelaunchLog.log(Level.FINE, "The coremod %s requested minecraft version %s and minecraft is %s. It will be loaded.", fmlCorePlugin, version, FMLInjectionData.mccversion);
+                }
                 TransformerExclusions trExclusions = coreModClass.getAnnotation(IFMLLoadingPlugin.TransformerExclusions.class);
                 if (trExclusions!=null)
                 {
@@ -489,7 +554,7 @@ public class RelaunchLibraryManager
         return loadedLibraries;
     }
 
-    private static ByteBuffer downloadBuffer = ByteBuffer.allocateDirect(1 << 22);
+    private static ByteBuffer downloadBuffer = ByteBuffer.allocateDirect(1 << 23);
     static IDownloadDisplay downloadMonitor;
 
     private static void performDownload(InputStream is, int sizeGuess, String validationHash, File target)

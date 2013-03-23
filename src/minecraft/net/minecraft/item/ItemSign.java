@@ -3,11 +3,10 @@ package net.minecraft.item;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.tileentity.TileEntity;
-
 public class ItemSign extends Item
 {
     public ItemSign(int par1)
@@ -76,13 +75,13 @@ public class ItemSign extends Item
                 if (par7 == 1)
                 {
                     int i1 = MathHelper.floor_double((double)((par2EntityPlayer.rotationYaw + 180.0F) * 16.0F / 360.0F) + 0.5D) & 15;
-                    // par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.signPost.blockID, var11);
+                    // world.setTypeIdAndData(i, j, k, Block.SIGN_POST.id, i1, 2);
                     block = Block.signPost;
                     par7 = i1;
                 }
                 else
                 {
-                    // par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.signWall.blockID, par7);
+                    // world.setTypeIdAndData(i, j, k, Block.WALL_SIGN.id, l, 2);
                     block = Block.signWall;
                 }
 
@@ -93,7 +92,7 @@ public class ItemSign extends Item
 
                 // CraftBukkit end
                 --par1ItemStack.stackSize;
-                TileEntitySign tileentitysign = (TileEntitySign) par3World.getBlockTileEntity(par4, par5, par6);
+                TileEntitySign tileentitysign = (TileEntitySign)par3World.getBlockTileEntity(par4, par5, par6);
 
                 if (tileentitysign != null)
                 {

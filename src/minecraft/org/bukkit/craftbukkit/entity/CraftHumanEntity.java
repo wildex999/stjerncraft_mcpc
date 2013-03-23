@@ -34,15 +34,15 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     private boolean op;
     private GameMode mode;
 
-    public CraftHumanEntity(final CraftServer server, final net.minecraft.entity.player.EntityPlayer/*was:EntityHuman*/ entity) {
+    public CraftHumanEntity(final CraftServer server, final net.minecraft.entity.player.EntityPlayer entity) {
         super(server, entity);
         mode = server.getDefaultGameMode();
-        this.inventory = new CraftInventoryPlayer(entity.inventory/*was:inventory*/);
-        enderChest = new CraftInventory(entity.getInventoryEnderChest/*was:getEnderChest*/());
+        this.inventory = new CraftInventoryPlayer(entity.inventory);
+        enderChest = new CraftInventory(entity.getInventoryEnderChest());
     }
 
     public String getName() {
-        return getHandle().username/*was:name*/;
+        return getHandle().username;
     }
 
     public PlayerInventory getInventory() {
@@ -66,23 +66,23 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     }
 
     public ItemStack getItemOnCursor() {
-        return CraftItemStack.asCraftMirror(getHandle().inventory/*was:inventory*/.getItemStack/*was:getCarried*/());
+        return CraftItemStack.asCraftMirror(getHandle().inventory.getItemStack());
     }
 
     public void setItemOnCursor(ItemStack item) {
-        /*was:net.minecraft.server.*/net.minecraft.item.ItemStack/*was:ItemStack*/ stack = CraftItemStack.asNMSCopy(item);
-        getHandle().inventory/*was:inventory*/.setItemStack/*was:setCarried*/(stack);
+        net.minecraft.item.ItemStack stack = CraftItemStack.asNMSCopy(item);
+        getHandle().inventory.setItemStack(stack);
         if (this instanceof CraftPlayer) {
-            ((net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/) getHandle()).updateHeldItem/*was:broadcastCarriedItem*/(); // Send set slot for cursor
+            ((net.minecraft.entity.player.EntityPlayerMP) getHandle()).updateHeldItem(); // Send set slot for cursor
         }
     }
 
     public boolean isSleeping() {
-        return getHandle().sleeping/*was:sleeping*/;
+        return getHandle().sleeping;
     }
 
     public int getSleepTicks() {
-        return getHandle().sleepTimer/*was:sleepTicks*/;
+        return getHandle().sleepTimer;
     }
 
     public boolean isOp() {
@@ -151,13 +151,13 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     }
 
     @Override
-    public net.minecraft.entity.player.EntityPlayer/*was:EntityHuman*/ getHandle() {
-        return (net.minecraft.entity.player.EntityPlayer/*was:EntityHuman*/) entity;
+    public net.minecraft.entity.player.EntityPlayer getHandle() {
+        return (net.minecraft.entity.player.EntityPlayer) entity;
     }
 
-    public void setHandle(final net.minecraft.entity.player.EntityPlayer/*was:EntityHuman*/ entity) {
+    public void setHandle(final net.minecraft.entity.player.EntityPlayer entity) {
         super.setHandle(entity);
-        this.inventory = new CraftInventoryPlayer(entity.inventory/*was:inventory*/);
+        this.inventory = new CraftInventoryPlayer(entity.inventory);
     }
 
     @Override
@@ -166,32 +166,32 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     }
 
     public InventoryView getOpenInventory() {
-        return getHandle().openContainer/*was:activeContainer*/.getBukkitView();
+        return getHandle().openContainer.getBukkitView();
     }
 
     public InventoryView openInventory(Inventory inventory) {
-        if(!(getHandle() instanceof net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/)) return null;
-        net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/ player = (net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/) getHandle();
+        if(!(getHandle() instanceof net.minecraft.entity.player.EntityPlayerMP)) return null;
+        net.minecraft.entity.player.EntityPlayerMP player = (net.minecraft.entity.player.EntityPlayerMP) getHandle();
         InventoryType type = inventory.getType();
-        net.minecraft.inventory.Container/*was:Container*/ formerContainer = getHandle().openContainer/*was:activeContainer*/;
+        net.minecraft.inventory.Container formerContainer = getHandle().openContainer;
         // TODO: Should we check that it really IS a CraftInventory first?
         CraftInventory craftinv = (CraftInventory) inventory;
         switch(type) {
         case PLAYER:
         case CHEST:
         case ENDER_CHEST:
-            getHandle().displayGUIChest/*was:openContainer*/(craftinv.getInventory());
+            getHandle().displayGUIChest(craftinv.getInventory());
             break;
         case DISPENSER:
-            if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityDispenser/*was:TileEntityDispenser*/) {
-                getHandle().displayGUIDispenser/*was:openDispenser*/((net.minecraft.tileentity.TileEntityDispenser/*was:TileEntityDispenser*/)craftinv.getInventory());
+            if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityDispenser) {
+                getHandle().displayGUIDispenser((net.minecraft.tileentity.TileEntityDispenser) craftinv.getInventory());
             } else {
                 openCustomInventory(inventory, player, 3);
             }
             break;
         case FURNACE:
-            if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityFurnace/*was:TileEntityFurnace*/) {
-                getHandle().displayGUIFurnace/*was:openFurnace*/((net.minecraft.tileentity.TileEntityFurnace/*was:TileEntityFurnace*/)craftinv.getInventory());
+            if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityFurnace) {
+                getHandle().displayGUIFurnace((net.minecraft.tileentity.TileEntityFurnace) craftinv.getInventory());
             } else {
                 openCustomInventory(inventory, player, 2);
             }
@@ -200,29 +200,36 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
             openCustomInventory(inventory, player, 1);
             break;
         case BREWING:
-            if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityBrewingStand/*was:TileEntityBrewingStand*/) {
-                getHandle().displayGUIBrewingStand/*was:openBrewingStand*/((net.minecraft.tileentity.TileEntityBrewingStand/*was:TileEntityBrewingStand*/)craftinv.getInventory());
+            if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityBrewingStand) {
+                getHandle().displayGUIBrewingStand((net.minecraft.tileentity.TileEntityBrewingStand) craftinv.getInventory());
             } else {
                 openCustomInventory(inventory, player, 5);
             }
             break;
         case ENCHANTING:
-                openCustomInventory(inventory, player, 4);
+            openCustomInventory(inventory, player, 4);
+            break;
+        case HOPPER:
+            if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityHopper) {
+                getHandle().func_94064_a((net.minecraft.tileentity.TileEntityHopper) craftinv.getInventory());
+            } else if (craftinv.getInventory() instanceof net.minecraft.entity.item.EntityMinecartHopper) {
+                getHandle().func_96125_a((net.minecraft.entity.item.EntityMinecartHopper) craftinv.getInventory());
+            }
             break;
         case CREATIVE:
         case CRAFTING:
             throw new IllegalArgumentException("Can't open a " + type + " inventory!");
         }
-        if (getHandle().openContainer/*was:activeContainer*/ == formerContainer) {
+        if (getHandle().openContainer == formerContainer) {
             return null;
         }
-        getHandle().openContainer/*was:activeContainer*/.checkReachable = false;
-        return getHandle().openContainer/*was:activeContainer*/.getBukkitView();
+        getHandle().openContainer.checkReachable = false;
+        return getHandle().openContainer.getBukkitView();
     }
 
-    private void openCustomInventory(Inventory inventory, net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/ player, int windowType) {
-        if (player.playerNetServerHandler/*was:playerConnection*/ == null) return;
-        net.minecraft.inventory.Container/*was:Container*/ container = new CraftContainer(inventory, this, player.nextContainerCounter());
+    private void openCustomInventory(Inventory inventory, net.minecraft.entity.player.EntityPlayerMP player, int windowType) {
+        if (player.playerNetServerHandler == null) return;
+        net.minecraft.inventory.Container container = new CraftContainer(inventory, this, player.nextContainerCounter());
 
         container = CraftEventFactory.callInventoryOpenEvent(player, container);
         if(container == null) return;
@@ -230,9 +237,9 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         String title = container.getBukkitView().getTitle();
         int size = container.getBukkitView().getTopInventory().getSize();
 
-        player.playerNetServerHandler/*was:playerConnection*/.sendPacketToPlayer/*was:sendPacket*/(new net.minecraft.network.packet.Packet100OpenWindow/*was:Packet100OpenWindow*/(container.windowId/*was:windowId*/, windowType, title, size));
-        getHandle().openContainer/*was:activeContainer*/ = container;
-        getHandle().openContainer/*was:activeContainer*/.addCraftingToCrafters/*was:addSlotListener*/(player);
+        player.playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet100OpenWindow(container.windowId, windowType, title, size, true));
+        getHandle().openContainer = container;
+        getHandle().openContainer.addCraftingToCrafters(player);
     }
 
     public InventoryView openWorkbench(Location location, boolean force) {
@@ -245,11 +252,11 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         if (location == null) {
             location = getLocation();
         }
-        getHandle().displayGUIWorkbench/*was:startCrafting*/(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        getHandle().displayGUIWorkbench(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         if (force) {
-            getHandle().openContainer/*was:activeContainer*/.checkReachable = false;
+            getHandle().openContainer.checkReachable = false;
         }
-        return getHandle().openContainer/*was:activeContainer*/.getBukkitView();
+        return getHandle().openContainer.getBukkitView();
     }
 
     public InventoryView openEnchanting(Location location, boolean force) {
@@ -262,22 +269,22 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         if (location == null) {
             location = getLocation();
         }
-        getHandle().displayGUIEnchantment/*was:startEnchanting*/(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        getHandle().displayGUIEnchantment(location.getBlockX(), location.getBlockY(), location.getBlockZ(), null);
         if (force) {
-            getHandle().openContainer/*was:activeContainer*/.checkReachable = false;
+            getHandle().openContainer.checkReachable = false;
         }
-        return getHandle().openContainer/*was:activeContainer*/.getBukkitView();
+        return getHandle().openContainer.getBukkitView();
     }
 
     public void openInventory(InventoryView inventory) {
-        if (!(getHandle() instanceof net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/)) return; // TODO: NPC support?
-        if (((net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/) getHandle()).playerNetServerHandler/*was:playerConnection*/ == null) return;
-        if (getHandle().openContainer/*was:activeContainer*/ != getHandle().inventoryContainer/*was:defaultContainer*/) {
+        if (!(getHandle() instanceof net.minecraft.entity.player.EntityPlayerMP)) return; // TODO: NPC support?
+        if (((net.minecraft.entity.player.EntityPlayerMP) getHandle()).playerNetServerHandler == null) return;
+        if (getHandle().openContainer != getHandle().inventoryContainer) {
             // fire INVENTORY_CLOSE if one already open
-            ((net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/)getHandle()).playerNetServerHandler/*was:playerConnection*/.handleCloseWindow/*was:handleContainerClose*/(new net.minecraft.network.packet.Packet101CloseWindow/*was:Packet101CloseWindow*/(getHandle().openContainer/*was:activeContainer*/.windowId/*was:windowId*/));
+            ((net.minecraft.entity.player.EntityPlayerMP)getHandle()).playerNetServerHandler.handleCloseWindow(new net.minecraft.network.packet.Packet101CloseWindow(getHandle().openContainer.windowId));
         }
-        net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/ player = (net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/) getHandle();
-        net.minecraft.inventory.Container/*was:Container*/ container;
+        net.minecraft.entity.player.EntityPlayerMP player = (net.minecraft.entity.player.EntityPlayerMP) getHandle();
+        net.minecraft.inventory.Container container;
         if (inventory instanceof CraftInventoryView) {
             container = ((CraftInventoryView) inventory).getHandle();
         } else {
@@ -295,17 +302,17 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         int windowType = CraftContainer.getNotchInventoryType(type);
         String title = inventory.getTitle();
         int size = inventory.getTopInventory().getSize();
-        player.playerNetServerHandler/*was:playerConnection*/.sendPacketToPlayer/*was:sendPacket*/(new net.minecraft.network.packet.Packet100OpenWindow/*was:Packet100OpenWindow*/(container.windowId/*was:windowId*/, windowType, title, size));
-        player.openContainer/*was:activeContainer*/ = container;
-        player.openContainer/*was:activeContainer*/.addCraftingToCrafters/*was:addSlotListener*/(player);
+        player.playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet100OpenWindow(container.windowId, windowType, title, size, false));
+        player.openContainer = container;
+        player.openContainer.addCraftingToCrafters(player);
     }
 
     public void closeInventory() {
-        getHandle().closeScreen/*was:closeInventory*/();
+        getHandle().closeScreen();
     }
 
     public boolean isBlocking() {
-        return getHandle().isBlocking/*was:bh*/();
+        return getHandle().isBlocking(); // Should be isBlocking
     }
 
     public boolean setWindowProperty(InventoryView.Property prop, int value) {
@@ -313,6 +320,6 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     }
 
     public int getExpToLevel() {
-        return getHandle().xpBarCap/*was:getExpToLevel*/();
+        return getHandle().xpBarCap();
     }
 }

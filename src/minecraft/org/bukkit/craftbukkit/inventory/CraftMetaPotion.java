@@ -14,8 +14,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 
-import guava10.com.google.common.collect.ImmutableList;
-import guava10.com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
@@ -38,21 +38,21 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
         }
     }
 
-    CraftMetaPotion(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
+    CraftMetaPotion(net.minecraft.nbt.NBTTagCompound tag) {
         super(tag);
 
-        if (tag.hasKey/*was:hasKey*/(POTION_EFFECTS.NBT)) {
-            net.minecraft.nbt.NBTTagList/*was:NBTTagList*/ list = tag.getTagList/*was:getList*/(POTION_EFFECTS.NBT);
-            int length = list.tagCount/*was:size*/();
+        if (tag.hasKey(POTION_EFFECTS.NBT)) {
+            net.minecraft.nbt.NBTTagList list = tag.getTagList(POTION_EFFECTS.NBT);
+            int length = list.tagCount();
             if (length > 0) {
                 customEffects = new ArrayList<PotionEffect>(length);
 
                 for (int i = 0; i < length; i++) {
-                    net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ effect = (net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/) list.tagAt/*was:get*/(i);
-                    PotionEffectType type = PotionEffectType.getById(effect.getByte/*was:getByte*/(ID.NBT));
-                    int amp = effect.getByte/*was:getByte*/(AMPLIFIER.NBT);
-                    int duration = effect.getInteger/*was:getInt*/(DURATION.NBT);
-                    boolean ambient = effect.getBoolean/*was:getBoolean*/(AMBIENT.NBT);
+                    net.minecraft.nbt.NBTTagCompound effect = (net.minecraft.nbt.NBTTagCompound) list.tagAt(i);
+                    PotionEffectType type = PotionEffectType.getById(effect.getByte(ID.NBT));
+                    int amp = effect.getByte(AMPLIFIER.NBT);
+                    int duration = effect.getInteger(DURATION.NBT);
+                    boolean ambient = effect.getBoolean(AMBIENT.NBT);
                     customEffects.add(new PotionEffect(type, duration, amp, ambient));
                 }
             }
@@ -76,19 +76,19 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     }
 
     @Override
-    void applyToItem(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
+    void applyToItem(net.minecraft.nbt.NBTTagCompound tag) {
         super.applyToItem(tag);
         if (hasCustomEffects()) {
-            net.minecraft.nbt.NBTTagList/*was:NBTTagList*/ effectList = new net.minecraft.nbt.NBTTagList/*was:NBTTagList*/();
-            tag.setTag/*was:set*/(POTION_EFFECTS.NBT, effectList);
+            net.minecraft.nbt.NBTTagList effectList = new net.minecraft.nbt.NBTTagList();
+            tag.setTag(POTION_EFFECTS.NBT, effectList);
 
             for (PotionEffect effect : customEffects) {
-                net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ effectData = new net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/();
-                effectData.setByte/*was:setByte*/(ID.NBT, (byte) effect.getType().getId());
-                effectData.setByte/*was:setByte*/(AMPLIFIER.NBT, (byte) effect.getAmplifier());
-                effectData.setInteger/*was:setInt*/(DURATION.NBT, effect.getDuration());
-                effectData.setBoolean/*was:setBoolean*/(AMBIENT.NBT, effect.isAmbient());
-                effectList.appendTag/*was:add*/(effectData);
+                net.minecraft.nbt.NBTTagCompound effectData = new net.minecraft.nbt.NBTTagCompound();
+                effectData.setByte(ID.NBT, (byte) effect.getType().getId());
+                effectData.setByte(AMPLIFIER.NBT, (byte) effect.getAmplifier());
+                effectData.setInteger(DURATION.NBT, effect.getDuration());
+                effectData.setBoolean(AMBIENT.NBT, effect.isAmbient());
+                effectList.appendTag(effectData);
             }
         }
     }

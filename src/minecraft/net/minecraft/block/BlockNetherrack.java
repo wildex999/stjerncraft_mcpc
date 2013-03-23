@@ -7,14 +7,19 @@ import net.minecraft.world.World;
 
 public class BlockNetherrack extends Block
 {
-    public BlockNetherrack(int par1, int par2)
+    public BlockNetherrack(int par1)
     {
-        super(par1, par2, Material.rock);
+        super(par1, Material.rock);
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 
     // CraftBukkit start
-    public void doPhysics(World world, int i, int j, int k, int l)
+
+    /**
+     * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are
+     * their own) Args: x, y, z, neighbor blockID
+     */
+    public void onNeighborBlockChange(World world, int i, int j, int k, int l)
     {
         if (Block.blocksList[l] != null && Block.blocksList[l].canProvidePower())
         {

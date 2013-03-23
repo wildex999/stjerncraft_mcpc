@@ -2,15 +2,20 @@ package org.bukkit.craftbukkit;
 
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.YamlConfiguration;
+/* TODO: update
+import org.spigotmc.Metrics;
+import org.spigotmc.RestartCommand;
+import org.spigotmc.WatchdogThread;
+ */
 
 public class Spigot {
     public static void initialize(CraftServer server, SimpleCommandMap commandMap, YamlConfiguration configuration) {
-        if (configuration.getBoolean("settings.restart-command", true)) {
-            commandMap.register("bukkit", new org.bukkit.craftbukkit.command.RestartCommand("restart"));
+        if (configuration.getBoolean("settings.tps-command", true)) { // MCPC+ - config option to allow mods to replace command
+            commandMap.register("bukkit", new org.bukkit.craftbukkit.command.TicksPerSecondCommand("tps"));
         }
 
-        if (configuration.getBoolean("settings.tps-command", true)) {
-            commandMap.register("bukkit", new org.bukkit.craftbukkit.command.TicksPerSecondCommand("tps"));
+        if (configuration.getBoolean("settings.restart-command", true)) { // MCPC+ - config option to allow mods to replace command
+            //commandMap.register("bukkit", new RestartCommand("restart")); // TODO: moved into org.spigotmc
         }
 
         int timeout = configuration.getInt("settings.timeout-time", 300);

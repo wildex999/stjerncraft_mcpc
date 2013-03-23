@@ -1,7 +1,5 @@
 package net.minecraft.util;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,9 +19,9 @@ public class IntHashMap
 
     /** A serial stamp used to mark changes */
     private transient volatile int versionStamp;
+    // private Set f = new HashSet(); // CraftBukkit - expensive and unused
 
-    /** The set of all the keys stored in this MCHash object */
-    private Set keySet = new HashSet();
+    public IntHashMap() {}
 
     /**
      * Makes the passed in integer suitable for hashing by a number of shifts
@@ -235,16 +233,6 @@ public class IntHashMap
         {
             this.grow(2 * this.slots.length);
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Return the Set of all keys stored in this MCHash object
-     */
-    public Set getKeySet()
-    {
-        return this.keySet;
     }
 
     /**

@@ -1,3 +1,5 @@
+// MCPC+ - proxy for FML log / CB jline compatibility
+// TODO: move out of NMS namespace
 package net.minecraft.server;
 
 import java.io.IOException;

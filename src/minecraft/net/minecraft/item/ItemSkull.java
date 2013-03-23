@@ -1,8 +1,5 @@
 package net.minecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.creativetab.CreativeTabs;
@@ -12,11 +9,10 @@ import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-
 public class ItemSkull extends Item
 {
     private static final String[] skullTypes = new String[] {"skeleton", "wither", "zombie", "char", "creeper"};
-    private static final int[] field_82806_b = new int[] {224, 225, 226, 227, 228};
+    public static final String[] field_94587_a = new String[] {"skull_skeleton", "skull_wither", "skull_zombie", "skull_char", "skull_creeper"};
 
     public ItemSkull(int par1)
     {
@@ -80,7 +76,7 @@ public class ItemSkull extends Item
             else
             {
                 // CraftBukkit start - handle in ItemBlock
-                // world.setTypeIdAndData(i, j, k, Block.SKULL.id, l);
+                // world.setTypeIdAndData(i, j, k, Block.SKULL.id, l, 2);
                 if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, Block.skull.blockID, par7, clickedX, clickedY, clickedZ))
                 {
                     return false;
@@ -106,26 +102,14 @@ public class ItemSkull extends Item
                         s = par1ItemStack.getTagCompound().getString("SkullOwner");
                     }
 
-                    ((TileEntitySkull) tileentity).setSkullType(par1ItemStack.getItemDamage(), s);
-                    ((TileEntitySkull) tileentity).setSkullRotation(i1);
-                    ((BlockSkull) Block.skull).makeWither(par3World, par4, par5, par6, (TileEntitySkull) tileentity);
+                    ((TileEntitySkull)tileentity).setSkullType(par1ItemStack.getItemDamage(), s);
+                    ((TileEntitySkull)tileentity).setSkullRotation(i1);
+                    ((BlockSkull)Block.skull).makeWither(par3World, par4, par5, par6, (TileEntitySkull)tileentity);
                 }
+
                 --par1ItemStack.stackSize;
                 return true;
             }
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
-     */
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
-    {
-        for (int j = 0; j < skullTypes.length; ++j)
-        {
-            par3List.add(new ItemStack(par1, 1, j));
         }
     }
 
@@ -137,22 +121,11 @@ public class ItemSkull extends Item
         return par1;
     }
 
-    @SideOnly(Side.CLIENT)
-
     /**
-     * Gets an icon index based on an item's damage value
+     * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
+     * different names based on their damage or NBT.
      */
-    public int getIconFromDamage(int par1)
-    {
-        if (par1 < 0 || par1 >= skullTypes.length)
-        {
-            par1 = 0;
-        }
-
-        return field_82806_b[par1];
-    }
-
-    public String getItemNameIS(ItemStack par1ItemStack)
+    public String getUnlocalizedName(ItemStack par1ItemStack)
     {
         int i = par1ItemStack.getItemDamage();
 
@@ -161,7 +134,7 @@ public class ItemSkull extends Item
             i = 0;
         }
 
-        return super.getItemName() + "." + skullTypes[i];
+        return super.getUnlocalizedName() + "." + skullTypes[i];
     }
 
     public String getItemDisplayName(ItemStack par1ItemStack)

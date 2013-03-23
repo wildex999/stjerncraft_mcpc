@@ -1,9 +1,8 @@
 package net.minecraft.entity.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import org.bukkit.event.entity.ExplosionPrimeEvent; // CraftBukkit
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -11,6 +10,7 @@ public class EntityTNTPrimed extends Entity
 {
     /** How long the fuse is */
     public int fuse;
+    private EntityLiving tntPlacedBy;
     public float yield = 4; // CraftBukkit
     public boolean isIncendiary = false; // CraftBukkit
 
@@ -23,7 +23,7 @@ public class EntityTNTPrimed extends Entity
         this.yOffset = this.height / 2.0F;
     }
 
-    public EntityTNTPrimed(World par1World, double par2, double par4, double par6)
+    public EntityTNTPrimed(World par1World, double par2, double par4, double par6, EntityLiving par8EntityLiving)
     {
         this(par1World);
         this.setPosition(par2, par4, par6);
@@ -35,6 +35,7 @@ public class EntityTNTPrimed extends Entity
         this.prevPosX = par2;
         this.prevPosY = par4;
         this.prevPosZ = par6;
+        this.tntPlacedBy = par8EntityLiving;
     }
 
     protected void entityInit() {}
@@ -84,6 +85,7 @@ public class EntityTNTPrimed extends Entity
             {
                 this.explode();
             }
+
             this.setDead();
             // CraftBukkit end
         }
@@ -106,6 +108,7 @@ public class EntityTNTPrimed extends Entity
             // give 'this' instead of (Entity) null so we know what causes the damage
             this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, event.getRadius(), event.getFire(), true);
         }
+
         // CraftBukkit end
     }
 
@@ -125,9 +128,8 @@ public class EntityTNTPrimed extends Entity
         this.fuse = par1NBTTagCompound.getByte("Fuse");
     }
 
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
+    public EntityLiving func_94083_c()
     {
-        return 0.0F;
+        return this.tntPlacedBy;
     }
 }

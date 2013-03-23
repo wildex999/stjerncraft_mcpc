@@ -102,6 +102,7 @@ public abstract class EntityMob extends EntityCreature implements IMob
 
                     // CraftBukkit end
                 }
+
                 return true;
             }
             else
@@ -133,7 +134,7 @@ public abstract class EntityMob extends EntityCreature implements IMob
 
         if (par1Entity instanceof EntityLiving)
         {
-            i += EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLiving)par1Entity);
+            i += EnchantmentHelper.getEnchantmentModifierLiving((EntityLiving) this, (EntityLiving) par1Entity);
             j += EnchantmentHelper.getKnockbackModifier(this, (EntityLiving)par1Entity);
         }
 

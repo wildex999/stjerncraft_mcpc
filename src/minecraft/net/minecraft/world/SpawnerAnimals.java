@@ -1,14 +1,9 @@
 package net.minecraft.world;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -25,12 +20,9 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.living.LivingSpecialSpawnEvent;
-// CraftBukkit start
 import org.bukkit.craftbukkit.util.LongHash;
 import org.bukkit.craftbukkit.util.LongObjectHashMap;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-// CraftBukkit end
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public final class SpawnerAnimals
 {
@@ -38,7 +30,6 @@ public final class SpawnerAnimals
 
     /** An array of entity classes that spawn at night. */
     protected static final Class[] nightSpawnEntities = new Class[] {EntitySpider.class, EntityZombie.class, EntitySkeleton.class};
-    private static byte spawnRadius = 0; // Spigot
 
     /**
      * Given a chunk, find a random position in it.
@@ -51,26 +42,6 @@ public final class SpawnerAnimals
         int i1 = par0World.rand.nextInt(chunk == null ? par0World.getActualHeight() : chunk.getTopFilledSegment() + 16 - 1);
         return new ChunkPosition(k, i1, l);
     }
-
-    // Spigot start - get entity count only from chunks being processed in eligibleChunksForSpawning
-    public static final int getEntityCount(WorldServer server, Class oClass) {
-        int i = 0;
-        for (Long coord : eligibleChunksForSpawning.keySet()) {
-            int x = LongHash.msw(coord);
-            int z = LongHash.lsw(coord);
-            if (!server.theChunkProviderServer.chunksToUnload.contains(x,z) && server.chunkExists(x, z)) {
-                for (List<Entity> entitySlice : server.getChunkFromChunkCoords(x, z).entityLists) {
-                    for (Entity entity : entitySlice) {
-                        if (oClass.isAssignableFrom(entity.getClass())) {
-                            ++i;
-                        }
-                    }
-                }
-            }
-        }
-        return i;
-    }
-    // Spigot end
 
     /**
      * adds all chunks within the spawn radius of the players to eligibleChunksForSpawning. pars: the world,
@@ -88,24 +59,12 @@ public final class SpawnerAnimals
             int i;
             int j;
 
-            // Spigot start - limit radius to spawn distance (chunks aren't loaded)
-            if (spawnRadius == 0) {
-                spawnRadius = (byte) par0WorldServer.getWorld().mobSpawnRange;
-                if (spawnRadius > (byte) par0WorldServer.getServer().getViewDistance()) {
-                    spawnRadius = (byte) par0WorldServer.getServer().getViewDistance();
-                }
-                if (spawnRadius > 8) {
-                    spawnRadius = 8;
-                }
-            }
-            // Spigot end
-
             for (i = 0; i < par0WorldServer.playerEntities.size(); ++i)
             {
                 EntityPlayer entityplayer = (EntityPlayer)par0WorldServer.playerEntities.get(i);
                 int k = MathHelper.floor_double(entityplayer.posX / 16.0D);
                 j = MathHelper.floor_double(entityplayer.posZ / 16.0D);
-                byte b0 = spawnRadius; // Spigot - replace 8 with view distance constrained value
+                byte b0 = 8;
 
                 for (int l = -b0; l <= b0; ++l)
                 {
@@ -145,15 +104,12 @@ public final class SpawnerAnimals
                     case monster:
                         limit = par0WorldServer.getWorld().getMonsterSpawnLimit();
                         break;
-
                     case creature:
                         limit = par0WorldServer.getWorld().getAnimalSpawnLimit();
                         break;
-
                     case waterCreature:
                         limit = par0WorldServer.getWorld().getWaterAnimalSpawnLimit();
                         break;
-
                     case ambient:
                         limit = par0WorldServer.getWorld().getAmbientSpawnLimit();
                         break;
@@ -164,16 +120,14 @@ public final class SpawnerAnimals
                     continue;
                 }
 
-                int mobcnt = 0;
                 // CraftBukkit end
 
-                if ((!enumcreaturetype.getPeacefulCreature() || par2) && (enumcreaturetype.getPeacefulCreature() || par1) && (!enumcreaturetype.getAnimal() || par3) && (mobcnt = getEntityCount(par0WorldServer, enumcreaturetype.getCreatureClass())) <= limit * eligibleChunksForSpawning.size() / 256)   // CraftBukkit - use per-world limits
+                if ((!enumcreaturetype.getPeacefulCreature() || par2) && (enumcreaturetype.getPeacefulCreature() || par1) && (!enumcreaturetype.getAnimal() || par3) && par0WorldServer.countEntities(enumcreaturetype.getCreatureClass()) <= limit * eligibleChunksForSpawning.size() / 256)   // CraftBukkit - use per-world limits
                 {
                     Iterator iterator = eligibleChunksForSpawning.keySet().iterator();
-                    int k1 = (limit * eligibleChunksForSpawning.size() / 256) - mobcnt + 1; // CraftBukkit - up to 1 more than limit
                     label110:
 
-                    while (iterator.hasNext() && (k1 > 0))   // Spigot - while more allowed
+                    while (iterator.hasNext())
                     {
                         // CraftBukkit start
                         long key = ((Long) iterator.next()).longValue();
@@ -182,52 +136,52 @@ public final class SpawnerAnimals
                         {
                             ChunkPosition chunkposition = getRandomSpawningPointInChunk(par0WorldServer, LongHash.msw(key), LongHash.lsw(key));
                             // CraftBukkit end
-                            int l1 = chunkposition.x;
-                            int i2 = chunkposition.y;
-                            int j2 = chunkposition.z;
+                            int k1 = chunkposition.x;
+                            int l1 = chunkposition.y;
+                            int i2 = chunkposition.z;
 
-                            if (!par0WorldServer.isBlockNormalCube(l1, i2, j2) && par0WorldServer.getBlockMaterial(l1, i2, j2) == enumcreaturetype.getCreatureMaterial())
+                            if (!par0WorldServer.isBlockNormalCube(k1, l1, i2) && par0WorldServer.getBlockMaterial(k1, l1, i2) == enumcreaturetype.getCreatureMaterial())
                             {
+                                int j2 = 0;
                                 int k2 = 0;
-                                int l2 = 0;
 
-                                while (l2 < 3)
+                                while (k2 < 3)
                                 {
+                                    int l2 = k1;
                                     int i3 = l1;
                                     int j3 = i2;
-                                    int k3 = j2;
                                     byte b1 = 6;
                                     SpawnListEntry spawnlistentry = null;
-                                    int l3 = 0;
+                                    int k3 = 0;
 
                                     while (true)
                                     {
-                                        if (l3 < 4)
+                                        if (k3 < 4)
                                         {
                                             label103:
                                             {
-                                                i3 += par0WorldServer.rand.nextInt(b1) - par0WorldServer.rand.nextInt(b1);
-                                                j3 += par0WorldServer.rand.nextInt(1) - par0WorldServer.rand.nextInt(1);
-                                                k3 += par0WorldServer.rand.nextInt(b1) - par0WorldServer.rand.nextInt(b1);
+                                                l2 += par0WorldServer.rand.nextInt(b1) - par0WorldServer.rand.nextInt(b1);
+                                                i3 += par0WorldServer.rand.nextInt(1) - par0WorldServer.rand.nextInt(1);
+                                                j3 += par0WorldServer.rand.nextInt(b1) - par0WorldServer.rand.nextInt(b1);
 
-                                                if (canCreatureTypeSpawnAtLocation(enumcreaturetype, par0WorldServer, i3, j3, k3))
+                                                if (canCreatureTypeSpawnAtLocation(enumcreaturetype, par0WorldServer, l2, i3, j3))
                                                 {
-                                                    float f = (float) i3 + 0.5F;
-                                                    float f1 = (float) j3;
-                                                    float f2 = (float)k3 + 0.5F;
+                                                    float f = (float)l2 + 0.5F;
+                                                    float f1 = (float)i3;
+                                                    float f2 = (float)j3 + 0.5F;
 
-                                                    if (par0WorldServer.getClosestPlayer((double) f, (double) f1, (double) f2, 24.0D) == null)
+                                                    if (par0WorldServer.getClosestPlayer((double)f, (double)f1, (double)f2, 24.0D) == null)
                                                     {
-                                                        float f3 = f - (float) chunkcoordinates.posX;
-                                                        float f4 = f1 - (float) chunkcoordinates.posY;
-                                                        float f5 = f2 - (float) chunkcoordinates.posZ;
+                                                        float f3 = f - (float)chunkcoordinates.posX;
+                                                        float f4 = f1 - (float)chunkcoordinates.posY;
+                                                        float f5 = f2 - (float)chunkcoordinates.posZ;
                                                         float f6 = f3 * f3 + f4 * f4 + f5 * f5;
 
                                                         if (f6 >= 576.0F)
                                                         {
                                                             if (spawnlistentry == null)
                                                             {
-                                                                spawnlistentry = par0WorldServer.spawnRandomCreature(enumcreaturetype, i3, j3, k3);
+                                                                spawnlistentry = par0WorldServer.spawnRandomCreature(enumcreaturetype, l2, i3, j3);
 
                                                                 if (spawnlistentry == null)
                                                                 {
@@ -239,7 +193,7 @@ public final class SpawnerAnimals
 
                                                             try
                                                             {
-                                                                entityliving = (EntityLiving) spawnlistentry.entityClass.getConstructor(new Class[] { World.class}).newInstance(new Object[] { par0WorldServer});
+                                                                entityliving = (EntityLiving)spawnlistentry.entityClass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {par0WorldServer});
                                                             }
                                                             catch (Exception exception)
                                                             {
@@ -247,41 +201,34 @@ public final class SpawnerAnimals
                                                                 return i;
                                                             }
 
-                                                            entityliving.setLocationAndAngles((double) f, (double) f1, (double) f2, par0WorldServer.rand.nextFloat() * 360.0F, 0.0F);
+                                                            entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par0WorldServer.rand.nextFloat() * 360.0F, 0.0F);
 
-                                                            if (entityliving.getCanSpawnHere())
+                                                            Result canSpawn = ForgeEventFactory.canEntitySpawn(entityliving, par0WorldServer, f, f1, f2);
+                                                            if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && entityliving.getCanSpawnHere()))
                                                             {
-                                                                ++k2;
-                                                                // CraftBukkit start - added a reason for spawning this creature, moved creatureSpecificInit(entityliving, world...) up
+                                                                ++j2;
+                                                                // CraftBukkit start - added a reason for spawning this creature, moved a(entityliving, world...) up
                                                                 creatureSpecificInit(entityliving, par0WorldServer, f, f1, f2);
-                                                                par0WorldServer.addEntity(entityliving, SpawnReason.NATURAL);
+                                                                par0WorldServer.addEntity(entityliving, CreatureSpawnEvent.SpawnReason.NATURAL);
+
                                                                 // CraftBukkit end
-                                                                // Spigot start
-                                                                k1--;
-
-                                                                if (k1 <= 0)   // If we're past limit, stop spawn
-                                                                {
-                                                                    continue label110;
-                                                                }
-
-                                                                // Spigot end
-                                                                if (k2 >= entityliving.getMaxSpawnedInChunk())
+                                                                if (j2 >= entityliving.getMaxSpawnedInChunk())
                                                                 {
                                                                     continue label110;
                                                                 }
                                                             }
 
-                                                            i += k2;
+                                                            i += j2;
                                                         }
                                                     }
                                                 }
 
-                                                ++l3;
+                                                ++k3;
                                                 continue;
                                             }
                                         }
 
-                                        ++l2;
+                                        ++k2;
                                         break;
                                     }
                                 }
@@ -311,10 +258,8 @@ public final class SpawnerAnimals
         else
         {
             int l = par1World.getBlockId(par2, par3 - 1, par4);
-            // Forge start
-            boolean spawnBlock = Block.blocksList[l] != null && Block.blocksList[l].canCreatureSpawn(par0EnumCreatureType, par1World, par2, par3 - 1, par4);
+            boolean spawnBlock = (Block.blocksList[l] != null && Block.blocksList[l].canCreatureSpawn(par0EnumCreatureType, par1World, par2, par3 - 1, par4));
             return spawnBlock && l != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
-            // Forge end
         }
     }
 
@@ -342,7 +287,7 @@ public final class SpawnerAnimals
         {
             while (par6Random.nextFloat() < par1BiomeGenBase.getSpawningChance())
             {
-                SpawnListEntry spawnlistentry = (SpawnListEntry)WeightedRandom.getRandomItem(par0World.rand, list);
+                SpawnListEntry spawnlistentry = (SpawnListEntry) WeightedRandom.getRandomItem(par0World.rand, (Collection) list);
                 int i1 = spawnlistentry.minGroupCount + par6Random.nextInt(1 + spawnlistentry.maxGroupCount - spawnlistentry.minGroupCount);
                 int j1 = par2 + par6Random.nextInt(par4);
                 int k1 = par3 + par6Random.nextInt(par5);
@@ -375,9 +320,9 @@ public final class SpawnerAnimals
                             }
 
                             entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par6Random.nextFloat() * 360.0F, 0.0F);
-                            // CraftBukkit start - added a reason for spawning this creature, moved creatureSpecificInit(entity, world...) up
+                            // CraftBukkit start - added a reason for spawning this creature, moved a(entity, world...) up
                             creatureSpecificInit(entityliving, par0World, f, f1, f2);
-                            par0World.addEntity(entityliving, SpawnReason.CHUNK_GEN);
+                            par0World.addEntity(entityliving, CreatureSpawnEvent.SpawnReason.CHUNK_GEN);
                             // CraftBukkit end
                             flag = true;
                         }

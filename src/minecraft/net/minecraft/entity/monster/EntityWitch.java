@@ -1,7 +1,5 @@
 package net.minecraft.entity.monster;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.entity.EntityLiving;
@@ -198,22 +196,6 @@ public class EntityWitch extends EntityMob implements IRangedAttackMob
         return par2;
     }
 
-    @SideOnly(Side.CLIENT)
-    public void handleHealthUpdate(byte par1)
-    {
-        if (par1 == 15)
-        {
-            for (int i = 0; i < this.rand.nextInt(35) + 10; ++i)
-            {
-                this.worldObj.spawnParticle("witchMagic", this.posX + this.rand.nextGaussian() * 0.12999999523162842D, this.boundingBox.maxY + 0.5D + this.rand.nextGaussian() * 0.12999999523162842D, this.posZ + this.rand.nextGaussian() * 0.12999999523162842D, 0.0D, 0.0D, 0.0D);
-            }
-        }
-        else
-        {
-            super.handleHealthUpdate(par1);
-        }
-    }
-
     /**
      * This method returns a value to be applied directly to entity speed, this factor is less than 1 when a slowdown
      * potion effect is applied, more than 1 when a haste potion effect is applied and 2 for fleeing entities.
@@ -260,7 +242,7 @@ public class EntityWitch extends EntityMob implements IRangedAttackMob
     /**
      * Attack the specified entity using a ranged attack.
      */
-    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving)
+    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving, float par2)
     {
         if (!this.getAggressive())
         {
@@ -269,9 +251,9 @@ public class EntityWitch extends EntityMob implements IRangedAttackMob
             double d0 = par1EntityLiving.posX + par1EntityLiving.motionX - this.posX;
             double d1 = par1EntityLiving.posY + (double)par1EntityLiving.getEyeHeight() - 1.100000023841858D - this.posY;
             double d2 = par1EntityLiving.posZ + par1EntityLiving.motionZ - this.posZ;
-            float f = MathHelper.sqrt_double(d0 * d0 + d2 * d2);
+            float f1 = MathHelper.sqrt_double(d0 * d0 + d2 * d2);
 
-            if (f >= 8.0F && !par1EntityLiving.isPotionActive(Potion.moveSlowdown))
+            if (f1 >= 8.0F && !par1EntityLiving.isPotionActive(Potion.moveSlowdown))
             {
                 entitypotion.setPotionDamage(32698);
             }
@@ -279,12 +261,12 @@ public class EntityWitch extends EntityMob implements IRangedAttackMob
             {
                 entitypotion.setPotionDamage(32660);
             }
-            else if (f <= 3.0F && !par1EntityLiving.isPotionActive(Potion.weakness) && this.rand.nextFloat() < 0.25F)
+            else if (f1 <= 3.0F && !par1EntityLiving.isPotionActive(Potion.weakness) && this.rand.nextFloat() < 0.25F)
             {
                 entitypotion.setPotionDamage(32696);
             }
 
-            entitypotion.setThrowableHeading(d0, d1 + (double)(f * 0.2F), d2, 0.75F, 8.0F);
+            entitypotion.setThrowableHeading(d0, d1 + (double)(f1 * 0.2F), d2, 0.75F, 8.0F);
             this.worldObj.spawnEntityInWorld(entitypotion);
         }
     }

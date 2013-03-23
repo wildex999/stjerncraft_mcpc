@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.updater;
 
-// import guava10.com.google.gson.*; // Spigot
+import com.google.gson.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 public class BukkitDLUpdaterService {
     private static final String API_PREFIX_ARTIFACT = "/api/1.0/downloads/projects/craftbukkit/view/";
     private static final String API_PREFIX_CHANNEL = "/api/1.0/downloads/channels/";
-    // private static final DateDeserializer dateDeserializer = new DateDeserializer(); // Spigot
+    private static final DateDeserializer dateDeserializer = new DateDeserializer();
     private final String host;
 
     public BukkitDLUpdaterService(String host) {
@@ -47,11 +47,8 @@ public class BukkitDLUpdaterService {
             URLConnection connection = url.openConnection();
             connection.setRequestProperty("User-Agent", getUserAgent());
             reader = new InputStreamReader(connection.getInputStream());
-            // Spigot start
-            // Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, dateDeserializer).setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-            // return gson.fromJson(reader, ArtifactDetails.class);
-            // Spigot end
-            return null;
+            Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, dateDeserializer).setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+            return gson.fromJson(reader, ArtifactDetails.class);
         } finally {
             if (reader != null) {
                 reader.close();
@@ -79,13 +76,10 @@ public class BukkitDLUpdaterService {
             URLConnection connection = url.openConnection();
             connection.setRequestProperty("User-Agent", getUserAgent());
             reader = new InputStreamReader(connection.getInputStream());
-            // Spigot start
-            // Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, dateDeserializer).setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-            // ArtifactDetails.ChannelDetails fromJson = gson.fromJson(reader, ArtifactDetails.ChannelDetails.class);
+            Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, dateDeserializer).setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+            ArtifactDetails.ChannelDetails fromJson = gson.fromJson(reader, ArtifactDetails.ChannelDetails.class);
 
-            //return fromJson;
-            // Spigot end
-            return null;
+            return fromJson;
         } finally {
             if (reader != null) {
                 reader.close();
@@ -93,9 +87,7 @@ public class BukkitDLUpdaterService {
         }
     }
 
-    // Spigot start
-    /*
-     static class DateDeserializer implements JsonDeserializer<Date> {
+    static class DateDeserializer implements JsonDeserializer<Date> {
         private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         public Date deserialize(JsonElement je, Type type, JsonDeserializationContext jdc) throws JsonParseException {
@@ -105,5 +97,5 @@ public class BukkitDLUpdaterService {
                 throw new JsonParseException("Date is not formatted correctly", ex);
             }
         }
-    }*/// Spigot end
+    }
 }

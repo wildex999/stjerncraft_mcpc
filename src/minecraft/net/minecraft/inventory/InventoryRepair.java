@@ -48,9 +48,9 @@ public class InventoryRepair extends InventoryBasic   // CraftBukkit - public
     }
     // CraftBukkit end
 
-    InventoryRepair(ContainerRepair par1ContainerRepair, String par2Str, int par3)
+    InventoryRepair(ContainerRepair par1ContainerRepair, String par2Str, boolean par3, int par4)
     {
-        super(par2Str, par3);
+        super(par2Str, par3, par4);
         this.theContainer = par1ContainerRepair;
         this.setMaxStackSize(1); // CraftBukkit
     }
@@ -61,6 +61,14 @@ public class InventoryRepair extends InventoryBasic   // CraftBukkit - public
     public void onInventoryChanged()
     {
         super.onInventoryChanged();
-        this.theContainer.onCraftMatrixChanged(this);
+        this.theContainer.onCraftMatrixChanged((IInventory) this);
+    }
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
     }
 }

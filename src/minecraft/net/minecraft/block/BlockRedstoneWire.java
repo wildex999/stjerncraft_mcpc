@@ -1,7 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -13,6 +11,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 
 public class BlockRedstoneWire extends Block
@@ -22,20 +21,12 @@ public class BlockRedstoneWire extends Block
      * updateCurrentStrength.
      */
     private boolean wiresProvidePower = true;
-    private Set blocksNeedingUpdate = new java.util.LinkedHashSet(); // CraftBukkit - HashSet -> LinkedHashSet
+    private Set blocksNeedingUpdate = new HashSet();
 
-    public BlockRedstoneWire(int par1, int par2)
+    public BlockRedstoneWire(int par1)
     {
-        super(par1, par2, Material.circuits);
+        super(par1, Material.circuits);
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.0625F, 1.0F);
-    }
-
-    /**
-     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
-     */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
-    {
-        return this.blockIndexInTexture;
     }
 
     /**
@@ -72,17 +63,6 @@ public class BlockRedstoneWire extends Block
         return 5;
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns a integer with hex for 0xrrggbb with this color multiplied against the blocks color. Note only called
-     * when first determining what to render.
-     */
-    public int colorMultiplier(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
-    {
-        return 8388608;
-    }
-
     /**
      * Checks to see if its valid to put this block at the specified coordinates. Args: world, x, y, z
      */
@@ -111,71 +91,78 @@ public class BlockRedstoneWire extends Block
     private void calculateCurrentChanges(World par1World, int par2, int par3, int par4, int par5, int par6, int par7)
     {
         int k1 = par1World.getBlockMetadata(par2, par3, par4);
-        int l1 = 0;
+        byte b0 = 0;
+        int l1 = this.getMaxCurrentStrength(par1World, par5, par6, par7, b0);
         this.wiresProvidePower = false;
-        boolean flag = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
+        int i2 = par1World.getStrongestIndirectPower(par2, par3, par4);
         this.wiresProvidePower = true;
-        int i2;
-        int j2;
-        int k2;
 
-        if (flag)
+        if (i2 > 0 && i2 > l1 - 1)
         {
-            l1 = 15;
+            l1 = i2;
+        }
+
+        int j2 = 0;
+
+        for (int k2 = 0; k2 < 4; ++k2)
+        {
+            int l2 = par2;
+            int i3 = par4;
+
+            if (k2 == 0)
+            {
+                l2 = par2 - 1;
+            }
+
+            if (k2 == 1)
+            {
+                ++l2;
+            }
+
+            if (k2 == 2)
+            {
+                i3 = par4 - 1;
+            }
+
+            if (k2 == 3)
+            {
+                ++i3;
+            }
+
+            if (l2 != par5 || i3 != par7)
+            {
+                j2 = this.getMaxCurrentStrength(par1World, l2, par3, i3, j2);
+            }
+
+            if (par1World.isBlockNormalCube(l2, par3, i3) && !par1World.isBlockNormalCube(par2, par3 + 1, par4))
+            {
+                if ((l2 != par5 || i3 != par7) && par3 >= par6)
+                {
+                    j2 = this.getMaxCurrentStrength(par1World, l2, par3 + 1, i3, j2);
+                }
+            }
+            else if (!par1World.isBlockNormalCube(l2, par3, i3) && (l2 != par5 || i3 != par7) && par3 <= par6)
+            {
+                j2 = this.getMaxCurrentStrength(par1World, l2, par3 - 1, i3, j2);
+            }
+        }
+
+        if (j2 > l1)
+        {
+            l1 = j2 - 1;
+        }
+        else if (l1 > 0)
+        {
+            --l1;
         }
         else
         {
-            for (i2 = 0; i2 < 4; ++i2)
-            {
-                j2 = par2;
-                k2 = par4;
+            l1 = 0;
+        }
 
-                if (i2 == 0)
-                {
-                    j2 = par2 - 1;
-                }
-
-                if (i2 == 1)
-                {
-                    ++j2;
-                }
-
-                if (i2 == 2)
-                {
-                    k2 = par4 - 1;
-                }
-
-                if (i2 == 3)
-                {
-                    ++k2;
-                }
-
-                if (j2 != par5 || par3 != par6 || k2 != par7)
-                {
-                    l1 = this.getMaxCurrentStrength(par1World, j2, par3, k2, l1);
-                }
-
-                if (par1World.isBlockNormalCube(j2, par3, k2) && !par1World.isBlockNormalCube(par2, par3 + 1, par4))
-                {
-                    if (j2 != par5 || par3 + 1 != par6 || k2 != par7)
-                    {
-                        l1 = this.getMaxCurrentStrength(par1World, j2, par3 + 1, k2, l1);
-                    }
-                }
-                else if (!par1World.isBlockNormalCube(j2, par3, k2) && (j2 != par5 || par3 - 1 != par6 || k2 != par7))
-                {
-                    l1 = this.getMaxCurrentStrength(par1World, j2, par3 - 1, k2, l1);
-                }
-            }
-
-            if (l1 > 0)
-            {
-                --l1;
-            }
-            else
-            {
-                l1 = 0;
-            }
+        if (i2 > l1 - 1)
+        {
+            l1 = i2;
         }
 
         // CraftBukkit start
@@ -190,80 +177,14 @@ public class BlockRedstoneWire extends Block
 
         if (k1 != l1)
         {
-            par1World.editingBlocks = true;
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, l1);
-            par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
-            par1World.editingBlocks = false;
-
-            for (i2 = 0; i2 < 4; ++i2)
-            {
-                j2 = par2;
-                k2 = par4;
-                int l2 = par3 - 1;
-
-                if (i2 == 0)
-                {
-                    j2 = par2 - 1;
-                }
-
-                if (i2 == 1)
-                {
-                    ++j2;
-                }
-
-                if (i2 == 2)
-                {
-                    k2 = par4 - 1;
-                }
-
-                if (i2 == 3)
-                {
-                    ++k2;
-                }
-
-                if (par1World.isBlockNormalCube(j2, par3, k2))
-                {
-                    l2 += 2;
-                }
-
-                boolean flag1 = false;
-                int i3 = this.getMaxCurrentStrength(par1World, j2, par3, k2, -1);
-                l1 = par1World.getBlockMetadata(par2, par3, par4);
-
-                if (l1 > 0)
-                {
-                    --l1;
-                }
-
-                if (i3 >= 0 && i3 != l1)
-                {
-                    this.calculateCurrentChanges(par1World, j2, par3, k2, par2, par3, par4);
-                }
-
-                i3 = this.getMaxCurrentStrength(par1World, j2, l2, k2, -1);
-                l1 = par1World.getBlockMetadata(par2, par3, par4);
-
-                if (l1 > 0)
-                {
-                    --l1;
-                }
-
-                if (i3 >= 0 && i3 != l1)
-                {
-                    this.calculateCurrentChanges(par1World, j2, l2, k2, par2, par3, par4);
-                }
-            }
-
-            if (k1 < l1 || l1 == 0)
-            {
-                this.blocksNeedingUpdate.add(new ChunkPosition(par2, par3, par4));
-                this.blocksNeedingUpdate.add(new ChunkPosition(par2 - 1, par3, par4));
-                this.blocksNeedingUpdate.add(new ChunkPosition(par2 + 1, par3, par4));
-                this.blocksNeedingUpdate.add(new ChunkPosition(par2, par3 - 1, par4));
-                this.blocksNeedingUpdate.add(new ChunkPosition(par2, par3 + 1, par4));
-                this.blocksNeedingUpdate.add(new ChunkPosition(par2, par3, par4 - 1));
-                this.blocksNeedingUpdate.add(new ChunkPosition(par2, par3, par4 + 1));
-            }
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, l1, 2);
+            this.blocksNeedingUpdate.add(new ChunkPosition(par2, par3, par4));
+            this.blocksNeedingUpdate.add(new ChunkPosition(par2 - 1, par3, par4));
+            this.blocksNeedingUpdate.add(new ChunkPosition(par2 + 1, par3, par4));
+            this.blocksNeedingUpdate.add(new ChunkPosition(par2, par3 - 1, par4));
+            this.blocksNeedingUpdate.add(new ChunkPosition(par2, par3 + 1, par4));
+            this.blocksNeedingUpdate.add(new ChunkPosition(par2, par3, par4 - 1));
+            this.blocksNeedingUpdate.add(new ChunkPosition(par2, par3, par4 + 1));
         }
     }
 
@@ -399,11 +320,13 @@ public class BlockRedstoneWire extends Block
         }
     }
 
+    // CraftBukkit - private -> public
+
     /**
      * Returns the current strength at the specified block if it is greater than the passed value, or the passed value
      * otherwise. Signature: (world, x, y, z, strength)
      */
-    public int getMaxCurrentStrength(World par1World, int par2, int par3, int par4, int par5) // CraftBukkit - private -> public
+    public int getMaxCurrentStrength(World par1World, int par2, int par3, int par4, int par5)
     {
         if (par1World.getBlockId(par2, par3, par4) != this.blockID)
         {
@@ -424,7 +347,6 @@ public class BlockRedstoneWire extends Block
     {
         if (!par1World.isRemote)
         {
-            int i1 = par1World.getBlockMetadata(par2, par3, par4);
             boolean flag = this.canPlaceBlockAt(par1World, par2, par3, par4);
 
             if (flag)
@@ -433,8 +355,8 @@ public class BlockRedstoneWire extends Block
             }
             else
             {
-                this.dropBlockAsItem(par1World, par2, par3, par4, i1, 0);
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                this.dropBlockAsItem(par1World, par2, par3, par4, 0, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
 
             super.onNeighborBlockChange(par1World, par2, par3, par4, par5);
@@ -453,9 +375,9 @@ public class BlockRedstoneWire extends Block
      * Returns true if the block is emitting direct/strong redstone power on the specified side. Args: World, X, Y, Z,
      * side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        return !this.wiresProvidePower ? false : this.isProvidingWeakPower(par1IBlockAccess, par2, par3, par4, par5);
+        return !this.wiresProvidePower ? 0 : this.isProvidingWeakPower(par1IBlockAccess, par2, par3, par4, par5);
     }
 
     /**
@@ -463,51 +385,56 @@ public class BlockRedstoneWire extends Block
      * returns true, standard redstone propagation rules will apply instead and this will not be called. Args: World, X,
      * Y, Z, side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
         if (!this.wiresProvidePower)
         {
-            return false;
-        }
-        else if (par1IBlockAccess.getBlockMetadata(par2, par3, par4) == 0)
-        {
-            return false;
-        }
-        else if (par5 == 1)
-        {
-            return true;
+            return 0;
         }
         else
         {
-            boolean flag = isPoweredOrRepeater(par1IBlockAccess, par2 - 1, par3, par4, 1) || !par1IBlockAccess.isBlockNormalCube(par2 - 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 - 1, par3 - 1, par4, -1);
-            boolean flag1 = isPoweredOrRepeater(par1IBlockAccess, par2 + 1, par3, par4, 3) || !par1IBlockAccess.isBlockNormalCube(par2 + 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 + 1, par3 - 1, par4, -1);
-            boolean flag2 = isPoweredOrRepeater(par1IBlockAccess, par2, par3, par4 - 1, 2) || !par1IBlockAccess.isBlockNormalCube(par2, par3, par4 - 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 - 1, par4 - 1, -1);
-            boolean flag3 = isPoweredOrRepeater(par1IBlockAccess, par2, par3, par4 + 1, 0) || !par1IBlockAccess.isBlockNormalCube(par2, par3, par4 + 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 - 1, par4 + 1, -1);
+            int i1 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 
-            if (!par1IBlockAccess.isBlockNormalCube(par2, par3 + 1, par4))
+            if (i1 == 0)
             {
-                if (par1IBlockAccess.isBlockNormalCube(par2 - 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 - 1, par3 + 1, par4, -1))
-                {
-                    flag = true;
-                }
-
-                if (par1IBlockAccess.isBlockNormalCube(par2 + 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 + 1, par3 + 1, par4, -1))
-                {
-                    flag1 = true;
-                }
-
-                if (par1IBlockAccess.isBlockNormalCube(par2, par3, par4 - 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 + 1, par4 - 1, -1))
-                {
-                    flag2 = true;
-                }
-
-                if (par1IBlockAccess.isBlockNormalCube(par2, par3, par4 + 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 + 1, par4 + 1, -1))
-                {
-                    flag3 = true;
-                }
+                return 0;
             }
+            else if (par5 == 1)
+            {
+                return i1;
+            }
+            else
+            {
+                boolean flag = isPoweredOrRepeater(par1IBlockAccess, par2 - 1, par3, par4, 1) || !par1IBlockAccess.isBlockNormalCube(par2 - 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 - 1, par3 - 1, par4, -1);
+                boolean flag1 = isPoweredOrRepeater(par1IBlockAccess, par2 + 1, par3, par4, 3) || !par1IBlockAccess.isBlockNormalCube(par2 + 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 + 1, par3 - 1, par4, -1);
+                boolean flag2 = isPoweredOrRepeater(par1IBlockAccess, par2, par3, par4 - 1, 2) || !par1IBlockAccess.isBlockNormalCube(par2, par3, par4 - 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 - 1, par4 - 1, -1);
+                boolean flag3 = isPoweredOrRepeater(par1IBlockAccess, par2, par3, par4 + 1, 0) || !par1IBlockAccess.isBlockNormalCube(par2, par3, par4 + 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 - 1, par4 + 1, -1);
 
-            return !flag2 && !flag1 && !flag && !flag3 && par5 >= 2 && par5 <= 5 ? true : (par5 == 2 && flag2 && !flag && !flag1 ? true : (par5 == 3 && flag3 && !flag && !flag1 ? true : (par5 == 4 && flag && !flag2 && !flag3 ? true : par5 == 5 && flag1 && !flag2 && !flag3)));
+                if (!par1IBlockAccess.isBlockNormalCube(par2, par3 + 1, par4))
+                {
+                    if (par1IBlockAccess.isBlockNormalCube(par2 - 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 - 1, par3 + 1, par4, -1))
+                    {
+                        flag = true;
+                    }
+
+                    if (par1IBlockAccess.isBlockNormalCube(par2 + 1, par3, par4) && isPoweredOrRepeater(par1IBlockAccess, par2 + 1, par3 + 1, par4, -1))
+                    {
+                        flag1 = true;
+                    }
+
+                    if (par1IBlockAccess.isBlockNormalCube(par2, par3, par4 - 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 + 1, par4 - 1, -1))
+                    {
+                        flag2 = true;
+                    }
+
+                    if (par1IBlockAccess.isBlockNormalCube(par2, par3, par4 + 1) && isPoweredOrRepeater(par1IBlockAccess, par2, par3 + 1, par4 + 1, -1))
+                    {
+                        flag3 = true;
+                    }
+                }
+
+                return !flag2 && !flag1 && !flag && !flag3 && par5 >= 2 && par5 <= 5 ? i1 : (par5 == 2 && flag2 && !flag && !flag1 ? i1 : (par5 == 3 && flag3 && !flag && !flag1 ? i1 : (par5 == 4 && flag && !flag2 && !flag3 ? i1 : (par5 == 5 && flag1 && !flag2 && !flag3 ? i1 : 0))));
+            }
         }
     }
 
@@ -517,45 +444,6 @@ public class BlockRedstoneWire extends Block
     public boolean canProvidePower()
     {
         return this.wiresProvidePower;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * A randomly called display update to be able to add particles or other items for display
-     */
-    public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
-    {
-        int l = par1World.getBlockMetadata(par2, par3, par4);
-
-        if (l > 0)
-        {
-            double d0 = (double)par2 + 0.5D + ((double)par5Random.nextFloat() - 0.5D) * 0.2D;
-            double d1 = (double)((float)par3 + 0.0625F);
-            double d2 = (double)par4 + 0.5D + ((double)par5Random.nextFloat() - 0.5D) * 0.2D;
-            float f = (float)l / 15.0F;
-            float f1 = f * 0.6F + 0.4F;
-
-            if (l == 0)
-            {
-                f1 = 0.0F;
-            }
-
-            float f2 = f * f * 0.7F - 0.5F;
-            float f3 = f * f * 0.6F - 0.7F;
-
-            if (f2 < 0.0F)
-            {
-                f2 = 0.0F;
-            }
-
-            if (f3 < 0.0F)
-            {
-                f3 = 0.0F;
-            }
-
-            par1World.spawnParticle("reddust", d0, d1, d2, (double)f1, (double)f2, (double)f3);
-        }
     }
 
     /**
@@ -574,7 +462,7 @@ public class BlockRedstoneWire extends Block
         {
             return false;
         }
-        else if (i1 != Block.redstoneRepeaterIdle.blockID && i1 != Block.redstoneRepeaterActive.blockID)
+        else if (!Block.redstoneRepeaterIdle.func_94487_f(i1))
         {
             return (Block.blocksList[i1] != null && Block.blocksList[i1].canConnectRedstone(par0IBlockAccess, par1, par2, par3, par4));
         }
@@ -609,15 +497,5 @@ public class BlockRedstoneWire extends Block
                 return false;
             }
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return Item.redstone.itemID;
     }
 }

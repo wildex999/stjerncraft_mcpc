@@ -1,13 +1,12 @@
 package net.minecraft.entity.projectile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentThorns;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IProjectile;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -21,8 +20,8 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
 // CraftBukkit start
-import net.minecraft.entity.item.EntityItem;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -82,7 +81,7 @@ public class EntityArrow extends Entity implements IProjectile
 
         this.posY = par2EntityLiving.posY + (double)par2EntityLiving.getEyeHeight() - 0.10000000149011612D;
         double d0 = par3EntityLiving.posX - par2EntityLiving.posX;
-        double d1 = par3EntityLiving.posY + (double)par3EntityLiving.getEyeHeight() - 0.699999988079071D - this.posY;
+        double d1 = par3EntityLiving.boundingBox.minY + (double)(par3EntityLiving.height / 3.0F) - this.posY;
         double d2 = par3EntityLiving.posZ - par2EntityLiving.posZ;
         double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d2 * d2);
 
@@ -137,9 +136,9 @@ public class EntityArrow extends Entity implements IProjectile
         par1 /= (double)f2;
         par3 /= (double)f2;
         par5 /= (double)f2;
-        par1 += this.rand.nextGaussian() * 0.007499999832361937D * (double)par8;
-        par3 += this.rand.nextGaussian() * 0.007499999832361937D * (double)par8;
-        par5 += this.rand.nextGaussian() * 0.007499999832361937D * (double)par8;
+        par1 += this.rand.nextGaussian() * (double)(this.rand.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)par8;
+        par3 += this.rand.nextGaussian() * (double)(this.rand.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)par8;
+        par5 += this.rand.nextGaussian() * (double)(this.rand.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)par8;
         par1 *= (double)par7;
         par3 *= (double)par7;
         par5 *= (double)par7;
@@ -150,41 +149,6 @@ public class EntityArrow extends Entity implements IProjectile
         this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(par1, par5) * 180.0D / Math.PI);
         this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(par3, (double)f3) * 180.0D / Math.PI);
         this.ticksInGround = 0;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,
-     * posY, posZ, yaw, pitch
-     */
-    public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9)
-    {
-        this.setPosition(par1, par3, par5);
-        this.setRotation(par7, par8);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the velocity to the args. Args: x, y, z
-     */
-    public void setVelocity(double par1, double par3, double par5)
-    {
-        this.motionX = par1;
-        this.motionY = par3;
-        this.motionZ = par5;
-
-        if (this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F)
-        {
-            float f = MathHelper.sqrt_double(par1 * par1 + par5 * par5);
-            this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(par1, par5) * 180.0D / Math.PI);
-            this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(par3, (double)f) * 180.0D / Math.PI);
-            this.prevRotationPitch = this.rotationPitch;
-            this.prevRotationYaw = this.rotationYaw;
-            this.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
-            this.ticksInGround = 0;
-        }
     }
 
     /**
@@ -291,6 +255,16 @@ public class EntityArrow extends Entity implements IProjectile
                 movingobjectposition = new MovingObjectPosition(entity);
             }
 
+            if (movingobjectposition != null && movingobjectposition.entityHit != null && movingobjectposition.entityHit instanceof EntityPlayer)
+            {
+                EntityPlayer entityplayer = (EntityPlayer)movingobjectposition.entityHit;
+
+                if (entityplayer.capabilities.disableDamage || this.shootingEntity instanceof EntityPlayer && !((EntityPlayer)this.shootingEntity).func_96122_a(entityplayer))
+                {
+                    movingobjectposition = null;
+                }
+            }
+
             float f2;
             float f3;
 
@@ -300,8 +274,8 @@ public class EntityArrow extends Entity implements IProjectile
                 Projectile projectile = (Projectile) this.getBukkitEntity();
                 ProjectileHitEvent phe = new ProjectileHitEvent(projectile);
                 this.worldObj.getServer().getPluginManager().callEvent(phe);
-
                 // CraftBukkit end
+
                 if (movingobjectposition.entityHit != null)
                 {
                     f2 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
@@ -326,7 +300,7 @@ public class EntityArrow extends Entity implements IProjectile
                     // CraftBukkit start - moved damage call
                     if (movingobjectposition.entityHit.attackEntityFrom(damagesource, i1))
                     {
-                        if (this.isBurning() && !(movingobjectposition.entityHit instanceof EntityEnderman) && (!(movingobjectposition.entityHit instanceof EntityPlayerMP) || !(this.shootingEntity instanceof EntityPlayerMP) || this.worldObj.pvpMode))   // CraftBukkit - abide by pvp setting if destination is a player.
+                        if (this.isBurning() && !(movingobjectposition.entityHit instanceof EntityEnderman) && (!(movingobjectposition.entityHit instanceof EntityPlayerMP) || !(this.shootingEntity instanceof EntityPlayerMP) || this.worldObj.pvpMode))   // CraftBukkit - abide by pvp setting if destination is a player
                         {
                             EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
                             org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
@@ -359,13 +333,11 @@ public class EntityArrow extends Entity implements IProjectile
                                 }
                             }
 
-                            // CraftBukkit start
                             if (this.shootingEntity != null)
                             {
                                 EnchantmentThorns.func_92096_a(this.shootingEntity, entityliving, this.rand);
                             }
 
-                            // CraftBukkit end
                             if (this.shootingEntity != null && movingobjectposition.entityHit != this.shootingEntity && movingobjectposition.entityHit instanceof EntityPlayer && this.shootingEntity instanceof EntityPlayerMP)
                             {
                                 ((EntityPlayerMP)this.shootingEntity).playerNetServerHandler.sendPacketToPlayer(new Packet70GameEvent(6, 0));
@@ -410,7 +382,7 @@ public class EntityArrow extends Entity implements IProjectile
 
                     if (this.inTile != 0)
                     {
-                        Block.blocksList[this.inTile].onEntityCollidedWithBlock(this.worldObj, this.xTile, this.yTile, this.zTile, this);
+                        Block.blocksList[this.inTile].onEntityCollidedWithBlock(this.worldObj, this.xTile, this.yTile, this.zTile, (Entity) this);
                     }
                 }
             }
@@ -565,12 +537,6 @@ public class EntityArrow extends Entity implements IProjectile
     protected boolean canTriggerWalking()
     {
         return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
-    {
-        return 0.0F;
     }
 
     public void setDamage(double par1)

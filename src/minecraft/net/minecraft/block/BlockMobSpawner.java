@@ -1,7 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
@@ -10,9 +8,9 @@ import net.minecraft.world.World;
 
 public class BlockMobSpawner extends BlockContainer
 {
-    protected BlockMobSpawner(int par1, int par2)
+    protected BlockMobSpawner(int par1)
     {
-        super(par1, par2, Material.rock);
+        super(par1, Material.rock);
     }
 
     /**
@@ -48,7 +46,7 @@ public class BlockMobSpawner extends BlockContainer
         /* CraftBukkit start - delegate to getExpDrop
         int j1 = 15 + world.random.nextInt(15) + world.random.nextInt(15);
 
-        this.f(world, i, j, k, j1);*/
+        this.j(world, i, j, k, j1);*/
     }
 
     public int getExpDrop(World world, int data, int enchantmentLevel)
@@ -65,15 +63,5 @@ public class BlockMobSpawner extends BlockContainer
     public boolean isOpaqueCube()
     {
         return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return 0;
     }
 }

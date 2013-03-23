@@ -39,15 +39,15 @@ public class ItemSeeds extends Item implements IPlantable
         {
             return false;
         }
-        else if (par2EntityPlayer.isWithinHomeDistance(par4, par5, par6) && par2EntityPlayer.isWithinHomeDistance(par4, par5 + 1, par6))
+        else if (par2EntityPlayer.canCurrentToolHarvestBlock(par4, par5, par6) && par2EntityPlayer.canCurrentToolHarvestBlock(par4, par5 + 1, par6))
         {
             int i1 = par3World.getBlockId(par4, par5, par6);
-            Block block = Block.blocksList[i1];
+            Block soil = Block.blocksList[i1];
 
-            if (block != null && block.canSustainPlant(par3World, par4, par5, par6, ForgeDirection.UP, this) && par3World.isAirBlock(par4, par5 + 1, par6))   // Forge
+            if (soil != null && soil.canSustainPlant(par3World, par4, par5, par6, ForgeDirection.UP, this) && par3World.isAirBlock(par4, par5 + 1, par6))
             {
                 // CraftBukkit start - seeds
-                // world.setTypeId(i, j + 1, k, this.id);
+                // world.setTypeIdUpdate(i, j + 1, k, this.id);
                 if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5 + 1, par6, this.blockType, 0, clickedX, clickedY, clickedZ))
                 {
                     return false;

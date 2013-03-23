@@ -1,12 +1,8 @@
 package net.minecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockHalfSlab;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-
 public class ItemSlab extends ItemBlock
 {
     private final boolean isFullBlock;
@@ -14,27 +10,17 @@ public class ItemSlab extends ItemBlock
     /** Instance of BlockHalfSlab. */
     private final BlockHalfSlab theHalfSlab;
 
-    /** Instance of BlockHalfSlab. */
-    private final BlockHalfSlab theHalfSlab2;
+    /** The double-slab block corresponding to this item. */
+    private final BlockHalfSlab doubleSlab;
 
     public ItemSlab(int par1, BlockHalfSlab par2BlockHalfSlab, BlockHalfSlab par3BlockHalfSlab, boolean par4)
     {
         super(par1);
         this.theHalfSlab = par2BlockHalfSlab;
-        this.theHalfSlab2 = par3BlockHalfSlab;
+        this.doubleSlab = par3BlockHalfSlab;
         this.isFullBlock = par4;
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Gets an icon index based on an item's damage value
-     */
-    public int getIconFromDamage(int par1)
-    {
-        return Block.blocksList[this.itemID].getBlockTextureFromSideAndMetadata(2, par1);
     }
 
     /**
@@ -45,7 +31,11 @@ public class ItemSlab extends ItemBlock
         return par1;
     }
 
-    public String getItemNameIS(ItemStack par1ItemStack)
+    /**
+     * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
+     * different names based on their damage or NBT.
+     */
+    public String getUnlocalizedName(ItemStack par1ItemStack)
     {
         return this.theHalfSlab.getFullSlabName(par1ItemStack.getItemDamage());
     }
@@ -80,9 +70,10 @@ public class ItemSlab extends ItemBlock
             if ((par7 == 1 && !flag || par7 == 0 && flag) && i1 == this.theHalfSlab.blockID && k1 == par1ItemStack.getItemDamage())
             {
                 // CraftBukkit start - world.setTypeIdAndData -> processBlockPlace()
-                if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, this.theHalfSlab2.blockID, k1, clickedX, clickedY, clickedZ))
+                // if (world.b(this.c.b(world, i, j, k)) && world.setTypeIdAndData(i, j, k, this.c.id, k1, 3)) {
+                if (par3World.checkIfAABBIsClear(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, this.doubleSlab.blockID, k1, clickedX, clickedY, clickedZ))
                 {
-                    // par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.theHalfSlab2.stepSound.getPlaceSound(), (this.theHalfSlab2.stepSound.getVolume() + 1.0F) / 2.0F, this.theHalfSlab2.stepSound.getPitch() * 0.8F);
+                    // world.makeSound((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), this.c.stepSound.getPlaceSound(), (this.c.stepSound.getVolume1() + 1.0F) / 2.0F, this.c.stepSound.getVolume2() * 0.8F);
                     // CraftBukkit end
                     --par1ItemStack.stackSize;
                 }
@@ -96,67 +87,10 @@ public class ItemSlab extends ItemBlock
         }
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns true if the given ItemBlock can be placed on the given side of the given block position.
-     */
-    public boolean canPlaceItemBlockOnSide(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer, ItemStack par7ItemStack)
-    {
-        int i1 = par2;
-        int j1 = par3;
-        int k1 = par4;
-        int l1 = par1World.getBlockId(par2, par3, par4);
-        int i2 = par1World.getBlockMetadata(par2, par3, par4);
-        int j2 = i2 & 7;
-        boolean flag = (i2 & 8) != 0;
-
-        if ((par5 == 1 && !flag || par5 == 0 && flag) && l1 == this.theHalfSlab.blockID && j2 == par7ItemStack.getItemDamage())
-        {
-            return true;
-        }
-        else
-        {
-            if (par5 == 0)
-            {
-                --par3;
-            }
-
-            if (par5 == 1)
-            {
-                ++par3;
-            }
-
-            if (par5 == 2)
-            {
-                --par4;
-            }
-
-            if (par5 == 3)
-            {
-                ++par4;
-            }
-
-            if (par5 == 4)
-            {
-                --par2;
-            }
-
-            if (par5 == 5)
-            {
-                ++par2;
-            }
-
-            l1 = par1World.getBlockId(par2, par3, par4);
-            i2 = par1World.getBlockMetadata(par2, par3, par4);
-            j2 = i2 & 7;
-            flag = (i2 & 8) != 0;
-            return l1 == this.theHalfSlab.blockID && j2 == par7ItemStack.getItemDamage() ? true : super.canPlaceItemBlockOnSide(par1World, i1, j1, k1, par5, par6EntityPlayer, par7ItemStack);
-        }
-    }
-
     private boolean func_77888_a(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7)
     {
+        final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
+
         if (par7 == 0)
         {
             --par5;
@@ -193,9 +127,12 @@ public class ItemSlab extends ItemBlock
 
         if (i1 == this.theHalfSlab.blockID && k1 == par1ItemStack.getItemDamage())
         {
-            if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.theHalfSlab2.blockID, k1))
+            // CraftBukkit start - world.setTypeIdAndData -> processBlockPlace()
+            // if (world.b(this.c.b(world, i, j, k)) && world.setTypeIdAndData(i, j, k, this.c.id, k1, 3)) {
+            if (par3World.checkIfAABBIsClear(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, this.doubleSlab.blockID, k1, clickedX, clickedY, clickedZ))
             {
-                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.theHalfSlab2.stepSound.getPlaceSound(), (this.theHalfSlab2.stepSound.getVolume() + 1.0F) / 2.0F, this.theHalfSlab2.stepSound.getPitch() * 0.8F);
+                // world.makeSound((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F, this.c.stepSound.getPlaceSound(), (this.c.stepSound.getVolume1() + 1.0F) / 2.0F, this.c.stepSound.getVolume2() * 0.8F);
+                // CraftBukkit end
                 --par1ItemStack.stackSize;
             }
 

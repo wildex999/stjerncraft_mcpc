@@ -12,6 +12,7 @@ public class RecipesMapCloning extends ShapelessRecipes implements IRecipe   // 
         super(new ItemStack(Item.map, 0, -1), java.util.Arrays.asList(new ItemStack(Item.emptyMap, 0, 0)));
     }
     // CraftBukkit end
+
     /**
      * Used to check if a recipe matches current crafting inventory
      */

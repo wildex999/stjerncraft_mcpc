@@ -13,18 +13,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Direction;
-import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.IShearable;
-import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 
 public class BlockVine extends Block implements IShearable
 {
     public BlockVine(int par1)
     {
-        super(par1, 143, Material.vine);
+        super(par1, Material.vine);
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
@@ -209,38 +208,11 @@ public class BlockVine extends Block implements IShearable
         {
             if (i1 != l)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, i1);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, i1, 2);
             }
 
             return true;
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public int getBlockColor()
-    {
-        return ColorizerFoliage.getFoliageColorBasic();
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the color this block should be rendered. Used by leaves.
-     */
-    public int getRenderColor(int par1)
-    {
-        return ColorizerFoliage.getFoliageColorBasic();
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns a integer with hex for 0xrrggbb with this color multiplied against the blocks color. Note only called
-     * when first determining what to render.
-     */
-    public int colorMultiplier(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
-    {
-        return par1IBlockAccess.getBiomeGenForCoords(par2, par4).getBiomeFoliageColor();
     }
 
     /**
@@ -252,7 +224,7 @@ public class BlockVine extends Block implements IShearable
         if (!par1World.isRemote && !this.canVineStay(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 
@@ -321,7 +293,7 @@ public class BlockVine extends Block implements IShearable
                         // CraftBukkit start - fire BlockSpreadEvent
                         org.bukkit.block.Block source = par1World.getWorld().getBlockAt(par2, par3, par4);
                         org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3 + 1, par4);
-                        CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, i2);
+                        CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, l1);
                         // CraftBukkit end
                     }
                 }
@@ -343,7 +315,7 @@ public class BlockVine extends Block implements IShearable
                     {
                         if (Block.blocksList[l1].blockMaterial.isOpaque() && Block.blocksList[l1].renderAsNormalBlock())
                         {
-                            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 | 1 << k1);
+                            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 | 1 << k1, 2);
                         }
                     }
                     else
@@ -404,7 +376,7 @@ public class BlockVine extends Block implements IShearable
 
                         if (j2 != (j2 | i2))
                         {
-                            par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, j2 | i2);
+                            par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, j2 | i2, 2);
                         }
                     }
                 }

@@ -1,10 +1,7 @@
 package net.minecraft.entity.monster;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
-
 public class EntityMagmaCube extends EntitySlime
 {
     public EntityMagmaCube(World par1World)
@@ -29,12 +26,6 @@ public class EntityMagmaCube extends EntitySlime
     public int getTotalArmorValue()
     {
         return this.getSlimeSize() * 3;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public int getBrightnessForRender(float par1)
-    {
-        return 15728880;
     }
 
     /**

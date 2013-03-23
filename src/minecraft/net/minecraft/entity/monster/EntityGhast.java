@@ -4,8 +4,6 @@ package net.minecraft.entity.monster;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.entity.EntityTargetEvent;
-import net.minecraft.stats.StatBase;
-// CraftBukkit end
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,11 +11,13 @@ import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.AchievementList;
+import net.minecraft.stats.StatBase;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class EntityGhast extends EntityFlying implements IMob
 {
@@ -56,7 +56,7 @@ public class EntityGhast extends EntityFlying implements IMob
         else if ("fireball".equals(par1DamageSource.getDamageType()) && par1DamageSource.getEntity() instanceof EntityPlayer)
         {
             super.attackEntityFrom(par1DamageSource, 1000);
-            ((EntityPlayer)par1DamageSource.getEntity()).triggerAchievement(AchievementList.ghast);
+            ((EntityPlayer) par1DamageSource.getEntity()).triggerAchievement((StatBase) AchievementList.ghast);
             return true;
         }
         else
@@ -143,6 +143,7 @@ public class EntityGhast extends EntityFlying implements IMob
                     this.targetedEntity = ((CraftEntity) event.getTarget()).getHandle();
                 }
             }
+
             // CraftBukkit end
         }
 
@@ -168,6 +169,7 @@ public class EntityGhast extends EntityFlying implements IMob
                     }
                 }
             }
+
             // CraftBukkit end
 
             if (this.targetedEntity != null)
@@ -183,7 +185,7 @@ public class EntityGhast extends EntityFlying implements IMob
             double d5 = this.targetedEntity.posX - this.posX;
             double d6 = this.targetedEntity.boundingBox.minY + (double)(this.targetedEntity.height / 2.0F) - (this.posY + (double)(this.height / 2.0F));
             double d7 = this.targetedEntity.posZ - this.posZ;
-            this.renderYawOffset = this.rotationYaw = -((float) Math.atan2(d5, d7)) * 180.0F / 3.1415927F;
+            this.renderYawOffset = this.rotationYaw = -((float)Math.atan2(d5, d7)) * 180.0F / (float)Math.PI;
 
             if (this.canEntityBeSeen(this.targetedEntity))
             {

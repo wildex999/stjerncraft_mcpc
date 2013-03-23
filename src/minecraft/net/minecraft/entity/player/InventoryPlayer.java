@@ -1,20 +1,23 @@
 package net.minecraft.entity.player;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-// CraftBukkit start
-import java.util.List;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-import org.bukkit.entity.HumanEntity;
-// CraftBukkit end
+import java.util.concurrent.Callable;
 import net.minecraft.block.Block;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ReportedException;
+
+// CraftBukkit start
+import java.util.List;
+
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.entity.HumanEntity;
+// CraftBukkit end
 
 public class InventoryPlayer implements IInventory
 {
@@ -28,10 +31,6 @@ public class InventoryPlayer implements IInventory
 
     /** The index of the currently held item (0-8). */
     public int currentItem = 0;
-    @SideOnly(Side.CLIENT)
-
-    /** The current ItemStack. */
-    private ItemStack currentItemStack;
 
     /** The player whose inventory this is. */
     public EntityPlayer player;
@@ -120,20 +119,6 @@ public class InventoryPlayer implements IInventory
         return -1;
     }
 
-    @SideOnly(Side.CLIENT)
-    private int getInventorySlotContainItemAndDamage(int par1, int par2)
-    {
-        for (int k = 0; k < this.mainInventory.length; ++k)
-        {
-            if (this.mainInventory[k] != null && this.mainInventory[k].itemID == par1 && this.mainInventory[k].getItemDamage() == par2)
-            {
-                return k;
-            }
-        }
-
-        return -1;
-    }
-
     /**
      * stores an itemstack in the users inventory
      */
@@ -194,74 +179,6 @@ public class InventoryPlayer implements IInventory
         return -1;
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets a specific itemID as the current item being held (only if it exists on the hotbar)
-     */
-    public void setCurrentItem(int par1, int par2, boolean par3, boolean par4)
-    {
-        boolean flag2 = true;
-        this.currentItemStack = this.getCurrentItem();
-        int k;
-
-        if (par3)
-        {
-            k = this.getInventorySlotContainItemAndDamage(par1, par2);
-        }
-        else
-        {
-            k = this.getInventorySlotContainItem(par1);
-        }
-
-        if (k >= 0 && k < 9)
-        {
-            this.currentItem = k;
-        }
-        else
-        {
-            if (par4 && par1 > 0)
-            {
-                int l = this.getFirstEmptyStack();
-
-                if (l >= 0 && l < 9)
-                {
-                    this.currentItem = l;
-                }
-
-                this.func_70439_a(Item.itemsList[par1], par2);
-            }
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Switch the current item to the next one or the previous one
-     */
-    public void changeCurrentItem(int par1)
-    {
-        if (par1 > 0)
-        {
-            par1 = 1;
-        }
-
-        if (par1 < 0)
-        {
-            par1 = -1;
-        }
-
-        for (this.currentItem -= par1; this.currentItem < 0; this.currentItem += 9)
-        {
-            ;
-        }
-
-        while (this.currentItem >= 9)
-        {
-            this.currentItem -= 9;
-        }
-    }
-
     /**
      * Clear this player's inventory, using the specified ID and metadata as filters or -1 for no filter.
      */
@@ -294,27 +211,6 @@ public class InventoryPlayer implements IInventory
         }
 
         return k;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void func_70439_a(Item par1Item, int par2)
-    {
-        if (par1Item != null)
-        {
-            int j = this.getInventorySlotContainItemAndDamage(par1Item.itemID, par2);
-
-            if (j >= 0)
-            {
-                this.mainInventory[j] = this.mainInventory[this.currentItem];
-            }
-
-            if (this.currentItemStack != null && this.currentItemStack.isItemEnchantable() && this.getInventorySlotContainItemAndDamage(this.currentItemStack.itemID, this.currentItemStack.getItemDamageForDisplay()) == this.currentItem)
-            {
-                return;
-            }
-
-            this.mainInventory[this.currentItem] = new ItemStack(Item.itemsList[par1Item.itemID], 1, par2);
-        }
     }
 
     /**
@@ -456,46 +352,65 @@ public class InventoryPlayer implements IInventory
      */
     public boolean addItemStackToInventory(ItemStack par1ItemStack)
     {
-        int i;
-
-        if (par1ItemStack.isItemDamaged())
+        if (par1ItemStack == null)
         {
-            i = this.getFirstEmptyStack();
-
-            if (i >= 0)
-            {
-                this.mainInventory[i] = ItemStack.copyItemStack(par1ItemStack);
-                this.mainInventory[i].animationsToGo = 5;
-                par1ItemStack.stackSize = 0;
-                return true;
-            }
-            else if (this.player.capabilities.isCreativeMode)
-            {
-                par1ItemStack.stackSize = 0;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return false;
         }
         else
         {
-            do
+            try
             {
-                i = par1ItemStack.stackSize;
-                par1ItemStack.stackSize = this.storePartialItemStack(par1ItemStack);
-            }
-            while (par1ItemStack.stackSize > 0 && par1ItemStack.stackSize < i);
+                int i;
 
-            if (par1ItemStack.stackSize == i && this.player.capabilities.isCreativeMode)
-            {
-                par1ItemStack.stackSize = 0;
-                return true;
+                if (par1ItemStack.isItemDamaged())
+                {
+                    i = this.getFirstEmptyStack();
+
+                    if (i >= 0)
+                    {
+                        this.mainInventory[i] = ItemStack.copyItemStack(par1ItemStack);
+                        this.mainInventory[i].animationsToGo = 5;
+                        par1ItemStack.stackSize = 0;
+                        return true;
+                    }
+                    else if (this.player.capabilities.isCreativeMode)
+                    {
+                        par1ItemStack.stackSize = 0;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    do
+                    {
+                        i = par1ItemStack.stackSize;
+                        par1ItemStack.stackSize = this.storePartialItemStack(par1ItemStack);
+                    }
+                    while (par1ItemStack.stackSize > 0 && par1ItemStack.stackSize < i);
+
+                    if (par1ItemStack.stackSize == i && this.player.capabilities.isCreativeMode)
+                    {
+                        par1ItemStack.stackSize = 0;
+                        return true;
+                    }
+                    else
+                    {
+                        return par1ItemStack.stackSize < i;
+                    }
+                }
             }
-            else
+            catch (Throwable throwable)
             {
-                return par1ItemStack.stackSize < i;
+                CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Adding item to inventory");
+                CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
+                crashreportcategory.addCrashSection("Item ID", Integer.valueOf(par1ItemStack.itemID));
+                crashreportcategory.addCrashSection("Item data", Integer.valueOf(par1ItemStack.getItemDamage()));
+                crashreportcategory.addCrashSectionCallable("Item name", (Callable)(new CallableItemName(this, par1ItemStack)));
+                throw new ReportedException(crashreport);
             }
         }
     }
@@ -695,6 +610,15 @@ public class InventoryPlayer implements IInventory
     }
 
     /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return false;
+    }
+
+    /**
      * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
      * this more of a set than a get?*
      */
@@ -869,6 +793,14 @@ public class InventoryPlayer implements IInventory
     public void openChest() {}
 
     public void closeChest() {}
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
+    }
 
     /**
      * Copy the ItemStack contents from another InventoryPlayer instance

@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 
 import org.bukkit.command.CommandSender;
 
-public class ServerCommandListener implements net.minecraft.command.ICommandSender/*was:ICommandListener*/ {
+public class ServerCommandListener implements net.minecraft.command.ICommandSender {
     private final CommandSender commandSender;
     private final String prefix;
 
@@ -15,7 +15,7 @@ public class ServerCommandListener implements net.minecraft.command.ICommandSend
         this.prefix = parts[parts.length - 1];
     }
 
-    public void sendChatToPlayer/*was:sendMessage*/(String msg) {
+    public void sendChatToPlayer(String msg) {
         this.commandSender.sendMessage(msg);
     }
 
@@ -23,7 +23,10 @@ public class ServerCommandListener implements net.minecraft.command.ICommandSend
         return commandSender;
     }
 
-    public String getCommandSenderName/*was:getName*/() {
+    /**
+     * Gets the name of this command sender (usually username, but possibly "Rcon")
+     */
+    public String getCommandSenderName() {
         try {
             Method getName = commandSender.getClass().getMethod("getName");
 
@@ -33,15 +36,24 @@ public class ServerCommandListener implements net.minecraft.command.ICommandSend
         return this.prefix;
     }
 
-    public String translateString/*was:a*/(String s, Object... aobject) {
-        return net.minecraft.util.StringTranslate/*was:LocaleLanguage*/.getInstance/*was:a*/().translateKeyFormat/*was:a*/(s, aobject);
+    /**
+     * Translates and formats the given string key with the given arguments.
+     */
+    public String translateString(String s, Object... aobject) {
+        return net.minecraft.util.StringTranslate.getInstance().translateKeyFormat(s, aobject);
     }
 
-    public boolean canCommandSenderUseCommand/*was:a*/(int i, String s) {
+    /**
+     * Returns true if the command sender is allowed to use the given command.
+     */
+    public boolean canCommandSenderUseCommand(int i, String s) {
         return true;
     }
 
-    public net.minecraft.util.ChunkCoordinates/*was:ChunkCoordinates*/ getPlayerCoordinates/*was:b*/() {
-        return new net.minecraft.util.ChunkCoordinates/*was:ChunkCoordinates*/(0, 0, 0);
+    /**
+     * Return the position for this command sender.
+     */
+    public net.minecraft.util.ChunkCoordinates getPlayerCoordinates() {
+        return new net.minecraft.util.ChunkCoordinates(0, 0, 0);
     }
 }

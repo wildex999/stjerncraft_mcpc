@@ -1,7 +1,5 @@
 package net.minecraft.entity.passive;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -23,7 +21,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
 public class EntityOcelot extends EntityTameable
 {
     /**
@@ -95,28 +92,6 @@ public class EntityOcelot extends EntityTameable
     protected boolean canDespawn()
     {
         return !this.isTamed();
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the texture's file path as a String.
-     */
-    public String getTexture()
-    {
-        switch (this.getTameSkin())
-        {
-            case 0:
-                return "/mob/ozelot.png";
-            case 1:
-                return "/mob/cat_black.png";
-            case 2:
-                return "/mob/cat_red.png";
-            case 3:
-                return "/mob/cat_siamese.png";
-            default:
-                return super.getTexture();
-        }
     }
 
     /**
@@ -376,7 +351,7 @@ public class EntityOcelot extends EntityTameable
      */
     public String getEntityName()
     {
-        return this.isTamed() ? "entity.Cat.name" : super.getEntityName();
+        return this.func_94056_bM() ? this.func_94057_bL() : (this.isTamed() ? "entity.Cat.name" : super.getEntityName());
     }
 
     /**

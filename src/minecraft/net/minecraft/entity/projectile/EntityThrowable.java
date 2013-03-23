@@ -1,7 +1,5 @@
 package net.minecraft.entity.projectile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -15,6 +13,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
 import org.bukkit.event.entity.ProjectileHitEvent; // CraftBukkit
 
 public abstract class EntityThrowable extends Entity implements IProjectile
@@ -41,19 +40,6 @@ public abstract class EntityThrowable extends Entity implements IProjectile
     }
 
     protected void entityInit() {}
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
-     * length * 64 * renderDistanceWeight Args: distance
-     */
-    public boolean isInRangeToRenderDist(double par1)
-    {
-        double d1 = this.boundingBox.getAverageEdgeLength() * 4.0D;
-        d1 *= 64.0D;
-        return par1 < d1 * d1;
-    }
 
     public EntityThrowable(World par1World, EntityLiving par2EntityLiving)
     {
@@ -114,25 +100,6 @@ public abstract class EntityThrowable extends Entity implements IProjectile
         this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(par1, par5) * 180.0D / Math.PI);
         this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(par3, (double)f3) * 180.0D / Math.PI);
         this.ticksInGround = 0;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the velocity to the args. Args: x, y, z
-     */
-    public void setVelocity(double par1, double par3, double par5)
-    {
-        this.motionX = par1;
-        this.motionY = par3;
-        this.motionZ = par5;
-
-        if (this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F)
-        {
-            float f = MathHelper.sqrt_double(par1 * par1 + par5 * par5);
-            this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(par1, par5) * 180.0D / Math.PI);
-            this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(par3, (double)f) * 180.0D / Math.PI);
-        }
     }
 
     /**
@@ -345,12 +312,6 @@ public abstract class EntityThrowable extends Entity implements IProjectile
         {
             this.throwerName = null;
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
-    {
-        return 0.0F;
     }
 
     public EntityLiving getThrower()

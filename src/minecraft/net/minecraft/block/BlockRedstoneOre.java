@@ -1,7 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -9,28 +7,29 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import org.bukkit.event.entity.EntityInteractEvent; // CraftBukkit
 
 public class BlockRedstoneOre extends Block
 {
     private boolean glowing;
 
-    public BlockRedstoneOre(int par1, int par2, boolean par3)
+    public BlockRedstoneOre(int par1, boolean par2)
     {
-        super(par1, par2, Material.rock);
+        super(par1, Material.rock);
 
-        if (par3)
+        if (par2)
         {
             this.setTickRandomly(true);
         }
 
-        this.glowing = par3;
+        this.glowing = par2;
     }
 
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 30;
     }
@@ -71,6 +70,7 @@ public class BlockRedstoneOre extends Block
                 super.onEntityWalking(par1World, par2, par3, par4, par5Entity);
             }
         }
+
         // CraftBukkit end
     }
 
@@ -92,7 +92,7 @@ public class BlockRedstoneOre extends Block
 
         if (this.blockID == Block.oreRedstone.blockID)
         {
-            par1World.setBlockWithNotify(par2, par3, par4, Block.oreRedstoneGlowing.blockID);
+            par1World.setBlock(par2, par3, par4, Block.oreRedstoneGlowing.blockID);
         }
     }
 
@@ -103,7 +103,7 @@ public class BlockRedstoneOre extends Block
     {
         if (this.blockID == Block.oreRedstoneGlowing.blockID)
         {
-            par1World.setBlockWithNotify(par2, par3, par4, Block.oreRedstone.blockID);
+            par1World.setBlock(par2, par3, par4, Block.oreRedstone.blockID);
         }
     }
 
@@ -141,7 +141,7 @@ public class BlockRedstoneOre extends Block
         if (this.getDropType(l, world.random, i1) != this.id) {
             int j1 = 1 + world.random.nextInt(5);
 
-            this.f(world, i, j, k, j1);
+            this.j(world, i, j, k, j1);
         } */
     }
 
@@ -155,19 +155,6 @@ public class BlockRedstoneOre extends Block
 
         return 0;
         // CraftBukkit end
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * A randomly called display update to be able to add particles or other items for display
-     */
-    public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
-    {
-        if (this.glowing)
-        {
-            this.sparkle(par1World, par2, par3, par4);
-        }
     }
 
     /**

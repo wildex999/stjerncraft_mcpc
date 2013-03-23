@@ -1,9 +1,6 @@
 package net.minecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentDurability;
@@ -15,9 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 public final class ItemStack
@@ -80,7 +75,12 @@ public final class ItemStack
         this.itemFrame = null;
         this.itemID = par1;
         this.stackSize = par2;
-        this.setItemDamage(par3); // CraftBukkit
+        // CraftBukkit start - pass to setData to do filtering
+        this.setItemDamage(par3);
+        //if (this.damage < 0) {
+        //    this.damage = 0;
+        //}
+        // CraftBukkit end
     }
 
     public static ItemStack loadItemStackFromNBT(NBTTagCompound par0NBTTagCompound)
@@ -120,16 +120,6 @@ public final class ItemStack
         return Item.itemsList[this.itemID];
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the icon index of the current stack.
-     */
-    public int getIconIndex()
-    {
-        return this.getItem().getIconIndex(this);
-    }
-
     public boolean tryPlaceItemIntoWorld(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5, int par6, float par7, float par8, float par9)
     {
         boolean flag = this.getItem().onItemUse(this, par1EntityPlayer, par2World, par3, par4, par5, par6, par7, par8, par9);
@@ -161,7 +151,7 @@ public final class ItemStack
 
     public ItemStack onFoodEaten(World par1World, EntityPlayer par2EntityPlayer)
     {
-        return this.getItem().onFoodEaten(this, par1World, par2EntityPlayer);
+        return this.getItem().onEaten(this, par1World, par2EntityPlayer);
     }
 
     /**
@@ -189,6 +179,11 @@ public final class ItemStack
         this.itemID = par1NBTTagCompound.getShort("id");
         this.stackSize = par1NBTTagCompound.getByte("Count");
         this.itemDamage = par1NBTTagCompound.getShort("Damage");
+
+        if (this.itemDamage < 0)
+        {
+            this.itemDamage = 0;
+        }
 
         if (par1NBTTagCompound.hasKey("tag"))
         {
@@ -255,8 +250,32 @@ public final class ItemStack
      */
     public void setItemDamage(int par1)
     {
-        // MCPC+ - removed filter
+        // CraftBukkit start - filter out data for items that shouldn't have it
+        // The crafting system uses this value for a special purpose so we have to allow it
+        if (par1 == 32767)
+        {
+            this.itemDamage = par1;
+            return;
+        }
+
+        if (!(this.getHasSubtypes() || Item.itemsList[this.itemID].isDamageable() || this.itemID > 255))   // Should be usesDurability
+        {
+            par1 = 0;
+        }
+
+        // Filter wool to avoid confusing the client
+        if (this.itemID == Block.cloth.blockID)
+        {
+            par1 = Math.min(15, par1);
+        }
+
+        // CraftBukkit end
         this.itemDamage = par1;
+
+        if (this.itemDamage < -1)   // CraftBukkit - don't filter -1, we use it
+        {
+            this.itemDamage = 0;
+        }
     }
 
     /**
@@ -267,21 +286,22 @@ public final class ItemStack
         return Item.itemsList[this.itemID].getMaxDamage();
     }
 
-    /**
-     * Damages the item in the ItemStack
-     */
-    public void damageItem(int par1, EntityLiving par2EntityLiving)
+    public boolean func_96631_a(int par1, Random par2Random)
     {
-        if (this.isItemStackDamageable())
+        if (!this.isItemStackDamageable())
         {
-            if (par1 > 0 && par2EntityLiving instanceof EntityPlayer)
+            return false;
+        }
+        else
+        {
+            if (par1 > 0)
             {
                 int j = EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, this);
                 int k = 0;
 
                 for (int l = 0; j > 0 && l < par1; ++l)
                 {
-                    if (EnchantmentDurability.func_92097_a(this, j, par2EntityLiving.worldObj.rand))
+                    if (EnchantmentDurability.func_92097_a(this, j, par2Random))
                     {
                         ++k;
                     }
@@ -291,38 +311,49 @@ public final class ItemStack
 
                 if (par1 <= 0)
                 {
-                    return;
+                    return false;
                 }
             }
 
-            if (!(par2EntityLiving instanceof EntityPlayer) || !((EntityPlayer)par2EntityLiving).capabilities.isCreativeMode)
+            this.itemDamage += par1;
+            return this.itemDamage > this.getMaxDamage();
+        }
+    }
+
+    /**
+     * Damages the item in the ItemStack
+     */
+    public void damageItem(int par1, EntityLiving par2EntityLiving)
+    {
+        if (!(par2EntityLiving instanceof EntityPlayer) || !((EntityPlayer)par2EntityLiving).capabilities.isCreativeMode)
+        {
+            if (this.isItemStackDamageable())
             {
-                this.itemDamage += par1;
-            }
-
-            if (this.itemDamage > this.getMaxDamage())
-            {
-                par2EntityLiving.renderBrokenItemStack(this);
-
-                if (par2EntityLiving instanceof EntityPlayer)
+                if (this.func_96631_a(par1, par2EntityLiving.getRNG()))
                 {
-                    ((EntityPlayer)par2EntityLiving).addStat(StatList.objectBreakStats[this.itemID], 1);
-                }
+                    par2EntityLiving.renderBrokenItemStack(this);
 
-                --this.stackSize;
+                    if (par2EntityLiving instanceof EntityPlayer)
+                    {
+                        ((EntityPlayer)par2EntityLiving).addStat(StatList.objectBreakStats[this.itemID], 1);
+                    }
 
-                if (this.stackSize < 0)
-                {
-                    this.stackSize = 0;
-                }
+                    --this.stackSize;
 
-                // CraftBukkit start - Check for item breaking
-                if (this.stackSize == 0 && par2EntityLiving instanceof EntityPlayer)
-                {
-                    org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemBreakEvent((EntityPlayer) par2EntityLiving, this);
+                    if (this.stackSize < 0)
+                    {
+                        this.stackSize = 0;
+                    }
+
+                    // CraftBukkit start - Check for item breaking
+                    if (this.stackSize == 0 && par2EntityLiving instanceof EntityPlayer)
+                    {
+                        org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemBreakEvent((EntityPlayer) par2EntityLiving, this);
+                    }
+
+                    // CraftBukkit end
+                    this.itemDamage = 0;
                 }
-                // CraftBukkit end
-                this.itemDamage = 0;
             }
         }
     }
@@ -332,7 +363,7 @@ public final class ItemStack
      */
     public void hitEntity(EntityLiving par1EntityLiving, EntityPlayer par2EntityPlayer)
     {
-        boolean flag = Item.itemsList[this.itemID].hitEntity(this, par1EntityLiving, par2EntityPlayer);
+        boolean flag = Item.itemsList[this.itemID].hitEntity(this, par1EntityLiving, (EntityLiving) par2EntityPlayer);
 
         if (flag)
         {
@@ -418,7 +449,7 @@ public final class ItemStack
 
     public String getItemName()
     {
-        return Item.itemsList[this.itemID].getItemNameIS(this);
+        return Item.itemsList[this.itemID].getUnlocalizedName(this);
     }
 
     /**
@@ -431,7 +462,7 @@ public final class ItemStack
 
     public String toString()
     {
-        return this.stackSize + "x" + Item.itemsList[this.itemID].getItemName() + "@" + this.itemDamage;
+        return this.stackSize + "x" + Item.itemsList[this.itemID].getUnlocalizedName() + "@" + this.itemDamage;
     }
 
     /**
@@ -528,7 +559,7 @@ public final class ItemStack
     {
         if (this.stackTagCompound == null)
         {
-            this.stackTagCompound = new NBTTagCompound();
+            this.stackTagCompound = new NBTTagCompound("tag");
         }
 
         if (!this.stackTagCompound.hasKey("display"))
@@ -545,118 +576,6 @@ public final class ItemStack
     public boolean hasDisplayName()
     {
         return this.stackTagCompound == null ? false : (!this.stackTagCompound.hasKey("display") ? false : this.stackTagCompound.getCompoundTag("display").hasKey("Name"));
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Return a list of strings containing information about the item
-     */
-    public List getTooltip(EntityPlayer par1EntityPlayer, boolean par2)
-    {
-        ArrayList arraylist = new ArrayList();
-        Item item = Item.itemsList[this.itemID];
-        String s = this.getDisplayName();
-
-        if (this.hasDisplayName())
-        {
-            s = "\u00a7o" + s + "\u00a7r";
-        }
-
-        if (par2)
-        {
-            String s1 = "";
-
-            if (s.length() > 0)
-            {
-                s = s + " (";
-                s1 = ")";
-            }
-
-            if (this.getHasSubtypes())
-            {
-                s = s + String.format("#%04d/%d%s", new Object[] {Integer.valueOf(this.itemID), Integer.valueOf(this.itemDamage), s1});
-            }
-            else
-            {
-                s = s + String.format("#%04d%s", new Object[] {Integer.valueOf(this.itemID), s1});
-            }
-        }
-        else if (!this.hasDisplayName() && this.itemID == Item.map.itemID)
-        {
-            s = s + " #" + this.itemDamage;
-        }
-
-        arraylist.add(s);
-        item.addInformation(this, par1EntityPlayer, arraylist, par2);
-
-        if (this.hasTagCompound())
-        {
-            NBTTagList nbttaglist = this.getEnchantmentTagList();
-
-            if (nbttaglist != null)
-            {
-                for (int i = 0; i < nbttaglist.tagCount(); ++i)
-                {
-                    short short1 = ((NBTTagCompound)nbttaglist.tagAt(i)).getShort("id");
-                    short short2 = ((NBTTagCompound)nbttaglist.tagAt(i)).getShort("lvl");
-
-                    if (Enchantment.enchantmentsList[short1] != null)
-                    {
-                        arraylist.add(Enchantment.enchantmentsList[short1].getTranslatedName(short2));
-                    }
-                }
-            }
-
-            if (this.stackTagCompound.hasKey("display"))
-            {
-                NBTTagCompound nbttagcompound = this.stackTagCompound.getCompoundTag("display");
-
-                if (nbttagcompound.hasKey("color"))
-                {
-                    if (par2)
-                    {
-                        arraylist.add("Color: #" + Integer.toHexString(nbttagcompound.getInteger("color")).toUpperCase());
-                    }
-                    else
-                    {
-                        arraylist.add("\u00a7o" + StatCollector.translateToLocal("item.dyed"));
-                    }
-                }
-
-                if (nbttagcompound.hasKey("Lore"))
-                {
-                    NBTTagList nbttaglist1 = nbttagcompound.getTagList("Lore");
-
-                    if (nbttaglist1.tagCount() > 0)
-                    {
-                        for (int j = 0; j < nbttaglist1.tagCount(); ++j)
-                        {
-                            arraylist.add("\u00a75\u00a7o" + ((NBTTagString)nbttaglist1.tagAt(j)).data);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (par2 && this.isItemDamaged())
-        {
-            arraylist.add("Durability: " + (this.getMaxDamage() - this.getItemDamageForDisplay()) + " / " + this.getMaxDamage());
-        }
-
-        return arraylist;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public boolean hasEffect()
-    {
-        return this.getItem().hasEffect(this);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public EnumRarity getRarity()
-    {
-        return this.getItem().getRarity(this);
     }
 
     /**
@@ -751,7 +670,7 @@ public final class ItemStack
     {
         if (!this.hasTagCompound())
         {
-            this.stackTagCompound = new NBTTagCompound();
+            this.stackTagCompound = new NBTTagCompound("tag");
         }
 
         this.stackTagCompound.setInteger("RepairCost", par1);

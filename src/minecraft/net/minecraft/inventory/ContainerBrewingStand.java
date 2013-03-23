@@ -1,15 +1,13 @@
 package net.minecraft.inventory;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 // CraftBukkit start
 import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-// CraftBukkit end
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityBrewingStand;
+// CraftBukkit end
 
 public class ContainerBrewingStand extends Container
 {
@@ -71,15 +69,6 @@ public class ContainerBrewingStand extends Container
         }
 
         this.brewTime = this.tileBrewingStand.getBrewTime();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void updateProgressBar(int par1, int par2)
-    {
-        if (par1 == 0)
-        {
-            this.tileBrewingStand.setBrewTime(par2);
-        }
     }
 
     public boolean canInteractWith(EntityPlayer par1EntityPlayer)

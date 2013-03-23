@@ -18,10 +18,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.crypto.SecretKey;
+import net.minecraft.logging.ILogAgent;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet252SharedKey;
 import net.minecraft.util.CryptManager;
+
+import java.io.IOException; // CraftBukkit
 
 public class TcpConnection implements INetworkManager
 {
@@ -29,7 +32,8 @@ public class TcpConnection implements INetworkManager
     public static AtomicInteger field_74469_b = new AtomicInteger();
 
     /** The object used for synchronization on the send queue. */
-    private Object sendQueueLock;
+    private final Object sendQueueLock = new Object();
+    private final ILogAgent field_98215_i;
 
     /** The socket used by this network manager. */
     public Socket networkSocket; // CraftBukkit - private -> public
@@ -44,23 +48,23 @@ public class TcpConnection implements INetworkManager
     private volatile DataOutputStream socketOutputStream;
 
     /** Whether the network is currently operational. */
-    private volatile boolean isRunning;
+    private volatile boolean isRunning = true;
 
     /**
      * Whether this network manager is currently terminating (and should ignore further errors).
      */
-    private volatile boolean isTerminating;
+    private volatile boolean isTerminating = false;
 
     /**
      * Linked list of packets that have been read and are awaiting processing.
      */
-    private java.util.Queue readPackets;
+    private java.util.Queue readPackets = new java.util.concurrent.ConcurrentLinkedQueue(); // CraftBukkit - Concurrent linked queue
 
     /** Linked list of packets awaiting sending. */
-    private List dataPackets;
+    private List dataPackets = Collections.synchronizedList(new ArrayList());
 
     /** Linked list of packets with chunk data that are awaiting sending. */
-    private List chunkDataPackets;
+    private List chunkDataPackets = Collections.synchronizedList(new ArrayList());
 
     /** A reference to the NetHandler object. */
     private NetHandler theNetHandler;
@@ -68,7 +72,7 @@ public class TcpConnection implements INetworkManager
     /**
      * Whether this server is currently terminating. If this is a client, this is always false.
      */
-    private boolean isServerTerminating;
+    private boolean isServerTerminating = false;
 
     /** The thread used for writing. */
     private Thread writeThread;
@@ -77,80 +81,51 @@ public class TcpConnection implements INetworkManager
     private Thread readThread;
 
     /** A String indicating why the network has shutdown. */
-    private String terminationReason;
+    private String terminationReason = "";
     private Object[] field_74480_w;
-    private int field_74490_x;
+    private int field_74490_x = 0;
 
     /**
      * The length in bytes of the packets in both send queues (data and chunkData).
      */
-    private int sendQueueByteLength;
+    private int sendQueueByteLength = 0;
     public static int[] field_74470_c = new int[256];
     public static int[] field_74467_d = new int[256];
-    public int field_74468_e;
-    boolean isInputBeingDecrypted;
-    boolean isOutputEncrypted;
-    private SecretKey sharedKeyForEncryption;
-    private PrivateKey field_74463_A;
+    public int field_74468_e = 0;
+    boolean isInputBeingDecrypted = false;
+    boolean isOutputEncrypted = false;
+    private SecretKey sharedKeyForEncryption = null;
+    private PrivateKey field_74463_A = null;
 
     /**
      * Delay for sending pending chunk data packets (as opposed to pending non-chunk data packets)
      */
-    private int chunkDataPacketsDelay;
+    private int chunkDataPacketsDelay = 50;
 
-    @SideOnly(Side.CLIENT)
-    public TcpConnection(Socket par1Socket, String par2Str, NetHandler par3NetHandler) throws IOException
+    public TcpConnection(ILogAgent par1ILogAgent, Socket par2Socket, String par3Str, NetHandler par4NetHandler, PrivateKey par5PrivateKey) throws IOException   // CraftBukkit - throws IOException
     {
-        this(par1Socket, par2Str, par3NetHandler, (PrivateKey)null);
-    }
-
-    public TcpConnection(Socket par1Socket, String par2Str, NetHandler par3NetHandler, PrivateKey par4PrivateKey) throws IOException
-    {
-        this.sendQueueLock = new Object();
-        this.isRunning = true;
-        this.isTerminating = false;
-        this.readPackets = new java.util.concurrent.ConcurrentLinkedQueue(); // CraftBukkit - Concurrent linked queue
-        this.dataPackets = Collections.synchronizedList(new ArrayList());
-        this.chunkDataPackets = Collections.synchronizedList(new ArrayList());
-        this.isServerTerminating = false;
-        this.terminationReason = "";
-        this.field_74490_x = 0;
-        this.sendQueueByteLength = 0;
-        this.field_74468_e = 0;
-        this.isInputBeingDecrypted = false;
-        this.isOutputEncrypted = false;
-        this.sharedKeyForEncryption = null;
-        this.field_74463_A = null;
-        this.chunkDataPacketsDelay = 50;
-        this.field_74463_A = par4PrivateKey;
-        this.networkSocket = par1Socket;
-        this.remoteSocketAddress = par1Socket.getRemoteSocketAddress();
-        this.theNetHandler = par3NetHandler;
+        this.field_74463_A = par5PrivateKey;
+        this.networkSocket = par2Socket;
+        this.field_98215_i = par1ILogAgent;
+        this.remoteSocketAddress = par2Socket.getRemoteSocketAddress();
+        this.theNetHandler = par4NetHandler;
 
         try
         {
-            par1Socket.setSoTimeout(30000);
-            par1Socket.setTrafficClass(24);
+            par2Socket.setSoTimeout(30000);
+            par2Socket.setTrafficClass(24);
         }
         catch (SocketException socketexception)
         {
             System.err.println(socketexception.getMessage());
         }
 
-        this.socketInputStream = new DataInputStream(par1Socket.getInputStream());
-        this.socketOutputStream = new DataOutputStream(new BufferedOutputStream(par1Socket.getOutputStream(), 5120));
-        this.readThread = new TcpReaderThread(this, par2Str + " read thread");
-        this.writeThread = new TcpWriterThread(this, par2Str + " write thread");
+        this.socketInputStream = new DataInputStream(par2Socket.getInputStream());
+        this.socketOutputStream = new DataOutputStream(new BufferedOutputStream(par2Socket.getOutputStream(), 5120));
+        this.readThread = new TcpReaderThread(this, par3Str + " read thread");
+        this.writeThread = new TcpWriterThread(this, par3Str + " write thread");
         this.readThread.start();
         this.writeThread.start();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void closeConnections()
-    {
-        this.wakeThreads();
-        this.writeThread = null;
-        this.readThread = null;
     }
 
     /**
@@ -322,7 +297,7 @@ public class TcpConnection implements INetworkManager
 
         try
         {
-            Packet packet = Packet.readPacket(this.socketInputStream, this.theNetHandler.isServerHandler(), this.networkSocket);
+            Packet packet = Packet.readPacket(this.field_98215_i, this.socketInputStream, this.theNetHandler.isServerHandler(), this.networkSocket);
 
             if (packet != null)
             {
@@ -498,7 +473,7 @@ public class TcpConnection implements INetworkManager
         }
     }
 
-    private void decryptInputStream() throws IOException
+    private void decryptInputStream() throws IOException   // CraftBukkit - throws IOException
     {
         this.isInputBeingDecrypted = true;
         InputStream inputstream = this.networkSocket.getInputStream();
@@ -508,7 +483,7 @@ public class TcpConnection implements INetworkManager
     /**
      * flushes the stream and replaces it with an encryptedOutputStream
      */
-    private void encryptOuputStream() throws IOException
+    private void encryptOuputStream() throws IOException   // CraftBukkit - throws IOException
     {
         this.socketOutputStream.flush();
         this.isOutputEncrypted = true;

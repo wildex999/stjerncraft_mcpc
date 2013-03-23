@@ -1,7 +1,5 @@
 package net.minecraft.world.chunk;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,9 +9,11 @@ import java.util.Map;
 import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -28,11 +28,7 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.world.ChunkEvent;
-// CraftBukkit start
-import net.minecraft.entity.player.EntityPlayerMP;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-// CraftBukkit end
 
 public class Chunk
 {
@@ -97,8 +93,15 @@ public class Chunk
 
     /** The time according to World.worldTime when this chunk was last saved */
     public long lastSaveTime;
-    public boolean deferRender;
-    public int field_82912_p;
+
+    /**
+     * Updates to this chunk will not be sent to clients if this is false. This field is set to true the first time the
+     * chunk is sent to a client, and never set to false.
+     */
+    public boolean sendUpdates;
+
+    /** Lowest value in the heightmap. */
+    public int heightMapMinimum;
 
     /**
      * Contains the current round-robin relight check index, and is implied as the relight check location as well.
@@ -118,8 +121,8 @@ public class Chunk
         this.isModified = false;
         this.hasEntities = false;
         this.lastSaveTime = 0L;
-        this.deferRender = false;
-        this.field_82912_p = 0;
+        this.sendUpdates = false;
+        this.heightMapMinimum = 0;
         this.queuedLightChecks = 4096;
         this.field_76653_p = false;
         this.entityLists = new List[16];
@@ -130,7 +133,7 @@ public class Chunk
 
         for (int k = 0; k < this.entityLists.length; ++k)
         {
-            this.entityLists[k] = new ArrayList();
+            this.entityLists[k] = new org.bukkit.craftbukkit.util.UnsafeList(); // CraftBukkit - ArrayList -> UnsafeList
         }
 
         Arrays.fill(this.precipitationHeightMap, -999);
@@ -160,18 +163,18 @@ public class Chunk
                 {
                     /* FORGE: The following change, a cast from unsigned byte to int,
                      * fixes a vanilla bug when generating new chunks that contain a block ID > 127 */
-                    int k1 = par2ArrayOfByte[l << 11 | i1 << 7 | j1] & 0xFF;
+                    int b0 = par2ArrayOfByte[l << 11 | i1 << 7 | j1] & 0xFF;
 
-                    if (k1 != 0)
+                    if (b0 != 0)
                     {
-                        int l1 = j1 >> 4;
+                        int k1 = j1 >> 4;
 
-                        if (this.storageArrays[l1] == null)
+                        if (this.storageArrays[k1] == null)
                         {
-                            this.storageArrays[l1] = new ExtendedBlockStorage(l1 << 4, !par1World.provider.hasNoSky);
+                            this.storageArrays[k1] = new ExtendedBlockStorage(k1 << 4, !par1World.provider.hasNoSky);
                         }
 
-                        this.storageArrays[l1].setExtBlockID(l, j1 & 15, i1, k1);
+                        this.storageArrays[k1].setExtBlockID(l, j1 & 15, i1, b0);
                     }
                 }
             }
@@ -200,7 +203,7 @@ public class Chunk
                 for (int y = 0; y < k; ++y)
                 {
                     int idx = x << 11 | z << 7 | y;
-                    int id = ids[idx] & 0xFF;
+                   int id = ids[idx] & 0xFF;
                     int meta = metadata[idx];
 
                     if (id != 0)
@@ -302,55 +305,13 @@ public class Chunk
         return this.storageArrays;
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Generates the height map for a chunk from scratch
-     */
-    public void generateHeightMap()
-    {
-        int i = this.getTopFilledSegment();
-
-        for (int j = 0; j < 16; ++j)
-        {
-            int k = 0;
-
-            while (k < 16)
-            {
-                this.precipitationHeightMap[j + (k << 4)] = -999;
-                int l = i + 16 - 1;
-
-                while (true)
-                {
-                    if (l > 0)
-                    {
-                        int i1 = this.getBlockID(j, l - 1, k);
-
-                        if (getBlockLightOpacity(j, l - 1, k) == 0)
-                        {
-                            --l;
-                            continue;
-                        }
-
-                        this.heightMap[k << 4 | j] = l;
-                    }
-
-                    ++k;
-                    break;
-                }
-            }
-        }
-
-        this.isModified = true;
-    }
-
     /**
      * Generates the initial skylight map for the chunk upon generation or load.
      */
     public void generateSkylightMap()
     {
         int i = this.getTopFilledSegment();
-        this.field_82912_p = Integer.MAX_VALUE;
+        this.heightMapMinimum = Integer.MAX_VALUE;
         int j;
         int k;
 
@@ -375,9 +336,9 @@ public class Chunk
 
                         this.heightMap[k << 4 | j] = l;
 
-                        if (l < this.field_82912_p)
+                        if (l < this.heightMapMinimum)
                         {
-                            this.field_82912_p = l;
+                            this.heightMapMinimum = l;
                         }
                     }
 
@@ -451,10 +412,10 @@ public class Chunk
                         int k = this.getHeightValue(i, j);
                         int l = this.xPosition * 16 + i;
                         int i1 = this.zPosition * 16 + j;
-                        int j1 = this.worldObj.func_82734_g(l - 1, i1);
-                        int k1 = this.worldObj.func_82734_g(l + 1, i1);
-                        int l1 = this.worldObj.func_82734_g(l, i1 - 1);
-                        int i2 = this.worldObj.func_82734_g(l, i1 + 1);
+                        int j1 = this.worldObj.getChunkHeightMapMinimum(l - 1, i1);
+                        int k1 = this.worldObj.getChunkHeightMapMinimum(l + 1, i1);
+                        int l1 = this.worldObj.getChunkHeightMapMinimum(l, i1 - 1);
+                        int i2 = this.worldObj.getChunkHeightMapMinimum(l, i1 + 1);
 
                         if (k1 < j1)
                         {
@@ -612,9 +573,9 @@ public class Chunk
                 j2 = l;
             }
 
-            if (l1 < this.field_82912_p)
+            if (l1 < this.heightMapMinimum)
             {
-                this.field_82912_p = l1;
+                this.heightMapMinimum = l1;
             }
 
             if (!this.worldObj.provider.hasNoSky)
@@ -668,14 +629,6 @@ public class Chunk
             ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
             return extendedblockstorage != null ? extendedblockstorage.getExtBlockMetadata(par1, par2 & 15, par3) : 0;
         }
-    }
-
-    /**
-     * Sets a blockID for a position in the chunk. Args: x, y, z, blockID
-     */
-    public boolean setBlockID(int par1, int par2, int par3, int par4)
-    {
-        return this.setBlockIDWithMetadata(par1, par2, par3, par4, 0);
     }
 
     /**
@@ -806,6 +759,15 @@ public class Chunk
                             tileentity.updateContainingBlockInfo();
                             tileentity.blockMetadata = par5;
                         }
+                    }
+                }
+                else if (l1 > 0 && Block.blocksList[l1] instanceof ITileEntityProvider)
+                {
+                    tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
+
+                    if (tileentity != null)
+                    {
+                        tileentity.updateContainingBlockInfo();
                     }
                 }
 
@@ -1019,7 +981,6 @@ public class Chunk
         if (tileentity == null)
         {
             int l = this.getBlockID(par1, par2, par3);
-
             int meta = this.getBlockMetadata(par1, par2, par3);
 
             if (l <= 0 || !Block.blocksList[l].hasTileEntity(meta))
@@ -1069,11 +1030,11 @@ public class Chunk
         Block block = Block.blocksList[getBlockID(par1, par2, par3)];
         if (block != null && block.hasTileEntity(getBlockMetadata(par1, par2, par3)))
         {
-            TileEntity old = (TileEntity)chunkTileEntityMap.get(chunkposition);
-            if (old != null)
+            if (this.chunkTileEntityMap.containsKey(chunkposition))
             {
-                old.invalidate();
+                ((TileEntity)this.chunkTileEntityMap.get(chunkposition)).invalidate();
             }
+
             par4TileEntity.validate();
             this.chunkTileEntityMap.put(chunkposition, par4TileEntity);
             // CraftBukkit start
@@ -1155,7 +1116,6 @@ public class Chunk
             // CraftBukkit end
             this.worldObj.unloadEntities(this.entityLists[i]);
         }
-
         MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(this));
     }
 
@@ -1171,7 +1131,7 @@ public class Chunk
      * Fills the given list of all entities that intersect within the given bounding box that aren't the passed entity
      * Args: entity, aabb, listToFill
      */
-    public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List)
+    public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
     {
         int i = MathHelper.floor_double((par2AxisAlignedBB.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
         int j = MathHelper.floor_double((par2AxisAlignedBB.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
@@ -1179,19 +1139,13 @@ public class Chunk
         if (i < 0)
         {
             i = 0;
-        }
-        else if (i >= this.entityLists.length) //BugFix: Collision above the world
-        {
-            i = this.entityLists.length - 1;
+            j = Math.max(i, j);
         }
 
         if (j >= this.entityLists.length)
         {
             j = this.entityLists.length - 1;
-        }
-        else if (j < 0) //BugFix: Collision below the world
-        {
-            j = 0;
+            i = Math.min(i, j);
         }
 
         for (int k = i; k <= j; ++k)
@@ -1202,7 +1156,7 @@ public class Chunk
             {
                 Entity entity1 = (Entity)list1.get(l);
 
-                if (entity1 != par1Entity && entity1.boundingBox.intersectsWith(par2AxisAlignedBB))
+                if (entity1 != par1Entity && entity1.boundingBox.intersectsWith(par2AxisAlignedBB) && (par4IEntitySelector == null || par4IEntitySelector.isEntityApplicable(entity1)))
                 {
                     par3List.add(entity1);
                     Entity[] aentity = entity1.getParts();
@@ -1213,7 +1167,7 @@ public class Chunk
                         {
                             entity1 = aentity[i1];
 
-                            if (entity1 != par1Entity && entity1.boundingBox.intersectsWith(par2AxisAlignedBB))
+                            if (entity1 != par1Entity && entity1.boundingBox.intersectsWith(par2AxisAlignedBB) && (par4IEntitySelector == null || par4IEntitySelector.isEntityApplicable(entity1)))
                             {
                                 par3List.add(entity1);
                             }
@@ -1273,7 +1227,7 @@ public class Chunk
     {
         if (par1)
         {
-            if (this.hasEntities && this.worldObj.getTotalWorldTime() != this.lastSaveTime)
+            if (this.hasEntities && this.worldObj.getTotalWorldTime() != this.lastSaveTime || this.isModified)
             {
                 return true;
             }
@@ -1404,145 +1358,6 @@ public class Chunk
     public void setStorageArrays(ExtendedBlockStorage[] par1ArrayOfExtendedBlockStorage)
     {
         this.storageArrays = par1ArrayOfExtendedBlockStorage;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Initialise this chunk with new binary data
-     */
-    public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
-    {
-        Iterator iterator = chunkTileEntityMap.values().iterator();
-        while(iterator.hasNext())
-        {
-            TileEntity tileEntity = (TileEntity)iterator.next();
-            tileEntity.updateContainingBlockInfo();
-            tileEntity.getBlockMetadata();
-            tileEntity.getBlockType();
-        }
-
-        int k = 0;
-        boolean flag1 = !this.worldObj.provider.hasNoSky;
-        int l;
-
-        for (l = 0; l < this.storageArrays.length; ++l)
-        {
-            if ((par2 & 1 << l) != 0)
-            {
-                if (this.storageArrays[l] == null)
-                {
-                    this.storageArrays[l] = new ExtendedBlockStorage(l << 4, flag1);
-                }
-
-                byte[] abyte1 = this.storageArrays[l].getBlockLSBArray();
-                System.arraycopy(par1ArrayOfByte, k, abyte1, 0, abyte1.length);
-                k += abyte1.length;
-            }
-            else if (par4 && this.storageArrays[l] != null)
-            {
-                this.storageArrays[l] = null;
-            }
-        }
-
-        NibbleArray nibblearray;
-
-        for (l = 0; l < this.storageArrays.length; ++l)
-        {
-            if ((par2 & 1 << l) != 0 && this.storageArrays[l] != null)
-            {
-                nibblearray = this.storageArrays[l].getMetadataArray();
-                System.arraycopy(par1ArrayOfByte, k, nibblearray.getValueArray(), 0, nibblearray.getValueArray().length); // Spigot
-                k += nibblearray.getValueArray().length; // Spigot
-            }
-        }
-
-        for (l = 0; l < this.storageArrays.length; ++l)
-        {
-            if ((par2 & 1 << l) != 0 && this.storageArrays[l] != null)
-            {
-                nibblearray = this.storageArrays[l].getBlocklightArray();
-                System.arraycopy(par1ArrayOfByte, k, nibblearray.getValueArray(), 0, nibblearray.getValueArray().length); // Spigot
-                k += nibblearray.getValueArray().length; // Spigot
-            }
-        }
-
-        if (flag1)
-        {
-            for (l = 0; l < this.storageArrays.length; ++l)
-            {
-                if ((par2 & 1 << l) != 0 && this.storageArrays[l] != null)
-                {
-                    nibblearray = this.storageArrays[l].getSkylightArray();
-                    System.arraycopy(par1ArrayOfByte, k, nibblearray.getValueArray(), 0, nibblearray.getValueArray().length); // Spigot
-                    k += nibblearray.getValueArray().length; // Spigot
-                }
-            }
-        }
-
-        for (l = 0; l < this.storageArrays.length; ++l)
-        {
-            if ((par3 & 1 << l) != 0)
-            {
-                if (this.storageArrays[l] == null)
-                {
-                    k += 2048;
-                }
-                else
-                {
-                    nibblearray = this.storageArrays[l].getBlockMSBArray();
-
-                    if (nibblearray == null)
-                    {
-                        nibblearray = this.storageArrays[l].createBlockMSBArray();
-                    }
-
-                    System.arraycopy(par1ArrayOfByte, k, nibblearray.getValueArray(), 0, nibblearray.getValueArray().length); // Spigot
-                    k += nibblearray.getValueArray().length; // Spigot
-                }
-            }
-            else if (par4 && this.storageArrays[l] != null && this.storageArrays[l].getBlockMSBArray() != null)
-            {
-                this.storageArrays[l].clearMSBArray();
-            }
-        }
-
-        if (par4)
-        {
-            System.arraycopy(par1ArrayOfByte, k, this.blockBiomeArray, 0, this.blockBiomeArray.length);
-            int i1 = k + this.blockBiomeArray.length;
-        }
-
-        for (l = 0; l < this.storageArrays.length; ++l)
-        {
-            if (this.storageArrays[l] != null && (par2 & 1 << l) != 0)
-            {
-                this.storageArrays[l].removeInvalidBlocks();
-            }
-        }
-
-        this.generateHeightMap();
-
-        List<TileEntity> invalidList = new ArrayList<TileEntity>();
-        iterator = chunkTileEntityMap.values().iterator();
-        while (iterator.hasNext())
-        {
-            TileEntity tileEntity = (TileEntity)iterator.next();
-            int x = tileEntity.xCoord & 15;
-            int y = tileEntity.yCoord;
-            int z = tileEntity.zCoord & 15;
-            Block block = tileEntity.getBlockType();
-            if (block == null || block.blockID != getBlockID(x, y, z) || tileEntity.getBlockMetadata() != getBlockMetadata(x, y, z))
-            {
-                invalidList.add(tileEntity);
-            }
-            tileEntity.updateContainingBlockInfo();
-        }
-
-        for (TileEntity tileEntity : invalidList)
-        {
-            tileEntity.invalidate();
-        }
     }
 
     /**

@@ -1,7 +1,5 @@
 package net.minecraft.inventory;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Iterator;
 import java.util.Map;
 import net.minecraft.block.Block;
@@ -10,6 +8,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -27,7 +26,7 @@ public class ContainerRepair extends Container
     /**
      * The 2slots where you put your items in that you want to merge and/or rename.
      */
-    private IInventory inputSlots = new InventoryRepair(this, "Repair", 2);
+    private IInventory inputSlots = new InventoryRepair(this, "Repair", true, 2);
     private World theWorld;
     private int field_82861_i;
     private int field_82858_j;
@@ -57,7 +56,7 @@ public class ContainerRepair extends Container
         this.thePlayer = par6EntityPlayer;
         this.addSlotToContainer(new Slot(this.inputSlots, 0, 27, 47));
         this.addSlotToContainer(new Slot(this.inputSlots, 1, 76, 47));
-        this.addSlotToContainer(new SlotRepair(this, this.outputSlot, 2, 134, 47, par2World, par3, par4, par5));
+        this.addSlotToContainer((Slot)(new SlotRepair(this, this.outputSlot, 2, 134, 47, par2World, par3, par4, par5)));
         int l;
 
         for (l = 0; l < 3; ++l)
@@ -198,7 +197,7 @@ public class ContainerRepair extends Container
                         int k2 = l1 - k1;
                         boolean flag1 = enchantment.func_92089_a(itemstack);
 
-                        if (this.thePlayer.capabilities.isCreativeMode)
+                        if (this.thePlayer.capabilities.isCreativeMode || itemstack.itemID == ItemEnchantedBook.enchantedBook.itemID)
                         {
                             flag1 = true;
                         }
@@ -324,7 +323,7 @@ public class ContainerRepair extends Container
 
             if (j == i && j > 0 && this.maximumCost >= 40)
             {
-                //System.out.println("Naming an item only, cost too high; giving discount to cap cost to 39 levels"); // CraftBukkit -remove debug
+                // this.h.getLogger().info("Naming an item only, cost too high; giving discount to cap cost to 39 levels"); // CraftBukkit - remove debug
                 this.maximumCost = 39;
             }
 
@@ -366,15 +365,6 @@ public class ContainerRepair extends Container
     {
         super.addCraftingToCrafters(par1ICrafting);
         par1ICrafting.sendProgressBarUpdate(this, 0, this.maximumCost);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void updateProgressBar(int par1, int par2)
-    {
-        if (par1 == 0)
-        {
-            this.maximumCost = par2;
-        }
     }
 
     /**

@@ -1,9 +1,6 @@
 package net.minecraft.entity.player;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-
 public class PlayerCapabilities
 {
     /** Disables player damage. */
@@ -68,20 +65,8 @@ public class PlayerCapabilities
         return this.flySpeed;
     }
 
-    @SideOnly(Side.CLIENT)
-    public void setFlySpeed(float par1)
-    {
-        this.flySpeed = par1;
-    }
-
     public float getWalkSpeed()
     {
         return this.walkSpeed;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void func_82877_b(float par1)
-    {
-        this.walkSpeed = par1;
     }
 }

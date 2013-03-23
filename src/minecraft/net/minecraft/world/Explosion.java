@@ -10,11 +10,14 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentProtection;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+
 // CraftBukkit start
 import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -106,11 +109,11 @@ public class Explosion
                             if (k1 > 0)
                             {
                                 Block block = Block.blocksList[k1];
-                                float f3 = this.exploder != null ? this.exploder.func_82146_a(this, block, l, i1, j1) : block.getExplosionResistance(this.exploder);
+                                float f3 = this.exploder != null ? this.exploder.func_82146_a(this, this.worldObj, l, i1, j1, block) : block.getExplosionResistance(this.exploder, worldObj, l, i1, j1, explosionX, explosionY, explosionZ);
                                 f1 -= (f3 + 0.3F) * f2;
                             }
 
-                            if (f1 > 0.0F && i1 < 256 && i1 >= 0)   // CraftBukkit - don't wrap explosions
+                            if (f1 > 0.0F && (this.exploder == null || this.exploder.func_96091_a(this, this.worldObj, l, i1, j1, k1, f1)) && i1 < 256 && i1 >= 0)   // CraftBukkit - don't wrap explosions
                             {
                                 hashset.add(new ChunkPosition(l, i1, j1));
                             }
@@ -132,7 +135,7 @@ public class Explosion
         int l1 = MathHelper.floor_double(this.explosionY + (double)this.explosionSize + 1.0D);
         int i2 = MathHelper.floor_double(this.explosionZ - (double)this.explosionSize - 1.0D);
         int j2 = MathHelper.floor_double(this.explosionZ + (double)this.explosionSize + 1.0D);
-        List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)i, (double)k, (double)i2, (double)j, (double)l1, (double)j2));
+        List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, AxisAlignedBB.getAABBPool().getAABB((double)i, (double)k, (double)i2, (double)j, (double)l1, (double)j2));
         Vec3 vec3 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.explosionX, this.explosionY, this.explosionZ);
 
         for (int k2 = 0; k2 < list.size(); ++k2)
@@ -170,7 +173,7 @@ public class Explosion
                         if (!event.isCancelled())
                         {
                             damagee.setLastDamageCause(event);
-                            entity.attackEntityFrom(DamageSource.explosion, event.getDamage());
+                            entity.attackEntityFrom(DamageSource.setExplosionSource(this), event.getDamage());
                             double d11 = EnchantmentProtection.func_92092_a(entity, d10);
                             entity.motionX += d0 * d11;
                             entity.motionY += d1 * d11;
@@ -202,7 +205,7 @@ public class Explosion
                         if (!event.isCancelled())
                         {
                             entity.getBukkitEntity().setLastDamageCause(event);
-                            entity.attackEntityFrom(DamageSource.explosion, event.getDamage());
+                            entity.attackEntityFrom(DamageSource.setExplosionSource(this), event.getDamage());
                             entity.motionX += d0 * d10;
                             entity.motionY += d1 * d10;
                             entity.motionZ += d2 * d10;
@@ -290,7 +293,6 @@ public class Explosion
                 j = chunkposition.y;
                 k = chunkposition.z;
                 l = this.worldObj.getBlockId(i, j, k);
-                org.bukkit.craftbukkit.OrebfuscatorManager.updateNearbyBlocks(worldObj, i, j, k); // Spigot (Orebfuscator)
 
                 if (par1)
                 {
@@ -324,12 +326,8 @@ public class Explosion
                         block.dropBlockAsItemWithChance(this.worldObj, i, j, k, this.worldObj.getBlockMetadata(i, j, k), event.getYield(), 0);
                     }
 
-                    if (this.worldObj.setBlockAndMetadataWithUpdate(i, j, k, 0, 0, this.worldObj.isRemote))
-                    {
-                        this.worldObj.notifyBlocksOfNeighborChange(i, j, k, 0);
-                    }
-
-                    block.onBlockDestroyedByExplosion(this.worldObj, i, j, k);
+                    this.worldObj.setBlock(i, j, k, 0, 0, 3);
+                    block.onBlockDestroyedByExplosion(this.worldObj, i, j, k, this);
                 }
             }
         }
@@ -349,7 +347,11 @@ public class Explosion
 
                 if (l == 0 && Block.opaqueCubeLookup[i1] && this.explosionRNG.nextInt(3) == 0)
                 {
-                    this.worldObj.setBlockWithNotify(i, j, k, Block.fire.blockID);
+                    // CraftBukkit start - ignition by explosion.
+                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.worldObj, i, j, k, this).isCancelled())
+                    {
+                        this.worldObj.setBlock(i, j, k, Block.fire.blockID);
+                    } // CraftBukkit end
                 }
             }
         }
@@ -358,5 +360,10 @@ public class Explosion
     public Map func_77277_b()
     {
         return this.field_77288_k;
+    }
+
+    public EntityLiving func_94613_c()
+    {
+        return this.exploder == null ? null : (this.exploder instanceof EntityTNTPrimed ? ((EntityTNTPrimed)this.exploder).func_94083_c() : (this.exploder instanceof EntityLiving ? (EntityLiving)this.exploder : null));
     }
 }

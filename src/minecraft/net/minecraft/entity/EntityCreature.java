@@ -3,11 +3,11 @@ package net.minecraft.entity;
 // CraftBukkit start
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.event.entity.EntityTargetEvent;
-// CraftBukkit end
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public abstract class EntityCreature extends EntityLiving
 {
@@ -81,7 +81,7 @@ public abstract class EntityCreature extends EntityLiving
         }
         else if (this.entityToAttack.isEntityAlive())
         {
-            float f1 = this.entityToAttack.getDistanceToEntity(this);
+            float f1 = this.entityToAttack.getDistanceToEntity((Entity) this);
 
             if (this.canEntityBeSeen(this.entityToAttack))
             {
@@ -128,7 +128,7 @@ public abstract class EntityCreature extends EntityLiving
         if (this.pathToEntity != null && this.rand.nextInt(100) != 0)
         {
             this.worldObj.theProfiler.startSection("followpath");
-            Vec3 vec3 = this.pathToEntity.getPosition(this);
+            Vec3 vec3 = this.pathToEntity.getPosition((Entity) this);
             double d0 = (double)(this.width * 2.0F);
 
             while (vec3 != null && vec3.squareDistanceTo(this.posX, vec3.yCoord, this.posZ) < d0 * d0)
@@ -142,7 +142,7 @@ public abstract class EntityCreature extends EntityLiving
                 }
                 else
                 {
-                    vec3 = this.pathToEntity.getPosition(this);
+                    vec3 = this.pathToEntity.getPosition((Entity) this);
                 }
             }
 
@@ -153,7 +153,8 @@ public abstract class EntityCreature extends EntityLiving
                 double d1 = vec3.xCoord - this.posX;
                 double d2 = vec3.zCoord - this.posZ;
                 double d3 = vec3.yCoord - (double)i;
-                float f2 = (float)(org.bukkit.craftbukkit.TrigMath.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;                 // CraftBukkit - Math -> TrigMath
+                // CraftBukkit - Math -> TrigMath
+                float f2 = (float)(org.bukkit.craftbukkit.TrigMath.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;
                 float f3 = MathHelper.wrapAngleTo180_float(f2 - this.rotationYaw);
                 this.moveForward = this.moveSpeed;
 

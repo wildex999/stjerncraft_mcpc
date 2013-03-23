@@ -1,7 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +8,7 @@ import java.util.Random;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 
 public class BlockRedstoneTorch extends BlockTorch
@@ -19,14 +18,6 @@ public class BlockRedstoneTorch extends BlockTorch
 
     /** Map of ArrayLists of RedstoneUpdateInfo. Key of map is World. */
     private static Map redstoneUpdateInfoCache = new HashMap();
-
-    /**
-     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
-     */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
-    {
-        return par1 == 1 ? Block.redstoneWire.getBlockTextureFromSideAndMetadata(par1, par2) : super.getBlockTextureFromSideAndMetadata(par1, par2);
-    }
 
     private boolean checkForBurnout(World par1World, int par2, int par3, int par4, boolean par5)
     {
@@ -62,10 +53,10 @@ public class BlockRedstoneTorch extends BlockTorch
         return false;
     }
 
-    protected BlockRedstoneTorch(int par1, int par2, boolean par3)
+    protected BlockRedstoneTorch(int par1, boolean par2)
     {
-        super(par1, par2);
-        this.torchActive = par3;
+        super(par1);
+        this.torchActive = par2;
         this.setTickRandomly(true);
         this.setCreativeTab((CreativeTabs)null);
     }
@@ -73,7 +64,7 @@ public class BlockRedstoneTorch extends BlockTorch
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 2;
     }
@@ -120,16 +111,16 @@ public class BlockRedstoneTorch extends BlockTorch
      * returns true, standard redstone propagation rules will apply instead and this will not be called. Args: World, X,
      * Y, Z, side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
         if (!this.torchActive)
         {
-            return false;
+            return 0;
         }
         else
         {
             int i1 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
-            return i1 == 5 && par5 == 1 ? false : (i1 == 3 && par5 == 3 ? false : (i1 == 4 && par5 == 2 ? false : (i1 == 1 && par5 == 5 ? false : i1 != 2 || par5 != 4)));
+            return i1 == 5 && par5 == 1 ? 0 : (i1 == 3 && par5 == 3 ? 0 : (i1 == 4 && par5 == 2 ? 0 : (i1 == 1 && par5 == 5 ? 0 : (i1 == 2 && par5 == 4 ? 0 : 15))));
         }
     }
 
@@ -139,7 +130,7 @@ public class BlockRedstoneTorch extends BlockTorch
     private boolean isIndirectlyPowered(World par1World, int par2, int par3, int par4)
     {
         int l = par1World.getBlockMetadata(par2, par3, par4);
-        return l == 5 && par1World.isBlockIndirectlyProvidingPowerTo(par2, par3 - 1, par4, 0) ? true : (l == 3 && par1World.isBlockIndirectlyProvidingPowerTo(par2, par3, par4 - 1, 2) ? true : (l == 4 && par1World.isBlockIndirectlyProvidingPowerTo(par2, par3, par4 + 1, 3) ? true : (l == 1 && par1World.isBlockIndirectlyProvidingPowerTo(par2 - 1, par3, par4, 4) ? true : l == 2 && par1World.isBlockIndirectlyProvidingPowerTo(par2 + 1, par3, par4, 5))));
+        return l == 5 && par1World.getIndirectPowerOutput(par2, par3 - 1, par4, 0) ? true : (l == 3 && par1World.getIndirectPowerOutput(par2, par3, par4 - 1, 2) ? true : (l == 4 && par1World.getIndirectPowerOutput(par2, par3, par4 + 1, 3) ? true : (l == 1 && par1World.getIndirectPowerOutput(par2 - 1, par3, par4, 4) ? true : l == 2 && par1World.getIndirectPowerOutput(par2 + 1, par3, par4, 5))));
     }
 
     /**
@@ -179,7 +170,7 @@ public class BlockRedstoneTorch extends BlockTorch
                 }
 
                 // CraftBukkit end
-                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, Block.torchRedstoneIdle.blockID, par1World.getBlockMetadata(par2, par3, par4));
+                par1World.setBlock(par2, par3, par4, Block.torchRedstoneIdle.blockID, par1World.getBlockMetadata(par2, par3, par4), 3);
 
                 if (this.checkForBurnout(par1World, par2, par3, par4, true))
                 {
@@ -210,7 +201,7 @@ public class BlockRedstoneTorch extends BlockTorch
             }
 
             // CraftBukkit end
-            par1World.setBlockAndMetadataWithNotify(par2, par3, par4, Block.torchRedstoneActive.blockID, par1World.getBlockMetadata(par2, par3, par4));
+            par1World.setBlock(par2, par3, par4, Block.torchRedstoneActive.blockID, par1World.getBlockMetadata(par2, par3, par4), 3);
         }
     }
 
@@ -220,17 +211,24 @@ public class BlockRedstoneTorch extends BlockTorch
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        super.onNeighborBlockChange(par1World, par2, par3, par4, par5);
-        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+        if (!this.func_94397_d(par1World, par2, par3, par4, par5))
+        {
+            boolean flag = this.isIndirectlyPowered(par1World, par2, par3, par4);
+
+            if (this.torchActive && flag || !this.torchActive && !flag)
+            {
+                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
+            }
+        }
     }
 
     /**
      * Returns true if the block is emitting direct/strong redstone power on the specified side. Args: World, X, Y, Z,
      * side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        return par5 == 0 ? this.isProvidingWeakPower(par1IBlockAccess, par2, par3, par4, par5) : false;
+        return par5 == 0 ? this.isProvidingWeakPower(par1IBlockAccess, par2, par3, par4, par5) : 0;
     }
 
     /**
@@ -249,52 +247,12 @@ public class BlockRedstoneTorch extends BlockTorch
         return true;
     }
 
-    @SideOnly(Side.CLIENT)
-
     /**
-     * A randomly called display update to be able to add particles or other items for display
+     * Returns true if the given block ID is equivalent to this one. Example: redstoneTorchOn matches itself and
+     * redstoneTorchOff, and vice versa. Most blocks only match themselves.
      */
-    public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
+    public boolean isAssociatedBlockID(int par1)
     {
-        if (this.torchActive)
-        {
-            int l = par1World.getBlockMetadata(par2, par3, par4);
-            double d0 = (double)((float)par2 + 0.5F) + (double)(par5Random.nextFloat() - 0.5F) * 0.2D;
-            double d1 = (double)((float)par3 + 0.7F) + (double)(par5Random.nextFloat() - 0.5F) * 0.2D;
-            double d2 = (double)((float)par4 + 0.5F) + (double)(par5Random.nextFloat() - 0.5F) * 0.2D;
-            double d3 = 0.2199999988079071D;
-            double d4 = 0.27000001072883606D;
-
-            if (l == 1)
-            {
-                par1World.spawnParticle("reddust", d0 - d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
-            }
-            else if (l == 2)
-            {
-                par1World.spawnParticle("reddust", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
-            }
-            else if (l == 3)
-            {
-                par1World.spawnParticle("reddust", d0, d1 + d3, d2 - d4, 0.0D, 0.0D, 0.0D);
-            }
-            else if (l == 4)
-            {
-                par1World.spawnParticle("reddust", d0, d1 + d3, d2 + d4, 0.0D, 0.0D, 0.0D);
-            }
-            else
-            {
-                par1World.spawnParticle("reddust", d0, d1, d2, 0.0D, 0.0D, 0.0D);
-            }
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return Block.torchRedstoneActive.blockID;
+        return par1 == Block.torchRedstoneIdle.blockID || par1 == Block.torchRedstoneActive.blockID;
     }
 }

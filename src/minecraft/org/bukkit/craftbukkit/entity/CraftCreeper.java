@@ -8,12 +8,12 @@ import org.bukkit.event.entity.CreeperPowerEvent;
 
 public class CraftCreeper extends CraftMonster implements Creeper {
 
-    public CraftCreeper(CraftServer server, net.minecraft.entity.monster.EntityCreeper/*was:EntityCreeper*/ entity) {
+    public CraftCreeper(CraftServer server, net.minecraft.entity.monster.EntityCreeper entity) {
         super(server, entity);
     }
 
     public boolean isPowered() {
-        return getHandle().getPowered/*was:isPowered*/();
+        return getHandle().getPowered();
     }
 
     public void setPowered(boolean powered) {
@@ -38,8 +38,8 @@ public class CraftCreeper extends CraftMonster implements Creeper {
     }
 
     @Override
-    public net.minecraft.entity.monster.EntityCreeper/*was:EntityCreeper*/ getHandle() {
-        return (net.minecraft.entity.monster.EntityCreeper/*was:EntityCreeper*/) entity;
+    public net.minecraft.entity.monster.EntityCreeper getHandle() {
+        return (net.minecraft.entity.monster.EntityCreeper) entity;
     }
 
     @Override

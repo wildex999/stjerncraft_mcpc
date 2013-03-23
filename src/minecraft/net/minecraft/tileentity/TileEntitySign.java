@@ -1,11 +1,8 @@
 package net.minecraft.tileentity;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet130UpdateSign;
-
 public class TileEntitySign extends TileEntity
 {
     /** An array of four strings storing the lines of text on the sign. */
@@ -17,6 +14,8 @@ public class TileEntitySign extends TileEntity
      */
     public int lineBeingEdited = -1;
     public boolean isEditable = true; // CraftBukkit - privite -> public
+
+    public TileEntitySign() {}
 
     /**
      * Writes a tile entity to NBT.
@@ -74,15 +73,5 @@ public class TileEntitySign extends TileEntity
     public boolean isEditable()
     {
         return this.isEditable;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the sign's isEditable flag to the specified parameter.
-     */
-    public void setEditable(boolean par1)
-    {
-        this.isEditable = par1;
     }
 }

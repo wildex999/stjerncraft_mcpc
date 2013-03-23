@@ -8,13 +8,13 @@ import org.bukkit.inventory.ShapelessRecipe;
 
 public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe {
     // TODO: Could eventually use this to add a matches() method or some such
-    private net.minecraft.item.crafting.ShapelessRecipes/*was:ShapelessRecipes*/ recipe;
+    private net.minecraft.item.crafting.ShapelessRecipes recipe;
 
     public CraftShapelessRecipe(ItemStack result) {
         super(result);
     }
 
-    public CraftShapelessRecipe(ItemStack result, net.minecraft.item.crafting.ShapelessRecipes/*was:ShapelessRecipes*/ recipe) {
+    public CraftShapelessRecipe(ItemStack result, net.minecraft.item.crafting.ShapelessRecipes recipe) {
         this(result);
         this.recipe = recipe;
     }
@@ -37,9 +37,9 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
         for (ItemStack mdata : ingred) {
             int id = mdata.getTypeId();
             short dmg = mdata.getDurability();
-            data[i] = new net.minecraft.item.ItemStack/*was:ItemStack*/(id, 1, dmg);
+            data[i] = new net.minecraft.item.ItemStack(id, 1, dmg);
             i++;
         }
-        net.minecraft.item.crafting.CraftingManager/*was:CraftingManager*/.getInstance/*was:getInstance*/().addShapelessRecipe/*was:registerShapelessRecipe*/(CraftItemStack.asNMSCopy(this.getResult()), data);
+        net.minecraft.item.crafting.CraftingManager.getInstance().addShapelessRecipe(CraftItemStack.asNMSCopy(this.getResult()), data);
     }
 }

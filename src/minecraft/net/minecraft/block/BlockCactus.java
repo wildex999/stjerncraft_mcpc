@@ -1,7 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -14,13 +12,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.IPlantable;
-import org.bukkit.event.entity.EntityDamageByBlockEvent; // CraftBukkit
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 
 public class BlockCactus extends Block implements IPlantable
 {
-    protected BlockCactus(int par1, int par2)
+    protected BlockCactus(int par1)
     {
-        super(par1, par2, Material.cactus);
+        super(par1, Material.cactus);
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
@@ -43,14 +41,15 @@ public class BlockCactus extends Block implements IPlantable
             {
                 int i1 = par1World.getBlockMetadata(par2, par3, par4);
 
-                if (i1 >= (byte) range(3, (par1World.growthOdds / par1World.getWorld().cactusGrowthModifier * 15) + 0.5F, 15))   // Spigot
+                if (i1 == 15)
                 {
                     org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3 + 1, par4, this.blockID, 0); // CraftBukkit
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, 0);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, 0, 4);
+                    this.onNeighborBlockChange(par1World, par2, par3 + 1, par4, this.blockID);
                 }
                 else
                 {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 + 1);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 + 1, 4);
                 }
             }
         }
@@ -63,26 +62,7 @@ public class BlockCactus extends Block implements IPlantable
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
         float f = 0.0625F;
-        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + f), (double)par3, (double)((float)par4 + f), (double)((float)(par2 + 1) - f), (double)((float)(par3 + 1) - f), (double)((float)(par4 + 1) - f));
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the bounding box of the wired rectangular prism to render.
-     */
-    public AxisAlignedBB getSelectedBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
-    {
-        float f = 0.0625F;
-        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + f), (double)par3, (double)((float)par4 + f), (double)((float)(par2 + 1) - f), (double)(par3 + 1), (double)((float)(par4 + 1) - f));
-    }
-
-    /**
-     * Returns the block texture based on the side being looked at.  Args: side
-     */
-    public int getBlockTextureFromSide(int par1)
-    {
-        return par1 == 1 ? this.blockIndexInTexture - 1 : (par1 == 0 ? this.blockIndexInTexture + 1 : this.blockIndexInTexture);
+        return AxisAlignedBB.getAABBPool().getAABB((double)((float)par2 + f), (double)par3, (double)((float)par4 + f), (double)((float)(par2 + 1) - f), (double)((float)(par3 + 1) - f), (double)((float)(par4 + 1) - f));
     }
 
     /**
@@ -126,8 +106,7 @@ public class BlockCactus extends Block implements IPlantable
     {
         if (!this.canBlockStay(par1World, par2, par3, par4))
         {
-            this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.destroyBlock(par2, par3, par4, true);
         }
     }
 
@@ -184,7 +163,7 @@ public class BlockCactus extends Block implements IPlantable
         // CraftBukkit end
         par5Entity.attackEntityFrom(DamageSource.cactus, 1);
     }
-
+    
     @Override
     public EnumPlantType getPlantType(World world, int x, int y, int z)
     {
@@ -201,5 +180,5 @@ public class BlockCactus extends Block implements IPlantable
     public int getPlantMetadata(World world, int x, int y, int z)
     {
         return -1;
-    }
+    }    
 }

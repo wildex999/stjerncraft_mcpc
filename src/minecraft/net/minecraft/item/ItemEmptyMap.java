@@ -3,10 +3,9 @@ package net.minecraft.item;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.MapData;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.WorldServer;
-
+import net.minecraft.world.storage.MapData;
 public class ItemEmptyMap extends ItemMapBase
 {
     protected ItemEmptyMap(int par1)
@@ -23,7 +22,7 @@ public class ItemEmptyMap extends ItemMapBase
         ItemStack itemstack1 = new ItemStack(Item.map, 1, par2World.getUniqueDataId("map"));
         String s = "map_" + itemstack1.getItemDamage();
         MapData mapdata = new MapData(s);
-        par2World.setItemData(s, mapdata);
+        par2World.setItemData(s, (WorldSavedData) mapdata);
         mapdata.scale = 0;
         int i = 128 * (1 << mapdata.scale);
         mapdata.xCenter = (int)(Math.round(par3EntityPlayer.posX / (double)i) * (long)i);

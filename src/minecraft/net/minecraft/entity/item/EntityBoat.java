@@ -1,7 +1,5 @@
 package net.minecraft.entity.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -13,6 +11,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 // CraftBukkit start
 import org.bukkit.Location;
 import org.bukkit.entity.Vehicle;
@@ -32,12 +31,6 @@ public class EntityBoat extends Entity
     private double boatZ;
     private double boatYaw;
     private double boatPitch;
-    @SideOnly(Side.CLIENT)
-    private double velocityX;
-    @SideOnly(Side.CLIENT)
-    private double velocityY;
-    @SideOnly(Side.CLIENT)
-    private double velocityZ;
 
     // CraftBukkit start
     public double maxSpeed = 0.4D;
@@ -46,6 +39,10 @@ public class EntityBoat extends Entity
     public boolean landBoats = false;
 
     @Override
+
+    /**
+     * Applies a velocity to each of the entities pushing them away from each other. Args: entity
+     */
     public void applyEntityCollision(Entity entity)
     {
         org.bukkit.entity.Entity hitEntity = (entity == null) ? null : entity.getBukkitEntity();
@@ -161,13 +158,9 @@ public class EntityBoat extends Entity
             this.setTimeSinceHit(10);
             this.setDamageTaken(this.getDamageTaken() + par2 * 10);
             this.setBeenAttacked();
+            boolean flag = par1DamageSource.getEntity() instanceof EntityPlayer && ((EntityPlayer)par1DamageSource.getEntity()).capabilities.isCreativeMode;
 
-            if (par1DamageSource.getEntity() instanceof EntityPlayer && ((EntityPlayer)par1DamageSource.getEntity()).capabilities.isCreativeMode)
-            {
-                this.setDamageTaken(100);
-            }
-
-            if (this.getDamageTaken() > 40)
+            if (flag || this.getDamageTaken() > 40)
             {
                 // CraftBukkit start
                 VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
@@ -186,7 +179,11 @@ public class EntityBoat extends Entity
                     this.riddenByEntity.mountEntity(this);
                 }
 
-                this.dropItemWithOffset(Item.boat.itemID, 1, 0.0F);
+                if (!flag)
+                {
+                    this.dropItemWithOffset(Item.boat.itemID, 1, 0.0F);
+                }
+
                 this.setDead();
             }
 
@@ -198,73 +195,12 @@ public class EntityBoat extends Entity
         }
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Setups the entity to do the hurt animation. Only used by packets in multiplayer.
-     */
-    public void performHurtAnimation()
-    {
-        this.setForwardDirection(-this.getForwardDirection());
-        this.setTimeSinceHit(10);
-        this.setDamageTaken(this.getDamageTaken() * 11);
-    }
-
     /**
      * Returns true if other Entities should be prevented from moving through this Entity.
      */
     public boolean canBeCollidedWith()
     {
         return !this.isDead;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,
-     * posY, posZ, yaw, pitch
-     */
-    public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9)
-    {
-        if (this.field_70279_a)
-        {
-            this.boatPosRotationIncrements = par9 + 5;
-        }
-        else
-        {
-            double d3 = par1 - this.posX;
-            double d4 = par3 - this.posY;
-            double d5 = par5 - this.posZ;
-            double d6 = d3 * d3 + d4 * d4 + d5 * d5;
-
-            if (d6 <= 1.0D)
-            {
-                return;
-            }
-
-            this.boatPosRotationIncrements = 3;
-        }
-
-        this.boatX = par1;
-        this.boatY = par3;
-        this.boatZ = par5;
-        this.boatYaw = (double)par7;
-        this.boatPitch = (double)par8;
-        this.motionX = this.velocityX;
-        this.motionY = this.velocityY;
-        this.motionZ = this.velocityZ;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Sets the velocity to the args. Args: x, y, z
-     */
-    public void setVelocity(double par1, double par3, double par5)
-    {
-        this.velocityX = this.motionX = par1;
-        this.velocityY = this.motionY = par3;
-        this.velocityZ = this.motionZ = par5;
     }
 
     /**
@@ -301,7 +237,7 @@ public class EntityBoat extends Entity
         {
             double d1 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (double)(i + 0) / (double)b0 - 0.125D;
             double d2 = this.boundingBox.minY + (this.boundingBox.maxY - this.boundingBox.minY) * (double)(i + 1) / (double)b0 - 0.125D;
-            AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(this.boundingBox.minX, d1, this.boundingBox.minZ, this.boundingBox.maxX, d2, this.boundingBox.maxZ);
+            AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB(this.boundingBox.minX, d1, this.boundingBox.minZ, this.boundingBox.maxX, d2, this.boundingBox.maxZ);
 
             if (this.worldObj.isAABBInMaterial(axisalignedbb, Material.water))
             {
@@ -497,10 +433,10 @@ public class EntityBoat extends Entity
 
             if (d10 * d10 + d11 * d11 > 0.001D)
             {
-                d5 = (double)((float)(Math.atan2(d11, d10) * 180.0D / 3.141592653589793D));
+                d5 = (double)((float)(Math.atan2(d11, d10) * 180.0D / Math.PI));
             }
 
-            double d12 = MathHelper.wrapAngleTo180_double(d5 - (double) this.rotationYaw);
+            double d12 = MathHelper.wrapAngleTo180_double(d5 - (double)this.rotationYaw);
 
             if (d12 > 20.0D)
             {
@@ -512,7 +448,7 @@ public class EntityBoat extends Entity
                 d12 = -20.0D;
             }
 
-            this.rotationYaw = (float)((double) this.rotationYaw + d12);
+            this.rotationYaw = (float)((double)this.rotationYaw + d12);
             this.setRotation(this.rotationYaw, this.rotationPitch);
             // CraftBukkit start
             org.bukkit.Server server = this.worldObj.getServer();
@@ -533,13 +469,13 @@ public class EntityBoat extends Entity
             if (!this.worldObj.isRemote)
             {
                 List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
-                int k;
+                int l;
 
                 if (list != null && !list.isEmpty())
                 {
-                    for (k = 0; k < list.size(); ++k)
+                    for (l = 0; l < list.size(); ++l)
                     {
-                        Entity entity = (Entity) list.get(k);
+                        Entity entity = (Entity)list.get(l);
 
                         if (entity != this.riddenByEntity && entity.canBePushed() && entity instanceof EntityBoat)
                         {
@@ -548,25 +484,23 @@ public class EntityBoat extends Entity
                     }
                 }
 
-                for (k = 0; k < 4; ++k)
+                for (l = 0; l < 4; ++l)
                 {
-                    int l = MathHelper.floor_double(this.posX + ((double)(k % 2) - 0.5D) * 0.8D);
-                    int i1 = MathHelper.floor_double(this.posZ + ((double)(k / 2) - 0.5D) * 0.8D);
+                    int i1 = MathHelper.floor_double(this.posX + ((double)(l % 2) - 0.5D) * 0.8D);
+                    int j1 = MathHelper.floor_double(this.posZ + ((double)(l / 2) - 0.5D) * 0.8D);
 
-                    for (int j1 = 0; j1 < 2; ++j1)
+                    for (int k1 = 0; k1 < 2; ++k1)
                     {
-                        int k1 = MathHelper.floor_double(this.posY) + j1;
-                        int l1 = this.worldObj.getBlockId(l, k1, i1);
-                        int i2 = this.worldObj.getBlockMetadata(l, k1, i1);
+                        int l1 = MathHelper.floor_double(this.posY) + k1;
+                        int i2 = this.worldObj.getBlockId(i1, l1, j1);
 
-                        if (l1 == Block.snow.blockID)
+                        if (i2 == Block.snow.blockID)
                         {
-                            this.worldObj.setBlockWithNotify(l, k1, i1, 0);
+                            this.worldObj.setBlockToAir(i1, l1, j1);
                         }
-                        else if (l1 == Block.waterlily.blockID)
+                        else if (i2 == Block.waterlily.blockID)
                         {
-                            Block.waterlily.dropBlockAsItemWithChance(this.worldObj, l, k1, i1, i2, 0.3F, 0);
-                            this.worldObj.setBlockWithNotify(l, k1, i1, 0);
+                            this.worldObj.destroyBlock(i1, l1, j1, true);
                         }
                     }
                 }
@@ -628,12 +562,6 @@ public class EntityBoat extends Entity
         this.dataWatcher.updateObject(19, Integer.valueOf(par1));
     }
 
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
-    {
-        return 0.0F;
-    }
-
     /**
      * Gets the damage taken from the last hit.
      */
@@ -672,11 +600,5 @@ public class EntityBoat extends Entity
     public int getForwardDirection()
     {
         return this.dataWatcher.getWatchableObjectInt(18);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void func_70270_d(boolean par1)
-    {
-        this.field_70279_a = par1;
     }
 }

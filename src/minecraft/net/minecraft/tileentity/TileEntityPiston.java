@@ -1,7 +1,5 @@
 package net.minecraft.tileentity;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -68,12 +66,6 @@ public class TileEntityPiston extends TileEntity
         return this.storedOrientation;
     }
 
-    @SideOnly(Side.CLIENT)
-    public boolean shouldRenderHead()
-    {
-        return this.shouldHeadBeRendered;
-    }
-
     /**
      * Get interpolated progress value (between lastProgress and progress) given the fractional time between ticks as an
      * argument.
@@ -121,24 +113,6 @@ public class TileEntityPiston extends TileEntity
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public float getOffsetX(float par1)
-    {
-        return this.extending ? (this.getProgress(par1) - 1.0F) * (float)Facing.offsetsXForSide[this.storedOrientation] : (1.0F - this.getProgress(par1)) * (float)Facing.offsetsXForSide[this.storedOrientation];
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float getOffsetY(float par1)
-    {
-        return this.extending ? (this.getProgress(par1) - 1.0F) * (float)Facing.offsetsYForSide[this.storedOrientation] : (1.0F - this.getProgress(par1)) * (float)Facing.offsetsYForSide[this.storedOrientation];
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float getOffsetZ(float par1)
-    {
-        return this.extending ? (this.getProgress(par1) - 1.0F) * (float)Facing.offsetsZForSide[this.storedOrientation] : (1.0F - this.getProgress(par1)) * (float)Facing.offsetsZForSide[this.storedOrientation];
-    }
-
     /**
      * removes a pistons tile entity (and if the piston is moving, stops it)
      */
@@ -152,7 +126,8 @@ public class TileEntityPiston extends TileEntity
 
             if (this.worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord) == Block.pistonMoving.blockID)
             {
-                this.worldObj.setBlockAndMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, this.storedBlockID, this.storedMetadata);
+                this.worldObj.setBlock(this.xCoord, this.yCoord, this.zCoord, this.storedBlockID, this.storedMetadata, 3);
+                this.worldObj.notifyBlockOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.storedBlockID);
             }
         }
     }
@@ -178,7 +153,8 @@ public class TileEntityPiston extends TileEntity
 
             if (this.worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord) == Block.pistonMoving.blockID)
             {
-                this.worldObj.setBlockAndMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, this.storedBlockID, this.storedMetadata);
+                this.worldObj.setBlock(this.xCoord, this.yCoord, this.zCoord, this.storedBlockID, this.storedMetadata, 3);
+                this.worldObj.notifyBlockOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.storedBlockID);
             }
         }
         else

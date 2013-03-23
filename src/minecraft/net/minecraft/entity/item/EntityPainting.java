@@ -1,7 +1,5 @@
 package net.minecraft.entity.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.item.Item;
@@ -42,27 +40,6 @@ public class EntityPainting extends EntityHanging
         if (!arraylist.isEmpty())
         {
             this.art = (EnumArt)arraylist.get(this.rand.nextInt(arraylist.size()));
-        }
-
-        this.setDirection(par5);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public EntityPainting(World par1World, int par2, int par3, int par4, int par5, String par6Str)
-    {
-        this(par1World, par2, par3, par4, par5);
-        EnumArt[] aenumart = EnumArt.values();
-        int i1 = aenumart.length;
-
-        for (int j1 = 0; j1 < i1; ++j1)
-        {
-            EnumArt enumart = aenumart[j1];
-
-            if (enumart.title.equals(par6Str))
-            {
-                this.art = enumart;
-                break;
-            }
         }
 
         this.setDirection(par5);

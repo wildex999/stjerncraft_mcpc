@@ -36,7 +36,7 @@ public class CraftBlockState implements BlockState {
         createData(block.getData());
     }
 
-    public static CraftBlockState getBlockState(/*was:net.minecraft.server.*/net.minecraft.world.World/*was:World*/ world, int x, int y, int z) {
+    public static CraftBlockState getBlockState(net.minecraft.world.World world, int x, int y, int z) {
         return new CraftBlockState(world.getWorld().getBlockAt(x, y, z));
     }
 
@@ -125,7 +125,7 @@ public class CraftBlockState implements BlockState {
             }
 
             block.setData(getRawData());
-            world.getHandle().markBlockForUpdate/*was:notify*/(x, y, z);
+            world.getHandle().markBlockForUpdate(x, y, z);
         }
 
         return true;

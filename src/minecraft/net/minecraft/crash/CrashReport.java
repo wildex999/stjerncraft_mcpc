@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.Callable;
+import net.minecraft.logging.ILogAgent;
 import net.minecraft.util.ReportedException;
 
 public class CrashReport
@@ -47,17 +47,17 @@ public class CrashReport
      */
     private void populateEnvironment()
     {
-        this.field_85061_c.addCrashSectionCallable("Minecraft Version", new CallableMinecraftVersion(this));
-        this.field_85061_c.addCrashSectionCallable("Operating System", new CallableOSInfo(this));
-        this.field_85061_c.addCrashSectionCallable("Java Version", new CallableJavaInfo(this));
-        this.field_85061_c.addCrashSectionCallable("Java VM Version", new CallableJavaInfo2(this));
-        this.field_85061_c.addCrashSectionCallable("Memory", new CallableMemoryInfo(this));
-        this.field_85061_c.addCrashSectionCallable("JVM Flags", new CallableJVMFlags(this));
-        this.field_85061_c.addCrashSectionCallable("AABB Pool Size", new CallableCrashMemoryReport(this));
-        this.field_85061_c.addCrashSectionCallable("Suspicious classes", new CallableSuspiciousClasses(this));
-        this.field_85061_c.addCrashSectionCallable("IntCache", new CallableIntCache(this));
-        this.field_85061_c.addCrashSectionCallable("CraftBukkit Information", (new org.bukkit.craftbukkit.CraftCrashReport()));  // CraftBukkit
-        FMLCommonHandler.instance().enhanceCrashReport(this, this.field_85061_c);
+        this.field_85061_c.addCrashSectionCallable("Minecraft Version", (Callable)(new CallableMinecraftVersion(this)));
+        this.field_85061_c.addCrashSectionCallable("Operating System", (Callable)(new CallableOSInfo(this)));
+        this.field_85061_c.addCrashSectionCallable("Java Version", (Callable)(new CallableJavaInfo(this)));
+        this.field_85061_c.addCrashSectionCallable("Java VM Version", (Callable)(new CallableJavaInfo2(this)));
+        this.field_85061_c.addCrashSectionCallable("Memory", (Callable)(new CallableMemoryInfo(this)));
+        this.field_85061_c.addCrashSectionCallable("JVM Flags", (Callable)(new CallableJVMFlags(this)));
+        this.field_85061_c.addCrashSectionCallable("AABB Pool Size", (Callable)(new CallableCrashMemoryReport(this)));
+        this.field_85061_c.addCrashSectionCallable("Suspicious classes", (Callable)(new CallableSuspiciousClasses(this)));
+        this.field_85061_c.addCrashSectionCallable("IntCache", (Callable)(new CallableIntCache(this)));
+        this.field_85061_c.addCrashSectionCallable("CraftBukkit Information", (Callable)(new org.bukkit.craftbukkit.CraftCrashReport()));  // CraftBukkit
+        FMLCommonHandler.instance().enhanceCrashReport(this, this.field_85061_c);        
     }
 
     /**
@@ -74,14 +74,6 @@ public class CrashReport
     public Throwable getCrashCause()
     {
         return this.cause;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public String func_90021_c()
-    {
-        StringBuilder stringbuilder = new StringBuilder();
-        this.getSectionsInStringBuilder(stringbuilder);
-        return stringbuilder.toString();
     }
 
     /**
@@ -186,20 +178,10 @@ public class CrashReport
         return stringbuilder.toString();
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Gets the file this crash report is saved into.
-     */
-    public File getFile()
-    {
-        return this.crashReportFile;
-    }
-
     /**
      * Saves the complete crash report to the given File.
      */
-    public boolean saveToFile(File par1File)
+    public boolean saveToFile(File par1File, ILogAgent par2ILogAgent)
     {
         if (this.crashReportFile != null)
         {
@@ -222,7 +204,7 @@ public class CrashReport
             }
             catch (Throwable throwable)
             {
-                Logger.getLogger("Minecraft").log(Level.SEVERE, "Could not save crash report to " + par1File, throwable);
+                par2ILogAgent.func_98234_c("Could not save crash report to " + par1File, throwable);
                 return false;
             }
         }
@@ -255,7 +237,7 @@ public class CrashReport
             StackTraceElement stacktraceelement = null;
             StackTraceElement stacktraceelement1 = null;
 
-            if (astacktraceelement != null && astacktraceelement.length - j < astacktraceelement.length && astacktraceelement.length - j >= 0) // MCPC+ - negative check
+            if (astacktraceelement != null && astacktraceelement.length - j < astacktraceelement.length)
             {
                 stacktraceelement = astacktraceelement[astacktraceelement.length - j];
 

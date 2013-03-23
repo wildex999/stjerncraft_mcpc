@@ -1,7 +1,5 @@
 package net.minecraft.entity.boss;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.block.Block;
@@ -12,14 +10,16 @@ import net.minecraft.entity.IEntityMultiPart;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.packet.Packet53BlockChange;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+
 // CraftBukkit start
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.packet.Packet53BlockChange;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.util.BlockStateListPopulator;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
@@ -29,7 +29,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.Bukkit;
 // CraftBukkit end
 
-public class EntityDragon extends EntityLiving implements IBossDisplayData, IEntityMultiPart
+public class EntityDragon extends EntityLiving implements IEntityMultiPart
 {
     public double targetX;
     public double targetY;
@@ -182,10 +182,10 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
 
             if (this.ringBufferIndex < 0)
             {
-                for (int i = 0; i < this.ringBuffer.length; ++i)
+                for (int d05 = 0; d05 < this.ringBuffer.length; ++d05)
                 {
-                    this.ringBuffer[i][0] = (double)this.rotationYaw;
-                    this.ringBuffer[i][1] = this.posY;
+                    this.ringBuffer[d05][0] = (double) this.rotationYaw;
+                    this.ringBuffer[d05][1] = this.posY;
                 }
             }
 
@@ -206,23 +206,23 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
             {
                 if (this.newPosRotationIncrements > 0)
                 {
-                    d3 = this.posX + (this.newPosX - this.posX) / (double)this.newPosRotationIncrements;
-                    d0 = this.posY + (this.newPosY - this.posY) / (double)this.newPosRotationIncrements;
-                    d1 = this.posZ + (this.newPosZ - this.posZ) / (double)this.newPosRotationIncrements;
-                    d2 = MathHelper.wrapAngleTo180_double(this.newRotationYaw - (double)this.rotationYaw);
-                    this.rotationYaw = (float)((double)this.rotationYaw + d2 / (double)this.newPosRotationIncrements);
+                    d0 = this.posX + (this.newPosX - this.posX) / (double) this.newPosRotationIncrements;
+                    d1 = this.posY + (this.newPosY - this.posY) / (double) this.newPosRotationIncrements;
+                    d2 = this.posZ + (this.newPosZ - this.posZ) / (double) this.newPosRotationIncrements;
+                    d3 = MathHelper.wrapAngleTo180_double(this.newRotationYaw - (double) this.rotationYaw);
+                    this.rotationYaw = (float)((double) this.rotationYaw + d3 / (double) this.newPosRotationIncrements);
                     this.rotationPitch = (float)((double)this.rotationPitch + (this.newRotationPitch - (double)this.rotationPitch) / (double)this.newPosRotationIncrements);
                     --this.newPosRotationIncrements;
-                    this.setPosition(d3, d0, d1);
+                    this.setPosition(d0, d1, d2);
                     this.setRotation(this.rotationYaw, this.rotationPitch);
                 }
             }
             else
             {
-                d3 = this.targetX - this.posX;
-                d0 = this.targetY - this.posY;
-                d1 = this.targetZ - this.posZ;
-                d2 = d3 * d3 + d0 * d0 + d1 * d1;
+                d0 = this.targetX - this.posX;
+                d1 = this.targetY - this.posY;
+                d2 = this.targetZ - this.posZ;
+                d3 = d0 * d0 + d1 * d1 + d2 * d2;
 
                 if (this.target != null)
                 {
@@ -246,27 +246,27 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
                     this.targetZ += this.rand.nextGaussian() * 2.0D;
                 }
 
-                if (this.forceNewTarget || d2 < 100.0D || d2 > 22500.0D || this.isCollidedHorizontally || this.isCollidedVertically)
+                if (this.forceNewTarget || d3 < 100.0D || d3 > 22500.0D || this.isCollidedHorizontally || this.isCollidedVertically)
                 {
                     this.setNewTarget();
                 }
 
-                d0 /= (double)MathHelper.sqrt_double(d3 * d3 + d1 * d1);
+                d1 /= (double) MathHelper.sqrt_double(d0 * d0 + d2 * d2);
                 f3 = 0.6F;
 
-                if (d0 < (double)(-f3))
+                if (d1 < (double)(-f3))
                 {
-                    d0 = (double)(-f3);
+                    d1 = (double)(-f3);
                 }
 
-                if (d0 > (double)f3)
+                if (d1 > (double) f3)
                 {
-                    d0 = (double)f3;
+                    d1 = (double) f3;
                 }
 
-                this.motionY += d0 * 0.10000000149011612D;
+                this.motionY += d1 * 0.10000000149011612D;
                 this.rotationYaw = MathHelper.wrapAngleTo180_float(this.rotationYaw);
-                double d8 = 180.0D - Math.atan2(d3, d1) * 180.0D / Math.PI;
+                double d8 = 180.0D - Math.atan2(d0, d2) * 180.0D / Math.PI;
                 double d9 = MathHelper.wrapAngleTo180_double(d8 - (double)this.rotationYaw);
 
                 if (d9 > 50.0D)
@@ -405,7 +405,7 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
             {
                 if (!this.worldObj.isRemote)
                 {
-                    this.attackEntityFromPart(this.dragonPartHead, DamageSource.explosion, 10);
+                    this.attackEntityFromPart(this.dragonPartHead, DamageSource.setExplosionSource((Explosion)null), 10);
                 }
 
                 this.healingEnderCrystal = null;
@@ -418,7 +418,7 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
 
                 if (!event.isCancelled())
                 {
-                    this.health += event.getAmount();
+                    this.setEntityHealth(this.getHealth() + event.getAmount());
                 }
 
                 // CraftBukkit end
@@ -500,6 +500,7 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
                 {
                     entity.attackEntityFrom(DamageSource.causeMobDamage(this), 10);
                 }
+
                 // CraftBukkit end
             }
         }
@@ -571,17 +572,15 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
                 for (int i2 = k; i2 <= j1; ++i2)
                 {
                     int j2 = this.worldObj.getBlockId(k1, l1, i2);
-                    // Forge start
                     Block block = Block.blocksList[j2];
 
                     if (block != null)
                     {
-                        if (block.canDragonDestroy(this.worldObj, k1, l1, i2))
+                        if (block.canDragonDestroy(worldObj, k1, l1, i2) && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
                         {
-                            // Forge end
-                            flag1 = true;
                             // CraftBukkit start - add blocks to list rather than destroying them
-                            // this.world.setTypeId(k1, l1, i2, 0);
+                            // flag1 = this.world.setAir(k1, l1, i2) || flag1;
+                            flag1 = true;
                             destroyedBlocks.add(craftWorld.getBlockAt(k1, l1, i2));
                             // CraftBukkit end
                         }
@@ -640,7 +639,7 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
         this.targetZ = this.posZ - (double)(f2 * 5.0F) + (double)((this.rand.nextFloat() - 0.5F) * 2.0F);
         this.target = null;
 
-        if (par2DamageSource.getEntity() instanceof EntityPlayer || par2DamageSource == DamageSource.explosion)
+        if (par2DamageSource.getEntity() instanceof EntityPlayer || par2DamageSource.isExplosion())
         {
             this.func_82195_e(par2DamageSource, par3);
         }
@@ -739,7 +738,7 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
                     double d1 = (double)(i1 - par2);
                     double d2 = d0 * d0 + d1 * d1;
 
-                    if (d2 <= ((double) b1 - 0.5D) * ((double) b1 - 0.5D))
+                    if (d2 <= ((double)b1 - 0.5D) * ((double)b1 - 0.5D))
                     {
                         if (k < b0)
                         {
@@ -825,16 +824,6 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
     public boolean canBeCollidedWith()
     {
         return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the health points of the dragon.
-     */
-    public int getDragonHealth()
-    {
-        return this.dataWatcher.getWatchableObjectInt(16);
     }
 
     public World func_82194_d()

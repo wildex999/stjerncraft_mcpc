@@ -1,12 +1,13 @@
 package net.minecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+// CraftBukkit start
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.entity.Fish;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.world.World;
-import org.bukkit.event.player.PlayerFishEvent; // CraftBukkit
+// CraftBukkit end
 
 public class ItemFishingRod extends Item
 {
@@ -16,27 +17,6 @@ public class ItemFishingRod extends Item
         this.setMaxDamage(64);
         this.setMaxStackSize(1);
         this.setCreativeTab(CreativeTabs.tabTools);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns True is the item is renderer in full 3D when hold.
-     */
-    public boolean isFull3D()
-    {
-        return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns true if this item should be rotated by 180 degrees around the Y axis when being held in an entities
-     * hands.
-     */
-    public boolean shouldRotateAroundWhenRendering()
-    {
-        return true;
     }
 
     /**
@@ -53,7 +33,8 @@ public class ItemFishingRod extends Item
         else
         {
             // CraftBukkit start
-            PlayerFishEvent playerFishEvent = new PlayerFishEvent((org.bukkit.entity.Player) par3EntityPlayer.getBukkitEntity(), null, PlayerFishEvent.State.FISHING);
+            EntityFishHook hook = new EntityFishHook(par2World, par3EntityPlayer);
+            PlayerFishEvent playerFishEvent = new PlayerFishEvent((org.bukkit.entity.Player) par3EntityPlayer.getBukkitEntity(), null, (Fish) hook.getBukkitEntity(), PlayerFishEvent.State.FISHING);
             par2World.getServer().getPluginManager().callEvent(playerFishEvent);
 
             if (playerFishEvent.isCancelled())
@@ -66,7 +47,7 @@ public class ItemFishingRod extends Item
 
             if (!par2World.isRemote)
             {
-                par2World.spawnEntityInWorld(new EntityFishHook(par2World, par3EntityPlayer));
+                par2World.spawnEntityInWorld(hook); // CraftBukkit - moved creation up
             }
 
             par3EntityPlayer.swingItem();

@@ -13,13 +13,32 @@ public class Profiler
     /** Flag profiling enabled */
     public boolean profilingEnabled = false;
 
+    /**
+     * Clear profiling.
+     */
     public final void clearProfiling() { }
+
+    /**
+     * Start section
+     */
     public final void startSection(String par1Str) { }
+
+    /**
+     * End section
+     */
     public final void endSection() { }
+
+    /**
+     * Get profiling data
+     */
     public final List getProfilingData(String par1Str)
     {
         return null;
     }
+
+    /**
+     * End current section and start a new section
+     */
     public final void endStartSection(String par1Str) { }
     public final String getNameOfLastSection()
     {

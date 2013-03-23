@@ -59,7 +59,7 @@ public class DimensionManager
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
     private static Set<Integer> leakedWorlds = Sets.newHashSet();
     private static ArrayList<Integer> mvDims = new ArrayList<Integer>(); // MCPC+ used to keep track of MV dimensions
-    private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+    private static final String FILE_SEPARATOR = System.getProperty("file.separator"); // MCPC+
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
@@ -207,11 +207,11 @@ public class DimensionManager
         if (world != null) {
             worlds.put(id, world);
             weakWorldMap.put(world, world);
-            //MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
+            //MinecraftServer.getServer().worldTickTimes.put(id, new long[100]); // MCPC+ - disabled
             FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         } else {
             worlds.remove(id);
-            //MinecraftServer.getServer().worldTickTimes.remove(id);
+            //MinecraftServer.getServer().worldTickTimes.remove(id);  // MCPC+ - disabled
             FMLLog.info("Unloading dimension %d", id);
         }
 
@@ -237,8 +237,7 @@ public class DimensionManager
     }
 
     public static void initDimension(int dim) {
-        if (dim == 0 || dim == 1 || dim == -1)
-            return;
+        if (dim == 0 || dim == 1 || dim == -1) return; // MCPC+ - do not initialize overworld, nether, end
         WorldServer overworld = getWorld(0);
         if (overworld == null) {
             throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
@@ -265,23 +264,21 @@ public class DimensionManager
                 initMyst = true;
             }
         }
-        if (!initMyst)
-        {
-            MinecraftServer mcServer = overworld.getMinecraftServer();
-            ISaveHandler savehandler = overworld.getSaveHandler();
-            WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
-    
-            WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler));
-            world.addWorldAccess(new WorldManager(mcServer, world));
-            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
-            if (!mcServer.isSinglePlayer())
-            {
-                world.getWorldInfo().setGameType(mcServer.getGameType());
-            }
-    
-            mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
-        }
+        if (initMyst) return;
         // MCPC+ end
+        MinecraftServer mcServer = overworld.getMinecraftServer();
+        ISaveHandler savehandler = overworld.getSaveHandler();
+        WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
+
+        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler, overworld.getWorldLogAgent()));
+        world.addWorldAccess(new WorldManager(mcServer, world));
+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
+        if (!mcServer.isSinglePlayer())
+        {
+            world.getWorldInfo().setGameType(mcServer.getGameType());
+        }
+
+        mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
     }
 
     // MCPC+ start - used to create an isolated myst dimension
@@ -300,7 +297,7 @@ public class DimensionManager
         File newWorld = new File(new File(par1Str), dim);
 
         org.bukkit.generator.ChunkGenerator gen = mcServer.server.getGenerator(name);
-        WorldServer mystWorld = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), name, mystDimension, worldsettings, getWorld(0), getWorld(0).theProfiler, env, gen);
+        WorldServer mystWorld = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), name, mystDimension, worldsettings, getWorld(0), getWorld(0).theProfiler, mcServer.getLogAgent(), env, gen);
         if (gen != null)
         {
             mystWorld.getWorld().getPopulators().addAll(gen.getDefaultPopulators(mystWorld.getWorld()));
@@ -320,7 +317,7 @@ public class DimensionManager
         return mystWorld;
     }
     // MCPC+ end
-
+    
     public static WorldServer getWorld(int id)
     {
         return worlds.get(id);

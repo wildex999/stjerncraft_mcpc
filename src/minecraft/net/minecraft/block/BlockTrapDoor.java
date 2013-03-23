@@ -1,8 +1,6 @@
 package net.minecraft.block;
 
 import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,13 +20,6 @@ public class BlockTrapDoor extends Block
     protected BlockTrapDoor(int par1, Material par2Material)
     {
         super(par1, par2Material);
-        this.blockIndexInTexture = 84;
-
-        if (par2Material == Material.iron)
-        {
-            ++this.blockIndexInTexture;
-        }
-
         float f = 0.5F;
         float f1 = 1.0F;
         this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, f1, 0.5F + f);
@@ -63,17 +54,6 @@ public class BlockTrapDoor extends Block
     public int getRenderType()
     {
         return 0;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the bounding box of the wired rectangular prism to render.
-     */
-    public AxisAlignedBB getSelectedBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
-    {
-        this.setBlockBoundsBasedOnState(par1World, par2, par3, par4);
-        return super.getSelectedBoundingBoxFromPool(par1World, par2, par3, par4);
     }
 
     /**
@@ -157,7 +137,7 @@ public class BlockTrapDoor extends Block
         else
         {
             int i1 = par1World.getBlockMetadata(par2, par3, par4);
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 ^ 4);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 ^ 4, 2);
             par1World.playAuxSFXAtEntity(par5EntityPlayer, 1003, par2, par3, par4, 0);
             return true;
         }
@@ -170,7 +150,7 @@ public class BlockTrapDoor extends Block
 
         if (flag1 != par5)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, l ^ 4);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, l ^ 4, 2);
             par1World.playAuxSFXAtEntity((EntityPlayer)null, 1003, par2, par3, par4, 0);
         }
     }
@@ -209,7 +189,7 @@ public class BlockTrapDoor extends Block
 
             if (!(isValidSupportBlock(par1World.getBlockId(j1, par3, k1)) || par1World.isBlockSolidOnSide(j1, par3, k1, ForgeDirection.getOrientation((i1 & 3) + 2))))
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
                 this.dropBlockAsItem(par1World, par2, par3, par4, i1, 0);
             }
 

@@ -2,16 +2,17 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
-import net.minecraft.world.World;
-// CraftBukkit start
 import net.minecraft.block.BlockSapling.TreeGenerator;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+
+// CraftBukkit start
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.block.BlockState;
 import org.bukkit.material.MaterialData;
 // CraftBukkit end
 
-public class WorldGenBigMushroom extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit - add interface
+public class WorldGenBigMushroom extends WorldGenerator implements TreeGenerator   // CraftBukkit - add interface
 {
     /** The mushroom type. 0 for brown, 1 for red. */
     private int mushroomType = -1;
@@ -33,16 +34,15 @@ public class WorldGenBigMushroom extends WorldGenerator implements net.minecraft
         return grow((BlockChangeDelegate) par1World, par2Random, par3, par4, par5, null, null, null);
     }
 
-    public boolean generate(BlockChangeDelegate world, Random random, int i, int j, int k)
+    public boolean generate(BlockChangeDelegate par1World, Random par2Random, int par3, int par4, int par5)
     {
-        return grow(world, random, i, j, k, null, null, null);
+        return grow(par1World, par2Random, par3, par4, par5, null, null, null);
     }
 
     public boolean grow(BlockChangeDelegate world, Random random, int i, int j, int k, org.bukkit.event.world.StructureGrowEvent event, ItemStack itemstack, org.bukkit.craftbukkit.CraftWorld bukkitWorld)
     {
         // CraftBukkit end
         int l = random.nextInt(2);
-        World w = world instanceof World ? (World)world : null; // MCPC
 
         if (this.mushroomType >= 0)
         {
@@ -76,7 +76,7 @@ public class WorldGenBigMushroom extends WorldGenerator implements net.minecraft
                         {
                             i2 = world.getTypeId(k1, j1, l1);
 
-                            if (i2 != 0 && Block.blocksList[i2] != null && !Block.blocksList[i2].isLeaves(w, k1, j1, l1)) // Forge
+                            if (i2 != 0 && i2 != Block.leaves.blockID)
                             {
                                 flag = false;
                             }
@@ -216,12 +216,8 @@ public class WorldGenBigMushroom extends WorldGenerator implements net.minecraft
                                     l2 = 0;
                                 }
 
-                                // Forge start
-                                Block block = Block.blocksList[world.getTypeId(i2, k1, k2)];
-
-                                if ((l2 != 0 || j >= j + i1 - 1) && (block == null || block.canBeReplacedByLeaves(w, i2, k1, k2)))
+                                if ((l2 != 0 || j >= j + i1 - 1) && !Block.opaqueCubeLookup[world.getTypeId(i2, k1, k2)])
                                 {
-                                    // Forge end
                                     // CraftBukkit start
                                     if (event == null)
                                     {
@@ -244,12 +240,9 @@ public class WorldGenBigMushroom extends WorldGenerator implements net.minecraft
                     for (k1 = 0; k1 < i1; ++k1)
                     {
                         l1 = world.getTypeId(i, j + k1, k);
-                        // Forge start
-                        Block block = Block.blocksList[l1];
 
-                        if (block == null || block.canBeReplacedByLeaves(w, i, j + k1, k))
+                        if (!Block.opaqueCubeLookup[l1])
                         {
-                            // Forge end
                             // CraftBukkit start
                             if (event == null)
                             {

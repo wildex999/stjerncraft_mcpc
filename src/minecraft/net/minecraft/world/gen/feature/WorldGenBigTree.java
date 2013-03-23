@@ -2,14 +2,13 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling;
+import net.minecraft.block.BlockSapling.TreeGenerator;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.block.BlockSapling.TreeGenerator;
-import org.bukkit.BlockChangeDelegate; // CraftBukkit
-import net.minecraftforge.common.ForgeDirection;
 
-public class WorldGenBigTree extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
+import org.bukkit.BlockChangeDelegate; // CraftBukkit
+
+public class WorldGenBigTree extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
 {
     /**
      * Contains three sets of two values that provide complimentary indices for a given 'major' index - 1 and 2 for 0, 0
@@ -19,6 +18,8 @@ public class WorldGenBigTree extends WorldGenerator implements net.minecraft.blo
 
     /** random seed for GenBigTree */
     Random rand = new Random();
+
+    /** Reference to the World object. */
     BlockChangeDelegate worldObj; // CraftBukkit
     int[] basePos = new int[] {0, 0, 0};
     int heightLimit = 0;
@@ -444,19 +445,10 @@ public class WorldGenBigTree extends WorldGenerator implements net.minecraft.blo
         int[] aint1 = new int[] {this.basePos[0], this.basePos[1] + this.heightLimit - 1, this.basePos[2]};
         int i = this.worldObj.getTypeId(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
 
-        // MCPC+ start - BlockChangeDelegate vs. Forge
-        Block soil = Block.blocksList[i];
-        boolean isValidSoil;
-        if (worldObj instanceof World) {
-            isValidSoil = (soil != null && soil.canSustainPlant((World) worldObj, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Block.sapling));
-        } else {
-            isValidSoil =  i == 2 || i == 3;
-        }
-        if (!isValidSoil)
+        if (i != 2 && i != 3)
         {
             return false;
         }
-        // MCPC+ end
         else
         {
             int j = this.checkBlockLine(aint, aint1);

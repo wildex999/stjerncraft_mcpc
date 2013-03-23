@@ -1,7 +1,6 @@
 package net.minecraft.entity.passive;
 
 import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
-import net.minecraft.stats.StatBase;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.ai.EntityAIControlledByPlayer;
 import net.minecraft.entity.ai.EntityAIFollowParent;
@@ -19,6 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.AchievementList;
+import net.minecraft.stats.StatBase;
 import net.minecraft.world.World;
 
 public class EntityPig extends EntityAnimal
@@ -243,7 +243,7 @@ public class EntityPig extends EntityAnimal
 
         if (par1 > 5.0F && this.riddenByEntity instanceof EntityPlayer)
         {
-            ((EntityPlayer)this.riddenByEntity).triggerAchievement(AchievementList.flyPig);
+            ((EntityPlayer) this.riddenByEntity).triggerAchievement((StatBase) AchievementList.flyPig);
         }
     }
 

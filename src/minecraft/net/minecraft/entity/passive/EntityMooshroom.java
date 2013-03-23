@@ -16,7 +16,7 @@ import net.minecraftforge.common.IShearable;
 public class EntityMooshroom extends EntityCow implements IShearable
 {
     EntityPlayer shearer = null; // MCPC
-
+    
     public EntityMooshroom(World par1World)
     {
         super(par1World);
@@ -45,24 +45,29 @@ public class EntityMooshroom extends EntityCow implements IShearable
                 return true;
             }
         }
-
+        
         shearer = par1EntityPlayer; // MCPC
-        return super.interact(par1EntityPlayer); // Forge
+        return super.interact(par1EntityPlayer);        
+    }
+
+    public EntityMooshroom func_94900_c(EntityAgeable par1EntityAgeable)
+    {
+        return new EntityMooshroom(this.worldObj);
     }
 
     /**
      * This function is used when two same-species animals in 'love mode' breed to generate the new baby animal.
      */
-    public EntityMooshroom spawnBabyAnimal(EntityAgeable par1EntityAgeable)
+    public EntityCow spawnBabyAnimal(EntityAgeable par1EntityAgeable)
     {
-        return new EntityMooshroom(this.worldObj);
+        return this.func_94900_c(par1EntityAgeable);
     }
 
     public EntityAgeable createChild(EntityAgeable par1EntityAgeable)
     {
-        return this.spawnBabyAnimal(par1EntityAgeable);
+        return this.func_94900_c(par1EntityAgeable);
     }
-
+    
     @Override
     public boolean isShearable(ItemStack item, World world, int X, int Y, int Z)
     {
@@ -72,16 +77,17 @@ public class EntityMooshroom extends EntityCow implements IShearable
     @Override
     public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune)
     {
-        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+        //ArrayList<ItemStack> ret = new ArrayList<ItemStack>(); // MCPC+ - move CB event from interact() to Forge onSheared()
         // CraftBukkit start
-        PlayerShearEntityEvent event = new PlayerShearEntityEvent((org.bukkit.entity.Player) shearer.getBukkitEntity(), this.getBukkitEntity());
+        /* TODO MCPC where does this go?
+        PlayerShearEntityEvent event = new PlayerShearEntityEvent((org.bukkit.entity.Player) par1EntityPlayer.getBukkitEntity(), this.getBukkitEntity());
         this.worldObj.getServer().getPluginManager().callEvent(event);
-        shearer = null;
 
         if (event.isCancelled())
         {
-            return ret;
+            return ret; // MCPC+ - false to ret
         }
+        */
         // CraftBukkit end
         setDead();
         EntityCow entitycow = new EntityCow(worldObj);
@@ -91,10 +97,11 @@ public class EntityMooshroom extends EntityCow implements IShearable
         worldObj.spawnEntityInWorld(entitycow);
         worldObj.spawnParticle("largeexplode", posX, posY + (double)(height / 2.0F), posZ, 0.0D, 0.0D, 0.0D);
 
+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
         for (int x = 0; x < 5; x++)
         {
             ret.add(new ItemStack(Block.mushroomRed));
         }
         return ret;
-    }
+    }    
 }

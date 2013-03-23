@@ -18,6 +18,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 // CraftBukkit start
 import org.bukkit.craftbukkit.util.BlockStateListPopulator;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -28,7 +29,6 @@ public class BlockSkull extends BlockContainer
     protected BlockSkull(int par1)
     {
         super(par1, Material.circuits);
-        this.blockIndexInTexture = 104;
         this.setBlockBounds(0.25F, 0.0F, 0.25F, 0.75F, 0.5F, 0.75F);
     }
 
@@ -97,10 +97,10 @@ public class BlockSkull extends BlockContainer
     /**
      * Called when the block is placed in the world.
      */
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
     {
         int l = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 2.5D) & 3;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, l);
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 2);
     }
 
     /**
@@ -109,16 +109,6 @@ public class BlockSkull extends BlockContainer
     public TileEntity createNewTileEntity(World par1World)
     {
         return new TileEntitySkull();
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return Item.skull.itemID;
     }
 
     /**
@@ -138,6 +128,29 @@ public class BlockSkull extends BlockContainer
         return par1;
     }
 
+    // CraftBukkit start - special case dropping so we can get info from the tile entity
+
+    /**
+     * Drops the block items with a specified chance of dropping the specified items
+     */
+    public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
+    {
+        if (par1World.rand.nextFloat() < par6)
+        {
+            ItemStack itemstack = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(par1World, par2, par3, par4));
+            TileEntitySkull tileentityskull = (TileEntitySkull) par1World.getBlockTileEntity(par2, par3, par4);
+
+            if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
+            {
+                itemstack.setTagCompound(new NBTTagCompound());
+                itemstack.getTagCompound().setString("SkullOwner", tileentityskull.getExtraType());
+            }
+
+            this.dropBlockAsItem_do(par1World, par2, par3, par4, itemstack);
+        }
+    }
+    // CraftBukkit end
+
     /**
      * Called when the block is attempted to be harvested
      */
@@ -146,7 +159,7 @@ public class BlockSkull extends BlockContainer
         if (par6EntityPlayer.capabilities.isCreativeMode)
         {
             par5 |= 8;
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, par5);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, par5, 4);
         }
 
         dropBlockAsItem(par1World, par2, par3, par4, par5, 0);
@@ -159,9 +172,25 @@ public class BlockSkull extends BlockContainer
      */
     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
     {
-        super.breakBlock(par1World, par2, par3, par4, par5, par6);
-    }
+        if (!par1World.isRemote)
+        {
+            /* CraftBukkit start - drop item in code above, not here
+            if ((i1 & 8) == 0) {
+                ItemStack itemstack = new ItemStack(Item.SKULL.id, 1, this.getDropData(world, i, j, k));
+                TileEntitySkull tileentityskull = (TileEntitySkull) world.getTileEntity(i, j, k);
 
+                if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0) {
+                    itemstack.setTag(new NBTTagCompound());
+                    itemstack.getTag().setString("SkullOwner", tileentityskull.getExtraType());
+                }
+
+                this.b(world, i, j, k, itemstack);
+            }
+            // CraftBukkit end */
+            super.breakBlock(par1World, par2, par3, par4, par5, par6);
+        }
+    }
+    
     @Override
     public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
     {
@@ -183,7 +212,7 @@ public class BlockSkull extends BlockContainer
             drops.add(itemstack);
         }
         return drops;
-    }
+    }    
 
     /**
      * Returns the ID of the items to drop on destruction.
@@ -198,7 +227,7 @@ public class BlockSkull extends BlockContainer
      */
     public void makeWither(World par1World, int par2, int par3, int par4, TileEntitySkull par5TileEntitySkull)
     {
-        if (par5TileEntitySkull.getSkullType() == 1 && par3 >= 2 && par1World.difficultySetting > 0)
+        if (par5TileEntitySkull.getSkullType() == 1 && par3 >= 2 && par1World.difficultySetting > 0 && !par1World.isRemote)
         {
             int l = Block.slowSand.blockID;
             int i1;
@@ -211,9 +240,9 @@ public class BlockSkull extends BlockContainer
                 {
                     // CraftBukkit start - use BlockStateListPopulator
                     BlockStateListPopulator blockList = new BlockStateListPopulator(par1World.getWorld());
-                    par1World.setBlockMetadata(par2, par3, par4 + i1, 8);
-                    par1World.setBlockMetadata(par2, par3, par4 + i1 + 1, 8);
-                    par1World.setBlockMetadata(par2, par3, par4 + i1 + 2, 8);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4 + i1, 8, 2);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4 + i1 + 1, 8, 2);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4 + i1 + 2, 8, 2);
                     blockList.setTypeId(par2, par3, par4 + i1, 0);
                     blockList.setTypeId(par2, par3, par4 + i1 + 1, 0);
                     blockList.setTypeId(par2, par3, par4 + i1 + 2, 0);
@@ -251,9 +280,9 @@ public class BlockSkull extends BlockContainer
                 {
                     // CraftBukkit start - use BlockStateListPopulator
                     BlockStateListPopulator blockList = new BlockStateListPopulator(par1World.getWorld());
-                    par1World.setBlockMetadata(par2 + i1, par3, par4, 8);
-                    par1World.setBlockMetadata(par2 + i1 + 1, par3, par4, 8);
-                    par1World.setBlockMetadata(par2 + i1 + 2, par3, par4, 8);
+                    par1World.setBlockMetadataWithNotify(par2 + i1, par3, par4, 8, 2);
+                    par1World.setBlockMetadataWithNotify(par2 + i1 + 1, par3, par4, 8, 2);
+                    par1World.setBlockMetadataWithNotify(par2 + i1 + 2, par3, par4, 8, 2);
                     blockList.setTypeId(par2 + i1, par3, par4, 0);
                     blockList.setTypeId(par2 + i1 + 1, par3, par4, 0);
                     blockList.setTypeId(par2 + i1 + 2, par3, par4, 0);

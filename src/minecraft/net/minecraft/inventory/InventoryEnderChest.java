@@ -4,12 +4,12 @@ package net.minecraft.inventory;
 import java.util.List;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
-// CraftBukkit end
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntityEnderChest;
+// CraftBukkit end
 
 public class InventoryEnderChest extends InventoryBasic
 {
@@ -50,7 +50,11 @@ public class InventoryEnderChest extends InventoryBasic
         maxStack = size;
     }
 
-    public int getMaxStackSize()
+    /**
+     * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
+     * this more of a set than a get?*
+     */
+    public int getInventoryStackLimit()
     {
         return maxStack;
     }
@@ -58,7 +62,7 @@ public class InventoryEnderChest extends InventoryBasic
 
     public InventoryEnderChest()
     {
-        super("container.enderchest", 27);
+        super("container.enderchest", false, 27);
     }
 
     public void setAssociatedChest(TileEntityEnderChest par1TileEntityEnderChest)
@@ -134,5 +138,13 @@ public class InventoryEnderChest extends InventoryBasic
 
         super.closeChest();
         this.associatedChest = null;
+    }
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
     }
 }

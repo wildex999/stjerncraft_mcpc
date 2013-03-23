@@ -1,26 +1,23 @@
 package net.minecraft.inventory;
 
 import java.util.List;
-// CraftBukkit Start
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.inventory.InventoryHolder;
-// CraftBukkit end
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-public class InventoryBasic implements IInventory
+public abstract class InventoryBasic implements IInventory   // CraftBukkit - abstract
 {
     private String inventoryTitle;
     private int slotsCount;
-    protected ItemStack[] inventoryContents;
+    protected ItemStack[] inventoryContents; // CraftBukkit - protected
     private List field_70480_d;
+    private boolean field_94051_e;
 
-    public InventoryBasic(String par1Str, int par2)
+    public InventoryBasic(String par1Str, boolean par2, int par3)
     {
         this.inventoryTitle = par1Str;
-        this.slotsCount = par2;
-        this.inventoryContents = new ItemStack[par2];
+        this.field_94051_e = par2;
+        this.slotsCount = par3;
+        this.inventoryContents = new ItemStack[par3];
     }
 
     /**
@@ -117,6 +114,15 @@ public class InventoryBasic implements IInventory
     }
 
     /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.field_94051_e;
+    }
+
+    /**
      * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
      * this more of a set than a get?*
      */
@@ -151,39 +157,11 @@ public class InventoryBasic implements IInventory
 
     public void closeChest() {}
 
-    @Override
-    public ItemStack[] getContents() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void onOpen(CraftHumanEntity who) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void onClose(CraftHumanEntity who) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public List<HumanEntity> getViewers() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public InventoryHolder getOwner() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void setMaxStackSize(int size) {
-        // TODO Auto-generated method stub
-        
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
     }
 }

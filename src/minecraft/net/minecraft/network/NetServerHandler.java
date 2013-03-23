@@ -4,23 +4,33 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.logging.Logger;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import cpw.mods.fml.common.network.FMLNetworkHandler;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerBeacon;
 import net.minecraft.inventory.ContainerMerchant;
 import net.minecraft.inventory.ContainerRepair;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemEditableBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemWritableBook;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet;
@@ -48,6 +58,7 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.network.packet.Packet255KickDisconnect;
 import net.minecraft.network.packet.Packet3Chat;
 import net.minecraft.network.packet.Packet53BlockChange;
+import net.minecraft.network.packet.Packet6SpawnPosition;
 import net.minecraft.network.packet.Packet7UseEntity;
 import net.minecraft.network.packet.Packet9Respawn;
 import net.minecraft.server.MinecraftServer;
@@ -58,9 +69,13 @@ import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatAllowedCharacters;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.IntHashMap;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.ReportedException;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -121,17 +136,14 @@ import org.bukkit.inventory.InventoryView;
 
 public class NetServerHandler extends NetHandler
 {
-    /** The logging system. */
-    public static Logger logger = Logger.getLogger("Minecraft");
-
     /** The underlying network manager for this server handler. */
-    public INetworkManager netManager;
+    public final INetworkManager netManager;
+
+    /** Reference to the MinecraftServer object. */
+    private final MinecraftServer mcServer;
 
     /** This is set to true whenever a player disconnects from the server. */
     public boolean connectionClosed = false;
-
-    /** Reference to the MinecraftServer object. */
-    private MinecraftServer mcServer;
 
     /** Reference to the EntityPlayerMP object. */
     public EntityPlayerMP playerEntity;
@@ -150,10 +162,8 @@ public class NetServerHandler extends NetHandler
     private long ticksOfLastKeepAlive;
     private volatile int chatSpamThresholdCount = 0;
     // MCPC - IMPORTANT: UPDATE THIS MAPPING FOR TESTING IN ECLIPSE
-    // eclipse mapping = chatSpamThresholdCount
-    // obf mapping = m
-    private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(NetServerHandler.class, "m"); // CraftBukkit - multithreaded field
-    //private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(NetServerHandler.class, "chatSpamThresholdCount"); // CraftBukkit - multithreaded field
+    // MCP mapping = chatSpamThresholdCount, CB mapping: chatThrottle, srg mapping: field_72581_m, obf mapping = l
+    private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(NetServerHandler.class, "chatSpamThresholdCount"); // CraftBukkit - multithreaded field // MCPC+ - runtime deobf srgname
     private int creativeItemCreationSpamThresholdTally = 0;
 
     /** The last known x position for this connection. */
@@ -229,7 +239,10 @@ public class NetServerHandler extends NetHandler
         }
 
         // CraftBukkit start
-        for (int spam; (spam = this.chatSpamThresholdCount) > 0 && !chatSpamField.compareAndSet(this, spam, spam - 1);) ;
+        for (int spam; (spam = this.chatSpamThresholdCount) > 0 && !chatSpamField.compareAndSet(this, spam, spam - 1);)
+        {
+            ;
+        }
 
         /* Use thread-safe field access instead
         if (this.m > 0) {
@@ -252,7 +265,7 @@ public class NetServerHandler extends NetHandler
         if (!this.connectionClosed)
         {
             // CraftBukkit start
-            String leaveMessage = "\u00A7e" + this.playerEntity.username + " left the game.";
+            String leaveMessage = EnumChatFormatting.YELLOW + this.playerEntity.username + " left the game.";
             PlayerKickEvent event = new PlayerKickEvent(this.server.getPlayer(this.playerEntity), par1Str, leaveMessage);
 
             if (this.server.getServer().isServerRunning())
@@ -478,7 +491,7 @@ public class NetServerHandler extends NetHandler
                     if (!this.playerEntity.isPlayerSleeping() && (d4 > 1.65D || d4 < 0.1D))
                     {
                         this.kickPlayerFromServer("Illegal stance");
-                        logger.warning(this.playerEntity.username + " had an illegal stance: " + d4);
+                        this.mcServer.getLogAgent().logWarning(this.playerEntity.username + " had an illegal stance: " + d4);
                         return;
                     }
 
@@ -517,13 +530,13 @@ public class NetServerHandler extends NetHandler
 
                 if (d11 > 100.0D && this.hasMoved && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.username)))   // CraftBukkit - Added this.checkMovement condition to solve this check being triggered by teleports
                 {
-                    logger.warning(this.playerEntity.username + " moved too quickly! " + d4 + "," + d6 + "," + d7 + " (" + d8 + ", " + d9 + ", " + d10 + ")");
+                    this.mcServer.getLogAgent().logWarning(this.playerEntity.username + " moved too quickly! " + d4 + "," + d6 + "," + d7 + " (" + d8 + ", " + d9 + ", " + d10 + ")");
                     this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, this.playerEntity.rotationYaw, this.playerEntity.rotationPitch);
                     return;
                 }
 
                 float f4 = 0.0625F;
-                boolean flag = worldserver.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double) f4, (double) f4, (double) f4)).isEmpty();
+                boolean flag = worldserver.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double)f4, (double)f4, (double)f4)).isEmpty();
 
                 if (this.playerEntity.onGround && !par1Packet10Flying.onGround && d6 > 0.0D)
                 {
@@ -554,7 +567,7 @@ public class NetServerHandler extends NetHandler
                 if (d11 > 0.0625D && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.theItemInWorldManager.isCreative())
                 {
                     flag1 = true;
-                    logger.warning(this.playerEntity.username + " moved wrongly!");
+                    this.mcServer.getLogAgent().logWarning(this.playerEntity.username + " moved wrongly!");
                 }
 
                 if (!this.hasMoved) //Fixes "Moved Too Fast" kick when being teleported while moving
@@ -565,13 +578,13 @@ public class NetServerHandler extends NetHandler
                 this.playerEntity.setPositionAndRotation(d1, d2, d3, f2, f3);
                 boolean flag2 = worldserver.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double) f4, (double) f4, (double) f4)).isEmpty();
 
-                if (flag && (flag1 || !flag2) && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.noClip)   // Forge
+                if (flag && (flag1 || !flag2) && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.noClip)
                 {
                     this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, f2, f3);
                     return;
                 }
 
-                AxisAlignedBB axisalignedbb = this.playerEntity.boundingBox.copy().expand((double) f4, (double) f4, (double) f4).addCoord(0.0D, -0.55D, 0.0D);
+                AxisAlignedBB axisalignedbb = this.playerEntity.boundingBox.copy().expand((double)f4, (double)f4, (double)f4).addCoord(0.0D, -0.55D, 0.0D);
 
                 if (!this.mcServer.isFlightAllowed() && !this.playerEntity.capabilities.allowFlying && !worldserver.isAABBNonEmpty(axisalignedbb))   // CraftBukkit - check abilities instead of creative mode
                 {
@@ -581,7 +594,7 @@ public class NetServerHandler extends NetHandler
 
                         if (this.ticksForFloatKick > 80)
                         {
-                            logger.warning(this.playerEntity.username + " was kicked for floating too long!");
+                            this.mcServer.getLogAgent().logWarning(this.playerEntity.username + " was kicked for floating too long!");
                             this.kickPlayerFromServer("Flying is not enabled on this server");
                             return;
                         }
@@ -599,12 +612,6 @@ public class NetServerHandler extends NetHandler
 
                 this.playerEntity.onGround = par1Packet10Flying.onGround;
                 this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
-
-                if (this.playerEntity.theItemInWorldManager.isCreative())
-                {
-                    return;    // CraftBukkit - fixed fall distance accumulating while being in Creative mode.
-                }
-
                 this.playerEntity.updateFlyingState(this.playerEntity.posY - d0, par1Packet10Flying.onGround);
             }
         }
@@ -687,7 +694,7 @@ public class NetServerHandler extends NetHandler
 
                 if (this.dropCount >= 20)
                 {
-                    logger.warning(this.playerEntity.username + " dropped their items too quickly!");
+                    this.mcServer.getLogAgent().logWarning(this.playerEntity.username + " dropped their items too quickly!");
                     this.kickPlayerFromServer("You dropped your items too quickly (Hacking?)");
                     return;
                 }
@@ -706,34 +713,32 @@ public class NetServerHandler extends NetHandler
         }
         else
         {
-            int i = this.mcServer.getSpawnProtectionSize();
-            boolean flag = worldserver.provider.dimensionId != 0 || this.mcServer.getConfigurationManager().getOps().isEmpty() || this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username) || i <= 0 || this.mcServer.isSinglePlayer();
-            boolean flag1 = false;
+            boolean flag = false;
 
             if (par1Packet14BlockDig.status == 0)
             {
-                flag1 = true;
+                flag = true;
             }
 
             if (par1Packet14BlockDig.status == 1)
             {
-                flag1 = true;
+                flag = true;
             }
 
             if (par1Packet14BlockDig.status == 2)
             {
-                flag1 = true;
+                flag = true;
             }
 
-            int j = par1Packet14BlockDig.xPosition;
-            int k = par1Packet14BlockDig.yPosition;
-            int l = par1Packet14BlockDig.zPosition;
+            int i = par1Packet14BlockDig.xPosition;
+            int j = par1Packet14BlockDig.yPosition;
+            int k = par1Packet14BlockDig.zPosition;
 
-            if (flag1)
+            if (flag)
             {
-                double d0 = this.playerEntity.posX - ((double)j + 0.5D);
-                double d1 = this.playerEntity.posY - ((double)k + 0.5D) + 1.5D;
-                double d2 = this.playerEntity.posZ - ((double)l + 0.5D);
+                double d0 = this.playerEntity.posX - ((double)i + 0.5D);
+                double d1 = this.playerEntity.posY - ((double)j + 0.5D) + 1.5D;
+                double d2 = this.playerEntity.posZ - ((double)k + 0.5D);
                 double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 
                 double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
@@ -744,31 +749,25 @@ public class NetServerHandler extends NetHandler
                     return;
                 }
 
-                if (k >= this.mcServer.getBuildLimit())
+                if (j >= this.mcServer.getBuildLimit())
                 {
                     return;
                 }
             }
 
-            ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
-            int i1 = MathHelper.abs_int(j - chunkcoordinates.posX);
-            int j1 = MathHelper.abs_int(l - chunkcoordinates.posZ);
-
-            if (i1 > j1)
-            {
-                j1 = i1;
-            }
-
             if (par1Packet14BlockDig.status == 0)
             {
                 // CraftBukkit start
-                if (j1 < this.server.getSpawnRadius() && !flag)
+                if (!this.mcServer.func_96290_a(worldserver, i, j, k, this.playerEntity))
                 {
-                    CraftEventFactory.callPlayerInteractEvent(this.playerEntity, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, j, k, l, i1, this.playerEntity.inventory.getCurrentItem());
-                    ForgeEventFactory.onPlayerInteract(this.playerEntity, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, j, k, l, 0); // Forge
-                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(j, k, l, worldserver));
+                    this.playerEntity.theItemInWorldManager.onBlockClicked(i, j, k, par1Packet14BlockDig.face);
+                }
+                else
+                {
+                    CraftEventFactory.callPlayerInteractEvent(this.playerEntity, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, i, j, k, par1Packet14BlockDig.face, this.playerEntity.inventory.getCurrentItem());
+                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j, k, worldserver));
                     // Update any tile entity data for this block
-                    TileEntity tileentity = worldserver.getBlockTileEntity(j, k, l);
+                    TileEntity tileentity = worldserver.getBlockTileEntity(i, j, k);
 
                     if (tileentity != null)
                     {
@@ -777,27 +776,23 @@ public class NetServerHandler extends NetHandler
 
                     // CraftBukkit end
                 }
-                else
-                {
-                    this.playerEntity.theItemInWorldManager.onBlockClicked(j, k, l, par1Packet14BlockDig.face);
-                }
             }
             else if (par1Packet14BlockDig.status == 2)
             {
-                this.playerEntity.theItemInWorldManager.uncheckedTryHarvestBlock(j, k, l);
+                this.playerEntity.theItemInWorldManager.uncheckedTryHarvestBlock(i, j, k);
 
-                if (worldserver.getBlockId(j, k, l) != 0)
+                if (worldserver.getBlockId(i, j, k) != 0)
                 {
-                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(j, k, l, worldserver));
+                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j, k, worldserver));
                 }
             }
             else if (par1Packet14BlockDig.status == 1)
             {
-                this.playerEntity.theItemInWorldManager.cancelDestroyingBlock(j, k, l);
+                this.playerEntity.theItemInWorldManager.cancelDestroyingBlock(i, j, k);
 
-                if (worldserver.getBlockId(j, k, l) != 0)
+                if (worldserver.getBlockId(i, j, k) != 0)
                 {
-                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(j, k, l, worldserver));
+                    this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j, k, worldserver));
                 }
             }
         }
@@ -846,8 +841,6 @@ public class NetServerHandler extends NetHandler
         int j = par1Packet15Place.getYPosition();
         int k = par1Packet15Place.getZPosition();
         int l = par1Packet15Place.getDirection();
-        int i1 = this.mcServer.getSpawnProtectionSize();
-        boolean flag1 = worldserver.provider.dimensionId != 0 || this.mcServer.getConfigurationManager().getOps().isEmpty() || this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username) || i1 <= 0 || this.mcServer.isSinglePlayer();
 
         if (par1Packet15Place.getDirection() == 255)
         {
@@ -859,7 +852,7 @@ public class NetServerHandler extends NetHandler
             // CraftBukkit start
             int itemstackAmount = itemstack.stackSize;
             org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this.playerEntity, org.bukkit.event.block.Action.RIGHT_CLICK_AIR, itemstack);
-            // Forge start
+            // MCPC+ start - merge with Forge event
             PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(this.playerEntity, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1);
 
             if (event.useItemInHand() != org.bukkit.event.Event.Result.DENY && forgeEvent.useItem != net.minecraftforge.event.Event.Result.DENY)
@@ -867,7 +860,8 @@ public class NetServerHandler extends NetHandler
                 this.playerEntity.theItemInWorldManager.tryUseItem(this.playerEntity, this.playerEntity.worldObj, itemstack);
             }
 
-            // Forge end
+            // MCPC+ end
+
             // CraftBukkit - notch decrements the counter by 1 in the above method with food,
             // snowballs and so forth, but he does it in a place that doesn't cause the
             // inventory update packet to get sent
@@ -876,20 +870,11 @@ public class NetServerHandler extends NetHandler
         }
         else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
         {
-            this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet3Chat("\u00A77Height limit for building is " + this.mcServer.getBuildLimit()));
+            this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet3Chat("" + EnumChatFormatting.GRAY + "Height limit for building is " + this.mcServer.getBuildLimit()));
             flag = true;
         }
         else
         {
-            ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
-            int j1 = MathHelper.abs_int(i - chunkcoordinates.posX);
-            int k1 = MathHelper.abs_int(k - chunkcoordinates.posZ);
-
-            if (j1 > k1)
-            {
-                k1 = j1;
-            }
-
             // CraftBukkit start - Check if we can actually do something over this large a distance
             Location eyeLoc = this.getPlayerB().getEyeLocation();
 
@@ -898,14 +883,8 @@ public class NetServerHandler extends NetHandler
                 return;
             }
 
-            flag1 = true; // spawn protection moved to ItemBlock!!!
-
-            if (j1 > i1 || flag1)
-            {
-                // CraftBukkit end
-                this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
-            }
-
+            this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
+            // CraftBukkit end
             flag = true;
         }
 
@@ -958,8 +937,8 @@ public class NetServerHandler extends NetHandler
         {
             this.playerEntity.playerInventoryBeingManipulated = true;
             this.playerEntity.inventory.mainInventory[this.playerEntity.inventory.currentItem] = ItemStack.copyItemStack(this.playerEntity.inventory.mainInventory[this.playerEntity.inventory.currentItem]);
-            Slot slot = this.playerEntity.openContainer.getSlotFromInventory(this.playerEntity.inventory, this.playerEntity.inventory.currentItem);
-            if (slot == null) return; // MCPC+ - abort if no slot, fixes RP2 timer crash block place - see #181
+            Slot slot = this.playerEntity.openContainer.getSlotFromInventory((IInventory) this.playerEntity.inventory, this.playerEntity.inventory.currentItem);
+            if (slot == null) return; // MCPC+ - abort if no slot, fixes RP2 timer crash block place - see #181            
             this.playerEntity.openContainer.detectAndSendChanges();
             this.playerEntity.playerInventoryBeingManipulated = false;
 
@@ -975,10 +954,10 @@ public class NetServerHandler extends NetHandler
     {
         if (this.connectionClosed)
         {
-            return;    // CraftBukkit - rarely it would send a playerLoggedOut line twice
+            return;    // CraftBukkit - rarely it would send a disconnect line twice
         }
 
-        logger.info(this.playerEntity.username + " lost connection: " + par1Str);
+        this.mcServer.getLogAgent().logInfo(this.playerEntity.username + " lost connection: " + par1Str);
         // CraftBukkit start - we need to handle custom quit messages
         String quitMessage = this.mcServer.getConfigurationManager().disconnect(this.playerEntity);
 
@@ -992,7 +971,7 @@ public class NetServerHandler extends NetHandler
 
         if (this.mcServer.isSinglePlayer() && this.playerEntity.username.equals(this.mcServer.getServerOwner()))
         {
-            logger.info("Stopping singleplayer server as player logged out");
+            this.mcServer.getLogAgent().logInfo("Stopping singleplayer server as player logged out");
             this.mcServer.initiateShutdown();
         }
     }
@@ -1008,7 +987,7 @@ public class NetServerHandler extends NetHandler
             return;    // CraftBukkit
         }
 
-        logger.warning(this.getClass() + " wasn\'t prepared to deal with a " + par1Packet.getClass());
+        this.mcServer.getLogAgent().logWarning(this.getClass() + " wasn\'t prepared to deal with a " + par1Packet.getClass());
         this.kickPlayerFromServer("Protocol error, unexpected packet");
     }
 
@@ -1056,7 +1035,19 @@ public class NetServerHandler extends NetHandler
         }
 
         // CraftBukkit end
-        this.netManager.addToSendQueue(par1Packet);
+
+        try
+        {
+            this.netManager.addToSendQueue(par1Packet);
+        }
+        catch (Throwable throwable)
+        {
+            CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Sending packet");
+            CrashReportCategory crashreportcategory = crashreport.makeCategory("Packet being sent");
+            crashreportcategory.addCrashSectionCallable("Packet ID", (Callable)(new CallablePacketID(this, par1Packet)));
+            crashreportcategory.addCrashSectionCallable("Packet class", (Callable)(new CallablePacketClass(this, par1Packet)));
+            throw new ReportedException(crashreport);
+        }
     }
 
     public void handleBlockItemSwitch(Packet16BlockItemSwitch par1Packet16BlockItemSwitch)
@@ -1076,7 +1067,7 @@ public class NetServerHandler extends NetHandler
         }
         else
         {
-            logger.warning(this.playerEntity.username + " tried to set an invalid carried item");
+            this.mcServer.getLogAgent().logWarning(this.playerEntity.username + " tried to set an invalid carried item");
             this.kickPlayerFromServer("Nope!"); // CraftBukkit
         }
     }
@@ -1094,7 +1085,6 @@ public class NetServerHandler extends NetHandler
 
             if (s.length() > 100)
             {
-                System.out.println("var2 " + s + " is > 100");
                 // CraftBukkit start
                 if (par1Packet3Chat.canProcessAsync())
                 {
@@ -1132,6 +1122,7 @@ public class NetServerHandler extends NetHandler
             else
             {
                 s = s.trim();
+
                 for (int i = 0; i < s.length(); ++i)
                 {
                     if (!ChatAllowedCharacters.isAllowedCharacter(s.charAt(i)))
@@ -1179,26 +1170,12 @@ public class NetServerHandler extends NetHandler
                     this.sendPacketToPlayer(new Packet3Chat("Cannot send chat message."));
                     return;
                 }
-                this.chat(s, par1Packet3Chat.canProcessAsync());
-                // Spigot start
-                boolean isCounted = true;
 
-                if (server.spamGuardExclusions != null)
-                {
-                    for (String excluded : server.spamGuardExclusions)
-                    {
-                        if (s.startsWith(excluded))
-                        {
-                            isCounted = false;
-                            break;
-                        }
-                    }
-                }
+                this.chat(s, par1Packet3Chat.canProcessAsync());
 
                 // This section stays because it is only applicable to packets
-                if (isCounted && chatSpamField.addAndGet(this, 20) > 200 && !this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username))   // CraftBukkit use thread-safe spam
+                if (chatSpamField.addAndGet(this, 20) > 200 && !this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username))   // CraftBukkit use thread-safe spam
                 {
-                    // Spigot end
                     // CraftBukkit start
                     if (par1Packet3Chat.canProcessAsync())
                     {
@@ -1207,7 +1184,7 @@ public class NetServerHandler extends NetHandler
                             @Override
                             protected Object evaluate()
                             {
-                                NetServerHandler.this.kickPlayerFromServer("playerLoggedOut.spam");
+                                NetServerHandler.this.kickPlayerFromServer("disconnect.spam");
                                 return null;
                             }
                         };
@@ -1228,7 +1205,7 @@ public class NetServerHandler extends NetHandler
                     }
                     else
                     {
-                        this.kickPlayerFromServer("playerLoggedOut.spam");
+                        this.kickPlayerFromServer("disconnect.spam");
                     }
 
                     // CraftBukkit end
@@ -1243,7 +1220,7 @@ public class NetServerHandler extends NetHandler
         {
             if (s.length() == 0)
             {
-                logger.warning(this.playerEntity.username + " tried to send an empty message");
+                this.mcServer.getLogAgent().logWarning(this.playerEntity.username + " tried to send an empty message");
                 return;
             }
 
@@ -1263,11 +1240,17 @@ public class NetServerHandler extends NetHandler
                 Player player = this.getPlayerB();
                 AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet());
                 this.server.getPluginManager().callEvent(event);
-                ServerChatEvent forgeEvent = new ServerChatEvent(this.playerEntity, s, "<" + this.playerEntity.username + "> " + s);
+                // MCPC+ start - call Forge event
+                String old = s;
+                s = "<" + this.playerEntity.func_96090_ax() + "> " + s;                
+                ServerChatEvent forgeEvent = new ServerChatEvent(this.playerEntity, old, s);
                 if (MinecraftForge.EVENT_BUS.post(forgeEvent))
                 {
                     return;
                 }
+                s = forgeEvent.line; // ignored :( TODO
+                // MCPC+ end
+
                 if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0)
                 {
                     // Evil plugins still listening to deprecated event
@@ -1378,10 +1361,8 @@ public class NetServerHandler extends NetHandler
 
         try
         {
-            if (server.logCommands)
-            {
-                logger.info(event.getPlayer().getName() + " issued server command: " + event.getMessage());    // Spigot
-            }
+            this.mcServer.getLogAgent().logInfo(event.getPlayer().getName() + " issued server command: " + event.getMessage()); // CraftBukkit
+
             // MCPC+ start - handle bukkit/vanilla commands
             int space = event.getMessage().indexOf(" ");
             // if bukkit command exists then execute it over vanilla
@@ -1399,11 +1380,14 @@ public class NetServerHandler extends NetHandler
         catch (org.bukkit.command.CommandException ex)
         {
             player.sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
-            Logger.getLogger(NetServerHandler.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NetServerHandler.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
 
         // CraftBukkit end
+        /* CraftBukkit start - No longer needed as we have already handled it in server.dispatchServerCommand above.
+        this.minecraftServer.getCommandHandler().a(this.player, s);
+        // CraftBukkit end */
     }
 
     public void handleAnimation(Packet18Animation par1Packet18Animation)
@@ -1422,16 +1406,16 @@ public class NetServerHandler extends NetHandler
             double d0 = this.playerEntity.prevPosX + (this.playerEntity.posX - this.playerEntity.prevPosX) * (double) f;
             double d1 = this.playerEntity.prevPosY + (this.playerEntity.posY - this.playerEntity.prevPosY) * (double) f + 1.62D - (double) this.playerEntity.yOffset;
             double d2 = this.playerEntity.prevPosZ + (this.playerEntity.posZ - this.playerEntity.prevPosZ) * (double) f;
-            Vec3 vec3d = this.playerEntity.worldObj.getWorldVec3Pool().getVecFromPool(d0, d1, d2);
-            float f3 = MathHelper.cos(-f2 * 0.017453292F - 3.1415927F);
-            float f4 = MathHelper.sin(-f2 * 0.017453292F - 3.1415927F);
+            Vec3 vec3 = this.playerEntity.worldObj.getWorldVec3Pool().getVecFromPool(d0, d1, d2);
+            float f3 = MathHelper.cos(-f2 * 0.017453292F - (float)Math.PI);
+            float f4 = MathHelper.sin(-f2 * 0.017453292F - (float)Math.PI);
             float f5 = -MathHelper.cos(-f1 * 0.017453292F);
             float f6 = MathHelper.sin(-f1 * 0.017453292F);
             float f7 = f4 * f5;
             float f8 = f3 * f5;
             double d3 = 5.0D;
-            Vec3 vec3d1 = vec3d.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
-            MovingObjectPosition movingobjectposition = this.playerEntity.worldObj.rayTraceBlocks_do(vec3d, vec3d1, true);
+            Vec3 vec31 = vec3.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
+            MovingObjectPosition movingobjectposition = this.playerEntity.worldObj.rayTraceBlocks_do(vec3, vec31, true);
 
             if (movingobjectposition == null || movingobjectposition.typeOfHit != EnumMovingObjectType.TILE)
             {
@@ -1550,7 +1534,7 @@ public class NetServerHandler extends NetHandler
                 if (par1Packet7UseEntity.isLeftClick == 0)
                 {
                     // CraftBukkit start
-                    PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) this.getPlayerB(), entity.getBukkitEntity());
+                    PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) this.getPlayer(), entity.getBukkitEntity());
                     this.server.getPluginManager().callEvent(event);
 
                     if (event.isCancelled())
@@ -1573,7 +1557,7 @@ public class NetServerHandler extends NetHandler
                     {
                         String type = entity.getClass().getSimpleName();
                         kickPlayerFromServer("Attacking an " + type + " is not permitted");
-                        System.out.println("Player " + playerEntity.username + " tried to attack an " + type + ", so I have playerLoggedOuted them for exploiting.");
+                        System.out.println("Player " + playerEntity.username + " tried to attack an " + type + ", so I have disconnected them for exploiting.");
                         return;
                     }
 
@@ -1596,7 +1580,7 @@ public class NetServerHandler extends NetHandler
         {
             if (this.playerEntity.playerConqueredTheEnd)
             {
-                this.mcServer.getConfigurationManager().transferPlayerToDimension(this.playerEntity, 0, TeleportCause.END_PORTAL); // CraftBukkit - reroute logic through custom portal management
+                this.mcServer.getConfigurationManager().changeDimension(this.playerEntity, 0, TeleportCause.END_PORTAL); // CraftBukkit - reroute logic through custom portal management
             }
             else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
             {
@@ -1673,90 +1657,89 @@ public class NetServerHandler extends NetHandler
         {
             return;    // CraftBukkit
         }
-        ItemStack itemstack = null;
-        SlotType type = null;
+
         if (this.playerEntity.openContainer.windowId == par1Packet102WindowClick.window_Id && this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
         {
-            if (this.playerEntity.openContainer.getBukkitView() != null) // MCPC - allow vanilla to bypass
+            // CraftBukkit start - fire InventoryClickEvent
+            if (par1Packet102WindowClick.inventorySlot == -1)
             {
-                // CraftBukkit start - fire InventoryClickEvent
-                InventoryView inventory = this.playerEntity.openContainer.getBukkitView();
-                type = CraftInventoryView.getSlotType(inventory, par1Packet102WindowClick.inventorySlot);
-                InventoryClickEvent event = new InventoryClickEvent(inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1);
-                org.bukkit.inventory.Inventory top = inventory.getTopInventory();
+                // Vanilla doesn't do anything with this, neither should we
+                return;
+            }
 
-                if (par1Packet102WindowClick.inventorySlot == 0 && top instanceof CraftingInventory)
-                {
-                    // MCPC+ start - vanilla compatibility
-                    org.bukkit.inventory.Recipe recipe = null;
-                    try {
-                        recipe = ((CraftingInventory) top).getRecipe();
-                    }
-                    catch (AbstractMethodError e)
-                    {
-                        // do nothing
-                    }
-                    // MCPC+ end
-                    if (recipe != null)
-                    {
-                        event = new CraftItemEvent(recipe, inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1);
-                    }
+            if (this.playerEntity.openContainer.getBukkitView() == null) return; // MCPC - allow vanilla to bypass
+
+            InventoryView inventory = this.playerEntity.openContainer.getBukkitView();
+            SlotType type = CraftInventoryView.getSlotType(inventory, par1Packet102WindowClick.inventorySlot);
+            InventoryClickEvent event = new InventoryClickEvent(inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1);
+            org.bukkit.inventory.Inventory top = inventory.getTopInventory();
+
+            if (par1Packet102WindowClick.inventorySlot == 0 && top instanceof CraftingInventory)
+            {
+                // MCPC+ start - vanilla compatibility
+                org.bukkit.inventory.Recipe recipe = null;
+                try {
+                    recipe = ((CraftingInventory) top).getRecipe();
                 }
-
-                server.getPluginManager().callEvent(event);
-                
-                itemstack = null;
-                boolean defaultBehaviour = false;
-
-                switch (event.getResult())
+                catch (AbstractMethodError e)
                 {
-                    case DEFAULT:
-                        itemstack = this.playerEntity.openContainer.slotClick(par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick, par1Packet102WindowClick.holdingShift, this.playerEntity);
-                        defaultBehaviour = true;
-                        break;
+                    // do nothing
+                }
+                // MCPC+ end
 
-                    case DENY: // Deny any change, including changes from the event
-                        break;
+                if (recipe != null)
+                {
+                    event = new CraftItemEvent(recipe, inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1);
+                }
+            }
 
-                    case ALLOW: // Allow changes unconditionally
-                        org.bukkit.inventory.ItemStack cursor = event.getCursor();
+            server.getPluginManager().callEvent(event);
+            ItemStack itemstack = null;
+            boolean defaultBehaviour = false;
+            switch (event.getResult())
+            {
+                case DEFAULT:
+                    itemstack = this.playerEntity.openContainer.slotClick(par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick, par1Packet102WindowClick.holdingShift, this.playerEntity);
+                    defaultBehaviour = true;
+                    break;
+                case DENY: // Deny any change, including changes from the event
+                    break;
+                case ALLOW: // Allow changes unconditionally
+                    org.bukkit.inventory.ItemStack cursor = event.getCursor();
 
-                        if (cursor == null)
+                    if (cursor == null)
+                    {
+                        this.playerEntity.inventory.setItemStack((ItemStack) null);
+                    }
+                    else
+                    {
+                        this.playerEntity.inventory.setItemStack(CraftItemStack.asNMSCopy(cursor));
+                    }
+
+                    org.bukkit.inventory.ItemStack item = event.getCurrentItem();
+
+                    if (item != null)
+                    {
+                        itemstack = CraftItemStack.asNMSCopy(item);
+
+                        if (par1Packet102WindowClick.inventorySlot == -999)
                         {
-                            this.playerEntity.inventory.setItemStack((ItemStack) null);
+                            this.playerEntity.dropPlayerItem(itemstack);
                         }
                         else
                         {
-                            this.playerEntity.inventory.setItemStack(CraftItemStack.asNMSCopy(cursor));
+                            this.playerEntity.openContainer.getSlot(par1Packet102WindowClick.inventorySlot).putStack(itemstack);
                         }
+                    }
+                    else if (par1Packet102WindowClick.inventorySlot != -999)
+                    {
+                        this.playerEntity.openContainer.getSlot(par1Packet102WindowClick.inventorySlot).putStack((ItemStack) null);
+                    }
 
-                        org.bukkit.inventory.ItemStack item = event.getCurrentItem();
-
-                        if (item != null)
-                        {
-                            itemstack = CraftItemStack.asNMSCopy(item);
-
-                            if (par1Packet102WindowClick.inventorySlot == -999)
-                            {
-                                this.playerEntity.dropPlayerItem(itemstack);
-                            }
-                            else
-                            {
-                                this.playerEntity.openContainer.getSlot(par1Packet102WindowClick.inventorySlot).putStack(itemstack);
-                            }
-                        }
-                        else if (par1Packet102WindowClick.inventorySlot != -999)
-                        {
-                            this.playerEntity.openContainer.getSlot(par1Packet102WindowClick.inventorySlot).putStack((ItemStack) null);
-                        }
-
-                        break;
-                }
-                // CraftBukkit end
-            } else {
-                itemstack = this.playerEntity.openContainer.slotClick(par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick, par1Packet102WindowClick.holdingShift, this.playerEntity);;
+                    break;
             }
 
+            // CraftBukkit end
 
             if (ItemStack.areItemStacksEqual(par1Packet102WindowClick.itemStack, itemstack))
             {
@@ -1775,10 +1758,11 @@ public class NetServerHandler extends NetHandler
 
                 for (int i = 0; i < this.playerEntity.openContainer.inventorySlots.size(); ++i)
                 {
-                    arraylist.add(((Slot) this.playerEntity.openContainer.inventorySlots.get(i)).getStack());
+                    arraylist.add(((Slot)this.playerEntity.openContainer.inventorySlots.get(i)).getStack());
                 }
 
                 this.playerEntity.sendContainerAndContentsToPlayer(this.playerEntity.openContainer, arraylist);
+
                 // CraftBukkit start - send a Set Slot to update the crafting result slot
                 if (type == SlotType.RESULT && itemstack != null)
                 {
@@ -1794,7 +1778,7 @@ public class NetServerHandler extends NetHandler
     {
         if (this.playerEntity.openContainer.windowId == par1Packet108EnchantItem.windowId && this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
         {
-            this.playerEntity.openContainer.enchantItem(this.playerEntity, par1Packet108EnchantItem.enchantment);
+            this.playerEntity.openContainer.enchantItem((EntityPlayer) this.playerEntity, par1Packet108EnchantItem.enchantment);
             this.playerEntity.openContainer.detectAndSendChanges();
         }
     }
@@ -1846,9 +1830,7 @@ public class NetServerHandler extends NetHandler
                     }
 
                     return;
-
                 case DENY:
-
                     // TODO: Will this actually work?
                     if (par1Packet107CreativeSetSlot.slot > -1)
                     {
@@ -1856,11 +1838,9 @@ public class NetServerHandler extends NetHandler
                     }
 
                     return;
-
                 case DEFAULT:
                     // We do the stuff below
                     break;
-
                 default:
                     return;
             }
@@ -1887,7 +1867,7 @@ public class NetServerHandler extends NetHandler
 
                 if (entityitem != null)
                 {
-                    entityitem.func_70288_d();
+                    entityitem.setAgeToCreativeDespawnTime();
                 }
             }
         }
@@ -1951,10 +1931,9 @@ public class NetServerHandler extends NetHandler
                 {
                     for (i = 0; i < par1Packet130UpdateSign.signLines[j].length(); ++i)
                     {
-                        if (!ChatAllowedCharacters.isAllowedCharacter(par1Packet130UpdateSign.signLines[j].charAt(i))) // Spigot
+                        if (ChatAllowedCharacters.allowedCharacters.indexOf(par1Packet130UpdateSign.signLines[j].charAt(i)) < 0)
                         {
                             flag = false;
-                            break;
                         }
                     }
                 }
@@ -2047,7 +2026,7 @@ public class NetServerHandler extends NetHandler
         StringBuilder stringbuilder = new StringBuilder();
         String s;
 
-        for (Iterator iterator = this.mcServer.getPossibleCompletions(this.playerEntity, par1Packet203AutoComplete.getText()).iterator(); iterator.hasNext(); stringbuilder.append(s))
+        for (Iterator iterator = this.mcServer.getPossibleCompletions((ICommandSender) this.playerEntity, par1Packet203AutoComplete.getText()).iterator(); iterator.hasNext(); stringbuilder.append(s))
         {
             s = (String)iterator.next();
 
@@ -2070,25 +2049,25 @@ public class NetServerHandler extends NetHandler
         FMLNetworkHandler.handlePacket250Packet(par1Packet250CustomPayload, netManager, this);
     }
 
-    public void handleVanilla250Packet(Packet250CustomPayload packet250custompayload)   // Forge
-    {
+    public void handleVanilla250Packet(Packet250CustomPayload par1Packet250CustomPayload)
+    {    
         DataInputStream datainputstream;
         ItemStack itemstack;
         ItemStack itemstack1;
 
         // CraftBukkit start - ignore empty payloads
-        if (packet250custompayload.length <= 0)
+        if (par1Packet250CustomPayload.length <= 0)
         {
             return;
         }
 
         // CraftBukkit end
 
-        if ("MC|BEdit".equals(packet250custompayload.channel))
+        if ("MC|BEdit".equals(par1Packet250CustomPayload.channel))
         {
             try
             {
-                datainputstream = new DataInputStream(new ByteArrayInputStream(packet250custompayload.data));
+                datainputstream = new DataInputStream(new ByteArrayInputStream(par1Packet250CustomPayload.data));
                 itemstack = Packet.readItemStack(datainputstream);
 
                 if (!ItemWritableBook.validBookTagPages(itemstack.getTagCompound()))
@@ -2106,16 +2085,16 @@ public class NetServerHandler extends NetHandler
             catch (Exception exception)
             {
                 // CraftBukkit start
-                logger.log(Level.WARNING, this.playerEntity.username + " sent invalid MC|BEdit data", exception);
+                this.mcServer.getLogAgent().func_98235_b(this.playerEntity.username + " sent invalid MC|BEdit data", exception);
                 this.kickPlayerFromServer("Invalid book data!");
                 // CraftBukkit end
             }
         }
-        else if ("MC|BSign".equals(packet250custompayload.channel))
+        else if ("MC|BSign".equals(par1Packet250CustomPayload.channel))
         {
             try
             {
-                datainputstream = new DataInputStream(new ByteArrayInputStream(packet250custompayload.data));
+                datainputstream = new DataInputStream(new ByteArrayInputStream(par1Packet250CustomPayload.data));
                 itemstack = Packet.readItemStack(datainputstream);
 
                 if (!ItemEditableBook.validBookTagContents(itemstack.getTagCompound()))
@@ -2136,7 +2115,7 @@ public class NetServerHandler extends NetHandler
             catch (Exception exception1)
             {
                 // CraftBukkit start
-                logger.log(Level.WARNING, this.playerEntity.username + " sent invalid MC|BSign data", exception1);
+                this.mcServer.getLogAgent().func_98235_b(this.playerEntity.username + " sent invalid MC|BSign data", exception1);
                 this.kickPlayerFromServer("Invalid book data!");
                 // CraftBukkit end
             }
@@ -2145,23 +2124,23 @@ public class NetServerHandler extends NetHandler
         {
             int i;
 
-            if ("MC|TrSel".equals(packet250custompayload.channel))
+            if ("MC|TrSel".equals(par1Packet250CustomPayload.channel))
             {
                 try
                 {
-                    datainputstream = new DataInputStream(new ByteArrayInputStream(packet250custompayload.data));
+                    datainputstream = new DataInputStream(new ByteArrayInputStream(par1Packet250CustomPayload.data));
                     i = datainputstream.readInt();
                     Container container = this.playerEntity.openContainer;
 
                     if (container instanceof ContainerMerchant)
                     {
-                        ((ContainerMerchant) container).setCurrentRecipeIndex(i);
+                        ((ContainerMerchant)container).setCurrentRecipeIndex(i);
                     }
                 }
                 catch (Exception exception2)
                 {
                     // CraftBukkit start
-                    logger.log(Level.WARNING, this.playerEntity.username + " sent invalid MC|TrSel data", exception2);
+                    this.mcServer.getLogAgent().func_98235_b(this.playerEntity.username + " sent invalid MC|TrSel data", exception2);
                     this.kickPlayerFromServer("Invalid trade data!");
                     // CraftBukkit end
                 }
@@ -2170,7 +2149,7 @@ public class NetServerHandler extends NetHandler
             {
                 int j;
 
-                if ("MC|AdvCdm".equals(packet250custompayload.channel))
+                if ("MC|AdvCdm".equals(par1Packet250CustomPayload.channel))
                 {
                     if (!this.mcServer.isCommandBlockEnabled())
                     {
@@ -2180,7 +2159,7 @@ public class NetServerHandler extends NetHandler
                     {
                         try
                         {
-                            datainputstream = new DataInputStream(new ByteArrayInputStream(packet250custompayload.data));
+                            datainputstream = new DataInputStream(new ByteArrayInputStream(par1Packet250CustomPayload.data));
                             i = datainputstream.readInt();
                             j = datainputstream.readInt();
                             int k = datainputstream.readInt();
@@ -2189,7 +2168,7 @@ public class NetServerHandler extends NetHandler
 
                             if (tileentity != null && tileentity instanceof TileEntityCommandBlock)
                             {
-                                ((TileEntityCommandBlock) tileentity).setCommand(s);
+                                ((TileEntityCommandBlock)tileentity).setCommand(s);
                                 this.playerEntity.worldObj.markBlockForUpdate(i, j, k);
                                 this.playerEntity.sendChatToPlayer("Command set: " + s);
                             }
@@ -2197,7 +2176,7 @@ public class NetServerHandler extends NetHandler
                         catch (Exception exception3)
                         {
                             // CraftBukkit start
-                            logger.log(Level.WARNING, this.playerEntity.username + " sent invalid MC|AdvCdm data", exception3);
+                            this.mcServer.getLogAgent().func_98235_b(this.playerEntity.username + " sent invalid MC|AdvCdm data", exception3);
                             this.kickPlayerFromServer("Invalid CommandBlock data!");
                             // CraftBukkit end
                         }
@@ -2207,65 +2186,65 @@ public class NetServerHandler extends NetHandler
                         this.playerEntity.sendChatToPlayer(this.playerEntity.translateString("advMode.notAllowed", new Object[0]));
                     }
                 }
-                else if ("MC|Beacon".equals(packet250custompayload.channel))
+                else if ("MC|Beacon".equals(par1Packet250CustomPayload.channel))
                 {
                     if (this.playerEntity.openContainer instanceof ContainerBeacon)
                     {
                         try
                         {
-                            datainputstream = new DataInputStream(new ByteArrayInputStream(packet250custompayload.data));
+                            datainputstream = new DataInputStream(new ByteArrayInputStream(par1Packet250CustomPayload.data));
                             i = datainputstream.readInt();
                             j = datainputstream.readInt();
-                            ContainerBeacon containerbeacon = (ContainerBeacon) this.playerEntity.openContainer;
+                            ContainerBeacon containerbeacon = (ContainerBeacon)this.playerEntity.openContainer;
                             Slot slot = containerbeacon.getSlot(0);
 
                             if (slot.getHasStack())
                             {
                                 slot.decrStackSize(1);
                                 TileEntityBeacon tileentitybeacon = containerbeacon.getBeacon();
-                                tileentitybeacon.func_82128_d(i);
-                                tileentitybeacon.func_82127_e(j);
+                                tileentitybeacon.setPrimaryEffect(i);
+                                tileentitybeacon.setSecondaryEffect(j);
                                 tileentitybeacon.onInventoryChanged();
                             }
                         }
                         catch (Exception exception4)
                         {
                             // CraftBukkit start
-                            logger.log(Level.WARNING, this.playerEntity.username + " sent invalid MC|Beacon data", exception4);
+                            this.mcServer.getLogAgent().func_98235_b(this.playerEntity.username + " sent invalid MC|Beacon data", exception4);
                             this.kickPlayerFromServer("Invalid beacon data!");
                             // CraftBukkit end
                         }
                     }
                 }
-                else if ("MC|ItemName".equals(packet250custompayload.channel) && this.playerEntity.openContainer instanceof ContainerRepair)
+                else if ("MC|ItemName".equals(par1Packet250CustomPayload.channel) && this.playerEntity.openContainer instanceof ContainerRepair)
                 {
-                    ContainerRepair containeranvil = (ContainerRepair) this.playerEntity.openContainer;
+                    ContainerRepair containerrepair = (ContainerRepair)this.playerEntity.openContainer;
 
-                    if (packet250custompayload.data != null && packet250custompayload.data.length >= 1)
+                    if (par1Packet250CustomPayload.data != null && par1Packet250CustomPayload.data.length >= 1)
                     {
-                        String s1 = ChatAllowedCharacters.filerAllowedCharacters(new String(packet250custompayload.data));
+                        String s1 = ChatAllowedCharacters.filerAllowedCharacters(new String(par1Packet250CustomPayload.data));
 
                         if (s1.length() <= 30)
                         {
-                            containeranvil.updateItemName(s1);
+                            containerrepair.updateItemName(s1);
                         }
                     }
                     else
                     {
-                        containeranvil.updateItemName("");
+                        containerrepair.updateItemName("");
                     }
                 }
-                // CraftBukkit start
+                // CraftBukkit start // MCPC+ - move REGISTER/UNREGISTER handling to FML
                 else
                 {
-                    server.getMessenger().dispatchIncomingMessage(playerEntity.getBukkitEntity(), packet250custompayload.channel, packet250custompayload.data);
+                    server.getMessenger().dispatchIncomingMessage(playerEntity.getBukkitEntity(), par1Packet250CustomPayload.channel, par1Packet250CustomPayload.data);
                 }
 
                 // CraftBukkit end
             }
         }
     }
-
+    
     @Override
 
     /**
@@ -2281,5 +2260,5 @@ public class NetServerHandler extends NetHandler
     public EntityPlayerMP getPlayer()
     {
         return playerEntity;
-    }
+    }    
 }

@@ -7,43 +7,43 @@ import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftEnchantment extends Enchantment {
-    private final /*was:net.minecraft.server.*/net.minecraft.enchantment.Enchantment/*was:Enchantment*/ target;
+    private final net.minecraft.enchantment.Enchantment target;
 
-    public CraftEnchantment(/*was:net.minecraft.server.*/net.minecraft.enchantment.Enchantment/*was:Enchantment*/ target) {
-        super(target.effectId/*was:id*/);
+    public CraftEnchantment(net.minecraft.enchantment.Enchantment target) {
+        super(target.effectId);
         this.target = target;
     }
 
     @Override
     public int getMaxLevel() {
-        return target.getMaxLevel/*was:getMaxLevel*/();
+        return target.getMaxLevel();
     }
 
     @Override
     public int getStartLevel() {
-        return target.getMinLevel/*was:getStartLevel*/();
+        return target.getMinLevel();
     }
 
     @Override
     public EnchantmentTarget getItemTarget() {
-        switch (target.type/*was:slot*/) {
-        case all/*was:ALL*/:
+        switch (target.type) {
+        case all:
             return EnchantmentTarget.ALL;
-        case armor/*was:ARMOR*/:
+        case armor:
             return EnchantmentTarget.ARMOR;
-        case armor_feet/*was:ARMOR_FEET*/:
+        case armor_feet:
             return EnchantmentTarget.ARMOR_FEET;
-        case armor_head/*was:ARMOR_HEAD*/:
+        case armor_head:
             return EnchantmentTarget.ARMOR_HEAD;
-        case armor_legs/*was:ARMOR_LEGS*/:
+        case armor_legs:
             return EnchantmentTarget.ARMOR_LEGS;
-        case armor_torso/*was:ARMOR_TORSO*/:
+        case armor_torso:
             return EnchantmentTarget.ARMOR_TORSO;
-        case digger/*was:DIGGER*/:
+        case digger:
             return EnchantmentTarget.TOOL;
-        case weapon/*was:WEAPON*/:
+        case weapon:
             return EnchantmentTarget.WEAPON;
-        case bow/*was:BOW*/:
+        case bow:
             return EnchantmentTarget.BOW;
         default:
             return null;
@@ -52,12 +52,12 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public boolean canEnchantItem(ItemStack item) {
-        return target.func_92089_a/*was:canEnchant*/(CraftItemStack.asNMSCopy(item));
+        return target.func_92089_a(CraftItemStack.asNMSCopy(item));
     }
 
     @Override
     public String getName() {
-        switch (target.effectId/*was:id*/) {
+        switch (target.effectId) {
         case 0:
             return "PROTECTION_ENVIRONMENTAL";
         case 1:
@@ -103,11 +103,11 @@ public class CraftEnchantment extends Enchantment {
         case 51:
             return "ARROW_INFINITE";
         default:
-            return "UNKNOWN_ENCHANT_" + target.effectId/*was:id*/;
+            return "UNKNOWN_ENCHANT_" + target.effectId;
         }
     }
 
-    public static /*was:net.minecraft.server.*/net.minecraft.enchantment.Enchantment/*was:Enchantment*/ getRaw(Enchantment enchantment) {
+    public static net.minecraft.enchantment.Enchantment getRaw(Enchantment enchantment) {
         if (enchantment instanceof EnchantmentWrapper) {
             enchantment = ((EnchantmentWrapper) enchantment).getEnchantment();
         }
@@ -128,6 +128,6 @@ public class CraftEnchantment extends Enchantment {
             return false;
         }
         CraftEnchantment ench = (CraftEnchantment) other;
-        return !target.canApplyTogether/*was:a*/(ench.target);
+        return !target.canApplyTogether(ench.target);
     }
 }

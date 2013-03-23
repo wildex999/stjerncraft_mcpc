@@ -77,7 +77,7 @@ public class WatchdogThread extends Thread {
                 System.err.println(LINE);
 
                 if (this.restart) {
-                    ((CraftServer) Bukkit.getServer()).restart();
+                    //((CraftServer) Bukkit.getServer()).restart(); // MCPC+ TODO
                 }
 
                 //Give up

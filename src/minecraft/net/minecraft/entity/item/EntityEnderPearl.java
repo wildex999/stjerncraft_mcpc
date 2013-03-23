@@ -1,18 +1,16 @@
 package net.minecraft.entity.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 // CraftBukkit start
 import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-// CraftBukkit end
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class EntityEnderPearl extends EntityThrowable
 {
@@ -24,12 +22,6 @@ public class EntityEnderPearl extends EntityThrowable
     public EntityEnderPearl(World par1World, EntityLiving par2EntityLiving)
     {
         super(par1World, par2EntityLiving);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public EntityEnderPearl(World par1World, double par2, double par4, double par6)
-    {
-        super(par1World, par2, par4, par6);
     }
 
     /**
@@ -77,6 +69,7 @@ public class EntityEnderPearl extends EntityThrowable
                             entityplayermp.attackEntityFrom(DamageSource.fall, damageEvent.getDamage());
                         }
                     }
+
                     // CraftBukkit end
                 }
             }

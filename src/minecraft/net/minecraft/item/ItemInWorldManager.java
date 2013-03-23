@@ -3,23 +3,18 @@ package net.minecraft.item;
 // CraftBukkit start
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.Event;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.tileentity.TileEntity;
-// CraftBukkit end
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet53BlockChange;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 
@@ -166,11 +161,11 @@ public class ItemInWorldManager
      * if not creative, it calls destroyBlockInWorldPartially untill the block is broken first. par4 is the specific
      * side. tryHarvestBlock can also be the result of this call
      */
-    public void onBlockClicked(int par1, int par2, int par3, int par4)
+    public void onBlockClicked(int par1, int par2, int par3, int par4) // MCPC+ - merge this whole method by hand
     {
         // this.world.douseFire((EntityHuman) null, i, j, k, l); // CraftBukkit - moved down
         // CraftBukkit
-        PlayerInteractEvent playerinteractevent = CraftEventFactory.callPlayerInteractEvent(this.thisPlayerMP, Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4, this.thisPlayerMP.inventory.getCurrentItem());
+        org.bukkit.event.player.PlayerInteractEvent playerinteractevent = CraftEventFactory.callPlayerInteractEvent(this.thisPlayerMP, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4, this.thisPlayerMP.inventory.getCurrentItem());
 
         if (!this.gameType.isAdventure() || this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3))
         {
@@ -211,7 +206,7 @@ public class ItemInWorldManager
 
                 if (block != null)
                 {
-                    if (playerinteractevent.useInteractedBlock() == Event.Result.DENY || playerinteractevent1.useBlock == net.minecraftforge.event.Event.Result.DENY)   // MCPC
+                    if (playerinteractevent.useInteractedBlock() == org.bukkit.event.Event.Result.DENY || playerinteractevent1.useBlock == net.minecraftforge.event.Event.Result.DENY)   // MCPC
                     {
                         // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
                         if (i1 == Block.doorWood.blockID)
@@ -236,7 +231,7 @@ public class ItemInWorldManager
                     }
                 }
 
-                if (playerinteractevent.useItemInHand() == Event.Result.DENY || playerinteractevent1.useItem == net.minecraftforge.event.Event.Result.DENY)   // Forge
+                if (playerinteractevent.useItemInHand() == org.bukkit.event.Event.Result.DENY || playerinteractevent1.useItem == net.minecraftforge.event.Event.Result.DENY)   // Forge
                 {
                     // If we 'insta destroyed' then the client needs to be informed.
                     if (f > 1.0f)
@@ -382,7 +377,7 @@ public class ItemInWorldManager
             if (nmsBlock != null && !event.isCancelled() && !this.isCreative() && this.thisPlayerMP.canHarvestBlock(nmsBlock))
             {
                 // Copied from Block.a(world, entityhuman, int, int, int, int)
-                if (!(nmsBlock.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(this.thisPlayerMP)))
+                if (!(nmsBlock.func_71906_q_CodeFix_Public() && EnchantmentHelper.getSilkTouchModifier(this.thisPlayerMP)))
                 {
                     int data = block.getData();
                     int bonusLevel = EnchantmentHelper.getFortuneModifier(this.thisPlayerMP);
@@ -412,73 +407,85 @@ public class ItemInWorldManager
                 org.bukkit.craftbukkit.OrebfuscatorManager.updateNearbyBlocks(theWorld, par1, par2, par3);
             }
 
-            // Spigot (Orebfuscator) end
+            // Spigot (Orebfuscator) end            
         }
-
+        
         // Forge start
-        ItemStack itemstack = this.thisPlayerMP.getCurrentEquippedItem();
-
-        if (itemstack != null && itemstack.getItem().onBlockStartBreak(itemstack, par1, par2, par3, this.thisPlayerMP))
+        ItemStack stack = thisPlayerMP.getCurrentEquippedItem();
+        if (stack != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, thisPlayerMP))
         {
             return false;
         }
-
         // Forge end
-        int l = this.theWorld.getBlockId(par1, par2, par3);
 
-        if (Block.blocksList[l] == null)
+        if (false)   // Never trigger
         {
-            return false;    // CraftBukkit - a plugin set block to air without cancelling
-        }
-
-        int i1 = this.theWorld.getBlockMetadata(par1, par2, par3);
-        this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, par1, par2, par3, l + (this.theWorld.getBlockMetadata(par1, par2, par3) << 12));
-        boolean flag = false; // Forge
-
-        if (this.isCreative())
-        {
-            flag = this.removeBlock(par1, par2, par3); // Forge
-            this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
+            // CraftBukkit end
+            return false;
         }
         else
         {
-            // Forge start
-            boolean flag1 = false;
-            Block block = Block.blocksList[l];
+            int l = this.theWorld.getBlockId(par1, par2, par3);
 
-            if (block != null)
+            if (Block.blocksList[l] == null)
             {
-                flag1 = block.canHarvestBlock(this.thisPlayerMP, i1);
+                return false;    // CraftBukkit - a plugin set block to air without cancelling
             }
 
-            // Forge end
+            int i1 = this.theWorld.getBlockMetadata(par1, par2, par3);
 
-            if (itemstack != null)
+            // CraftBukkit start - special case skulls, their item data comes from a tile entity
+            if (l == Block.skull.blockID && !this.isCreative())
             {
-                itemstack.onBlockDestroyed(this.theWorld, l, par1, par2, par3, this.thisPlayerMP);
+                Block.skull.dropBlockAsItemWithChance(theWorld, par1, par2, par3, i1, 1.0F, 0);
+                return this.removeBlock(par1, par2, par3);
+            }
 
-                if (itemstack.stackSize == 0)
+            // CraftBukkit end
+            this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, par1, par2, par3, l + (this.theWorld.getBlockMetadata(par1, par2, par3) << 12));
+            boolean flag = false;
+
+            if (this.isCreative())
+            {
+                flag = this.removeBlock(par1, par2, par3);
+                this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
+            }
+            else
+            {
+                ItemStack itemstack = this.thisPlayerMP.getCurrentEquippedItem();
+                boolean flag1 = false;
+                Block block = Block.blocksList[l];
+                if (block != null)
                 {
-                    this.thisPlayerMP.destroyCurrentEquippedItem();
+                    flag1 = block.canHarvestBlock(thisPlayerMP, i1);
+                }
+
+                if (itemstack != null)
+                {
+                    itemstack.onBlockDestroyed(this.theWorld, l, par1, par2, par3, this.thisPlayerMP);
+
+                    if (itemstack.stackSize == 0)
+                    {
+                        this.thisPlayerMP.destroyCurrentEquippedItem();
+                    }
+                }
+
+                flag = this.removeBlock(par1, par2, par3);
+                if (flag && flag1)
+                {
+                    Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
                 }
             }
 
-            flag = this.removeBlock(par1, par2, par3); // Forge
-
-            if (flag && flag1)
+            // CraftBukkit start - drop event experience
+            if (flag && event != null)
             {
-                Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
+                Block.blocksList[l].func_71923_g_CodeFix_Public(this.theWorld, par1, par2, par3, event.getExpToDrop());
             }
-        }
 
-        // CraftBukkit start - drop event experience
-        if (flag && event != null)
-        {
-            Block.blocksList[l].dropXpOnBlockBreak(this.theWorld, par1, par2, par3, event.getExpToDrop());
+            // CraftBukkit end
+            return flag;
         }
-
-        // CraftBukkit end
-        return flag;
     }
 
     /**
@@ -527,7 +534,7 @@ public class ItemInWorldManager
      * Activate the clicked on block, otherwise use the held item. Args: player, world, itemStack, x, y, z, side,
      * xOffset, yOffset, zOffset
      */
-    public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+    public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10) // MCPC+ - manually merge whole method by hand
     {
         int i1 = par2World.getBlockId(par4, par5, par6);
 
@@ -536,7 +543,7 @@ public class ItemInWorldManager
 
         if (i1 > 0)
         {
-            PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7, par3ItemStack);
+            org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(par1EntityPlayer, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7, par3ItemStack);
             net.minecraftforge.event.entity.player.PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
             // MCPC+ start
             // if forge event is explicitly cancelled, return
@@ -546,7 +553,7 @@ public class ItemInWorldManager
                 return false;
             }
             // if we have no explicit deny, check if item can be used
-            if (event.useItemInHand() != Event.Result.DENY && forgeEvent.useItem != net.minecraftforge.event.Event.Result.DENY)
+            if (event.useItemInHand() != org.bukkit.event.Event.Result.DENY && forgeEvent.useItem != net.minecraftforge.event.Event.Result.DENY)
             {
                 Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
                 // try to use an item in hand before activating a block. Used for items such as IC2's wrench.
@@ -557,7 +564,7 @@ public class ItemInWorldManager
                 }
             }
             // MCPC+ end
-            if (event.useInteractedBlock() == Event.Result.DENY || forgeEvent.useBlock == net.minecraftforge.event.Event.Result.DENY)
+            if (event.useInteractedBlock() == org.bukkit.event.Event.Result.DENY || forgeEvent.useBlock == net.minecraftforge.event.Event.Result.DENY)
             {
                 // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
                 if (i1 == Block.doorWood.blockID)
@@ -566,7 +573,7 @@ public class ItemInWorldManager
                     ((EntityPlayerMP) par1EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5 + (bottom ? 1 : -1), par6, par2World));
                 }
 
-                result = (event.useItemInHand() != Event.Result.ALLOW);
+                result = (event.useItemInHand() != org.bukkit.event.Event.Result.ALLOW);
             }
             else if (!par1EntityPlayer.isSneaking() || par3ItemStack == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6))
             {
@@ -594,7 +601,7 @@ public class ItemInWorldManager
 
             // MCPC+ - Disabling this causes bukkit incompatibility with placing liquids(water, lava, etc.)
             // If we have 'true' and no explicit deny *or* an explicit allow -- run the item part of the hook
-            if (par3ItemStack != null && ((!result && event.useItemInHand() != Event.Result.DENY) || event.useItemInHand() == Event.Result.ALLOW))
+            if (par3ItemStack != null && ((!result && event.useItemInHand() != org.bukkit.event.Event.Result.DENY) || event.useItemInHand() == org.bukkit.event.Event.Result.ALLOW))
             {
                 this.tryUseItem(par1EntityPlayer, par2World, par3ItemStack);
             }

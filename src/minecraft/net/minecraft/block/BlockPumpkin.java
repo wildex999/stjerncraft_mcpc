@@ -9,6 +9,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntitySnowman;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 // CraftBukkit end
@@ -18,47 +19,12 @@ public class BlockPumpkin extends BlockDirectional
     /** Boolean used to seperate different states of blocks */
     private boolean blockType;
 
-    protected BlockPumpkin(int par1, int par2, boolean par3)
+    protected BlockPumpkin(int par1, boolean par2)
     {
         super(par1, Material.pumpkin);
-        this.blockIndexInTexture = par2;
         this.setTickRandomly(true);
-        this.blockType = par3;
+        this.blockType = par2;
         this.setCreativeTab(CreativeTabs.tabBlock);
-    }
-
-    /**
-     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
-     */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
-    {
-        if (par1 == 1)
-        {
-            return this.blockIndexInTexture;
-        }
-        else if (par1 == 0)
-        {
-            return this.blockIndexInTexture;
-        }
-        else
-        {
-            int k = this.blockIndexInTexture + 1 + 16;
-
-            if (this.blockType)
-            {
-                ++k;
-            }
-
-            return par2 == 2 && par1 == 2 ? k : (par2 == 3 && par1 == 5 ? k : (par2 == 0 && par1 == 3 ? k : (par2 == 1 && par1 == 4 ? k : this.blockIndexInTexture + 16)));
-        }
-    }
-
-    /**
-     * Returns the block texture based on the side being looked at.  Args: side
-     */
-    public int getBlockTextureFromSide(int par1)
-    {
-        return par1 == 1 ? this.blockIndexInTexture : (par1 == 0 ? this.blockIndexInTexture : (par1 == 3 ? this.blockIndexInTexture + 1 + 16 : this.blockIndexInTexture + 16));
     }
 
     /**
@@ -67,6 +33,7 @@ public class BlockPumpkin extends BlockDirectional
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
         super.onBlockAdded(par1World, par2, par3, par4);
+
         if (par1World.getBlockId(par2, par3 - 1, par4) == Block.blockSnow.blockID && par1World.getBlockId(par2, par3 - 2, par4) == Block.blockSnow.blockID)
         {
             if (!par1World.isRemote)
@@ -77,12 +44,13 @@ public class BlockPumpkin extends BlockDirectional
                 blockList.setTypeId(par2, par3 - 1, par4, 0);
                 blockList.setTypeId(par2, par3 - 2, par4, 0);
                 EntitySnowman entitysnowman = new EntitySnowman(par1World);
-                entitysnowman.setLocationAndAngles((double) par2 + 0.5D, (double) par3 - 1.95D, (double) par4 + 0.5D, 0.0F, 0.0F);
+                entitysnowman.setLocationAndAngles((double)par2 + 0.5D, (double)par3 - 1.95D, (double)par4 + 0.5D, 0.0F, 0.0F);
 
                 if (par1World.addEntity(entitysnowman, SpawnReason.BUILD_SNOWMAN))
                 {
                     blockList.updateList();
                 }
+
                 // CraftBukkit end
             }
 
@@ -117,7 +85,7 @@ public class BlockPumpkin extends BlockDirectional
 
                 EntityIronGolem entityirongolem = new EntityIronGolem(par1World);
                 entityirongolem.setPlayerCreated(true);
-                entityirongolem.setLocationAndAngles((double) par2 + 0.5D, (double) par3 - 1.95D, (double) par4 + 0.5D, 0.0F, 0.0F);
+                entityirongolem.setLocationAndAngles((double)par2 + 0.5D, (double)par3 - 1.95D, (double)par4 + 0.5D, 0.0F, 0.0F);
 
                 if (par1World.addEntity(entityirongolem, SpawnReason.BUILD_IRONGOLEM))
                 {
@@ -128,6 +96,7 @@ public class BlockPumpkin extends BlockDirectional
 
                     blockList.updateList();
                 }
+
                 // CraftBukkit end
             }
         }
@@ -145,14 +114,19 @@ public class BlockPumpkin extends BlockDirectional
     /**
      * Called when the block is placed in the world.
      */
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
     {
         int l = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 2.5D) & 3;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, l);
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 2);
     }
 
     // CraftBukkit start
-    public void doPhysics(World world, int i, int j, int k, int l)
+
+    /**
+     * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are
+     * their own) Args: x, y, z, neighbor blockID
+     */
+    public void onNeighborBlockChange(World world, int i, int j, int k, int l)
     {
         if (Block.blocksList[l] != null && Block.blocksList[l].canProvidePower())
         {

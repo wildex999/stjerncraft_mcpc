@@ -1,7 +1,5 @@
 package net.minecraft.entity.monster;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import org.bukkit.event.entity.EntityTargetEvent; // CraftBukkit
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureAttribute;
@@ -203,16 +201,6 @@ public class EntitySpider extends EntityMob
      * Sets the Entity inside a web block.
      */
     public void setInWeb() {}
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * How large the spider should be scaled.
-     */
-    public float spiderScaleAmount()
-    {
-        return 1.0F;
-    }
 
     /**
      * Get this Entity's EnumCreatureAttribute

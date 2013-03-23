@@ -1,36 +1,25 @@
 package net.minecraft.entity.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
 public class EntityEnderCrystal extends Entity
 {
     /** Used to create the rotation animation when rendering the crystal. */
-    public int innerRotation;
+    public int innerRotation = 0;
     public int health;
 
     public EntityEnderCrystal(World par1World)
     {
         super(par1World);
-        this.innerRotation = 0;
         this.preventEntitySpawning = true;
         this.setSize(2.0F, 2.0F);
         this.yOffset = this.height / 2.0F;
         this.health = 5;
         this.innerRotation = this.rand.nextInt(100000);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public EntityEnderCrystal(World par1World, double par2, double par4, double par6)
-    {
-        this(par1World);
-        this.setPosition(par2, par4, par6);
     }
 
     /**
@@ -63,7 +52,13 @@ public class EntityEnderCrystal extends Entity
 
         if (this.worldObj.getBlockId(i, j, k) != Block.fire.blockID)
         {
-            this.worldObj.setBlockWithNotify(i, j, k, Block.fire.blockID);
+            // CraftBukkit start
+            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.worldObj, i, j, k, this).isCancelled())
+            {
+                this.worldObj.setBlock(i, j, k, Block.fire.blockID);
+            }
+
+            // CraftBukkit end
         }
     }
 
@@ -76,12 +71,6 @@ public class EntityEnderCrystal extends Entity
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
     protected void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) {}
-
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
-    {
-        return 0.0F;
-    }
 
     /**
      * Returns true if other Entities should be prevented from moving through this Entity.

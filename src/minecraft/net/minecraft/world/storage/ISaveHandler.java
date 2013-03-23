@@ -16,7 +16,7 @@ public interface ISaveHandler
     /**
      * Checks the session lock to prevent save collisions
      */
-    void checkSessionLock() throws MinecraftException;
+    void checkSessionLock() throws MinecraftException; // CraftBukkit - throws ExceptionWorldConflict
 
     /**
      * Returns the chunk loader with the provided world provider
@@ -26,12 +26,12 @@ public interface ISaveHandler
     /**
      * Saves the given World Info with the given NBTTagCompound as the Player.
      */
-    void saveWorldInfoWithPlayer(WorldInfo worldinfo, NBTTagCompound nbttagcompound);
+    void saveWorldInfoWithPlayer(WorldInfo worlddata, NBTTagCompound nbttagcompound);
 
     /**
      * Saves the passed in world info.
      */
-    void saveWorldInfo(WorldInfo worldinfo);
+    void saveWorldInfo(WorldInfo worlddata);
 
     /**
      * returns null if no saveHandler is relevent (eg. SMP)

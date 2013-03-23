@@ -1,11 +1,11 @@
 package net.minecraft.entity.player;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.FMLNetworkHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.FMLNetworkHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -14,10 +14,13 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentThorns;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.IEntityMultiPart;
 import net.minecraft.entity.IMerchant;
+import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.item.EntityMinecartHopper;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityMob;
@@ -37,6 +40,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet103SetSlot;
 import net.minecraft.potion.Potion;
+import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.ScoreObjectiveCriteria;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.stats.AchievementList;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
@@ -45,6 +53,7 @@ import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.tileentity.TileEntityBrewingStand;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.DamageSource;
@@ -56,6 +65,18 @@ import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 
+// CraftBukkit start
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.entity.CraftItem;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+// CraftBukkit end
+
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 import net.minecraftforge.common.MinecraftForge;
@@ -66,20 +87,6 @@ import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-// CraftBukkit start
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-import org.bukkit.craftbukkit.entity.CraftItem;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityCombustByEntityEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerBedLeaveEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
-// CraftBukkit end
 
 public abstract class EntityPlayer extends EntityLiving implements ICommandSender
 {
@@ -109,8 +116,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
     public float prevCameraYaw;
     public float cameraYaw;
     public String username;
-    @SideOnly(Side.CLIENT)
-    public String playerCloakUrl;
 
     /**
      * Used by EntityPlayer to prevent too many xp orbs from getting absorbed at once.
@@ -122,6 +127,8 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
     public double field_71094_bP;
     public double field_71095_bQ;
     public double field_71085_bR;
+    // CraftBukkit start
+
     // CraftBukkit start
     /** Boolean value indicating weather a player is sleeping or not */
     public boolean sleeping; // protected -> public
@@ -141,8 +148,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
     public ChunkCoordinates playerLocation;
     public int sleepTimer; // CraftBukkit - private -> public
     public float field_71079_bU;
-    @SideOnly(Side.CLIENT)
-    public float field_71082_cx;
     public float field_71089_bV;
 
     /**
@@ -221,42 +226,12 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         this.dataWatcher.addObject(18, Integer.valueOf(0));
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * returns the ItemStack containing the itemInUse
-     */
-    public ItemStack getItemInUse()
-    {
-        return this.itemInUse;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the item in use count
-     */
-    public int getItemInUseCount()
-    {
-        return this.itemInUseCount;
-    }
-
     /**
      * Checks if the entity is currently using an item (e.g., bow, food, sword) by holding down the useItemButton
      */
     public boolean isUsingItem()
     {
         return this.itemInUse != null;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * gets the duration for how long the current itemInUse has been in use
-     */
-    public int getItemInUseDuration()
-    {
-        return this.isUsingItem() ? this.itemInUse.getMaxItemUseDuration() - this.itemInUseCount : 0;
     }
 
     public void stopUsingItem()
@@ -507,7 +482,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
             }
 
             // CraftBukkit end
-
             ItemStack itemstack = this.itemInUse.onFoodEaten(this.worldObj, this);
 
             if (itemstack != this.itemInUse || itemstack != null && itemstack.stackSize != i)
@@ -524,19 +498,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public void handleHealthUpdate(byte par1)
-    {
-        if (par1 == 9)
-        {
-            this.onItemUseFinish();
-        }
-        else
-        {
-            super.handleHealthUpdate(par1);
-        }
-    }
-
     /**
      * Dead and sleeping entities cannot move
      */
@@ -545,12 +506,43 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         return this.getHealth() <= 0 || this.isPlayerSleeping();
     }
 
+    // CraftBukkit - protected -> public
+
     /**
      * sets current screen to null (used on escape buttons of GUIs)
      */
-    public void closeScreen() // CraftBukkit - protected -> public
+    public void closeScreen()
     {
         this.openContainer = this.inventoryContainer;
+    }
+
+    /**
+     * Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
+     */
+    public void mountEntity(Entity par1Entity)
+    {
+        // CraftBukkit start - mirror Entity mount changes
+        this.setPassengerOf(par1Entity);
+    }
+
+    public void setPassengerOf(Entity entity)
+    {
+        // CraftBukkit end
+        if (this.ridingEntity == entity)
+        {
+            this.unmountEntity(entity);
+
+            if (this.ridingEntity != null)
+            {
+                this.ridingEntity.riddenByEntity = null;
+            }
+
+            this.ridingEntity = null;
+        }
+        else
+        {
+            super.setPassengerOf(entity); // CraftBukkit - call new parent
+        }
     }
 
     /**
@@ -574,21 +566,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
             this.rotationYaw = f;
             this.renderYawOffset = ((EntityLiving)this.ridingEntity).renderYawOffset;
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Keeps moving the entity up so it isn't colliding with blocks and other requirements for this entity to be spawned
-     * (only actually used on players though its also on Entity)
-     */
-    public void preparePlayerToSpawn()
-    {
-        this.yOffset = 1.62F;
-        this.setSize(0.6F, 1.8F);
-        super.preparePlayerToSpawn();
-        this.setEntityHealth(this.getMaxHealth());
-        this.deathTime = 0;
     }
 
     protected void updateEntityActionState()
@@ -752,14 +729,25 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
     public void addToPlayerScore(Entity par1Entity, int par2)
     {
         this.addScore(par2);
+        Collection collection = this.func_96123_co().func_96520_a(ScoreObjectiveCriteria.field_96640_e);
 
         if (par1Entity instanceof EntityPlayer)
         {
             this.addStat(StatList.playerKillsStat, 1);
+            collection.addAll(this.func_96123_co().func_96520_a(ScoreObjectiveCriteria.field_96639_d));
         }
         else
         {
             this.addStat(StatList.mobKillsStat, 1);
+        }
+
+        Iterator iterator = collection.iterator();
+
+        while (iterator.hasNext())
+        {
+            ScoreObjective scoreobjective = (ScoreObjective)iterator.next();
+            Score score = this.func_96123_co().func_96529_a(this.getEntityName(), scoreobjective);
+            score.func_96648_a();
         }
     }
 
@@ -858,11 +846,9 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         if (captureDrops)
         {
             capturedDrops.add(par1EntityItem);
+            return;
         }
-        else
-        {
-            this.worldObj.spawnEntityInWorld(par1EntityItem);
-        }
+        this.worldObj.spawnEntityInWorld(par1EntityItem);
     }
 
     /**
@@ -870,30 +856,35 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
      * Deprecated in favor of the more sensitive version
      */
     @Deprecated
-    public float getCurrentPlayerStrVsBlock(Block par1Block)
+    public float getCurrentPlayerStrVsBlock(Block par1Block, boolean par2)
     {
-        return getCurrentPlayerStrVsBlock(par1Block, 0);
+        return getCurrentPlayerStrVsBlock(par1Block, par2, 0);
     }
 
-    public float getCurrentPlayerStrVsBlock(Block par1Block, int meta)
+    public float getCurrentPlayerStrVsBlock(Block par1Block, boolean par2, int meta)
     {
         ItemStack stack = inventory.getCurrentItem();
         float f = (stack == null ? 1.0F : stack.getItem().getStrVsBlock(stack, par1Block, meta));
-        int j = EnchantmentHelper.getEfficiencyModifier(this);
-        ItemStack itemstack = this.inventory.getCurrentItem();
 
-        if (j > 0 && itemstack != null)
+        if (f > 1.0F)
         {
-            float f1 = (float)(j * j + 1);
-            boolean canHarvest = ForgeHooks.canToolHarvestBlock(par1Block, meta, itemstack);
+            int i = EnchantmentHelper.getEfficiencyModifier(this);
+            ItemStack itemstack = this.inventory.getCurrentItem();
 
-            if (!canHarvest && f <= 1.0F)
+            if (i > 0 && itemstack != null)
             {
-                f += f1 * 0.08F;
-            }
-            else
-            {
-                f += f1;
+                float f1 = (float)(i * i + 1);
+
+                boolean canHarvest = ForgeHooks.canToolHarvestBlock(par1Block, meta, itemstack);
+
+                if (!canHarvest && f <= 1.0F)
+                {
+                    f += f1 * 0.08F;
+                }
+                else
+                {
+                    f += f1;
+                }
             }
         }
 
@@ -975,10 +966,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
             NBTTagList nbttaglist1 = par1NBTTagCompound.getTagList("EnderItems");
             this.theInventoryEnderChest.loadInventoryFromNBT(nbttaglist1);
         }
-        
-        //Disable vanilla mob armor/item pickup, players can already pickup items 
-        //and it causes issues with overwriting items, dropping items, etc..
-        //this.canPickUpLoot = false; // MCPC+ - keep enabled because CB relies on this flag for player pickup
     }
 
     /**
@@ -1015,7 +1002,11 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
      */
     public void displayGUIChest(IInventory par1IInventory) {}
 
-    public void displayGUIEnchantment(int par1, int par2, int par3) {}
+    public void func_94064_a(TileEntityHopper par1TileEntityHopper) {}
+
+    public void func_96125_a(EntityMinecartHopper par1EntityMinecartHopper) {}
+
+    public void displayGUIEnchantment(int par1, int par2, int par3, String par4Str) {}
 
     /**
      * Displays the GUI for interacting with an anvil.
@@ -1111,44 +1102,11 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         }
     }
 
-    /**
-     * Reduces damage, depending on potions
-     */
-    protected int applyPotionDamageCalculations(DamageSource par1DamageSource, int par2)
+    public boolean func_96122_a(EntityPlayer par1EntityPlayer)
     {
-        int j = super.applyPotionDamageCalculations(par1DamageSource, par2);
-
-        if (j <= 0)
-        {
-            return 0;
-        }
-        else
-        {
-            int k = EnchantmentHelper.getEnchantmentModifierDamage(this.inventory.armorInventory, par1DamageSource);
-
-            if (k > 20)
-            {
-                k = 20;
-            }
-
-            if (k > 0 && k <= 20)
-            {
-                int l = 25 - k;
-                int i1 = j * l + this.carryoverDamage;
-                j = i1 / 25;
-                this.carryoverDamage = i1 % 25;
-            }
-
-            return j;
-        }
-    }
-
-    /**
-     * returns if pvp is enabled or not
-     */
-    protected boolean isPVPEnabled()
-    {
-        return false;
+        ScorePlayerTeam scoreplayerteam = this.func_96124_cp();
+        ScorePlayerTeam scoreplayerteam1 = par1EntityPlayer.func_96124_cp();
+        return scoreplayerteam != scoreplayerteam1 ? true : (scoreplayerteam != null ? scoreplayerteam.func_96665_g() : true);
     }
 
     /**
@@ -1169,9 +1127,9 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
                 }
             }
 
-            if (!(par1EntityLiving instanceof EntityPlayer) || this.isPVPEnabled())
+            if (!(par1EntityLiving instanceof EntityPlayer) || this.func_96122_a((EntityPlayer)par1EntityLiving))
             {
-                List list = this.worldObj.getEntitiesWithinAABB(EntityWolf.class, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(this.posX, this.posY, this.posZ, this.posX + 1.0D, this.posY + 1.0D, this.posZ + 1.0D).expand(16.0D, 4.0D, 16.0D));
+                List list = this.worldObj.getEntitiesWithinAABB(EntityWolf.class, AxisAlignedBB.getAABBPool().getAABB(this.posX, this.posY, this.posZ, this.posX + 1.0D, this.posY + 1.0D, this.posZ + 1.0D).expand(16.0D, 4.0D, 16.0D));
                 Iterator iterator = list.iterator();
 
                 while (iterator.hasNext())
@@ -1246,7 +1204,9 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
             }
             par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
             this.addExhaustion(par1DamageSource.getHungerDamage());
-            this.health -= par2;
+            int j = this.getHealth();
+            this.setEntityHealth(this.getHealth() - par2);
+            this.field_94063_bt.func_94547_a(par1DamageSource, j, par2);
         }
     }
 
@@ -1275,7 +1235,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
      */
     public void displayGUIBeacon(TileEntityBeacon par1TileEntityBeacon) {}
 
-    public void displayGUIMerchant(IMerchant par1IMerchant) {}
+    public void displayGUIMerchant(IMerchant par1IMerchant, String par2Str) {}
 
     /**
      * Displays the GUI for interacting with a book.
@@ -1381,7 +1341,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
                 if (par1Entity instanceof EntityLiving)
                 {
-                    k = EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLiving)par1Entity);
+                    k = EnchantmentHelper.getEnchantmentModifierLiving((EntityLiving) this, (EntityLiving) par1Entity);
                     j += EnchantmentHelper.getKnockbackModifier(this, (EntityLiving)par1Entity);
                 }
 
@@ -1394,7 +1354,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
                 {
                     boolean flag = this.fallDistance > 0.0F && !this.onGround && !this.isOnLadder() && !this.isInWater() && !this.isPotionActive(Potion.blindness) && this.ridingEntity == null && par1Entity instanceof EntityLiving;
 
-                    if (flag)
+                    if (flag && i > 0)
                     {
                         i += this.rand.nextInt(i / 2 + 2);
                     }
@@ -1421,7 +1381,9 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
                         return;
                     }
+
                     // CraftBukkit end
+
                     if (flag2)
                     {
                         if (j > 0)
@@ -1444,7 +1406,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
                         if (i >= 18)
                         {
-                            this.triggerAchievement(AchievementList.overkill);
+                            this.triggerAchievement((StatBase) AchievementList.overkill);
                         }
 
                         this.setLastAttackingEntity(par1Entity);
@@ -1456,10 +1418,21 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
                     }
 
                     ItemStack itemstack = this.getCurrentEquippedItem();
+                    Object object = par1Entity;
 
-                    if (itemstack != null && par1Entity instanceof EntityLiving)
+                    if (par1Entity instanceof EntityDragonPart)
                     {
-                        itemstack.hitEntity((EntityLiving)par1Entity, this);
+                        IEntityMultiPart ientitymultipart = ((EntityDragonPart)par1Entity).entityDragonObj;
+
+                        if (ientitymultipart != null && ientitymultipart instanceof EntityLiving)
+                        {
+                            object = (EntityLiving)ientitymultipart;
+                        }
+                    }
+
+                    if (itemstack != null && object instanceof EntityLiving)
+                    {
+                        itemstack.hitEntity((EntityLiving)object, this);
 
                         // CraftBukkit - bypass infinite items; <= 0 -> == 0
                         if (itemstack.stackSize == 0)
@@ -1509,9 +1482,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
     public void onEnchantmentCritical(Entity par1Entity) {}
 
-    @SideOnly(Side.CLIENT)
-    public void respawnPlayer() {}
-
     /**
      * Will get destroyed next tick.
      */
@@ -1522,10 +1492,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
         if (this.openContainer != null)
         {
-            // CraftBukkit start
-            InventoryCloseEvent event = new InventoryCloseEvent(this.openContainer.getBukkitView());
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            // CraftBukkit end
             this.openContainer.onCraftGuiClosed(this);
         }
     }
@@ -1548,12 +1514,14 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
      */
     public EnumStatus sleepInBedAt(int par1, int par2, int par3)
     {
+        { // MCPC+ - scope to fix naming clash in event variable
         PlayerSleepInBedEvent event = new PlayerSleepInBedEvent(this, par1, par2, par3);
         MinecraftForge.EVENT_BUS.post(event);
         if (event.result != null)
         {
             return event.result;
         }
+        } // MCPC+
         if (!this.worldObj.isRemote)
         {
             if (this.isPlayerSleeping() || !this.isEntityAlive())
@@ -1578,7 +1546,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
             double d0 = 8.0D;
             double d1 = 5.0D;
-            List list = this.worldObj.getEntitiesWithinAABB(EntityMob.class, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par1 - d0, (double)par2 - d1, (double)par3 - d0, (double)par1 + d0, (double)par2 + d1, (double)par3 + d0));
+            List list = this.worldObj.getEntitiesWithinAABB(EntityMob.class, AxisAlignedBB.getAABBPool().getAABB((double)par1 - d0, (double)par2 - d1, (double)par3 - d0, (double)par1 + d0, (double)par2 + d1, (double)par3 + d0));
 
             if (!list.isEmpty())
             {
@@ -1591,10 +1559,10 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         {
             Player player = (Player) this.getBukkitEntity();
             org.bukkit.block.Block bed = this.worldObj.getWorld().getBlockAt(par1, par2, par3);
-            PlayerBedEnterEvent cbEvent = new PlayerBedEnterEvent(player, bed);
-            this.worldObj.getServer().getPluginManager().callEvent(cbEvent);
+            PlayerBedEnterEvent event = new PlayerBedEnterEvent(player, bed);
+            this.worldObj.getServer().getPluginManager().callEvent(event);
 
-            if (cbEvent.isCancelled())
+            if (event.isCancelled())
             {
                 return EnumStatus.OTHER_PROBLEM;
             }
@@ -1781,37 +1749,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         }
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the orientation of the bed in degrees.
-     */
-    public float getBedOrientationInDegrees()
-    {
-        if (this.playerLocation != null)
-        {
-            int x = playerLocation.posX;
-            int y = playerLocation.posY;
-            int z = playerLocation.posZ;
-            Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
-            int i = (block == null ? 0 : block.getBedDirection(worldObj, x, y, z));
-
-            switch (i)
-            {
-                case 0:
-                    return 90.0F;
-                case 1:
-                    return 0.0F;
-                case 2:
-                    return 270.0F;
-                case 3:
-                    return 180.0F;
-            }
-        }
-
-        return 0.0F;
-    }
-
     /**
      * Returns whether player is sleeping or not
      */
@@ -1826,17 +1763,6 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
     public boolean isPlayerFullyAsleep()
     {
         return this.sleeping && this.sleepTimer >= 100;
-    }
-
-    public int getSleepTimer()
-    {
-        return this.sleepTimer;
-    }
-
-    @SideOnly(Side.CLIENT)
-    protected boolean getHideCape(int par1)
-    {
-        return (this.dataWatcher.getWatchableObjectByte(16) & 1 << par1) != 0;
     }
 
     protected void setHideCape(int par1, boolean par2)
@@ -2034,7 +1960,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
                     }
                     else if ((double)this.startMinecartRidingCoordinate.getDistanceSquared(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) >= 1000000.0D)
                     {
-                        this.addStat(AchievementList.onARail, 1);
+                        this.addStat((StatBase) AchievementList.onARail, 1);
                     }
                 }
                 else if (this.ridingEntity instanceof EntityBoat)
@@ -2072,7 +1998,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
     {
         if (par1EntityLiving instanceof IMob)
         {
-            this.triggerAchievement(AchievementList.killEnemy);
+            this.triggerAchievement((StatBase) AchievementList.killEnemy);
         }
     }
 
@@ -2087,57 +2013,15 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         }
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Gets the Icon Index of the item currently held
-     */
-    public int getItemIcon(ItemStack par1ItemStack, int par2)
-    {
-        int j = super.getItemIcon(par1ItemStack, par2);
-
-        if (par1ItemStack.itemID == Item.fishingRod.itemID && this.fishEntity != null)
-        {
-            j = par1ItemStack.getIconIndex() + 16;
-        }
-        else
-        {
-            if (par1ItemStack.getItem().requiresMultipleRenderPasses())
-            {
-                return par1ItemStack.getItem().getIconIndex(par1ItemStack, par2);
-            }
-
-            if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-            {
-                int k = par1ItemStack.getMaxItemUseDuration() - this.itemInUseCount;
-
-                if (k >= 18)
-                {
-                    return 133;
-                }
-
-                if (k > 13)
-                {
-                    return 117;
-                }
-
-                if (k > 0)
-                {
-                    return 101;
-                }
-            }
-            j = par1ItemStack.getItem().getIconIndex(par1ItemStack, par2, this, itemInUse, itemInUseCount);
-        }
-
-        return j;
-    }
-
     public ItemStack getCurrentArmor(int par1)
     {
         return this.inventory.armorItemInSlot(par1);
     }
 
-    protected void func_82164_bB() {}
+    /**
+     * Makes entity wear random armor based on difficulty
+     */
+    protected void addRandomArmor() {}
 
     protected void func_82162_bC() {}
 
@@ -2320,6 +2204,17 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         return this.username;
     }
 
+    public boolean func_94062_bN()
+    {
+        return super.func_94062_bN();
+    }
+
+    /* CraftBukkit start - we use canPickUpLoot on players, can't have this
+    public boolean bS() {
+        return false;
+    }
+    // CraftBukkit end */
+
     /**
      * Copies the values from the given player into this player if boolean par2 is true. Always clones Ender Chest
      * Inventory.
@@ -2441,10 +2336,24 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         return this.inventory.armorInventory;
     }
 
-    @SideOnly(Side.CLIENT)
-    public boolean getHideCape()
+    public boolean func_96092_aw()
     {
-        return this.getHideCape(1);
+        return !this.capabilities.isFlying;
+    }
+
+    public Scoreboard func_96123_co()
+    {
+        return this.worldObj.getScoreboard();
+    }
+
+    public ScorePlayerTeam func_96124_cp()
+    {
+        return this.func_96123_co().func_96509_i(this.username);
+    }
+
+    public String func_96090_ax()
+    {
+        return ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.username);
     }
 
     public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)

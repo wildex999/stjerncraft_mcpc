@@ -5,17 +5,19 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.TileEntityRecordPlayer;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+
 import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 
 public class TileEntity
@@ -31,7 +33,7 @@ public class TileEntity
     private static Map classToNameMap = new HashMap();
 
     /** The reference to the world. */
-    public World worldObj; // CraftBukkit - protected -> public
+    public World worldObj;
 
     /** The x coordinate of the tile entity. */
     public int xCoord;
@@ -65,7 +67,13 @@ public class TileEntity
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    /**
+     * Sets the worldObj for this tileEntity.
+     */
+    public void setWorldObj(World par1World)
+    {
+        this.worldObj = par1World;
+    }
 
     /**
      * Returns the worldObj for this tileEntity.
@@ -73,14 +81,6 @@ public class TileEntity
     public World getWorldObj()
     {
         return this.worldObj;
-    }
-
-    /**
-     * Sets the worldObj for this tileEntity.
-     */
-    public void setWorldObj(World par1World)
-    {
-        this.worldObj = par1World;
     }
 
     public boolean func_70309_m()
@@ -163,7 +163,7 @@ public class TileEntity
         }
         else
         {
-            System.out.println("Skipping TileEntity with id " + par0NBTTagCompound.getString("id"));
+            MinecraftServer.getServer().getLogAgent().logWarning("Skipping TileEntity with id " + par0NBTTagCompound.getString("id"));
         }
 
         return tileentity;
@@ -191,26 +191,12 @@ public class TileEntity
         {
             this.blockMetadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
             this.worldObj.updateTileEntityChunkAndDoNothing(this.xCoord, this.yCoord, this.zCoord, this);
+
+            if (this.getBlockType() != null)
+            {
+                this.worldObj.func_96440_m(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID);
+            }
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the square of the distance between this entity and the passed in coordinates.
-     */
-    public double getDistanceFrom(double par1, double par3, double par5)
-    {
-        double d3 = (double)this.xCoord + 0.5D - par1;
-        double d4 = (double)this.yCoord + 0.5D - par3;
-        double d5 = (double)this.zCoord + 0.5D - par5;
-        return d3 * d3 + d4 * d4 + d5 * d5;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public double func_82115_m()
-    {
-        return 4096.0D;
     }
 
     /**
@@ -261,7 +247,10 @@ public class TileEntity
     /**
      * Called when a client event is received with the event number and argument, see World.sendClientEvent
      */
-    public void receiveClientEvent(int par1, int par2) {}
+    public boolean receiveClientEvent(int par1, int par2)
+    {
+        return false;
+    }
 
     /**
      * Causes the TileEntity to reset all it's cached values for it's container block, blockID, metaData and in the case
@@ -275,11 +264,13 @@ public class TileEntity
 
     public void func_85027_a(CrashReportCategory par1CrashReportCategory)
     {
-        par1CrashReportCategory.addCrashSectionCallable("Name", new CallableTileEntityName(this));
-        CrashReportCategory.func_85068_a(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.blockType != null ? this.blockType.blockID : 0, this.blockMetadata);
+        par1CrashReportCategory.addCrashSectionCallable("Name", (Callable)(new CallableTileEntityName(this)));
+        CrashReportCategory.func_85068_a(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID, this.getBlockMetadata());
+        par1CrashReportCategory.addCrashSectionCallable("Actual block type", (Callable)(new CallableTileEntityID(this)));
+        par1CrashReportCategory.addCrashSectionCallable("Actual block data value", (Callable)(new CallableTileEntityData(this)));
     }
 
-    static Map func_85028_t()
+    static Map getClassToNameMap()
     {
         return classToNameMap;
     }
@@ -291,6 +282,7 @@ public class TileEntity
         addMapping(TileEntityEnderChest.class, "EnderChest");
         addMapping(TileEntityRecordPlayer.class, "RecordPlayer");
         addMapping(TileEntityDispenser.class, "Trap");
+        addMapping(TileEntityDropper.class, "Dropper");
         addMapping(TileEntitySign.class, "Sign");
         addMapping(TileEntityMobSpawner.class, "MobSpawner");
         addMapping(TileEntityNote.class, "Music");
@@ -301,6 +293,9 @@ public class TileEntity
         addMapping(TileEntityCommandBlock.class, "Control");
         addMapping(TileEntityBeacon.class, "Beacon");
         addMapping(TileEntitySkull.class, "Skull");
+        addMapping(TileEntityDaylightDetector.class, "DLDetector");
+        addMapping(TileEntityHopper.class, "Hopper");
+        addMapping(TileEntityComparator.class, "Comparator");
     }
 
     // CraftBukkit start
@@ -316,7 +311,7 @@ public class TileEntity
         return null;
     }
     // CraftBukkit end
-
+    
     // -- BEGIN FORGE PATCHES --
     /**
      * Determines if this TileEntity requires update calls.
@@ -389,11 +384,11 @@ public class TileEntity
         Block type = getBlockType();
         if (type == Block.enchantmentTable)
         {
-            bb = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
+            bb = AxisAlignedBB.getAABBPool().getAABB(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
         }
         else if (type == Block.chest)
         {
-            bb = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 1, zCoord + 2);
+            bb = AxisAlignedBB.getAABBPool().getAABB(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
         }
         else if (type != null && type != Block.beacon)
         {
@@ -404,5 +399,5 @@ public class TileEntity
             }
         }
         return bb;
-    }
+    }    
 }

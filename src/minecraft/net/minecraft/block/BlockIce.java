@@ -1,7 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -10,38 +8,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockIce extends BlockBreakable
 {
-    public BlockIce(int par1, int par2)
+    public BlockIce(int par1)
     {
-        super(par1, par2, Material.ice, false);
+        super(par1, "ice", Material.ice, false);
         this.slipperiness = 0.98F;
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabBlock);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns which pass should this block be rendered on. 0 for solids and 1 for alpha
-     */
-    public int getRenderBlockPass()
-    {
-        return 1;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns true if the given side of this block type should be rendered, if the adjacent block is at the given
-     * coordinates.  Args: blockAccess, x, y, z, side
-     */
-    public boolean shouldSideBeRendered(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
-    {
-        return super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, 1 - par5);
     }
 
     /**
@@ -66,7 +42,7 @@ public class BlockIce extends BlockBreakable
         {
             if (par1World.provider.isHellWorld)
             {
-                par1World.setBlockWithNotify(par3, par4, par5, 0);
+                par1World.setBlockToAir(par3, par4, par5);
                 return;
             }
 
@@ -76,7 +52,7 @@ public class BlockIce extends BlockBreakable
 
             if (material.blocksMovement() || material.isLiquid())
             {
-                par1World.setBlockWithNotify(par3, par4, par5, Block.waterMoving.blockID);
+                par1World.setBlock(par3, par4, par5, Block.waterMoving.blockID);
             }
         }
     }
@@ -101,15 +77,17 @@ public class BlockIce extends BlockBreakable
             {
                 return;
             }
+
             // CraftBukkit end
+
             if (par1World.provider.isHellWorld)
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
                 return;
             }
 
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, Block.waterStill.blockID);
+            par1World.setBlock(par2, par3, par4, Block.waterStill.blockID);
         }
     }
 

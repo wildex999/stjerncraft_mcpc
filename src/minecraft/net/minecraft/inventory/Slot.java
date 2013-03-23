@@ -1,9 +1,8 @@
 package net.minecraft.inventory;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 public class Slot
 {
@@ -23,7 +22,7 @@ public class Slot
     public int yDisplayPosition;
 
     /** Position within background texture file, normally -1 which causes no background to be drawn. */
-    protected int backgroundIconIndex = -1;
+    protected Icon backgroundIcon = null;
 
     /** Background texture file assigned to this slot, if any. Vanilla "/gui/items.png" is used if this is null. */
     protected String texture = "/gui/items.png";
@@ -146,16 +145,6 @@ public class Slot
         return true;
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the icon index on items.png that is used as background image of the slot.
-     */
-    public int getBackgroundIconIndex()
-    {
-        return backgroundIconIndex;
-    }
-
     /**
      * Gets the path of the texture file to use for the background image of this slot when drawing the GUI.
      * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.  
@@ -167,11 +156,11 @@ public class Slot
 
     /**
      * Sets which icon index to use as the background image of the slot when it's empty.
-     * @param iconIndex int: The index into the texture file, 0-255, or -1 for no background.  
+     * @param icon The icon to use, null for none  
      */
-    public void setBackgroundIconIndex(int iconIndex)
+    public void setBackgroundIconIndex(Icon icon)
     {
-        backgroundIconIndex = iconIndex;
+        backgroundIcon = icon;
     }
 
     /**
@@ -193,4 +182,5 @@ public class Slot
     {
         return slotIndex;
     }
+
 }

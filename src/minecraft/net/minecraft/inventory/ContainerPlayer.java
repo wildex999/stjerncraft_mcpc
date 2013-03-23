@@ -3,14 +3,14 @@ package net.minecraft.inventory;
 // CraftBukkit start
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.packet.Packet103SetSlot;
-// CraftBukkit end
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.network.packet.Packet103SetSlot;
+// CraftBukkit end
 
 public class ContainerPlayer extends Container
 {
@@ -34,7 +34,7 @@ public class ContainerPlayer extends Container
         this.craftMatrix = new InventoryCrafting(this, 2, 2, par1InventoryPlayer.player); // CraftBukkit - pass player
         this.craftMatrix.resultInventory = this.craftResult; // CraftBukkit - let InventoryCrafting know about its result slot
         this.player = par1InventoryPlayer; // CraftBukkit - save player
-        this.addSlotToContainer(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 144, 36));
+        this.addSlotToContainer((Slot)(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 144, 36)));
         int i;
         int j;
 
@@ -48,7 +48,7 @@ public class ContainerPlayer extends Container
 
         for (i = 0; i < 4; ++i)
         {
-            this.addSlotToContainer(new SlotArmor(this, par1InventoryPlayer, par1InventoryPlayer.getSizeInventory() - 1 - i, 8, 8 + i * 18, i));
+            this.addSlotToContainer((Slot)(new SlotArmor(this, par1InventoryPlayer, par1InventoryPlayer.getSizeInventory() - 1 - i, 8, 8 + i * 18, i)));
         }
 
         for (i = 0; i < 3; ++i)
@@ -194,6 +194,11 @@ public class ContainerPlayer extends Container
         }
 
         return itemstack;
+    }
+
+    public boolean func_94530_a(ItemStack par1ItemStack, Slot par2Slot)
+    {
+        return par2Slot.inventory != this.craftResult && super.func_94530_a(par1ItemStack, par2Slot);
     }
 
     // CraftBukkit start

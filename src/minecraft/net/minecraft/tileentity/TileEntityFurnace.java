@@ -3,19 +3,11 @@ package net.minecraft.tileentity;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-// CraftBukkit start
-import java.util.List;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.event.inventory.FurnaceBurnEvent;
-import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-// CraftBukkit end
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemHoe;
@@ -25,12 +17,21 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
+import net.minecraftforge.common.ForgeDummyContainer;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.inventory.FurnaceBurnEvent;
 
-public class TileEntityFurnace extends TileEntity implements IInventory, ISidedInventory
+import java.util.List;
+
+public class TileEntityFurnace extends TileEntity implements ISidedInventory, net.minecraftforge.common.ISidedInventory
 {
+    private static final int[] field_102010_d = new int[] {0};
+    private static final int[] field_102011_e = new int[] {2, 1};
+    private static final int[] field_102009_f = new int[] {1};
+
     /**
      * The ItemStacks that hold the items currently being used in the furnace
      */
@@ -46,6 +47,7 @@ public class TileEntityFurnace extends TileEntity implements IInventory, ISidedI
 
     /** The number of ticks that the current item has been cooking for */
     public int furnaceCookTime = 0;
+    private String field_94130_e;
 
     // CraftBukkit start
     private int lastTick = (int)(System.currentTimeMillis() / 50);
@@ -166,7 +168,21 @@ public class TileEntityFurnace extends TileEntity implements IInventory, ISidedI
      */
     public String getInvName()
     {
-        return "container.furnace";
+        return this.isInvNameLocalized() ? this.field_94130_e : "container.furnace";
+    }
+
+    /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.field_94130_e != null && this.field_94130_e.length() > 0;
+    }
+
+    public void func_94129_a(String par1Str)
+    {
+        this.field_94130_e = par1Str;
     }
 
     /**
@@ -192,6 +208,11 @@ public class TileEntityFurnace extends TileEntity implements IInventory, ISidedI
         this.furnaceBurnTime = par1NBTTagCompound.getShort("BurnTime");
         this.furnaceCookTime = par1NBTTagCompound.getShort("CookTime");
         this.currentItemBurnTime = getItemBurnTime(this.furnaceItemStacks[1]);
+
+        if (par1NBTTagCompound.hasKey("CustomName"))
+        {
+            this.field_94130_e = par1NBTTagCompound.getString("CustomName");
+        }
     }
 
     /**
@@ -216,6 +237,11 @@ public class TileEntityFurnace extends TileEntity implements IInventory, ISidedI
         }
 
         par1NBTTagCompound.setTag("Items", nbttaglist);
+
+        if (this.isInvNameLocalized())
+        {
+            par1NBTTagCompound.setString("CustomName", this.field_94130_e);
+        }
     }
 
     /**
@@ -225,33 +251,6 @@ public class TileEntityFurnace extends TileEntity implements IInventory, ISidedI
     public int getInventoryStackLimit()
     {
         return maxStack; // CraftBukkit
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns an integer between 0 and the passed value representing how close the current item is to being completely
-     * cooked
-     */
-    public int getCookProgressScaled(int par1)
-    {
-        return this.furnaceCookTime * par1 / 200;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns an integer between 0 and the passed value representing how much burn time is left on the current fuel
-     * item, where 0 means that the item is exhausted and the passed value means that the item is fresh
-     */
-    public int getBurnTimeRemainingScaled(int par1)
-    {
-        if (this.currentItemBurnTime == 0)
-        {
-            this.currentItemBurnTime = 200;
-        }
-
-        return this.furnaceBurnTime * par1 / this.currentItemBurnTime;
     }
 
     /**
@@ -327,7 +326,7 @@ public class TileEntityFurnace extends TileEntity implements IInventory, ISidedI
 
                         if (this.furnaceItemStacks[1].stackSize == 0)
                         {
-                            this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItemStack(this.furnaceItemStacks[1]); // Forge
+                            this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItemStack(furnaceItemStacks[1]);
                         }
                     }
                 }
@@ -387,18 +386,6 @@ public class TileEntityFurnace extends TileEntity implements IInventory, ISidedI
         if (this.canSmelt())
         {
             ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
-            // CraftBukkit start
-            CraftItemStack source = CraftItemStack.asCraftMirror(this.furnaceItemStacks[0]);
-            CraftItemStack result = CraftItemStack.asCraftMirror(itemstack.copy());
-            FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(this.worldObj.getWorld().getBlockAt(this.xCoord, this.yCoord, this.zCoord), source, result);
-            this.worldObj.getServer().getPluginManager().callEvent(furnaceSmeltEvent);
-
-            if (furnaceSmeltEvent.isCancelled())
-            {
-                return;
-            }
-
-            itemstack = CraftItemStack.asNMSCopy(furnaceSmeltEvent.getResult());
 
             if (this.furnaceItemStacks[2] == null)
             {
@@ -406,12 +393,7 @@ public class TileEntityFurnace extends TileEntity implements IInventory, ISidedI
             }
             else if (this.furnaceItemStacks[2].isItemEqual(itemstack))
             {
-                // CraftBukkit - compare damage too
-                if (this.furnaceItemStacks[2].getItemDamage() == itemstack.getItemDamage())
-                {
-                    this.furnaceItemStacks[2].stackSize += itemstack.stackSize;
-                }
-                // CraftBukkit end
+                furnaceItemStacks[2].stackSize += itemstack.stackSize;
             }
 
             --this.furnaceItemStacks[0].stackSize;
@@ -485,12 +467,70 @@ public class TileEntityFurnace extends TileEntity implements IInventory, ISidedI
 
     public void closeChest() {}
 
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return par1 == 2 ? false : (par1 == 1 ? isItemFuel(par2ItemStack) : true);
+    }
+
+    /**
+     * Get the size of the side inventory.
+     */
+    public int[] getSizeInventorySide(int par1)
+    {
+        return par1 == 0 ? field_102011_e : (par1 == 1 ? field_102010_d : field_102009_f);
+    }
+
+    public boolean func_102007_a(int par1, ItemStack par2ItemStack, int par3)
+    {
+        return this.isStackValidForSlot(par1, par2ItemStack);
+    }
+
+    public boolean func_102008_b(int par1, ItemStack par2ItemStack, int par3)
+    {
+        return par3 != 0 || par1 != 1 || par2ItemStack.itemID == Item.bucketEmpty.itemID;
+    }
+
+    /***********************************************************************************
+     * This function is here for compatibilities sake, Modders should Check for
+     * Sided before ContainerWorldly, Vanilla Minecraft does not follow the sided standard
+     * that Modding has for a while.
+     *
+     * In vanilla:
+     *
+     *   Top: Ores
+     *   Sides: Fuel
+     *   Bottom: Output
+     *
+     * Standard Modding:
+     *   Top: Ores
+     *   Sides: Output
+     *   Bottom: Fuel
+     *
+     * The Modding one is designed after the GUI, the vanilla one is designed because its
+     * intended use is for the hopper, which logically would take things in from the top.
+     *
+     * This will possibly be removed in future updates, and make vanilla the definitive
+     * standard.
+     */
+
     @Override
     public int getStartInventorySide(ForgeDirection side)
     {
-        if (side == ForgeDirection.DOWN) return 1;
-        if (side == ForgeDirection.UP) return 0; 
-        return 2;
+        if (ForgeDummyContainer.legacyFurnaceSides)
+        {
+            if (side == ForgeDirection.DOWN) return 1;
+            if (side == ForgeDirection.UP) return 0;
+            return 2;
+        }
+        else
+        {
+            if (side == ForgeDirection.DOWN) return 2;
+            if (side == ForgeDirection.UP) return 0;
+            return 1;
+        }
     }
 
     @Override

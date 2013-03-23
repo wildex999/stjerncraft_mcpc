@@ -12,13 +12,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import net.minecraft.network.NetLoginHandler;
 import net.minecraft.network.NetworkListenThread;
 
 public class ServerListenThread extends Thread
 {
-    private static Logger logger = Logger.getLogger("Minecraft");
     private final List pendingConnections = Collections.synchronizedList(new ArrayList());
 
     /**
@@ -60,8 +59,8 @@ public class ServerListenThread extends Thread
                 catch (Exception exception)
                 {
                     netloginhandler.raiseErrorAndDisconnect("Internal server error");
-                    FMLLog.log(Level.SEVERE, exception, "Error handling login related packet - connection from %s refused", netloginhandler.getUsernameAndAddress());
-                    logger.log(Level.WARNING, "Failed to handle packet for " + netloginhandler.getUsernameAndAddress() + ": " + exception, exception);
+                    FMLLog.log(Level.SEVERE, exception, "Error handling login related packet - connection from %s refused", netloginhandler.getUsernameAndAddress());                    
+                    this.myNetworkListenThread.getServer().getLogAgent().func_98235_b("Failed to handle packet for " + netloginhandler.getUsernameAndAddress() + ": " + exception, (Throwable) exception);
                 }
 
                 if (netloginhandler.connectionComplete)
@@ -81,11 +80,10 @@ public class ServerListenThread extends Thread
             try
             {
                 Socket socket = this.myServerSocket.accept();
-                InetAddress inetaddress = socket.getInetAddress();
-                long i = System.currentTimeMillis();
-                HashMap hashmap = this.recentConnections;
+                // CraftBukkit start - connection throttle
+                InetAddress address = socket.getInetAddress();
+                long currentTime = System.currentTimeMillis();
 
-                // CraftBukkit start
                 if (((MinecraftServer) this.myNetworkListenThread.getServer()).server == null)
                 {
                     socket.close();
@@ -93,37 +91,37 @@ public class ServerListenThread extends Thread
                 }
 
                 connectionThrottle = ((MinecraftServer) this.myNetworkListenThread.getServer()).server.getConnectionThrottle();
-                // CraftBukkit end
 
                 synchronized (this.recentConnections)
                 {
-                    if (this.recentConnections.containsKey(inetaddress) && !isLocalHost(inetaddress) && i - ((Long) this.recentConnections.get(inetaddress)).longValue() < connectionThrottle)
+                    if (this.recentConnections.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - ((Long) this.recentConnections.get(address)).longValue() < connectionThrottle)
                     {
-                        this.recentConnections.put(inetaddress, Long.valueOf(i));
+                        this.recentConnections.put(address, Long.valueOf(currentTime));
                         socket.close();
                         continue;
                     }
 
-                    this.recentConnections.put(inetaddress, Long.valueOf(i));
+                    this.recentConnections.put(address, Long.valueOf(currentTime));
                 }
 
+                // CraftBukkit end
                 NetLoginHandler netloginhandler = new NetLoginHandler(this.myNetworkListenThread.getServer(), socket, "Connection #" + this.connectionCounter++);
                 this.addPendingConnection(netloginhandler);
             }
             catch (IOException ioexception)
             {
-                logger.warning("DSCT: " + ioexception.getMessage()); // CraftBukkit
+                this.myNetworkListenThread.getServer().getLogAgent().logWarning("DSCT: " + ioexception.getMessage()); // CraftBukkit
             }
         }
 
-        System.out.println("Closing listening thread");
+        this.myNetworkListenThread.getServer().getLogAgent().logInfo("Closing listening thread");
     }
 
     private void addPendingConnection(NetLoginHandler par1NetLoginHandler)
     {
         if (par1NetLoginHandler == null)
         {
-            throw new IllegalArgumentException("Got null pendingconnection!");
+            throw new IllegalArgumentException("Got null netloginhandler!");
         }
         else
         {
@@ -134,11 +132,6 @@ public class ServerListenThread extends Thread
                 this.pendingConnections.add(par1NetLoginHandler);
             }
         }
-    }
-
-    private static boolean isLocalHost(InetAddress par0InetAddress)
-    {
-        return "127.0.0.1".equals(par0InetAddress.getHostAddress());
     }
 
     public void func_71769_a(InetAddress par1InetAddress)
@@ -164,17 +157,5 @@ public class ServerListenThread extends Thread
         {
             ;
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public InetAddress getInetAddress()
-    {
-        return this.myServerAddress;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public int getMyPort()
-    {
-        return this.myPort;
     }
 }

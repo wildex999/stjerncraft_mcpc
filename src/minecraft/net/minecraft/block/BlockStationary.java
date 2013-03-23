@@ -4,10 +4,8 @@ import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-// CraftBukkit start
-import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.block.BlockIgniteEvent;
-// CraftBukkit end
+
+import org.bukkit.craftbukkit.event.CraftEventFactory;  // CraftBukkit
 
 public class BlockStationary extends BlockFluid
 {
@@ -47,11 +45,8 @@ public class BlockStationary extends BlockFluid
     private void setNotStationary(World par1World, int par2, int par3, int par4)
     {
         int l = par1World.getBlockMetadata(par2, par3, par4);
-        par1World.editingBlocks = true;
-        par1World.setBlockAndMetadata(par2, par3, par4, this.blockID - 1, l);
-        par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
-        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID - 1, this.tickRate());
-        par1World.editingBlocks = false;
+        par1World.setBlock(par2, par3, par4, this.blockID - 1, l, 2);
+        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID - 1, this.tickRate(par1World));
     }
 
     /**
@@ -64,9 +59,10 @@ public class BlockStationary extends BlockFluid
             int l = par5Random.nextInt(3);
             int i1;
             int j1;
-            // CraftBukkit start - prevent lava putting something on fire
-            org.bukkit.World bworld = par1World.getWorld();
-            BlockIgniteEvent.IgniteCause igniteCause = BlockIgniteEvent.IgniteCause.LAVA;
+            // CraftBukkit start - prevent lava putting something on fire, remember igniter block coords
+            int x = par2;
+            int y = par3;
+            int z = par4;
             // CraftBukkit end
 
             for (i1 = 0; i1 < l; ++i1)
@@ -81,18 +77,16 @@ public class BlockStationary extends BlockFluid
                     if (this.isFlammable(par1World, par2 - 1, par3, par4) || this.isFlammable(par1World, par2 + 1, par3, par4) || this.isFlammable(par1World, par2, par3, par4 - 1) || this.isFlammable(par1World, par2, par3, par4 + 1) || this.isFlammable(par1World, par2, par3 - 1, par4) || this.isFlammable(par1World, par2, par3 + 1, par4))
                     {
                         // CraftBukkit start - prevent lava putting something on fire
-                        org.bukkit.block.Block block = bworld.getBlockAt(par2, par3, par4);
-
-                        if (block.getTypeId() != Block.fire.blockID)
+                        if (par1World.getBlockId(par2, par3, par4) != Block.fire.blockID)
                         {
-                            if (CraftEventFactory.callEvent(new BlockIgniteEvent(block, igniteCause, null)).isCancelled())
+                            if (CraftEventFactory.callBlockIgniteEvent(par1World, par2, par3, par4, x, y, z).isCancelled())
                             {
                                 continue;
                             }
                         }
 
                         // CraftBukkit end
-                        par1World.setBlockWithNotify(par2, par3, par4, Block.fire.blockID);
+                        par1World.setBlock(par2, par3, par4, Block.fire.blockID);
                         return;
                     }
                 }
@@ -115,18 +109,16 @@ public class BlockStationary extends BlockFluid
                     if (par1World.isAirBlock(par2, par3 + 1, par4) && this.isFlammable(par1World, par2, par3, par4))
                     {
                         // CraftBukkit start - prevent lava putting something on fire
-                        org.bukkit.block.Block block = bworld.getBlockAt(par2, par3 + 1, par4);
-
-                        if (block.getTypeId() != Block.fire.blockID)
+                        if (par1World.getBlockId(par2, par3 + 1, par4) != Block.fire.blockID)
                         {
-                            if (CraftEventFactory.callEvent(new BlockIgniteEvent(block, igniteCause, null)).isCancelled())
+                            if (CraftEventFactory.callBlockIgniteEvent(par1World, par2, par3 + 1, par4, x, y, z).isCancelled())
                             {
                                 continue;
                             }
                         }
 
                         // CraftBukkit end
-                        par1World.setBlockWithNotify(par2, par3 + 1, par4, Block.fire.blockID);
+                        par1World.setBlock(par2, par3 + 1, par4, Block.fire.blockID);
                     }
                 }
             }

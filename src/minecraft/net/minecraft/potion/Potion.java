@@ -1,17 +1,14 @@
 package net.minecraft.potion;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
-import net.minecraft.entity.projectile.EntityPotion;
-// CraftBukkit end
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityPotion;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.StringUtils;
+// CraftBukkit end
 
 public class Potion
 {
@@ -279,43 +276,6 @@ public class Potion
     {
         this.effectiveness = par1;
         return this;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns true if the potion has a associated status icon to display in then inventory when active.
-     */
-    public boolean hasStatusIcon()
-    {
-        return this.statusIconIndex >= 0;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the index for the icon to display when the potion is active.
-     */
-    public int getStatusIconIndex()
-    {
-        return this.statusIconIndex;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * This method returns true if the potion effect is bad - negative - for the entity.
-     */
-    public boolean isBadEffect()
-    {
-        return this.isBadEffect;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static String getDurationString(PotionEffect par0PotionEffect)
-    {
-        int i = par0PotionEffect.getDuration();
-        return StringUtils.ticksToElapsedTime(i);
     }
 
     public double getEffectiveness()

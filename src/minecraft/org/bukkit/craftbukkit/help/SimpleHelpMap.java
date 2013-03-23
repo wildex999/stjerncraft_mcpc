@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.help;
 
-import guava10.com.google.common.base.Predicate;
-import guava10.com.google.common.base.Predicates;
-import guava10.com.google.common.collect.Collections2;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import org.bukkit.command.*;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.command.defaults.VanillaCommand;

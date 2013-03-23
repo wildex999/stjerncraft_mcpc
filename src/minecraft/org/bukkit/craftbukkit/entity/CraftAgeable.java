@@ -5,16 +5,16 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Ageable;
 
 public class CraftAgeable extends CraftCreature implements Ageable {
-    public CraftAgeable(CraftServer server, net.minecraft.entity.EntityAgeable/*was:EntityAgeable*/ entity) {
+    public CraftAgeable(CraftServer server, net.minecraft.entity.EntityAgeable entity) {
         super(server, entity);
     }
 
     public int getAge() {
-        return getHandle().getGrowingAge/*was:getAge*/();
+        return getHandle().getGrowingAge();
     }
 
     public void setAge(int age) {
-        getHandle().setGrowingAge/*was:setAge*/(age);
+        getHandle().setGrowingAge(age);
     }
 
     public void setAgeLock(boolean lock) {
@@ -55,8 +55,8 @@ public class CraftAgeable extends CraftCreature implements Ageable {
     }
     
     @Override
-    public net.minecraft.entity.EntityAgeable/*was:EntityAgeable*/ getHandle() {
-        return (net.minecraft.entity.EntityAgeable/*was:EntityAgeable*/) entity;
+    public net.minecraft.entity.EntityAgeable getHandle() {
+        return (net.minecraft.entity.EntityAgeable) entity;
     }
     
     @Override

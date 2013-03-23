@@ -1,7 +1,5 @@
 package net.minecraft.world.storage;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -9,9 +7,13 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+
 // CraftBukkit start
 import java.util.UUID;
 
@@ -67,6 +69,7 @@ public class MapData extends WorldSavedData
         int dimension = (dimTag instanceof NBTTagByte) ? ((NBTTagByte) dimTag).data : ((NBTTagInt) dimTag).data;
 
         // Forge end
+        
         if (dimension >= 10)
         {
             long least = par1NBTTagCompound.getLong("UUIDLeast");
@@ -75,10 +78,10 @@ public class MapData extends WorldSavedData
             if (least != 0L && most != 0L)
             {
                 this.uniqueId = new UUID(most, least);
-                CraftWorld craftworld = (CraftWorld) server.getWorld(this.uniqueId);
+                CraftWorld world = (CraftWorld) server.getWorld(this.uniqueId);
 
                 // Check if the stored world details are correct.
-                if (craftworld == null)
+                if (world == null)
                 {
                     /* All Maps which do not have their valid world loaded are set to a dimension which hopefully won't be reached.
                        This is to prevent them being corrupted with the wrong map data. */
@@ -86,7 +89,7 @@ public class MapData extends WorldSavedData
                 }
                 else
                 {
-                    dimension = (byte) craftworld.getHandle().dimension;
+                    dimension = (byte) world.getHandle().dimension;
                 }
             }
         }
@@ -133,7 +136,7 @@ public class MapData extends WorldSavedData
 
                         if (j1 >= 0 || j1 < 128)
                         {
-                            this.colors[j1 + l * 128] = abyte[i1 + i1 * short1];
+                            this.colors[j1 + l * 128] = abyte[i1 + k * short1];
                         }
                     }
                 }
@@ -309,46 +312,6 @@ public class MapData extends WorldSavedData
             {
                 mapinfo.field_76210_c[par1] = par3;
             }
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Updates the client's map with information from other players in MP
-     */
-    public void updateMPMapData(byte[] par1ArrayOfByte)
-    {
-        int i;
-
-        if (par1ArrayOfByte[0] == 0)
-        {
-            i = par1ArrayOfByte[1] & 255;
-            int j = par1ArrayOfByte[2] & 255;
-
-            for (int k = 0; k < par1ArrayOfByte.length - 3; ++k)
-            {
-                this.colors[(k + j) * 128 + i] = par1ArrayOfByte[k + 3];
-            }
-
-            this.markDirty();
-        }
-        else if (par1ArrayOfByte[0] == 1)
-        {
-            this.playersVisibleOnMap.clear();
-
-            for (i = 0; i < (par1ArrayOfByte.length - 1) / 3; ++i)
-            {
-                byte b0 = (byte)(par1ArrayOfByte[i * 3 + 1] >> 4);
-                byte b1 = par1ArrayOfByte[i * 3 + 2];
-                byte b2 = par1ArrayOfByte[i * 3 + 3];
-                byte b3 = (byte)(par1ArrayOfByte[i * 3 + 1] & 15);
-                this.playersVisibleOnMap.put("icon-" + i, new MapCoord(this, b0, b1, b2, b3));
-            }
-        }
-        else if (par1ArrayOfByte[0] == 2)
-        {
-            this.scale = par1ArrayOfByte[1];
         }
     }
 

@@ -6,20 +6,20 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pig;
 
 public class CraftPig extends CraftAnimals implements Pig {
-    public CraftPig(CraftServer server, net.minecraft.entity.passive.EntityPig/*was:EntityPig*/ entity) {
+    public CraftPig(CraftServer server, net.minecraft.entity.passive.EntityPig entity) {
         super(server, entity);
     }
 
     public boolean hasSaddle() {
-        return getHandle().getSaddled/*was:hasSaddle*/();
+        return getHandle().getSaddled();
     }
 
     public void setSaddle(boolean saddled) {
-        getHandle().setSaddled/*was:setSaddle*/(saddled);
+        getHandle().setSaddled(saddled);
     }
 
-    public net.minecraft.entity.passive.EntityPig/*was:EntityPig*/ getHandle() {
-        return (net.minecraft.entity.passive.EntityPig/*was:EntityPig*/) entity;
+    public net.minecraft.entity.passive.EntityPig getHandle() {
+        return (net.minecraft.entity.passive.EntityPig) entity;
     }
 
     @Override

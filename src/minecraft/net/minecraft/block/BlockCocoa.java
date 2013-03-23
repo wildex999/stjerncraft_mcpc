@@ -1,8 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.ArrayList;
 import java.util.Random;
 import net.minecraft.block.material.Material;
@@ -17,9 +14,11 @@ import net.minecraft.world.World;
 
 public class BlockCocoa extends BlockDirectional
 {
+    public static final String[] field_94470_a = new String[] {"cocoa_0", "cocoa_1", "cocoa_2"};
+
     public BlockCocoa(int par1)
     {
-        super(par1, 168, Material.plants);
+        super(par1, Material.plants);
         this.setTickRandomly(true);
     }
 
@@ -31,7 +30,7 @@ public class BlockCocoa extends BlockDirectional
         if (!this.canBlockStay(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
         else if (par1World.rand.nextInt(5) == 0)
         {
@@ -93,17 +92,6 @@ public class BlockCocoa extends BlockDirectional
         return super.getCollisionBoundingBoxFromPool(par1World, par2, par3, par4);
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the bounding box of the wired rectangular prism to render.
-     */
-    public AxisAlignedBB getSelectedBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
-    {
-        this.setBlockBoundsBasedOnState(par1World, par2, par3, par4);
-        return super.getSelectedBoundingBoxFromPool(par1World, par2, par3, par4);
-    }
-
     /**
      * Updates the blocks bounds based on its current state. Args: world, x, y, z
      */
@@ -121,15 +109,12 @@ public class BlockCocoa extends BlockDirectional
             case 0:
                 this.setBlockBounds((8.0F - f) / 16.0F, (12.0F - (float)l1) / 16.0F, (15.0F - (float)k1) / 16.0F, (8.0F + f) / 16.0F, 0.75F, 0.9375F);
                 break;
-
             case 1:
                 this.setBlockBounds(0.0625F, (12.0F - (float)l1) / 16.0F, (8.0F - f) / 16.0F, (1.0F + (float)k1) / 16.0F, 0.75F, (8.0F + f) / 16.0F);
                 break;
-
             case 2:
                 this.setBlockBounds((8.0F - f) / 16.0F, (12.0F - (float)l1) / 16.0F, 0.0625F, (8.0F + f) / 16.0F, 0.75F, (1.0F + (float)k1) / 16.0F);
                 break;
-
             case 3:
                 this.setBlockBounds((15.0F - (float)k1) / 16.0F, (12.0F - (float)l1) / 16.0F, (8.0F - f) / 16.0F, 0.9375F, 0.75F, (8.0F + f) / 16.0F);
         }
@@ -138,10 +123,10 @@ public class BlockCocoa extends BlockDirectional
     /**
      * Called when the block is placed in the world.
      */
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
     {
         int l = ((MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3) + 0) % 4;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, l);
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 2);
     }
 
     /**
@@ -166,7 +151,7 @@ public class BlockCocoa extends BlockDirectional
         if (!this.canBlockStay(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 
@@ -202,16 +187,6 @@ public class BlockCocoa extends BlockDirectional
         return dropped;
     }
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return Item.dyePowder.itemID;
-    }
-
     /**
      * Get the block's damage value (for use with pick block).
      */
@@ -219,10 +194,10 @@ public class BlockCocoa extends BlockDirectional
     {
         return 3;
     }
-
+    
     @Override
     public int idDropped(int par1, Random par2Random, int par3)
     {
         return 0;
-    }
+    }    
 }

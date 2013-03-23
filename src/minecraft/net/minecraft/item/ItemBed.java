@@ -6,7 +6,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
 public class ItemBed extends Item
 {
     public ItemBed(int par1)
@@ -34,7 +33,7 @@ public class ItemBed extends Item
         else
         {
             ++par5;
-            BlockBed blockbed = (BlockBed) Block.bed;
+            BlockBed blockbed = (BlockBed)Block.bed;
             int i1 = MathHelper.floor_double((double)(par2EntityPlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
             byte b0 = 0;
             byte b1 = 0;
@@ -61,10 +60,10 @@ public class ItemBed extends Item
 
             if (par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack) && par2EntityPlayer.canPlayerEdit(par4 + b0, par5, par6 + b1, par7, par1ItemStack))
             {
-                if (par3World.isAirBlock(par4, par5, par6) && par3World.isAirBlock(par4 + b0, par5, par6 + b1) && par3World.doesBlockHaveSolidTopSurface(par4, par5 - 1, par6) && par3World.doesBlockHaveSolidTopSurface(par4 + b0, par5 - 1, par6 + b1))
+                if (par3World.isAirBlock(par4, par5, par6) && par3World.isAirBlock(par4 + b0, par5, par6 + b1) && par3World.doesBlockHaveSolidTopSurface(par4, par5 - 1, par6) && par3World.func_85174_u(par4 + b0, par5 - 1, par6 + b1))
                 {
                     // CraftBukkit start
-                    // world.setTypeIdAndData(i, j, k, blockbed.id, i1);
+                    // world.setTypeIdAndData(i, j, k, blockbed.id, i1, 3);
                     if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, blockbed.blockID, i1, clickedX, clickedY, clickedZ))
                     {
                         return false;
@@ -74,7 +73,7 @@ public class ItemBed extends Item
 
                     if (par3World.getBlockId(par4, par5, par6) == blockbed.blockID)
                     {
-                        par3World.setBlockAndMetadataWithNotify(par4 + b0, par5, par6 + b1, blockbed.blockID, i1 + 8);
+                        par3World.setBlock(par4 + b0, par5, par6 + b1, blockbed.blockID, i1 + 8, 3);
                     }
 
                     --par1ItemStack.stackSize;

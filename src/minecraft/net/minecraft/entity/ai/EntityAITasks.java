@@ -4,12 +4,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.profiler.Profiler;
+
 import org.bukkit.craftbukkit.util.UnsafeList; // CraftBukkit
 
 public class EntityAITasks
 {
-    public List taskEntries = new ArrayList(); // MCPC+  private->public
-    private List executingTaskEntries = new ArrayList();
+    // CraftBukkit start - ArrayList -> UnsafeList
+
+    /** A list of EntityAITaskEntrys in EntityAITasks. */
+    private List taskEntries = new UnsafeList();
+
+    /** A list of EntityAITaskEntrys that are currently being executed. */
+    private List executingTaskEntries = new UnsafeList();
+    // CraftBukkit end
 
     /** Instance of Profiler. */
     private final Profiler theProfiler;
@@ -26,7 +33,10 @@ public class EntityAITasks
         this.taskEntries.add(new EntityAITaskEntry(this, par1, par2EntityAIBase));
     }
 
-    public void func_85156_a(EntityAIBase par1EntityAIBase)
+    /**
+     * removes the indicated task from the entity's AI tasks.
+     */
+    public void removeTask(EntityAIBase par1EntityAIBase)
     {
         Iterator iterator = this.taskEntries.iterator();
 
@@ -60,12 +70,12 @@ public class EntityAITasks
 
             while (iterator.hasNext())
             {
-                entityaitaskentry = (EntityAITaskEntry) iterator.next();
+                entityaitaskentry = (EntityAITaskEntry)iterator.next();
                 boolean flag = this.executingTaskEntries.contains(entityaitaskentry);
 
                 if (flag)
                 {
-                    if (this.func_75775_b(entityaitaskentry) && this.func_75773_a(entityaitaskentry))
+                    if (this.canUse(entityaitaskentry) && this.canContinue(entityaitaskentry))
                     {
                         continue;
                     }
@@ -74,10 +84,10 @@ public class EntityAITasks
                     this.executingTaskEntries.remove(entityaitaskentry);
                 }
 
-                if (this.func_75775_b(entityaitaskentry) && entityaitaskentry.action.shouldExecute())
+                if (this.canUse(entityaitaskentry) && entityaitaskentry.action.shouldExecute())
                 {
                     // CraftBukkit start - call method now instead of queueing
-                    // arraylist.add(pathfindergoalselectoritem);
+                    // arraylist.add(entityaitaskentry);
                     entityaitaskentry.action.startExecuting();
                     // CraftBukkit end
                     this.executingTaskEntries.add(entityaitaskentry);
@@ -90,7 +100,7 @@ public class EntityAITasks
 
             while (iterator.hasNext())
             {
-                entityaitaskentry = (EntityAITaskEntry) iterator.next();
+                entityaitaskentry = (EntityAITaskEntry)iterator.next();
 
                 if (!entityaitaskentry.action.continueExecuting())
                 {
@@ -105,9 +115,9 @@ public class EntityAITasks
         /*iterator = arraylist.iterator();
 
         while (iterator.hasNext()) {
-            pathfindergoalselectoritem = (PathfinderGoalSelectorItem) iterator.next();
-            this.c.a(pathfindergoalselectoritem.a.getClass().getSimpleName());
-            pathfindergoalselectoritem.a.c();
+            entityaitaskentry = (PathfinderGoalSelectorItem) iterator.next();
+            this.c.a(entityaitaskentry.a.getClass().getSimpleName());
+            entityaitaskentry.a.c();
             this.c.b();
         }*/
         // CraftBukkit end
@@ -117,14 +127,17 @@ public class EntityAITasks
 
         while (iterator.hasNext())
         {
-            entityaitaskentry = (EntityAITaskEntry) iterator.next();
+            entityaitaskentry = (EntityAITaskEntry)iterator.next();
             entityaitaskentry.action.updateTask();
         }
 
         this.theProfiler.endSection();
     }
 
-    private boolean func_75773_a(EntityAITaskEntry par1EntityAITaskEntry)
+    /**
+     * Determine if a specific AI Task should continue being executed.
+     */
+    private boolean canContinue(EntityAITaskEntry par1EntityAITaskEntry)
     {
         this.theProfiler.startSection("canContinue");
         boolean flag = par1EntityAITaskEntry.action.continueExecuting();
@@ -132,7 +145,11 @@ public class EntityAITasks
         return flag;
     }
 
-    private boolean func_75775_b(EntityAITaskEntry par1EntityAITaskEntry)
+    /**
+     * Determine if a specific AI Task can be executed, which means that all running higher (= lower int value) priority
+     * tasks are compatible with it or all lower priority tasks can be interrupted.
+     */
+    private boolean canUse(EntityAITaskEntry par1EntityAITaskEntry)
     {
         this.theProfiler.startSection("canUse");
         Iterator iterator = this.taskEntries.iterator();
@@ -145,15 +162,20 @@ public class EntityAITasks
             {
                 if (par1EntityAITaskEntry.priority >= entityaitaskentry1.priority)
                 {
-                    if (this.executingTaskEntries.contains(entityaitaskentry1) && !this.areTasksCompatible(par1EntityAITaskEntry, entityaitaskentry1))
+                    // CraftBukkit - switch order
+                    if (!this.areTasksCompatible(par1EntityAITaskEntry, entityaitaskentry1) && this.executingTaskEntries.contains(entityaitaskentry1))
                     {
                         this.theProfiler.endSection();
+                        ((UnsafeList.Itr) iterator).valid = false; // CraftBukkit - mark iterator for reuse
                         return false;
                     }
+
+                    // CraftBukkit - switch order
                 }
-                else if (this.executingTaskEntries.contains(entityaitaskentry1) && !entityaitaskentry1.action.isContinuous())
+                else if (!entityaitaskentry1.action.isInterruptible() && this.executingTaskEntries.contains(entityaitaskentry1))
                 {
                     this.theProfiler.endSection();
+                    ((UnsafeList.Itr) iterator).valid = false; // CraftBukkit - mark iterator for reuse
                     return false;
                 }
             }

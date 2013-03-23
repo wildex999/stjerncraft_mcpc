@@ -1,7 +1,5 @@
 package net.minecraft.entity.boss;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.command.IEntitySelector;
@@ -32,7 +30,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 // CraftBukkit end
 
-public class EntityWither extends EntityMob implements IBossDisplayData, IRangedAttackMob
+public class EntityWither extends EntityMob implements IRangedAttackMob
 {
     private float[] field_82220_d = new float[2];
     private float[] field_82221_e = new float[2];
@@ -93,12 +91,6 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
         this.dataWatcher.updateObject(16, Integer.valueOf(this.health));
     }
 
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
-    {
-        return this.height / 8.0F;
-    }
-
     /**
      * Returns the sound this mob makes while it's alive.
      */
@@ -121,17 +113,6 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
     protected String getDeathSound()
     {
         return "mob.wither.death";
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the texture's file path as a String.
-     */
-    public String getTexture()
-    {
-        int i = this.func_82212_n();
-        return i > 0 && (i > 80 || i / 5 % 2 != 1) ? "/mob/wither_invul.png" : "/mob/wither.png";
     }
 
     /**
@@ -181,7 +162,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
 
         if (this.motionX * this.motionX + this.motionZ * this.motionZ > 0.05000000074505806D)
         {
-            this.rotationYaw = (float) Math.atan2(this.motionZ, this.motionX) * 57.295776F - 90.0F;
+            this.rotationYaw = (float)Math.atan2(this.motionZ, this.motionX) * (180F / (float)Math.PI) - 90.0F;
         }
 
         super.onLivingUpdate();
@@ -292,11 +273,11 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
 
                     if (this.worldObj.difficultySetting >= 2)
                     {
-                        int k = i - 1;
-                        int l = this.field_82224_i[i - 1];
-                        this.field_82224_i[k] = this.field_82224_i[i - 1] + 1;
+                        int i1001 = i - 1;
+                        int i1003 = this.field_82224_i[i - 1];
+                        this.field_82224_i[i1001] = this.field_82224_i[i - 1] + 1;
 
-                        if (l > 15)
+                        if (i1003 > 15)
                         {
                             float f = 10.0F;
                             float f1 = 5.0F;
@@ -389,8 +370,6 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
 
                                 if (i3 > 0 && i3 != Block.bedrock.blockID && i3 != Block.endPortal.blockID && i3 != Block.endPortalFrame.blockID)
                                 {
-                                    int j3 = this.worldObj.getBlockMetadata(j2, k2, l2);
-
                                     // CraftBukkit start
                                     if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, j2, k2, l2, 0, 0).isCancelled())
                                     {
@@ -398,10 +377,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
                                     }
 
                                     // CraftBukkit end
-                                    this.worldObj.playAuxSFX(2001, j2, k2, l2, i3 + (j3 << 12));
-                                    Block.blocksList[i3].dropBlockAsItem(this.worldObj, j2, k2, l2, j3, 0);
-                                    this.worldObj.setBlockWithNotify(j2, k2, l2, 0);
-                                    flag = true;
+                                    flag = this.worldObj.destroyBlock(j2, k2, l2, true) || flag;
                                 }
                             }
                         }
@@ -448,7 +424,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
         }
         else
         {
-            float f = (this.renderYawOffset + (float)(180 * (par1 - 1))) / 180.0F * 3.1415927F;
+            float f = (this.renderYawOffset + (float)(180 * (par1 - 1))) / 180.0F * (float)Math.PI;
             float f1 = MathHelper.cos(f);
             return this.posX + (double)f1 * 1.3D;
         }
@@ -467,7 +443,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
         }
         else
         {
-            float f = (this.renderYawOffset + (float)(180 * (par1 - 1))) / 180.0F * 3.1415927F;
+            float f = (this.renderYawOffset + (float)(180 * (par1 - 1))) / 180.0F * (float)Math.PI;
             float f1 = MathHelper.sin(f);
             return this.posZ + (double)f1 * 1.3D;
         }
@@ -520,7 +496,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
     /**
      * Attack the specified entity using a ranged attack.
      */
-    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving)
+    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving, float par2)
     {
         this.func_82216_a(0, par1EntityLiving);
     }
@@ -600,12 +576,6 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
         this.entityAge = 0;
     }
 
-    @SideOnly(Side.CLIENT)
-    public int getBrightnessForRender(float par1)
-    {
-        return 15728880;
-    }
-
     /**
      * Returns true if other Entities should be prevented from moving through this Entity.
      */
@@ -643,18 +613,6 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
     public int getMaxHealth()
     {
         return 300;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float func_82207_a(int par1)
-    {
-        return this.field_82221_e[par1];
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float func_82210_r(int par1)
-    {
-        return this.field_82220_d[par1];
     }
 
     public int func_82212_n()
@@ -695,5 +653,13 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
     public EnumCreatureAttribute getCreatureAttribute()
     {
         return EnumCreatureAttribute.UNDEAD;
+    }
+
+    /**
+     * Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
+     */
+    public void mountEntity(Entity par1Entity)
+    {
+        this.ridingEntity = null;
     }
 }

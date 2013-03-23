@@ -3,7 +3,6 @@ package net.minecraft.entity.monster;
 // CraftBukkit start
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-// CraftBukkit end
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IRangedAttackMob;
@@ -18,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class EntitySnowman extends EntityGolem implements IRangedAttackMob
 {
@@ -142,14 +142,14 @@ public class EntitySnowman extends EntityGolem implements IRangedAttackMob
     /**
      * Attack the specified entity using a ranged attack.
      */
-    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving)
+    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving, float par2)
     {
         EntitySnowball entitysnowball = new EntitySnowball(this.worldObj, this);
         double d0 = par1EntityLiving.posX - this.posX;
         double d1 = par1EntityLiving.posY + (double)par1EntityLiving.getEyeHeight() - 1.100000023841858D - entitysnowball.posY;
         double d2 = par1EntityLiving.posZ - this.posZ;
-        float f = MathHelper.sqrt_double(d0 * d0 + d2 * d2) * 0.2F;
-        entitysnowball.setThrowableHeading(d0, d1 + (double)f, d2, 1.6F, 12.0F);
+        float f1 = MathHelper.sqrt_double(d0 * d0 + d2 * d2) * 0.2F;
+        entitysnowball.setThrowableHeading(d0, d1 + (double)f1, d2, 1.6F, 12.0F);
         this.playSound("random.bow", 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
         this.worldObj.spawnEntityInWorld(entitysnowball);
     }

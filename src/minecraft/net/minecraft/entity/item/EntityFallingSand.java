@@ -1,19 +1,20 @@
 package net.minecraft.entity.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.Iterator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSand;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 //CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -35,7 +36,7 @@ public class EntityFallingSand extends Entity
 
     /** Actual damage dealt to entities hit by falling block */
     private float fallHurtAmount;
-    private NBTTagCompound tileEntityData; // CraftBukkit
+    public NBTTagCompound fallingBlockTileEntityData;
 
     public EntityFallingSand(World par1World)
     {
@@ -46,6 +47,7 @@ public class EntityFallingSand extends Entity
         this.isAnvil = false;
         this.fallHurtMax = 40;
         this.fallHurtAmount = 2.0F;
+        this.fallingBlockTileEntityData = null;
     }
 
     public EntityFallingSand(World par1World, double par2, double par4, double par6, int par8)
@@ -62,6 +64,7 @@ public class EntityFallingSand extends Entity
         this.isAnvil = false;
         this.fallHurtMax = 40;
         this.fallHurtAmount = 2.0F;
+        this.fallingBlockTileEntityData = null;
         this.blockID = par8;
         this.metadata = par9;
         this.preventEntitySpawning = true;
@@ -124,26 +127,14 @@ public class EntityFallingSand extends Entity
 
                 if (this.fallTime == 1)
                 {
-                    if (this.fallTime != 1 || this.worldObj.getBlockId(i, j, k) != this.blockID || this.worldObj.getBlockMetadata(i, j, k) != this.metadata || CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, 0, 0).isCancelled()) // CraftBukkit - compare data and call event
+                    // CraftBukkit - compare data and call event
+                    if (this.fallTime != 1 || this.worldObj.getBlockId(i, j, k) != this.blockID || this.worldObj.getBlockMetadata(i, j, k) != this.metadata || CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, 0, 0).isCancelled())
                     {
                         this.setDead();
                         return;
                     }
 
-                    // CraftBukkit start - Store the block tile entity with this entity
-                    TileEntity tile = this.worldObj.getBlockTileEntity(i, j, k);
-
-                    if (tile != null)
-                    {
-                        tileEntityData = new NBTTagCompound();
-                        // Save the data
-                        tile.writeToNBT(tileEntityData);
-                        // Remove the existing tile entity
-                        this.worldObj.removeBlockTileEntity(i, j, k);
-                    }
-
-                    // CraftBukkit end
-                    this.worldObj.setBlockWithNotify(i, j, k, 0);
+                    this.worldObj.setBlockToAir(i, j, k);
                 }
 
                 if (this.onGround)
@@ -157,24 +148,44 @@ public class EntityFallingSand extends Entity
                         this.setDead();
 
                         // CraftBukkit start
-                        if (!this.isBreakingAnvil && this.worldObj.canPlaceEntityOnSide(this.blockID, i, j, k, true, 1, (Entity) null) && !BlockSand.canFallBelow(this.worldObj, i, j - 1, k) /* mimic the false conditions of setTypeIdAndData */ && i >= -30000000 && k >= -30000000 && i < 30000000 && k < 30000000 && j > 0 && j < 256 && !(this.worldObj.getBlockId(i, j, k) == this.blockID && this.worldObj.getBlockMetadata(i, j, k) == this.metadata))
+                        if (!this.isBreakingAnvil && this.worldObj.canPlaceEntityOnSide(this.blockID, i, j, k, true, 1, (Entity) null, (ItemStack) null) && !BlockSand.canFallBelow(this.worldObj, i, j - 1, k) /* mimic the false conditions of setTypeIdAndData */ && i >= -30000000 && k >= -30000000 && i < 30000000 && k < 30000000 && j > 0 && j < 256 && !(this.worldObj.getBlockId(i, j, k) == this.blockID && this.worldObj.getBlockMetadata(i, j, k) == this.metadata))
                         {
                             if (CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, this.blockID, this.metadata).isCancelled())
                             {
                                 return;
                             }
 
-                            this.worldObj.setBlockAndMetadataWithNotify(i, j, k, this.blockID, this.metadata);
-
-                            if (this.tileEntityData != null)
-                            {
-                                this.worldObj.setBlockTileEntity(i, j, k, TileEntity.createAndLoadEntity(this.tileEntityData));
-                            }
-
+                            this.worldObj.setBlock(i, j, k, this.blockID, this.metadata, 3);
                             // CraftBukkit end
+
                             if (Block.blocksList[this.blockID] instanceof BlockSand)
                             {
                                 ((BlockSand)Block.blocksList[this.blockID]).onFinishFalling(this.worldObj, i, j, k, this.metadata);
+                            }
+
+                            if (this.fallingBlockTileEntityData != null && Block.blocksList[this.blockID] instanceof ITileEntityProvider)
+                            {
+                                TileEntity tileentity = this.worldObj.getBlockTileEntity(i, j, k);
+
+                                if (tileentity != null)
+                                {
+                                    NBTTagCompound nbttagcompound = new NBTTagCompound();
+                                    tileentity.writeToNBT(nbttagcompound);
+                                    Iterator iterator = this.fallingBlockTileEntityData.getTags().iterator();
+
+                                    while (iterator.hasNext())
+                                    {
+                                        NBTBase nbtbase = (NBTBase)iterator.next();
+
+                                        if (!nbtbase.getName().equals("x") && !nbtbase.getName().equals("y") && !nbtbase.getName().equals("z"))
+                                        {
+                                            nbttagcompound.setTag(nbtbase.getName(), nbtbase.copy());
+                                        }
+                                    }
+
+                                    tileentity.readFromNBT(nbttagcompound);
+                                    tileentity.onInventoryChanged();
+                                }
                             }
                         }
                         else if (this.shouldDropItem && !this.isBreakingAnvil)
@@ -252,6 +263,7 @@ public class EntityFallingSand extends Entity
     protected void writeEntityToNBT(NBTTagCompound par1NBTTagCompound)
     {
         par1NBTTagCompound.setByte("Tile", (byte)this.blockID);
+        par1NBTTagCompound.setInteger("TileID", this.blockID);
         par1NBTTagCompound.setByte("Data", (byte)this.metadata);
         par1NBTTagCompound.setByte("Time", (byte)this.fallTime);
         par1NBTTagCompound.setBoolean("DropItem", this.shouldDropItem);
@@ -259,13 +271,10 @@ public class EntityFallingSand extends Entity
         par1NBTTagCompound.setFloat("FallHurtAmount", this.fallHurtAmount);
         par1NBTTagCompound.setInteger("FallHurtMax", this.fallHurtMax);
 
-        // CraftBukkit start - store the tile data
-        if (this.tileEntityData != null)
+        if (this.fallingBlockTileEntityData != null)
         {
-            par1NBTTagCompound.setTag("Bukkit.tileData", this.tileEntityData.copy());
+            par1NBTTagCompound.setCompoundTag("TileEntityData", this.fallingBlockTileEntityData);
         }
-
-        // CraftBukkit end
     }
 
     /**
@@ -273,7 +282,15 @@ public class EntityFallingSand extends Entity
      */
     protected void readEntityFromNBT(NBTTagCompound par1NBTTagCompound)
     {
-        this.blockID = par1NBTTagCompound.getByte("Tile") & 255;
+        if (par1NBTTagCompound.hasKey("TileID"))
+        {
+            this.blockID = par1NBTTagCompound.getInteger("TileID");
+        }
+        else
+        {
+            this.blockID = par1NBTTagCompound.getByte("Tile") & 255;
+        }
+
         this.metadata = par1NBTTagCompound.getByte("Data") & 255;
         this.fallTime = par1NBTTagCompound.getByte("Time") & 255;
 
@@ -288,18 +305,23 @@ public class EntityFallingSand extends Entity
             this.isAnvil = true;
         }
 
-        // CraftBukkit start - load tileData
-        if (par1NBTTagCompound.hasKey("Bukkit.tileData"))
-        {
-            this.tileEntityData = (NBTTagCompound) par1NBTTagCompound.getCompoundTag("Bukkit.tileData").copy();
-        }
-
-        // CraftBukkit end
-
         if (par1NBTTagCompound.hasKey("DropItem"))
         {
             this.shouldDropItem = par1NBTTagCompound.getBoolean("DropItem");
         }
+
+        if (par1NBTTagCompound.hasKey("TileEntityData"))
+        {
+            this.fallingBlockTileEntityData = par1NBTTagCompound.getCompoundTag("TileEntityData");
+        }
+
+        // CraftBukkit start - backward compatibility, remove in 1.6
+        if (par1NBTTagCompound.hasKey("Bukkit.tileData"))
+        {
+            this.fallingBlockTileEntityData = (NBTTagCompound) par1NBTTagCompound.getCompoundTag("Bukkit.tileData").copy();
+        }
+
+        // CraftBukkit end
 
         if (this.blockID == 0)
         {
@@ -307,31 +329,9 @@ public class EntityFallingSand extends Entity
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
-    {
-        return 0.0F;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public World getWorld()
-    {
-        return this.worldObj;
-    }
-
     public void setIsAnvil(boolean par1)
     {
         this.isAnvil = par1;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Return whether this entity should be rendered as on fire.
-     */
-    public boolean canRenderOnFire()
-    {
-        return false;
     }
 
     public void func_85029_a(CrashReportCategory par1CrashReportCategory)

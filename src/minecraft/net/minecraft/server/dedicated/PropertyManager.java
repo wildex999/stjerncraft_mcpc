@@ -7,18 +7,22 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.minecraft.logging.ILogAgent;
+
 import joptsimple.OptionSet; // CraftBukkit
 
 public class PropertyManager
 {
-    /** Reference to the logger. */
-    public static Logger logger = Logger.getLogger("Minecraft");
-    public Properties properties = new Properties(); // CraftBukkit - private -> public
-    private File associatedFile;
+    public final Properties properties = new Properties(); // CraftBukkit - private -> public
 
-    public PropertyManager(File par1File)
+    /** Reference to the logger. */
+    private final ILogAgent logger;
+    private final File associatedFile;
+
+    public PropertyManager(File par1File, ILogAgent par2ILogAgent)
     {
         this.associatedFile = par1File;
+        this.logger = par2ILogAgent;
 
         if (par1File.exists())
         {
@@ -31,7 +35,7 @@ public class PropertyManager
             }
             catch (Exception exception)
             {
-                logger.log(Level.WARNING, "Failed to load " + par1File, exception);
+                par2ILogAgent.func_98235_b("Failed to load " + par1File, exception);
                 this.logMessageAndSave();
             }
             finally
@@ -51,7 +55,7 @@ public class PropertyManager
         }
         else
         {
-            logger.log(Level.WARNING, par1File + " does not exist");
+            par2ILogAgent.logWarning(par1File + " does not exist");
             this.logMessageAndSave();
         }
     }
@@ -59,9 +63,9 @@ public class PropertyManager
     // CraftBukkit start
     private OptionSet options = null;
 
-    public PropertyManager(final OptionSet options)
+    public PropertyManager(final OptionSet options, ILogAgent ilogagent)
     {
-        this((File) options.valueOf("config"));
+        this((File) options.valueOf("config"), ilogagent);
         this.options = options;
     }
 
@@ -82,7 +86,7 @@ public class PropertyManager
      */
     public void logMessageAndSave()
     {
-        logger.log(Level.INFO, "Generating new properties file");
+        this.logger.logInfo("Generating new properties file");
         this.saveProperties();
     }
 
@@ -107,7 +111,7 @@ public class PropertyManager
         }
         catch (Exception exception)
         {
-            logger.log(Level.WARNING, "Failed to save " + this.associatedFile, exception);
+            this.logger.func_98235_b("Failed to save " + this.associatedFile, exception);
             this.logMessageAndSave();
         }
         finally

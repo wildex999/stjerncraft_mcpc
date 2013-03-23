@@ -3,8 +3,11 @@ package net.minecraft.block;
 import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -13,9 +16,9 @@ import static net.minecraftforge.common.ForgeDirection.*;
 
 public class BlockLever extends Block
 {
-    protected BlockLever(int par1, int par2)
+    protected BlockLever(int par1)
     {
-        super(par1, par2, Material.circuits);
+        super(par1, Material.circuits);
         this.setCreativeTab(CreativeTabs.tabRedstone);
     }
 
@@ -87,39 +90,72 @@ public class BlockLever extends Block
     {
         int j1 = par9 & 8;
         int k1 = par9 & 7;
-        k1 = -1;
+        byte b0 = -1;
 
         if (par5 == 0 && par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN))
         {
-            k1 = par1World.rand.nextBoolean() ? 0 : 7;
+            b0 = 0;
         }
 
         if (par5 == 1 && par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP))
         {
-            k1 = 5 + par1World.rand.nextInt(2);
+            b0 = 5;
         }
 
         if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH))
         {
-            k1 = 4;
+            b0 = 4;
         }
 
         if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH))
         {
-            k1 = 3;
+            b0 = 3;
         }
 
         if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
         {
-            k1 = 2;
+            b0 = 2;
         }
 
         if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
         {
-            k1 = 1;
+            b0 = 1;
         }
 
-        return k1 + j1;
+        return b0 + j1;
+    }
+
+    /**
+     * Called when the block is placed in the world.
+     */
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
+    {
+        int l = par1World.getBlockMetadata(par2, par3, par4);
+        int i1 = l & 7;
+        int j1 = l & 8;
+
+        if (i1 == invertMetadata(1))
+        {
+            if ((MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 1) == 0)
+            {
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 5 | j1, 2);
+            }
+            else
+            {
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 6 | j1, 2);
+            }
+        }
+        else if (i1 == invertMetadata(0))
+        {
+            if ((MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 1) == 0)
+            {
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 7 | j1, 2);
+            }
+            else
+            {
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 0 | j1, 2);
+            }
+        }
     }
 
     /**
@@ -200,7 +236,7 @@ public class BlockLever extends Block
             if (flag)
             {
                 this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
         }
     }
@@ -214,7 +250,7 @@ public class BlockLever extends Block
         if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
             return false;
         }
         else
@@ -263,11 +299,6 @@ public class BlockLever extends Block
     }
 
     /**
-     * Called when the block is clicked by a player. Args: x, y, z, entityPlayer
-     */
-    public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer) {}
-
-    /**
      * Called upon block activation (right click on the block.)
      */
     public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
@@ -283,8 +314,8 @@ public class BlockLever extends Block
             int k1 = 8 - (i1 & 8);
             // CraftBukkit start - Interact Lever
             org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
-            int old = (k1 != 8) ? 1 : 0;
-            int current = (k1 == 8) ? 1 : 0;
+            int old = (k1 != 8) ? 15 : 0;
+            int current = (k1 == 8) ? 15 : 0;
             BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
             par1World.getServer().getPluginManager().callEvent(eventRedstone);
 
@@ -294,8 +325,7 @@ public class BlockLever extends Block
             }
 
             // CraftBukkit end
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, j1 + k1);
-            par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, j1 + k1, 3);
             par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, k1 > 0 ? 0.6F : 0.5F);
             par1World.notifyBlocksOfNeighborChange(par2, par3, par4, this.blockID);
 
@@ -378,27 +408,27 @@ public class BlockLever extends Block
      * returns true, standard redstone propagation rules will apply instead and this will not be called. Args: World, X,
      * Y, Z, side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        return (par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 8) > 0;
+        return (par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 8) > 0 ? 15 : 0;
     }
 
     /**
      * Returns true if the block is emitting direct/strong redstone power on the specified side. Args: World, X, Y, Z,
      * side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
         int i1 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 
         if ((i1 & 8) == 0)
         {
-            return false;
+            return 0;
         }
         else
         {
             int j1 = i1 & 7;
-            return j1 == 0 && par5 == 0 ? true : (j1 == 7 && par5 == 0 ? true : (j1 == 6 && par5 == 1 ? true : (j1 == 5 && par5 == 1 ? true : (j1 == 4 && par5 == 2 ? true : (j1 == 3 && par5 == 3 ? true : (j1 == 2 && par5 == 4 ? true : j1 == 1 && par5 == 5))))));
+            return j1 == 0 && par5 == 0 ? 15 : (j1 == 7 && par5 == 0 ? 15 : (j1 == 6 && par5 == 1 ? 15 : (j1 == 5 && par5 == 1 ? 15 : (j1 == 4 && par5 == 2 ? 15 : (j1 == 3 && par5 == 3 ? 15 : (j1 == 2 && par5 == 4 ? 15 : (j1 == 1 && par5 == 5 ? 15 : 0)))))));
         }
     }
 

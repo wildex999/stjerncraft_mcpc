@@ -5,13 +5,13 @@ import org.bukkit.entity.Witch;
 import org.bukkit.entity.EntityType;
 
 public class CraftWitch extends CraftMonster implements Witch {
-    public CraftWitch(CraftServer server, net.minecraft.entity.monster.EntityWitch/*was:EntityWitch*/ entity) {
+    public CraftWitch(CraftServer server, net.minecraft.entity.monster.EntityWitch entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.monster.EntityWitch/*was:EntityWitch*/ getHandle() {
-        return (net.minecraft.entity.monster.EntityWitch/*was:EntityWitch*/) entity;
+    public net.minecraft.entity.monster.EntityWitch getHandle() {
+        return (net.minecraft.entity.monster.EntityWitch) entity;
     }
 
     @Override

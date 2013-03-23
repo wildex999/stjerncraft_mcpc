@@ -1,5 +1,7 @@
 package net.minecraft.block;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.block.material.Material;
@@ -18,17 +20,17 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 // CraftBukkit end
 
-public class BlockButton extends Block
+public abstract class BlockButton extends Block
 {
     /** Whether this button is sensible to arrows, used by wooden buttons. */
     protected boolean sensible;
 
-    protected BlockButton(int par1, int par2, boolean par3)
+    protected BlockButton(int par1, boolean par2)
     {
-        super(par1, par2, Material.circuits);
+        super(par1, Material.circuits);
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabRedstone);
-        this.sensible = par3;
+        this.sensible = par2;
     }
 
     /**
@@ -43,7 +45,7 @@ public class BlockButton extends Block
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return this.sensible ? 30 : 20;
     }
@@ -108,11 +110,11 @@ public class BlockButton extends Block
         {
             j1 = 3;
         }
-        else if (dir == WEST &&  par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
+        else if (dir == WEST && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
         {
             j1 = 2;
         }
-        else if (dir == EAST &&  par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
+        else if (dir == EAST && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
         {
             j1 = 1;
         }
@@ -170,7 +172,7 @@ public class BlockButton extends Block
             if (flag)
             {
                 this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
         }
     }
@@ -183,7 +185,7 @@ public class BlockButton extends Block
         if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
             return false;
         }
         else
@@ -255,8 +257,8 @@ public class BlockButton extends Block
         {
             // CraftBukkit start
             org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
-            int old = (k1 != 8) ? 1 : 0;
-            int current = (k1 == 8) ? 1 : 0;
+            int old = (k1 != 8) ? 15 : 0;
+            int current = (k1 == 8) ? 15 : 0;
             BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
             par1World.getServer().getPluginManager().callEvent(eventRedstone);
 
@@ -266,11 +268,11 @@ public class BlockButton extends Block
             }
 
             // CraftBukkit end
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, j1 + k1);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, j1 + k1, 3);
             par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
             par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, 0.6F);
             this.func_82536_d(par1World, par2, par3, par4, j1);
-            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
             return true;
         }
     }
@@ -294,27 +296,27 @@ public class BlockButton extends Block
      * returns true, standard redstone propagation rules will apply instead and this will not be called. Args: World, X,
      * Y, Z, side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        return (par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 8) > 0;
+        return (par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 8) > 0 ? 15 : 0;
     }
 
     /**
      * Returns true if the block is emitting direct/strong redstone power on the specified side. Args: World, X, Y, Z,
      * side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
         int i1 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 
         if ((i1 & 8) == 0)
         {
-            return false;
+            return 0;
         }
         else
         {
             int j1 = i1 & 7;
-            return j1 == 5 && par5 == 1 ? true : (j1 == 4 && par5 == 2 ? true : (j1 == 3 && par5 == 3 ? true : (j1 == 2 && par5 == 4 ? true : j1 == 1 && par5 == 5)));
+            return j1 == 5 && par5 == 1 ? 15 : (j1 == 4 && par5 == 2 ? 15 : (j1 == 3 && par5 == 3 ? 15 : (j1 == 2 && par5 == 4 ? 15 : (j1 == 1 && par5 == 5 ? 15 : 0))));
         }
     }
 
@@ -339,7 +341,7 @@ public class BlockButton extends Block
             {
                 // CraftBukkit start
                 org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
-                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, 1, 0);
+                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, 15, 0);
                 par1World.getServer().getPluginManager().callEvent(eventRedstone);
 
                 if (eventRedstone.getNewCurrent() > 0)
@@ -355,7 +357,7 @@ public class BlockButton extends Block
                 }
                 else
                 {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, l & 7);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, l & 7, 3);
                     int i1 = l & 7;
                     this.func_82536_d(par1World, par2, par3, par4, i1);
                     par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, 0.5F);
@@ -387,34 +389,54 @@ public class BlockButton extends Block
             {
                 if ((par1World.getBlockMetadata(par2, par3, par4) & 8) == 0)
                 {
-                    // CraftBukkit start - Call interaction when entities (currently arrows) hit wooden buttons
-                    EntityInteractEvent event = new EntityInteractEvent(par5Entity.getBukkitEntity(), par1World.getWorld().getBlockAt(par2, par3, par4));
-                    par1World.getServer().getPluginManager().callEvent(event);
-
-                    if (event.isCancelled())
-                    {
-                        return;
-                    }
-
-                    // CraftBukkit end
                     this.func_82535_o(par1World, par2, par3, par4);
                 }
             }
         }
     }
 
-    protected void func_82535_o(World par1World, int par2, int par3, int par4)
+    private void func_82535_o(World par1World, int par2, int par3, int par4)
     {
         int l = par1World.getBlockMetadata(par2, par3, par4);
         int i1 = l & 7;
         boolean flag = (l & 8) != 0;
         this.func_82534_e(l);
-        List list = par1World.getEntitiesWithinAABB(EntityArrow.class, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
+        List list = par1World.getEntitiesWithinAABB(EntityArrow.class, AxisAlignedBB.getAABBPool().getAABB((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
         boolean flag1 = !list.isEmpty();
+
+        // CraftBukkit start - Call interact event when arrows turn on wooden buttons
+        if (flag != flag1 && flag1)
+        {
+            org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
+            boolean allowed = false;
+
+            // If all of the events are cancelled block the button press, else allow
+            for (Object object : list)
+            {
+                if (object != null)
+                {
+                    EntityInteractEvent event = new EntityInteractEvent(((Entity) object).getBukkitEntity(), block);
+                    par1World.getServer().getPluginManager().callEvent(event);
+
+                    if (!event.isCancelled())
+                    {
+                        allowed = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!allowed)
+            {
+                return;
+            }
+        }
+
+        // CraftBukkit end
 
         if (flag1 && !flag)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 | 8);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 | 8, 3);
             this.func_82536_d(par1World, par2, par3, par4, i1);
             par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
             par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, 0.6F);
@@ -422,7 +444,7 @@ public class BlockButton extends Block
 
         if (!flag1 && flag)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1, 3);
             this.func_82536_d(par1World, par2, par3, par4, i1);
             par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
             par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, 0.5F);
@@ -430,7 +452,7 @@ public class BlockButton extends Block
 
         if (flag1)
         {
-            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
         }
     }
 

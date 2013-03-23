@@ -1,7 +1,5 @@
 package net.minecraft.entity.passive;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockCloth;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -29,7 +27,6 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
 public class EntityWolf extends EntityTameable
 {
     private float field_70926_e;
@@ -116,16 +113,6 @@ public class EntityWolf extends EntityTameable
     protected void playStepSound(int par1, int par2, int par3, int par4)
     {
         this.playSound("mob.wolf.step", 0.15F, 1.0F);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the texture's file path as a String.
-     */
-    public String getTexture()
-    {
-        return this.isTamed() ? "/mob/wolf_tame.png" : (this.isAngry() ? "/mob/wolf_angry.png" : super.getTexture());
     }
 
     /**
@@ -281,45 +268,6 @@ public class EntityWolf extends EntityTameable
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public boolean getWolfShaking()
-    {
-        return this.isShaking;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Used when calculating the amount of shading to apply while the wolf is shaking.
-     */
-    public float getShadingWhileShaking(float par1)
-    {
-        return 0.75F + (this.prevTimeWolfIsShaking + (this.timeWolfIsShaking - this.prevTimeWolfIsShaking) * par1) / 2.0F * 0.25F;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float getShakeAngle(float par1, float par2)
-    {
-        float f2 = (this.prevTimeWolfIsShaking + (this.timeWolfIsShaking - this.prevTimeWolfIsShaking) * par1 + par2) / 1.8F;
-
-        if (f2 < 0.0F)
-        {
-            f2 = 0.0F;
-        }
-        else if (f2 > 1.0F)
-        {
-            f2 = 1.0F;
-        }
-
-        return MathHelper.sin(f2 * (float)Math.PI) * MathHelper.sin(f2 * (float)Math.PI * 11.0F) * 0.15F * (float)Math.PI;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float getInterestedAngle(float par1)
-    {
-        return (this.field_70924_f + (this.field_70926_e - this.field_70924_f) * par1) * 0.15F * (float)Math.PI;
-    }
-
     public float getEyeHeight()
     {
         return this.height * 0.8F;
@@ -442,11 +390,13 @@ public class EntityWolf extends EntityTameable
                     this.setPathToEntity((PathEntity)null);
                     this.setAttackTarget((EntityLiving)null);
                     this.aiSit.setSitting(true);
+
                     // CraftBukkit start
                     if (updateMaxHealth)
                     {
                         this.maxHealth = this.getMaxHealth();
                     }
+
                     this.setEntityHealth(this.maxHealth);
                     // CraftBukkit end
                     this.setOwner(par1EntityPlayer.username);
@@ -464,27 +414,6 @@ public class EntityWolf extends EntityTameable
         }
 
         return super.interact(par1EntityPlayer);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleHealthUpdate(byte par1)
-    {
-        if (par1 == 8)
-        {
-            this.field_70928_h = true;
-            this.timeWolfIsShaking = 0.0F;
-            this.prevTimeWolfIsShaking = 0.0F;
-        }
-        else
-        {
-            super.handleHealthUpdate(par1);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public float getTailRotation()
-    {
-        return this.isAngry() ? 1.5393804F : (this.isTamed() ? (0.55F - (float)(20 - this.dataWatcher.getWatchableObjectInt(18)) * 0.02F) * (float)Math.PI : ((float)Math.PI / 5F));
     }
 
     /**

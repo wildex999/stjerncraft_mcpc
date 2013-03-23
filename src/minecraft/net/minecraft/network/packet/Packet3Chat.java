@@ -2,7 +2,8 @@ package net.minecraft.network.packet;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
+
+import java.io.IOException; // CraftBukkit
 
 public class Packet3Chat extends Packet
 {
@@ -38,7 +39,7 @@ public class Packet3Chat extends Packet
     /**
      * Abstract. Reads the raw packet data from the data stream.
      */
-    public void readPacketData(DataInputStream par1DataInputStream) throws IOException
+    public void readPacketData(DataInputStream par1DataInputStream) throws IOException   // CraftBukkit
     {
         this.message = readString(par1DataInputStream, maxChatLength);
     }
@@ -46,7 +47,7 @@ public class Packet3Chat extends Packet
     /**
      * Abstract. Writes the raw packet data to the data stream.
      */
-    public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
+    public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException   // CraftBukkit
     {
         writeString(this.message, par1DataOutputStream);
     }

@@ -1,7 +1,5 @@
 package net.minecraft.entity.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -68,34 +66,6 @@ public class EntityXPOrb extends Entity
     }
 
     protected void entityInit() {}
-
-    @SideOnly(Side.CLIENT)
-    public int getBrightnessForRender(float par1)
-    {
-        float f1 = 0.5F;
-
-        if (f1 < 0.0F)
-        {
-            f1 = 0.0F;
-        }
-
-        if (f1 > 1.0F)
-        {
-            f1 = 1.0F;
-        }
-
-        int i = super.getBrightnessForRender(par1);
-        int j = i & 255;
-        int k = i >> 16 & 255;
-        j += (int)(f1 * 15.0F * 16.0F);
-
-        if (j > 240)
-        {
-            j = 240;
-        }
-
-        return j | k << 16;
-    }
 
     /**
      * Called to update the entity's position/logic.
@@ -175,9 +145,9 @@ public class EntityXPOrb extends Entity
             }
         }
 
-        this.motionX *= (double) f;
+        this.motionX *= (double)f;
         this.motionY *= 0.9800000190734863D;
-        this.motionZ *= (double) f;
+        this.motionZ *= (double)f;
 
         if (this.onGround)
         {
@@ -198,7 +168,7 @@ public class EntityXPOrb extends Entity
      */
     public boolean handleWaterMovement()
     {
-        return this.worldObj.handleMaterialAcceleration(this.boundingBox, Material.water, this);
+        return this.worldObj.handleMaterialAcceleration(this.boundingBox, Material.water, (Entity) this);
     }
 
     /**
@@ -277,17 +247,6 @@ public class EntityXPOrb extends Entity
     public int getXpValue()
     {
         return this.xpValue;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns a number from 1 to 10 based on how much XP this orb is worth. This is used by RenderXPOrb to determine
-     * what texture to use.
-     */
-    public int getTextureByXP()
-    {
-        return this.xpValue >= 2477 ? 10 : (this.xpValue >= 1237 ? 9 : (this.xpValue >= 617 ? 8 : (this.xpValue >= 307 ? 7 : (this.xpValue >= 149 ? 6 : (this.xpValue >= 73 ? 5 : (this.xpValue >= 37 ? 4 : (this.xpValue >= 17 ? 3 : (this.xpValue >= 7 ? 2 : (this.xpValue >= 3 ? 1 : 0)))))))));
     }
 
     /**

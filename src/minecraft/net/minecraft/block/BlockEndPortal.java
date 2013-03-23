@@ -1,7 +1,5 @@
 package net.minecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.block.material.Material;
@@ -23,7 +21,7 @@ public class BlockEndPortal extends BlockContainer
 
     protected BlockEndPortal(int par1, Material par2Material)
     {
-        super(par1, 0, par2Material);
+        super(par1, par2Material);
         this.setLightValue(1.0F);
     }
 
@@ -44,21 +42,11 @@ public class BlockEndPortal extends BlockContainer
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, f, 1.0F);
     }
 
-    @SideOnly(Side.CLIENT)
-
     /**
-     * Returns true if the given side of this block type should be rendered, if the adjacent block is at the given
-     * coordinates.  Args: blockAccess, x, y, z, side
+     * Adds all intersecting collision boxes to a list. (Be sure to only add boxes to the list if they intersect the
+     * mask.) Parameters: World, X, Y, Z, mask, list, colliding entity
      */
-    public boolean shouldSideBeRendered(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
-    {
-        return par5 != 0 ? false : super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5);
-    }
-
-    /**
-     * if the specified block is in the given AABB, add its collision bounding box to the given list
-     */
-    public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity) {}
+    public void addCollisionBoxesToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity) {}
 
     /**
      * Is this block (a) opaque and (b) a full 1m cube?  This determines whether or not to render the shared face of two
@@ -92,28 +80,12 @@ public class BlockEndPortal extends BlockContainer
     {
         if (par5Entity.ridingEntity == null && par5Entity.riddenByEntity == null && !par1World.isRemote)
         {
-            // CraftBukkit start - Entity in portal 
+            // CraftBukkit start - Entity in portal
             EntityPortalEnterEvent event = new EntityPortalEnterEvent(par5Entity.getBukkitEntity(), new org.bukkit.Location(par1World.getWorld(), par2, par3, par4));
             par1World.getServer().getPluginManager().callEvent(event);
             // CraftBukkit end
             par5Entity.travelToDimension(1);
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * A randomly called display update to be able to add particles or other items for display
-     */
-    public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
-    {
-        double d0 = (double)((float)par2 + par5Random.nextFloat());
-        double d1 = (double)((float)par3 + 0.8F);
-        double d2 = (double)((float)par4 + par5Random.nextFloat());
-        double d3 = 0.0D;
-        double d4 = 0.0D;
-        double d5 = 0.0D;
-        par1World.spawnParticle("smoke", d0, d1, d2, d3, d4, d5);
     }
 
     /**
@@ -133,18 +105,8 @@ public class BlockEndPortal extends BlockContainer
         {
             if (par1World.provider.dimensionId != 0)
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return 0;
     }
 }

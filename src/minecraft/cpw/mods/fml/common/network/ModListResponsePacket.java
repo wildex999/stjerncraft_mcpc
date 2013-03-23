@@ -1,3 +1,15 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * 
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.common.network;
 
 import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDENTIFIERS;
@@ -25,8 +37,10 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
+// MCPC+ start
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
+// MCPC+ end
 
 public class ModListResponsePacket extends FMLPacket
 {
@@ -115,8 +129,8 @@ public class ModListResponsePacket extends FMLPacket
             pkt.data = FMLPacket.makePacket(MOD_MISSING, missingClientMods, versionIncorrectMods);
             // MCPC+ start - disable unneeded console spam
             if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
-                Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
-                FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
+            Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
+            FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
             }
             // MCPC+ end
             // Mark this as bad
@@ -129,8 +143,8 @@ public class ModListResponsePacket extends FMLPacket
             pkt.data = FMLPacket.makePacket(MOD_IDENTIFIERS, netHandler);
             // MCPC+ start - disable unneeded console spam
             if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
-                Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
-                FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
+            Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
+            FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
             }
             // MCPC+ end
             pkt.length = pkt.data.length;

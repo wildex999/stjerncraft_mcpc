@@ -6,8 +6,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.List;
 
+// MCPC+ start
 import org.bukkit.craftbukkit.inventory.CustomModRecipe;
 import org.bukkit.inventory.Recipe;
+// MCPC+ end
 
 import net.minecraft.block.Block;
 import net.minecraft.item.crafting.CraftingManager;
@@ -18,14 +20,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
 
-public class ShapelessOreRecipe implements IRecipe 
+public class ShapelessOreRecipe implements IRecipe
 {
     private ItemStack output = null;
-    private ArrayList input = new ArrayList();    
+    private ArrayList input = new ArrayList();
 
     public ShapelessOreRecipe(Block result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapelessOreRecipe(Item  result, Object... recipe){ this(new ItemStack(result), recipe); }
-    
+
     public ShapelessOreRecipe(ItemStack result, Object... recipe)
     {
         output = result.copy();
@@ -84,12 +86,12 @@ public class ShapelessOreRecipe implements IRecipe
 
     @Override
     public ItemStack getRecipeOutput(){ return output; }
-    
+
     @Override
     public ItemStack getCraftingResult(InventoryCrafting var1){ return output.copy(); }
-    
+
     @Override
-    public boolean matches(InventoryCrafting var1, World world) 
+    public boolean matches(InventoryCrafting var1, World world)
     {
         ArrayList required = new ArrayList(input);
 
@@ -105,9 +107,9 @@ public class ShapelessOreRecipe implements IRecipe
                 while (req.hasNext())
                 {
                     boolean match = false;
-                    
+
                     Object next = req.next();
-                    
+
                     if (next instanceof ItemStack)
                     {
                         match = checkItemEquals((ItemStack)next, slot);
@@ -137,10 +139,10 @@ public class ShapelessOreRecipe implements IRecipe
 
         return required.isEmpty();
     }
-    
+
     private boolean checkItemEquals(ItemStack target, ItemStack input)
     {
-        return (target.itemID == input.itemID && (target.getItemDamage() == -1 || target.getItemDamage() == input.getItemDamage()));
+        return (target.itemID == input.itemID && (target.getItemDamage() == OreDictionary.WILDCARD_VALUE || target.getItemDamage() == input.getItemDamage()));
     }
 
     /**
@@ -156,7 +158,6 @@ public class ShapelessOreRecipe implements IRecipe
     // MCPC+ start - required for Bukkit API
     @Override
     public Recipe toBukkitRecipe() {
-        // TODO: implement a Bukkit API wrapper?
         return new CustomModRecipe(this);
     }
     // MCPC+ end

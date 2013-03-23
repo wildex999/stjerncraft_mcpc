@@ -3,7 +3,7 @@ package net.minecraft.server.dedicated;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import net.minecraft.server.MinecraftServer;
+
 import static org.bukkit.craftbukkit.Main.*; // CraftBukkit
 
 class DedicatedServerCommandThread extends Thread
@@ -24,7 +24,7 @@ class DedicatedServerCommandThread extends Thread
         }
 
         // CraftBukkit end
-        jline.console.ConsoleReader consolereader = this.server.reader; // CraftBukkit
+        jline.console.ConsoleReader bufferedreader = this.server.reader; // CraftBukkit
         String s;
 
         try
@@ -34,11 +34,11 @@ class DedicatedServerCommandThread extends Thread
             {
                 if (useJline)
                 {
-                    s = consolereader.readLine(">", null);
+                    s = bufferedreader.readLine(">", null);
                 }
                 else
                 {
-                    s = consolereader.readLine();
+                    s = bufferedreader.readLine();
                 }
 
                 if (s != null)
@@ -52,7 +52,7 @@ class DedicatedServerCommandThread extends Thread
         catch (IOException ioexception)
         {
             // CraftBukkit
-            MinecraftServer.logger.log(java.util.logging.Level.SEVERE, null, ioexception);
+            java.util.logging.Logger.getLogger("").log(java.util.logging.Level.SEVERE, null, ioexception);
         }
     }
 }

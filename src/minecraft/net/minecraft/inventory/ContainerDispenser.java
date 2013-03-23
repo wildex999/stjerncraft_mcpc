@@ -3,11 +3,11 @@ package net.minecraft.inventory;
 // CraftBukkit start
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-import net.minecraft.entity.player.InventoryPlayer;
-// CraftBukkit end
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityDispenser;
+// CraftBukkit end
 
 public class ContainerDispenser extends Container
 {

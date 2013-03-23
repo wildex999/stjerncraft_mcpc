@@ -1,11 +1,8 @@
 package net.minecraft.entity.monster;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
-// CraftBukkit end
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
@@ -23,6 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class EntityCreeper extends EntityMob
 {
@@ -174,6 +172,7 @@ public class EntityCreeper extends EntityMob
                     {
                         this.timeSinceIgnited = 0;
                     }
+
                     // CraftBukkit end
                 }
             }
@@ -216,7 +215,12 @@ public class EntityCreeper extends EntityMob
     }
 
     // CraftBukkit start - whole method
-    protected void dropDeathLoot(boolean flag, int i)
+
+    /**
+     * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
+     * par2 - Level of Looting used to kill this mob.
+     */
+    protected void dropFewItems(boolean flag, int i)
     {
         int j = this.getDropItemId();
         java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
@@ -258,16 +262,6 @@ public class EntityCreeper extends EntityMob
     public boolean getPowered()
     {
         return this.dataWatcher.getWatchableObjectByte(17) == 1;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Params: (Float)Render tick. Returns the intensity of the creeper's flash when it is ignited.
-     */
-    public float getCreeperFlashIntensity(float par1)
-    {
-        return ((float)this.lastActiveTime + (float)(this.timeSinceIgnited - this.lastActiveTime) * par1) / (float)(this.fuseTime - 2);
     }
 
     /**
@@ -320,6 +314,7 @@ public class EntityCreeper extends EntityMob
         {
             this.dataWatcher.updateObject(17, Byte.valueOf((byte) 1));
         }
+
         // CraftBukkit end
     }
 }

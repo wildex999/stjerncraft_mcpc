@@ -1,10 +1,9 @@
 package net.minecraft.inventory;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,10 +11,10 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 // CraftBukkit start
 import java.util.Map;
 
-import net.minecraft.enchantment.Enchantment;
 import org.bukkit.craftbukkit.inventory.CraftInventoryEnchanting;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -26,8 +25,10 @@ import org.bukkit.entity.Player;
 
 public class ContainerEnchantment extends Container
 {
+    // CraftBukkit - make type specific (changed from IInventory)
+
     /** SlotEnchantmentTable object with ItemStack to be enchanted */
-    public SlotEnchantmentTable tableInventory = new SlotEnchantmentTable(this, "Enchant", 1); // CraftBukkit - make type specific (changed from IInventory)
+    public SlotEnchantmentTable tableInventory = new SlotEnchantmentTable(this, "Enchant", true, 1);
 
     /** current world (for bookshelf counting) */
     private World worldPointer;
@@ -52,7 +53,7 @@ public class ContainerEnchantment extends Container
         this.posX = par3;
         this.posY = par4;
         this.posZ = par5;
-        this.addSlotToContainer(new SlotEnchantment(this, this.tableInventory, 0, 25, 47));
+        this.addSlotToContainer((Slot)(new SlotEnchantment(this, this.tableInventory, 0, 25, 47)));
         int l;
 
         for (l = 0; l < 3; ++l)
@@ -67,6 +68,7 @@ public class ContainerEnchantment extends Container
         {
             this.addSlotToContainer(new Slot(par1InventoryPlayer, l, 8 + l * 18, 142));
         }
+
         // CraftBukkit start
         player = (Player) par1InventoryPlayer.player.getBukkitEntity();
         tableInventory.player = player;
@@ -94,19 +96,6 @@ public class ContainerEnchantment extends Container
             icrafting.sendProgressBarUpdate(this, 0, this.enchantLevels[0]);
             icrafting.sendProgressBarUpdate(this, 1, this.enchantLevels[1]);
             icrafting.sendProgressBarUpdate(this, 2, this.enchantLevels[2]);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void updateProgressBar(int par1, int par2)
-    {
-        if (par1 >= 0 && par1 <= 2)
-        {
-            this.enchantLevels[par1] = par2;
-        }
-        else
-        {
-            super.updateProgressBar(par1, par2);
         }
     }
 

@@ -1,7 +1,5 @@
 package net.minecraft.entity.projectile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -14,6 +12,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
 import org.bukkit.event.entity.ProjectileHitEvent; // CraftBukkit
 
 public abstract class EntityFireball extends Entity
@@ -40,19 +39,6 @@ public abstract class EntityFireball extends Entity
 
     protected void entityInit() {}
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
-     * length * 64 * renderDistanceWeight Args: distance
-     */
-    public boolean isInRangeToRenderDist(double par1)
-    {
-        double d1 = this.boundingBox.getAverageEdgeLength() * 4.0D;
-        d1 *= 64.0D;
-        return par1 < d1 * d1;
-    }
-
     public EntityFireball(World par1World, double par2, double par4, double par6, double par8, double par10, double par12)
     {
         super(par1World);
@@ -78,16 +64,16 @@ public abstract class EntityFireball extends Entity
         this.setDirection(par3, par5, par7);
     }
 
-    public void setDirection(double d0, double d1, double d2)
+    public void setDirection(double par3, double par5, double par7)
     {
         // CraftBukkit end
-        d0 += this.rand.nextGaussian() * 0.4D;
-        d1 += this.rand.nextGaussian() * 0.4D;
-        d2 += this.rand.nextGaussian() * 0.4D;
-        double d3 = (double) MathHelper.sqrt_double(d0 * d0 + d1 * d1 + d2 * d2);
-        this.accelerationX = d0 / d3 * 0.1D;
-        this.accelerationY = d1 / d3 * 0.1D;
-        this.accelerationZ = d2 / d3 * 0.1D;
+        par3 += this.rand.nextGaussian() * 0.4D;
+        par5 += this.rand.nextGaussian() * 0.4D;
+        par7 += this.rand.nextGaussian() * 0.4D;
+        double d3 = (double)MathHelper.sqrt_double(par3 * par3 + par5 * par5 + par7 * par7);
+        this.accelerationX = par3 / d3 * 0.1D;
+        this.accelerationY = par5 / d3 * 0.1D;
+        this.accelerationZ = par7 / d3 * 0.1D;
     }
 
     /**
@@ -178,12 +164,14 @@ public abstract class EntityFireball extends Entity
             if (movingobjectposition != null)
             {
                 this.onImpact(movingobjectposition);
+
                 // CraftBukkit start
                 if (this.isDead)
                 {
                     ProjectileHitEvent phe = new ProjectileHitEvent((org.bukkit.entity.Projectile) this.getBukkitEntity());
                     this.worldObj.getServer().getPluginManager().callEvent(phe);
                 }
+
                 // CraftBukkit end
             }
 
@@ -346,23 +334,11 @@ public abstract class EntityFireball extends Entity
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public float getShadowSize()
-    {
-        return 0.0F;
-    }
-
     /**
      * Gets how bright this entity is.
      */
     public float getBrightness(float par1)
     {
         return 1.0F;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public int getBrightnessForRender(float par1)
-    {
-        return 15728880;
     }
 }

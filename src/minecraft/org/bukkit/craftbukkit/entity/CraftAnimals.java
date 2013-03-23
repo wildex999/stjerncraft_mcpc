@@ -5,13 +5,13 @@ import org.bukkit.entity.Animals;
 
 public class CraftAnimals extends CraftAgeable implements Animals {
 
-    public CraftAnimals(CraftServer server, net.minecraft.entity.passive.EntityAnimal/*was:EntityAnimal*/ entity) {
+    public CraftAnimals(CraftServer server, net.minecraft.entity.passive.EntityAnimal entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.passive.EntityAnimal/*was:EntityAnimal*/ getHandle() {
-        return (net.minecraft.entity.passive.EntityAnimal/*was:EntityAnimal*/) entity;
+    public net.minecraft.entity.passive.EntityAnimal getHandle() {
+        return (net.minecraft.entity.passive.EntityAnimal) entity;
     }
 
     @Override
