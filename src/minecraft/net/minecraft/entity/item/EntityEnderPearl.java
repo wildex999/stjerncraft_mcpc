@@ -47,6 +47,13 @@ public class EntityEnderPearl extends EntityThrowable
 
                 if (!entityplayermp.playerNetServerHandler.connectionClosed && entityplayermp.worldObj == this.worldObj)
                 {
+                    EnderTeleportEvent event = new EnderTeleportEvent(entityplayermp, this.posX, this.posY, this.posZ, 5);
+                    if (!MinecraftForge.EVENT_BUS.post(event)){
+                        this.getThrower().setPositionAndUpdate(event.targetX, event.targetY, event.targetZ);
+                        this.getThrower().fallDistance = 0.0F;
+                        this.getThrower().attackEntityFrom(DamageSource.fall, event.attackDamage);
+                    }
+                                    
                     // CraftBukkit start
                     org.bukkit.craftbukkit.entity.CraftPlayer player = entityplayermp.getBukkitEntity();
                     org.bukkit.Location location = getBukkitEntity().getLocation();
