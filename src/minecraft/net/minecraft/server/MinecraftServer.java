@@ -1540,7 +1540,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     public int textureSize()
     {
-        return 16;
+        return org.bukkit.craftbukkit.Spigot.textureResolution; // Spigot
     }
 
     public abstract boolean isDedicatedServer();

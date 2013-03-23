@@ -836,7 +836,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void setTexturePack(String url) {
         Validate.notNull(url, "Texture pack URL cannot be null");
 
-        byte[] message = (url + "\0" + "16").getBytes();
+        byte[] message = (url + "\0" + org.bukkit.craftbukkit.Spigot.textureResolution).getBytes(); // Spigot
         Validate.isTrue(message.length <= Messenger.MAX_MESSAGE_SIZE, "Texture pack URL is too long");
 
         getHandle().playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet250CustomPayload("MC|TPack", message));

@@ -22,6 +22,7 @@ public class Spigot {
     public static boolean tabPing = false;
     private static Metrics metrics;
     public static List<String> bungeeIPs;    
+    public static int textureResolution = 16;
 
     public static void initialize(CraftServer server, SimpleCommandMap commandMap, YamlConfiguration configuration) {
         if (configuration.getBoolean("settings.tps-command", true)) { // MCPC+ - config option to allow mods to replace command
@@ -66,6 +67,7 @@ public class Spigot {
         
         tabPing = configuration.getBoolean("settings.tab-ping", tabPing);
         bungeeIPs = configuration.getStringList("settings.bungee-proxies");        
+        textureResolution = configuration.getInt("settings.texture-resolution", textureResolution);
 
         if (metrics == null) {
             try {

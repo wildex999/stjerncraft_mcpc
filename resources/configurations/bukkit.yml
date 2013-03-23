@@ -43,6 +43,7 @@ settings:
     restart-script-location: /path/to/server/start.sh
     bungee-proxies:
       - 127.0.0.1
+    texture-resolution: 16
 mcpc:
     connection-logging: false
     dump-materials: false
