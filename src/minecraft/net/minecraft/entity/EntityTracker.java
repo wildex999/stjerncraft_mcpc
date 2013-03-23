@@ -136,7 +136,7 @@ public class EntityTracker
         }
         else if (par1Entity instanceof EntityBoat)
         {
-            this.addEntityToTracker(par1Entity, 80, 3, true);
+            this.addEntityToTracker(par1Entity, 80, 2, true); // Spigot - send at same speed as player
         }
         else if (par1Entity instanceof EntitySquid)
         {
