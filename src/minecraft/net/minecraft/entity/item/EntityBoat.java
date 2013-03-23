@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 
 // CraftBukkit start
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -496,10 +497,24 @@ public class EntityBoat extends Entity
 
                         if (i2 == Block.snow.blockID)
                         {
+                            // CraftBukkit start
+                            if (CraftEventFactory.callEntityChangeBlockEvent(this, i1, l1, j1, 0, 0).isCancelled())
+                            {
+                                continue;
+                            }
+
+                            // CraftBukkit end
                             this.worldObj.setBlockToAir(i1, l1, j1);
                         }
                         else if (i2 == Block.waterlily.blockID)
                         {
+                            // CraftBukkit start
+                            if (CraftEventFactory.callEntityChangeBlockEvent(this, i1, l1, j1, 0, 0).isCancelled())
+                            {
+                                continue;
+                            }
+
+                            // CraftBukkit end
                             this.worldObj.destroyBlock(i1, l1, j1, true);
                         }
                     }
