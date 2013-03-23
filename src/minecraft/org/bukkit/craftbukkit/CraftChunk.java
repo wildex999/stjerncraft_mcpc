@@ -13,22 +13,22 @@ import org.bukkit.entity.Entity;
 import org.bukkit.ChunkSnapshot;
 
 public class CraftChunk implements Chunk {
-    private WeakReference<net.minecraft.world.chunk.Chunk> weakChunk;
-    private final net.minecraft.world.WorldServer worldServer;
+    private WeakReference</*was:net.minecraft.server.*/net.minecraft.world.chunk.Chunk/*was:Chunk*/> weakChunk;
+    private final net.minecraft.world.WorldServer/*was:WorldServer*/ worldServer;
     private final int x;
     private final int z;
     private static final byte[] emptyData = new byte[2048];
     private static final short[] emptyBlockIDs = new short[4096];
     private static final byte[] emptySkyLight = new byte[2048];
 
-    public CraftChunk(net.minecraft.world.chunk.Chunk chunk) {
-        if (!(chunk instanceof net.minecraft.world.chunk.EmptyChunk)) {
-            this.weakChunk = new WeakReference<net.minecraft.world.chunk.Chunk>(chunk);
+    public CraftChunk(/*was:net.minecraft.server.*/net.minecraft.world.chunk.Chunk/*was:Chunk*/ chunk) {
+        if (!(chunk instanceof net.minecraft.world.chunk.EmptyChunk/*was:EmptyChunk*/)) {
+            this.weakChunk = new WeakReference<net.minecraft.world.chunk.Chunk/*was:Chunk*/>(chunk);
         }
 
-        worldServer = (net.minecraft.world.WorldServer) getHandle().worldObj;
-        x = getHandle().xPosition;
-        z = getHandle().zPosition;
+        worldServer = (net.minecraft.world.WorldServer/*was:WorldServer*/) getHandle().worldObj/*was:world*/;
+        x = getHandle().xPosition/*was:x*/;
+        z = getHandle().zPosition/*was:z*/;
     }
 
     public World getWorld() {
@@ -39,14 +39,14 @@ public class CraftChunk implements Chunk {
         return (CraftWorld) getWorld();
     }
 
-    public net.minecraft.world.chunk.Chunk getHandle() {
-        net.minecraft.world.chunk.Chunk c = weakChunk.get();
+    public /*was:net.minecraft.server.*/net.minecraft.world.chunk.Chunk/*was:Chunk*/ getHandle() {
+        /*was:net.minecraft.server.*/net.minecraft.world.chunk.Chunk/*was:Chunk*/ c = weakChunk.get();
 
         if (c == null) {
-            c = worldServer.getChunkFromChunkCoords(x, z);
+            c = worldServer.getChunkFromChunkCoords/*was:getChunkAt*/(x, z);
 
-            if (!(c instanceof net.minecraft.world.chunk.EmptyChunk)) {
-                weakChunk = new WeakReference<net.minecraft.world.chunk.Chunk>(c);
+            if (!(c instanceof net.minecraft.world.chunk.EmptyChunk/*was:EmptyChunk*/)) {
+                weakChunk = new WeakReference<net.minecraft.world.chunk.Chunk/*was:Chunk*/>(c);
             }
         }
 
@@ -76,21 +76,21 @@ public class CraftChunk implements Chunk {
 
     public Entity[] getEntities() {
         int count = 0, index = 0;
-        net.minecraft.world.chunk.Chunk chunk = getHandle();
+        /*was:net.minecraft.server.*/net.minecraft.world.chunk.Chunk/*was:Chunk*/ chunk = getHandle();
 
         for (int i = 0; i < 16; i++) {
-            count += chunk.entityLists[i].size();
+            count += chunk.entityLists/*was:entitySlices*/[i].size();
         }
 
         Entity[] entities = new Entity[count];
 
         for (int i = 0; i < 16; i++) {
-            for (Object obj : chunk.entityLists[i].toArray()) {
-                if (!(obj instanceof net.minecraft.entity.Entity)) {
+            for (Object obj : chunk.entityLists/*was:entitySlices*/[i].toArray()) {
+                if (!(obj instanceof net.minecraft.entity.Entity/*was:Entity*/)) {
                     continue;
                 }
 
-                entities[index++] = ((net.minecraft.entity.Entity) obj).getBukkitEntity();
+                entities[index++] = ((net.minecraft.entity.Entity/*was:Entity*/) obj).getBukkitEntity();
             }
         }
 
@@ -99,16 +99,16 @@ public class CraftChunk implements Chunk {
 
     public BlockState[] getTileEntities() {
         int index = 0;
-        net.minecraft.world.chunk.Chunk chunk = getHandle();
-        BlockState[] entities = new BlockState[chunk.chunkTileEntityMap.size()];
+        /*was:net.minecraft.server.*/net.minecraft.world.chunk.Chunk/*was:Chunk*/ chunk = getHandle();
+        BlockState[] entities = new BlockState[chunk.chunkTileEntityMap/*was:tileEntities*/.size()];
 
-        for (Object obj : chunk.chunkTileEntityMap.keySet().toArray()) {
-            if (!(obj instanceof net.minecraft.world.ChunkPosition)) {
+        for (Object obj : chunk.chunkTileEntityMap/*was:tileEntities*/.keySet().toArray()) {
+            if (!(obj instanceof net.minecraft.world.ChunkPosition/*was:ChunkPosition*/)) {
                 continue;
             }
 
-            net.minecraft.world.ChunkPosition position = (net.minecraft.world.ChunkPosition) obj;
-            entities[index++] = worldServer.getWorld().getBlockAt(position.x + (chunk.xPosition << 4), position.y, position.z + (chunk.zPosition << 4)).getState();
+            net.minecraft.world.ChunkPosition/*was:ChunkPosition*/ position = (net.minecraft.world.ChunkPosition/*was:ChunkPosition*/) obj;
+            entities[index++] = worldServer.getWorld().getBlockAt(position.x/*was:x*/ + (chunk.xPosition/*was:x*/ << 4), position.y/*was:y*/, position.z/*was:z*/ + (chunk.zPosition/*was:z*/ << 4)).getState();
         }
         return entities;
     }
@@ -142,9 +142,9 @@ public class CraftChunk implements Chunk {
     }
 
     public ChunkSnapshot getChunkSnapshot(boolean includeMaxBlockY, boolean includeBiome, boolean includeBiomeTempRain) {
-        net.minecraft.world.chunk.Chunk chunk = getHandle();
+        /*was:net.minecraft.server.*/net.minecraft.world.chunk.Chunk/*was:Chunk*/ chunk = getHandle();
 
-        net.minecraft.world.chunk.storage.ExtendedBlockStorage[] cs = chunk.getBlockStorageArray(); /* Get sections */
+        net.minecraft.world.chunk.storage.ExtendedBlockStorage/*was:ChunkSection*/[] cs = chunk.getBlockStorageArray/*was:i*/(); /* Get sections */
         short[][] sectionBlockIDs = new short[cs.length][];
         byte[][] sectionBlockData = new byte[cs.length][];
         byte[][] sectionSkyLights = new byte[cs.length][];
@@ -160,17 +160,17 @@ public class CraftChunk implements Chunk {
                 sectionEmpty[i] = true;
             } else { /* Not empty */
                 short[] blockids = new short[4096];
-                byte[] baseids = cs[i].getBlockLSBArray();
+                byte[] baseids = cs[i].getBlockLSBArray/*was:g*/();
 
                 /* Copy base IDs */
                 for (int j = 0; j < 4096; j++) {
                     blockids[j] = (short) (baseids[j] & 0xFF);
                 }
 
-                if (cs[i].getBlockMSBArray() != null) { /* If we've got extended IDs */
+                if (cs[i].getBlockMSBArray/*was:i*/() != null) { /* If we've got extended IDs */
                     // Spigot start
-                    if (cs[i].getBlockMSBArray().isTrivialArray()) {
-                        int tval = cs[i].getBlockMSBArray().getTrivialArrayValue();
+                    if (cs[i].getBlockMSBArray/*was:i*/().isTrivialArray()) {
+                        int tval = cs[i].getBlockMSBArray/*was:i*/().getTrivialArrayValue();
                         if (tval != 0) {
                             tval = tval << 8;
                                 for (int j = 0; j < 4096; j++) {
@@ -178,7 +178,7 @@ public class CraftChunk implements Chunk {
                                 }
                         }
                     } else {
-                        byte[] extids = cs[i].getBlockMSBArray().getValueArray();
+                        byte[] extids = cs[i].getBlockMSBArray/*was:i*/().getValueArray()/*was:a*/;
                         // Spigot end
     
                         for (int j = 0; j < 2048; j++) {
@@ -198,33 +198,33 @@ public class CraftChunk implements Chunk {
 
                 /* Get block data nibbles */
                 // Spigot start
-                if (cs[i].getMetadataArray().isTrivialArray() && (cs[i].getMetadataArray().getTrivialArrayValue() == 0)) {
+                if (cs[i].getMetadataArray/*was:j*/().isTrivialArray() && (cs[i].getMetadataArray/*was:j*/().getTrivialArrayValue() == 0)) {
                     sectionBlockData[i] = emptyData;
                 } else {
                     sectionBlockData[i] = new byte[2048];
-                    cs[i].getMetadataArray().copyToByteArray(sectionBlockData[i], 0);
+                    cs[i].getMetadataArray/*was:j*/().copyToByteArray(sectionBlockData[i], 0);
                 }
-                if (cs[i].getSkylightArray() == null) {
+                if (cs[i].getSkylightArray/*was:l*/() == null) {
                     sectionSkyLights[i] = emptyData;
                 }
-                else if (cs[i].getSkylightArray().isTrivialArray()) {
-                    if (cs[i].getSkylightArray().getTrivialArrayValue() == 0) {
+                else if (cs[i].getSkylightArray/*was:l*/().isTrivialArray()) {
+                    if (cs[i].getSkylightArray/*was:l*/().getTrivialArrayValue() == 0) {
                         sectionSkyLights[i] = emptyData;
-                    } else if (cs[i].getSkylightArray().getTrivialArrayValue() == 15) {
+                    } else if (cs[i].getSkylightArray/*was:l*/().getTrivialArrayValue() == 15) {
                         sectionSkyLights[i] = emptySkyLight;
                     } else {
                         sectionSkyLights[i] = new byte[2048];
-                        cs[i].getSkylightArray().copyToByteArray(sectionSkyLights[i], 0);
+                        cs[i].getSkylightArray/*was:l*/().copyToByteArray(sectionSkyLights[i], 0);
                     }
                 } else {
                     sectionSkyLights[i] = new byte[2048];
-                    cs[i].getSkylightArray().copyToByteArray(sectionSkyLights[i], 0);
+                    cs[i].getSkylightArray/*was:l*/().copyToByteArray(sectionSkyLights[i], 0);
                 }
-                if (cs[i].getBlocklightArray().isTrivialArray() && (cs[i].getBlocklightArray().getTrivialArrayValue() == 0)) {
+                if (cs[i].getBlocklightArray/*was:k*/().isTrivialArray() && (cs[i].getBlocklightArray/*was:k*/().getTrivialArrayValue() == 0)) {
                     sectionEmitLights[i] = emptyData;
                 } else {
                     sectionEmitLights[i] = new byte[2048];
-                    cs[i].getBlocklightArray().copyToByteArray(sectionEmitLights[i], 0);
+                    cs[i].getBlocklightArray/*was:k*/().copyToByteArray(sectionEmitLights[i], 0);
                 }
                 // Spigot end
             }
@@ -234,33 +234,33 @@ public class CraftChunk implements Chunk {
 
         if (includeMaxBlockY) {
             hmap = new int[256]; // Get copy of height map
-            System.arraycopy(chunk.heightMap, 0, hmap, 0, 256);
+            System.arraycopy(chunk.heightMap/*was:heightMap*/, 0, hmap, 0, 256);
         }
 
-        net.minecraft.world.biome.BiomeGenBase[] biome = null;
+        net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/[] biome = null;
         double[] biomeTemp = null;
         double[] biomeRain = null;
 
         if (includeBiome || includeBiomeTempRain) {
-            net.minecraft.world.biome.WorldChunkManager wcm = chunk.worldObj.getWorldChunkManager();
+            net.minecraft.world.biome.WorldChunkManager/*was:WorldChunkManager*/ wcm = chunk.worldObj/*was:world*/.getWorldChunkManager/*was:getWorldChunkManager*/();
 
             if (includeBiome) {
-                biome = new net.minecraft.world.biome.BiomeGenBase[256];
+                biome = new net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/[256];
                 for (int i = 0; i < 256; i++) {
-                    biome[i] = chunk.getBiomeGenForWorldCoords(i & 0xF, i >> 4, wcm);
+                    biome[i] = chunk.getBiomeGenForWorldCoords/*was:a*/(i & 0xF, i >> 4, wcm);
                 }
             }
 
             if (includeBiomeTempRain) {
                 biomeTemp = new double[256];
                 biomeRain = new double[256];
-                float[] dat = wcm.getTemperatures((float[]) null, getX() << 4, getZ() << 4, 16, 16);
+                float[] dat = wcm.getTemperatures/*was:getTemperatures*/((float[]) null, getX() << 4, getZ() << 4, 16, 16);
 
                 for (int i = 0; i < 256; i++) {
                     biomeTemp[i] = dat[i];
                 }
 
-                dat = wcm.getRainfall((float[]) null, getX() << 4, getZ() << 4, 16, 16);
+                dat = wcm.getRainfall/*was:getWetness*/((float[]) null, getX() << 4, getZ() << 4, 16, 16);
 
                 for (int i = 0; i < 256; i++) {
                     biomeRain[i] = dat[i];
@@ -273,30 +273,30 @@ public class CraftChunk implements Chunk {
     }
 
     public static ChunkSnapshot getEmptyChunkSnapshot(int x, int z, CraftWorld world, boolean includeBiome, boolean includeBiomeTempRain) {
-        net.minecraft.world.biome.BiomeGenBase[] biome = null;
+        net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/[] biome = null;
         double[] biomeTemp = null;
         double[] biomeRain = null;
 
         if (includeBiome || includeBiomeTempRain) {
-            net.minecraft.world.biome.WorldChunkManager wcm = world.getHandle().getWorldChunkManager();
+            net.minecraft.world.biome.WorldChunkManager/*was:WorldChunkManager*/ wcm = world.getHandle().getWorldChunkManager/*was:getWorldChunkManager*/();
 
             if (includeBiome) {
-                biome = new net.minecraft.world.biome.BiomeGenBase[256];
+                biome = new net.minecraft.world.biome.BiomeGenBase/*was:BiomeBase*/[256];
                 for (int i = 0; i < 256; i++) {
-                    biome[i] = world.getHandle().getBiomeGenForCoords((x << 4) + (i & 0xF), (z << 4) + (i >> 4));
+                    biome[i] = world.getHandle().getBiomeGenForCoords/*was:getBiome*/((x << 4) + (i & 0xF), (z << 4) + (i >> 4));
                 }
             }
 
             if (includeBiomeTempRain) {
                 biomeTemp = new double[256];
                 biomeRain = new double[256];
-                float[] dat = wcm.getTemperatures((float[]) null, x << 4, z << 4, 16, 16);
+                float[] dat = wcm.getTemperatures/*was:getTemperatures*/((float[]) null, x << 4, z << 4, 16, 16);
 
                 for (int i = 0; i < 256; i++) {
                     biomeTemp[i] = dat[i];
                 }
 
-                dat = wcm.getRainfall((float[]) null, x << 4, z << 4, 16, 16);
+                dat = wcm.getRainfall/*was:getWetness*/((float[]) null, x << 4, z << 4, 16, 16);
 
                 for (int i = 0; i < 256; i++) {
                     biomeRain[i] = dat[i];

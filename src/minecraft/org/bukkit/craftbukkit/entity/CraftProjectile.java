@@ -6,13 +6,13 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 
 public class CraftProjectile extends AbstractProjectile implements Projectile { // MCPC
-    public CraftProjectile(CraftServer server, net.minecraft.entity.Entity entity) {
+    public CraftProjectile(CraftServer server, /*was:net.minecraft.server.*/net.minecraft.entity.Entity/*was:Entity*/ entity) {
         super(server, entity);
     }
 
     public LivingEntity getShooter() {
-        if (getHandle().getThrower() instanceof net.minecraft.entity.EntityLiving) {
-            return (LivingEntity) getHandle().getThrower().getBukkitEntity();
+        if (getHandle().getThrower/*was:getShooter*/() instanceof net.minecraft.entity.EntityLiving/*was:EntityLiving*/) {
+            return (LivingEntity) getHandle().getThrower/*was:getShooter*/().getBukkitEntity();
         }
 
         return null;
@@ -20,16 +20,16 @@ public class CraftProjectile extends AbstractProjectile implements Projectile { 
 
     public void setShooter(LivingEntity shooter) {
         if (shooter instanceof CraftLivingEntity) {
-            getHandle().thrower = (net.minecraft.entity.EntityLiving) ((CraftLivingEntity) shooter).entity;
+            getHandle().thrower/*was:shooter*/ = (net.minecraft.entity.EntityLiving/*was:EntityLiving*/) ((CraftLivingEntity) shooter).entity;
             if (shooter instanceof CraftHumanEntity) {
-                getHandle().throwerName = ((CraftHumanEntity) shooter).getName();
+                getHandle().throwerName/*was:shooterName*/ = ((CraftHumanEntity) shooter).getName();
             }
         }
     }
 
     @Override
-    public net.minecraft.entity.projectile.EntityThrowable getHandle() {
-        return (net.minecraft.entity.projectile.EntityThrowable) entity;
+    public net.minecraft.entity.projectile.EntityThrowable/*was:EntityProjectile*/ getHandle() {
+        return (net.minecraft.entity.projectile.EntityThrowable/*was:EntityProjectile*/) entity;
     }
 
     @Override

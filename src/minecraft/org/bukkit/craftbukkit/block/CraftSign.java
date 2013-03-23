@@ -5,16 +5,16 @@ import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.CraftWorld;
 
 public class CraftSign extends CraftBlockState implements Sign {
-    private final net.minecraft.tileentity.TileEntitySign sign;
+    private final net.minecraft.tileentity.TileEntitySign/*was:TileEntitySign*/ sign;
     private final String[] lines;
 
     public CraftSign(final Block block) {
         super(block);
 
         CraftWorld world = (CraftWorld) block.getWorld();
-        sign = (net.minecraft.tileentity.TileEntitySign) world.getTileEntityAt(getX(), getY(), getZ());
-        lines = new String[sign.signText.length];
-        System.arraycopy(sign.signText, 0, lines, 0, lines.length);
+        sign = (net.minecraft.tileentity.TileEntitySign/*was:TileEntitySign*/) world.getTileEntityAt(getX(), getY(), getZ());
+        lines = new String[sign.signText/*was:lines*/.length];
+        System.arraycopy(sign.signText/*was:lines*/, 0, lines, 0, lines.length);
     }
 
     public String[] getLines() {
@@ -36,12 +36,12 @@ public class CraftSign extends CraftBlockState implements Sign {
         if (result) {
             for(int i = 0; i < 4; i++) {
                 if(lines[i] != null) {
-                    sign.signText[i] = lines[i];
+                    sign.signText/*was:lines*/[i] = lines[i];
                 } else {
-                    sign.signText[i] = "";
+                    sign.signText/*was:lines*/[i] = "";
                 }
             }
-            sign.onInventoryChanged();
+            sign.onInventoryChanged/*was:update*/();
         }
 
         return result;

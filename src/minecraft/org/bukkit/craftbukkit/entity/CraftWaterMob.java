@@ -6,13 +6,13 @@ import org.bukkit.entity.WaterMob;
 
 public class CraftWaterMob extends CraftCreature implements WaterMob {
 
-    public CraftWaterMob(CraftServer server, net.minecraft.entity.passive.EntityWaterMob entity) {
+    public CraftWaterMob(CraftServer server, net.minecraft.entity.passive.EntityWaterMob/*was:EntityWaterAnimal*/ entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.passive.EntityWaterMob getHandle() {
-        return (net.minecraft.entity.passive.EntityWaterMob) entity;
+    public net.minecraft.entity.passive.EntityWaterMob/*was:EntityWaterAnimal*/ getHandle() {
+        return (net.minecraft.entity.passive.EntityWaterMob/*was:EntityWaterAnimal*/) entity;
     }
 
     @Override

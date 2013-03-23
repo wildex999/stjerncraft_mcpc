@@ -8,24 +8,24 @@ public class OrebfuscatorManager {
 
     // Default blocks
     static {
-        obfuscateBlocks[net.minecraft.block.Block.stone.blockID] = true;
-        obfuscateBlocks[net.minecraft.block.Block.oreGold.blockID] = true;
-        obfuscateBlocks[net.minecraft.block.Block.oreIron.blockID] = true;
-        obfuscateBlocks[net.minecraft.block.Block.oreCoal.blockID] = true;
-        obfuscateBlocks[net.minecraft.block.Block.oreLapis.blockID] = true;
-        obfuscateBlocks[net.minecraft.block.Block.chest.blockID] = true;
-        obfuscateBlocks[net.minecraft.block.Block.oreDiamond.blockID] = true;
-        obfuscateBlocks[net.minecraft.block.Block.oreRedstone.blockID] = true;
-        obfuscateBlocks[net.minecraft.block.Block.oreRedstoneGlowing.blockID] = true;
-        obfuscateBlocks[net.minecraft.block.Block.oreEmerald.blockID] = true;
-        obfuscateBlocks[net.minecraft.block.Block.enderChest.blockID] = true;
+        obfuscateBlocks[net.minecraft.block.Block/*was:Block*/.stone/*was:STONE*/.blockID/*was:id*/] = true;
+        obfuscateBlocks[net.minecraft.block.Block/*was:Block*/.oreGold/*was:GOLD_ORE*/.blockID/*was:id*/] = true;
+        obfuscateBlocks[net.minecraft.block.Block/*was:Block*/.oreIron/*was:IRON_ORE*/.blockID/*was:id*/] = true;
+        obfuscateBlocks[net.minecraft.block.Block/*was:Block*/.oreCoal/*was:COAL_ORE*/.blockID/*was:id*/] = true;
+        obfuscateBlocks[net.minecraft.block.Block/*was:Block*/.oreLapis/*was:LAPIS_ORE*/.blockID/*was:id*/] = true;
+        obfuscateBlocks[net.minecraft.block.Block/*was:Block*/.chest/*was:CHEST*/.blockID/*was:id*/] = true;
+        obfuscateBlocks[net.minecraft.block.Block/*was:Block*/.oreDiamond/*was:DIAMOND_ORE*/.blockID/*was:id*/] = true;
+        obfuscateBlocks[net.minecraft.block.Block/*was:Block*/.oreRedstone/*was:REDSTONE_ORE*/.blockID/*was:id*/] = true;
+        obfuscateBlocks[net.minecraft.block.Block/*was:Block*/.oreRedstoneGlowing/*was:GLOWING_REDSTONE_ORE*/.blockID/*was:id*/] = true;
+        obfuscateBlocks[net.minecraft.block.Block/*was:Block*/.oreEmerald/*was:EMERALD_ORE*/.blockID/*was:id*/] = true;
+        obfuscateBlocks[net.minecraft.block.Block/*was:Block*/.enderChest/*was:ENDER_CHEST*/.blockID/*was:id*/] = true;
     }
 
-    public static void updateNearbyBlocks(net.minecraft.world.World world, int x, int y, int z) {
+    public static void updateNearbyBlocks(net.minecraft.world.World/*was:World*/ world, int x, int y, int z) {
         updateNearbyBlocks(world, x, y, z, world.getServer().orebfuscatorUpdateRadius);
     }
 
-    public static void obfuscate(int chunkX, int chunkY, int bitmask, byte[] buffer, net.minecraft.world.World world) {
+    public static void obfuscate(int chunkX, int chunkY, int bitmask, byte[] buffer, net.minecraft.world.World/*was:World*/ world) {
         if (world.getServer().orebfuscatorEnabled && world.getWorld().obfuscated) {
             int initialRadius = 1;
             int index = 0;
@@ -42,7 +42,7 @@ public class OrebfuscatorManager {
                                 if (obfuscateBlocks[data & 0xFF]) { // TODO: decode extended block IDs (4-bit 'add' field)
                                     if (initialRadius == 0 || !areAjacentBlocksTransparent(world, startX + x, (i << 4) + y, startZ + z, initialRadius)) {
                                         // Replace with stone
-                                        buffer[index] = (byte) net.minecraft.block.Block.stone.blockID;
+                                        buffer[index] = (byte) net.minecraft.block.Block/*was:Block*/.stone/*was:STONE*/.blockID/*was:id*/;
                                     }
                                 }
                                 if (++index >= buffer.length) {
@@ -56,15 +56,15 @@ public class OrebfuscatorManager {
         }
     }
 
-    private static void updateNearbyBlocks(net.minecraft.world.World world, int x, int y, int z, int radius) {
-        if (world.getServer().orebfuscatorEnabled && world.getWorld().obfuscated && world.blockExists(x, y, z)) {
+    private static void updateNearbyBlocks(net.minecraft.world.World/*was:World*/ world, int x, int y, int z, int radius) {
+        if (world.getServer().orebfuscatorEnabled && world.getWorld().obfuscated && world.blockExists/*was:isLoaded*/(x, y, z)) {
             // Get block id
-            int id = world.getBlockId(x, y, z);
+            int id = world.getBlockId/*was:getTypeId*/(x, y, z);
 
             // See if it needs update
             if (obfuscateBlocks[id]) {
                 // Send the update
-                world.markBlockForUpdate(x, y, z);
+                world.markBlockForUpdate/*was:notify*/(x, y, z);
             }
 
             // Check other blocks for updates
@@ -79,10 +79,10 @@ public class OrebfuscatorManager {
         }
     }
 
-    private static boolean areAjacentBlocksTransparent(net.minecraft.world.World world, int x, int y, int z, int radius) {
-        return y > 0 && y <= world.getHeight()
-                && world.blockExists(x, y, z)
-                && !net.minecraft.block.Block.isNormalCube(world.getBlockId(x, y, z))
+    private static boolean areAjacentBlocksTransparent(net.minecraft.world.World/*was:World*/ world, int x, int y, int z, int radius) {
+        return y > 0 && y <= world.getHeight/*was:getHeight*/()
+                && world.blockExists/*was:isLoaded*/(x, y, z)
+                && !net.minecraft.block.Block/*was:Block*/.isNormalCube/*was:i*/(world.getBlockId/*was:getTypeId*/(x, y, z))
                 || (radius > 0 && (areAjacentBlocksTransparent(world, x, y + 1, z, radius - 1)
                 || areAjacentBlocksTransparent(world, x, y - 1, z, radius - 1)
                 || areAjacentBlocksTransparent(world, x + 1, y, z, radius - 1)

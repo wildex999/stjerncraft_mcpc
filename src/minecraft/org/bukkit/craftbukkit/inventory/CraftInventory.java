@@ -14,32 +14,32 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 
 public class CraftInventory implements Inventory {
-    protected net.minecraft.inventory.IInventory inventory;
+    protected net.minecraft.inventory.IInventory/*was:IInventory*/ inventory;
 
-    public CraftInventory(net.minecraft.inventory.IInventory inventory) {
+    public CraftInventory(net.minecraft.inventory.IInventory/*was:IInventory*/ inventory) {
         this.inventory = inventory;
     }
 
-    public net.minecraft.inventory.IInventory getInventory() {
+    public net.minecraft.inventory.IInventory/*was:IInventory*/ getInventory() {
         return inventory;
     }
 
     public int getSize() {
-        return getInventory().getSizeInventory();
+        return getInventory().getSizeInventory/*was:getSize*/();
     }
 
     public String getName() {
-        return getInventory().getInvName();
+        return getInventory().getInvName/*was:getName*/();
     }
 
     public ItemStack getItem(int index) {
-        net.minecraft.item.ItemStack item = getInventory().getStackInSlot(index);
+        /*was:net.minecraft.server.*/net.minecraft.item.ItemStack/*was:ItemStack*/ item = getInventory().getStackInSlot/*was:getItem*/(index);
         return item == null ? null : CraftItemStack.asCraftMirror(item);
     }
 
     public ItemStack[] getContents() {
         ItemStack[] items = new ItemStack[getSize()];
-        net.minecraft.item.ItemStack[] mcItems = getInventory().getContents();
+        /*was:net.minecraft.server.*/net.minecraft.item.ItemStack/*was:ItemStack*/[] mcItems = getInventory().getContents();
 
         for (int i = 0; i < mcItems.length; i++) {
             items[i] = mcItems[i] == null ? null : CraftItemStack.asCraftMirror(mcItems[i]);
@@ -53,7 +53,7 @@ public class CraftInventory implements Inventory {
             throw new IllegalArgumentException("Invalid inventory size; expected " + getInventory().getContents().length + " or less");
         }
 
-        net.minecraft.item.ItemStack[] mcItems = getInventory().getContents();
+        /*was:net.minecraft.server.*/net.minecraft.item.ItemStack/*was:ItemStack*/[] mcItems = getInventory().getContents();
 
         for (int i = 0; i < mcItems.length; i++) {
             if (i >= items.length) {
@@ -65,7 +65,7 @@ public class CraftInventory implements Inventory {
     }
 
     public void setItem(int index, ItemStack item) {
-        getInventory().setInventorySlotContents(index, ((item == null || item.getTypeId() == 0) ? null : CraftItemStack.asNMSCopy(item)));
+        getInventory().setInventorySlotContents/*was:setItem*/(index, ((item == null || item.getTypeId() == 0) ? null : CraftItemStack.asNMSCopy(item)));
     }
 
     public boolean contains(int materialId) {
@@ -355,7 +355,7 @@ public class CraftInventory implements Inventory {
     }
 
     private int getMaxItemStack() {
-        return getInventory().getInventoryStackLimit();
+        return getInventory().getInventoryStackLimit/*was:getMaxStackSize*/();
     }
 
     public void remove(int materialId) {
@@ -407,31 +407,31 @@ public class CraftInventory implements Inventory {
     }
 
     public String getTitle() {
-        return inventory.getInvName();
+        return inventory.getInvName/*was:getName*/();
     }
 
     public InventoryType getType() {
-        if (inventory instanceof net.minecraft.inventory.InventoryCrafting) {
-            return inventory.getSizeInventory() >= 9 ? InventoryType.WORKBENCH : InventoryType.CRAFTING;
-        } else if (inventory instanceof net.minecraft.entity.player.InventoryPlayer) {
+        if (inventory instanceof net.minecraft.inventory.InventoryCrafting/*was:InventoryCrafting*/) {
+            return inventory.getSizeInventory/*was:getSize*/() >= 9 ? InventoryType.WORKBENCH : InventoryType.CRAFTING;
+        } else if (inventory instanceof net.minecraft.entity.player.InventoryPlayer/*was:PlayerInventory*/) {
             return InventoryType.PLAYER;
-        } else if (inventory instanceof net.minecraft.tileentity.TileEntityDispenser) {
+        } else if (inventory instanceof net.minecraft.tileentity.TileEntityDispenser/*was:TileEntityDispenser*/) {
             return InventoryType.DISPENSER;
-        } else if (inventory instanceof net.minecraft.tileentity.TileEntityFurnace) {
+        } else if (inventory instanceof net.minecraft.tileentity.TileEntityFurnace/*was:TileEntityFurnace*/) {
             return InventoryType.FURNACE;
-        } else if (inventory instanceof net.minecraft.inventory.SlotEnchantmentTable) {
+        } else if (inventory instanceof net.minecraft.inventory.SlotEnchantmentTable/*was:ContainerEnchantTableInventory*/) {
             return InventoryType.ENCHANTING;
-        } else if (inventory instanceof net.minecraft.tileentity.TileEntityBrewingStand) {
+        } else if (inventory instanceof net.minecraft.tileentity.TileEntityBrewingStand/*was:TileEntityBrewingStand*/) {
             return InventoryType.BREWING;
         } else if (inventory instanceof CraftInventoryCustom.MinecraftInventory) {
             return ((CraftInventoryCustom.MinecraftInventory) inventory).getType();
-        } else if (inventory instanceof net.minecraft.inventory.InventoryEnderChest) {
+        } else if (inventory instanceof net.minecraft.inventory.InventoryEnderChest/*was:InventoryEnderChest*/) {
             return InventoryType.ENDER_CHEST;
-        } else if (inventory instanceof net.minecraft.inventory.InventoryMerchant) {
+        } else if (inventory instanceof net.minecraft.inventory.InventoryMerchant/*was:InventoryMerchant*/) {
             return InventoryType.MERCHANT;
-        } else if (inventory instanceof net.minecraft.tileentity.TileEntityBeacon) {
+        } else if (inventory instanceof net.minecraft.tileentity.TileEntityBeacon/*was:TileEntityBeacon*/) {
             return InventoryType.BEACON;
-        } else if (inventory instanceof net.minecraft.inventory.InventoryRepair) {
+        } else if (inventory instanceof net.minecraft.inventory.InventoryRepair/*was:ContainerAnvilInventory*/) {
             return InventoryType.ANVIL;
         } else {
             return InventoryType.CHEST;
@@ -443,7 +443,7 @@ public class CraftInventory implements Inventory {
     }
 
     public int getMaxStackSize() {
-        return inventory.getInventoryStackLimit();
+        return inventory.getInventoryStackLimit/*was:getMaxStackSize*/();
     }
 
     public void setMaxStackSize(int size) {

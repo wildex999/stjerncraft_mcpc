@@ -33,10 +33,10 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
         }
     }
 
-    CraftMetaEnchantedBook(net.minecraft.nbt.NBTTagCompound tag) {
+    CraftMetaEnchantedBook(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
         super(tag);
 
-        if (!tag.hasKey(STORED_ENCHANTMENTS.NBT)) {
+        if (!tag.hasKey/*was:hasKey*/(STORED_ENCHANTMENTS.NBT)) {
             return;
         }
 
@@ -50,7 +50,7 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
     }
 
     @Override
-    void applyToItem(net.minecraft.nbt.NBTTagCompound itemTag) {
+    void applyToItem(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ itemTag) {
         super.applyToItem(itemTag);
 
         applyEnchantments(enchantments, itemTag, STORED_ENCHANTMENTS);

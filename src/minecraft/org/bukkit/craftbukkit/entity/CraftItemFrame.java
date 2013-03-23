@@ -10,25 +10,25 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 
 public class CraftItemFrame extends CraftHanging implements ItemFrame {
-    public CraftItemFrame(CraftServer server, net.minecraft.entity.item.EntityItemFrame entity) {
+    public CraftItemFrame(CraftServer server, net.minecraft.entity.item.EntityItemFrame/*was:EntityItemFrame*/ entity) {
         super(server, entity);
     }
 
     public void setItem(org.bukkit.inventory.ItemStack item) {
         if (item == null || item.getTypeId() == 0) {
-            getHandle().getDataWatcher().addObjectByDataType(2, 5);
-            getHandle().getDataWatcher().func_82708_h(2);
+            getHandle().getDataWatcher/*was:getDataWatcher*/().addObjectByDataType/*was:a*/(2, 5);
+            getHandle().getDataWatcher/*was:getDataWatcher*/().func_82708_h/*was:h*/(2);
         } else {
-            getHandle().setDisplayedItem(CraftItemStack.asNMSCopy(item));
+            getHandle().setDisplayedItem/*was:a*/(CraftItemStack.asNMSCopy(item));
         }
     }
 
     public org.bukkit.inventory.ItemStack getItem() {
-        return CraftItemStack.asBukkitCopy(getHandle().getDisplayedItem());
+        return CraftItemStack.asBukkitCopy(getHandle().getDisplayedItem/*was:i*/());
     }
 
     public Rotation getRotation() {
-        return toBukkitRotation(getHandle().getRotation());
+        return toBukkitRotation(getHandle().getRotation/*was:j*/());
     }
 
     Rotation toBukkitRotation(int value) {
@@ -43,13 +43,13 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         case 3:
             return Rotation.COUNTER_CLOCKWISE;
         default:
-            throw new AssertionError("Unknown rotation " + getHandle().getRotation() + " for " + getHandle());
+            throw new AssertionError("Unknown rotation " + getHandle().getRotation/*was:j*/() + " for " + getHandle());
         }
     }
 
     public void setRotation(Rotation rotation) {
         Validate.notNull(rotation, "Rotation cannot be null");
-        getHandle().setItemRotation(toInteger(rotation));
+        getHandle().setItemRotation/*was:g*/(toInteger(rotation));
     }
 
     static int toInteger(Rotation rotation) {
@@ -69,8 +69,8 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
     }
 
     @Override
-    public net.minecraft.entity.item.EntityItemFrame getHandle() {
-        return (net.minecraft.entity.item.EntityItemFrame) entity;
+    public net.minecraft.entity.item.EntityItemFrame/*was:EntityItemFrame*/ getHandle() {
+        return (net.minecraft.entity.item.EntityItemFrame/*was:EntityItemFrame*/) entity;
     }
 
     @Override

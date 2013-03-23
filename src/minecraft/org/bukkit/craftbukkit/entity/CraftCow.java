@@ -7,13 +7,13 @@ import org.bukkit.entity.EntityType;
 
 public class CraftCow extends CraftAnimals implements Cow {
 
-    public CraftCow(CraftServer server, net.minecraft.entity.passive.EntityCow entity) {
+    public CraftCow(CraftServer server, net.minecraft.entity.passive.EntityCow/*was:EntityCow*/ entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.passive.EntityCow getHandle() {
-        return (net.minecraft.entity.passive.EntityCow) entity;
+    public net.minecraft.entity.passive.EntityCow/*was:EntityCow*/ getHandle() {
+        return (net.minecraft.entity.passive.EntityCow/*was:EntityCow*/) entity;
     }
 
     @Override

@@ -7,13 +7,13 @@ import org.bukkit.entity.Squid;
 
 public class CraftSquid extends CraftWaterMob implements Squid {
 
-    public CraftSquid(CraftServer server, net.minecraft.entity.passive.EntitySquid entity) {
+    public CraftSquid(CraftServer server, net.minecraft.entity.passive.EntitySquid/*was:EntitySquid*/ entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.passive.EntitySquid getHandle() {
-        return (net.minecraft.entity.passive.EntitySquid) entity;
+    public net.minecraft.entity.passive.EntitySquid/*was:EntitySquid*/ getHandle() {
+        return (net.minecraft.entity.passive.EntitySquid/*was:EntitySquid*/) entity;
     }
 
     @Override

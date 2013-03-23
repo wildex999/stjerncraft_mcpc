@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 
 public class CraftInventoryBrewer extends CraftInventory implements BrewerInventory {
-    public CraftInventoryBrewer(net.minecraft.inventory.IInventory inventory) {
+    public CraftInventoryBrewer(net.minecraft.inventory.IInventory/*was:IInventory*/ inventory) {
         super(inventory);
     }
 

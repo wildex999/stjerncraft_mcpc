@@ -198,20 +198,20 @@ class CraftMetaItem implements ItemMeta, Repairable {
         this.repairCost = meta.repairCost;
     }
 
-    CraftMetaItem(net.minecraft.nbt.NBTTagCompound tag) {
-        if (tag.hasKey(DISPLAY.NBT)) {
-            net.minecraft.nbt.NBTTagCompound display = tag.getCompoundTag(DISPLAY.NBT);
+    CraftMetaItem(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
+        if (tag.hasKey/*was:hasKey*/(DISPLAY.NBT)) {
+            net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ display = tag.getCompoundTag/*was:getCompound*/(DISPLAY.NBT);
 
-            if (display.hasKey(NAME.NBT)) {
-                displayName = display.getString(NAME.NBT);
+            if (display.hasKey/*was:hasKey*/(NAME.NBT)) {
+                displayName = display.getString/*was:getString*/(NAME.NBT);
             }
 
-            if (display.hasKey(LORE.NBT)) {
-                net.minecraft.nbt.NBTTagList list = display.getTagList(LORE.NBT);
-                lore = new ArrayList<String>(list.tagCount());
+            if (display.hasKey/*was:hasKey*/(LORE.NBT)) {
+                net.minecraft.nbt.NBTTagList/*was:NBTTagList*/ list = display.getTagList/*was:getList*/(LORE.NBT);
+                lore = new ArrayList<String>(list.tagCount/*was:size*/());
 
-                for (int index = 0; index < list.tagCount(); index++) {
-                    String line = ((net.minecraft.nbt.NBTTagString) list.tagAt(index)).data;
+                for (int index = 0; index < list.tagCount/*was:size*/(); index++) {
+                    String line = ((net.minecraft.nbt.NBTTagString/*was:NBTTagString*/) list.tagAt/*was:get*/(index)).data/*was:data*/;
                     lore.add(line);
                 }
             }
@@ -219,22 +219,22 @@ class CraftMetaItem implements ItemMeta, Repairable {
 
         this.enchantments = buildEnchantments(tag, ENCHANTMENTS);
 
-        if (tag.hasKey(REPAIR.NBT)) {
-            repairCost = tag.getInteger(REPAIR.NBT);
+        if (tag.hasKey/*was:hasKey*/(REPAIR.NBT)) {
+            repairCost = tag.getInteger/*was:getInt*/(REPAIR.NBT);
         }
     }
 
-    static Map<Enchantment, Integer> buildEnchantments(net.minecraft.nbt.NBTTagCompound tag, ItemMetaKey key) {
-        if (!tag.hasKey(key.NBT)) {
+    static Map<Enchantment, Integer> buildEnchantments(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag, ItemMetaKey key) {
+        if (!tag.hasKey/*was:hasKey*/(key.NBT)) {
             return null;
         }
 
-        net.minecraft.nbt.NBTTagList ench = tag.getTagList(key.NBT);
-        Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>(ench.tagCount());
+        net.minecraft.nbt.NBTTagList/*was:NBTTagList*/ ench = tag.getTagList/*was:getList*/(key.NBT);
+        Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>(ench.tagCount/*was:size*/());
 
-        for (int i = 0; i < ench.tagCount(); i++) {
-            int id = 0xffff & ((net.minecraft.nbt.NBTTagCompound) ench.tagAt(i)).getShort(ENCHANTMENTS_ID.NBT);
-            int level = 0xffff & ((net.minecraft.nbt.NBTTagCompound) ench.tagAt(i)).getShort(ENCHANTMENTS_LVL.NBT);
+        for (int i = 0; i < ench.tagCount/*was:size*/(); i++) {
+            int id = 0xffff & ((net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/) ench.tagAt/*was:get*/(i)).getShort/*was:getShort*/(ENCHANTMENTS_ID.NBT);
+            int level = 0xffff & ((net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/) ench.tagAt/*was:get*/(i)).getShort/*was:getShort*/(ENCHANTMENTS_LVL.NBT);
 
             enchantments.put(Enchantment.getById(id), level);
         }
@@ -277,9 +277,9 @@ class CraftMetaItem implements ItemMeta, Repairable {
     }
 
     @Overridden
-    void applyToItem(net.minecraft.nbt.NBTTagCompound itemTag) {
+    void applyToItem(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ itemTag) {
         if (hasDisplayName()) {
-            setDisplayTag(itemTag, NAME.NBT, new net.minecraft.nbt.NBTTagString(NAME.NBT, displayName));
+            setDisplayTag(itemTag, NAME.NBT, new net.minecraft.nbt.NBTTagString/*was:NBTTagString*/(NAME.NBT, displayName));
         }
 
         if (hasLore()) {
@@ -289,50 +289,50 @@ class CraftMetaItem implements ItemMeta, Repairable {
         applyEnchantments(enchantments, itemTag, ENCHANTMENTS);
 
         if (hasRepairCost()) {
-            itemTag.setInteger(REPAIR.NBT, repairCost);
+            itemTag.setInteger/*was:setInt*/(REPAIR.NBT, repairCost);
         }
     }
 
-    static net.minecraft.nbt.NBTTagList createStringList(List<String> list, ItemMetaKey key) {
+    static net.minecraft.nbt.NBTTagList/*was:NBTTagList*/ createStringList(List<String> list, ItemMetaKey key) {
         if (list == null || list.isEmpty()) {
             return null;
         }
 
-        net.minecraft.nbt.NBTTagList tagList = new net.minecraft.nbt.NBTTagList(key.NBT);
+        net.minecraft.nbt.NBTTagList/*was:NBTTagList*/ tagList = new net.minecraft.nbt.NBTTagList/*was:NBTTagList*/(key.NBT);
         for (int i = 0; i < list.size(); i++) {
-            tagList.appendTag(new net.minecraft.nbt.NBTTagString("", list.get(i)));
+            tagList.appendTag/*was:add*/(new net.minecraft.nbt.NBTTagString/*was:NBTTagString*/("", list.get(i)));
         }
 
         return tagList;
     }
 
-    static void applyEnchantments(Map<Enchantment, Integer> enchantments, net.minecraft.nbt.NBTTagCompound tag, ItemMetaKey key) {
+    static void applyEnchantments(Map<Enchantment, Integer> enchantments, net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag, ItemMetaKey key) {
         if (enchantments == null || enchantments.size() == 0) {
             return;
         }
 
-        net.minecraft.nbt.NBTTagList list = new net.minecraft.nbt.NBTTagList(key.NBT);
+        net.minecraft.nbt.NBTTagList/*was:NBTTagList*/ list = new net.minecraft.nbt.NBTTagList/*was:NBTTagList*/(key.NBT);
 
         for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-            net.minecraft.nbt.NBTTagCompound subtag = new net.minecraft.nbt.NBTTagCompound();
+            net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ subtag = new net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/();
 
-            subtag.setShort(ENCHANTMENTS_ID.NBT, (short) entry.getKey().getId());
-            subtag.setShort(ENCHANTMENTS_LVL.NBT, entry.getValue().shortValue());
+            subtag.setShort/*was:setShort*/(ENCHANTMENTS_ID.NBT, (short) entry.getKey().getId());
+            subtag.setShort/*was:setShort*/(ENCHANTMENTS_LVL.NBT, entry.getValue().shortValue());
 
-            list.appendTag(subtag);
+            list.appendTag/*was:add*/(subtag);
         }
 
-        tag.setTag(key.NBT, list);
+        tag.setTag/*was:set*/(key.NBT, list);
     }
 
-    void setDisplayTag(net.minecraft.nbt.NBTTagCompound tag, String key, net.minecraft.nbt.NBTBase value) {
-        final net.minecraft.nbt.NBTTagCompound display = tag.getCompoundTag(DISPLAY.NBT);
+    void setDisplayTag(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag, String key, net.minecraft.nbt.NBTBase/*was:NBTBase*/ value) {
+        final net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ display = tag.getCompoundTag/*was:getCompound*/(DISPLAY.NBT);
 
-        if (!tag.hasKey(DISPLAY.NBT)) {
-            tag.setCompoundTag(DISPLAY.NBT, display);
+        if (!tag.hasKey/*was:hasKey*/(DISPLAY.NBT)) {
+            tag.setCompoundTag/*was:setCompound*/(DISPLAY.NBT, display);
         }
 
-        display.setTag(key, value);
+        display.setTag/*was:set*/(key, value);
     }
 
     @Overridden

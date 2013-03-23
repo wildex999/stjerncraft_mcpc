@@ -7,15 +7,15 @@ import org.bukkit.command.BlockCommandSender;
  * Represents input from a command block
  */
 public class CraftBlockCommandSender extends ServerCommandSender implements BlockCommandSender {
-    private final net.minecraft.tileentity.TileEntityCommandBlock commandBlock;
+    private final net.minecraft.tileentity.TileEntityCommandBlock/*was:TileEntityCommand*/ commandBlock;
 
-    public CraftBlockCommandSender(net.minecraft.tileentity.TileEntityCommandBlock commandBlock) {
+    public CraftBlockCommandSender(net.minecraft.tileentity.TileEntityCommandBlock/*was:TileEntityCommand*/ commandBlock) {
         super();
         this.commandBlock = commandBlock;
     }
 
     public Block getBlock() {
-        return commandBlock.worldObj.getWorld().getBlockAt(commandBlock.xCoord, commandBlock.yCoord, commandBlock.zCoord);
+        return commandBlock.worldObj/*was:world*/.getWorld().getBlockAt(commandBlock.xCoord/*was:x*/, commandBlock.yCoord/*was:y*/, commandBlock.zCoord/*was:z*/);
     }
 
     public void sendMessage(String message) {

@@ -11,7 +11,7 @@ import joptsimple.OptionSet;
 public class ShortConsoleLogFormatter extends Formatter {
     private final SimpleDateFormat date;
 
-    public ShortConsoleLogFormatter(net.minecraft.server.MinecraftServer server) {
+    public ShortConsoleLogFormatter(net.minecraft.server.MinecraftServer/*was:MinecraftServer*/ server) {
         OptionSet options = server.options;
         SimpleDateFormat date = null;
 

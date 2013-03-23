@@ -30,11 +30,11 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
         this.scaling = map.scaling;
     }
 
-    CraftMetaMap(net.minecraft.nbt.NBTTagCompound tag) {
+    CraftMetaMap(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
         super(tag);
 
-        if (tag.hasKey(MAP_SCALING.NBT)) {
-            this.scaling = tag.getBoolean(MAP_SCALING.NBT) ? SCALING_TRUE : SCALING_FALSE;
+        if (tag.hasKey/*was:hasKey*/(MAP_SCALING.NBT)) {
+            this.scaling = tag.getBoolean/*was:getBoolean*/(MAP_SCALING.NBT) ? SCALING_TRUE : SCALING_FALSE;
         }
     }
 
@@ -48,11 +48,11 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
     }
 
     @Override
-    void applyToItem(net.minecraft.nbt.NBTTagCompound tag) {
+    void applyToItem(net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ tag) {
         super.applyToItem(tag);
 
         if (hasScaling()) {
-            tag.setBoolean(MAP_SCALING.NBT, isScaling());
+            tag.setBoolean/*was:setBoolean*/(MAP_SCALING.NBT, isScaling());
         }
     }
 

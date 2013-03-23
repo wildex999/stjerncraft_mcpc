@@ -11,11 +11,11 @@ import org.bukkit.inventory.ItemStack;
 
 
 public class CraftInventoryView extends InventoryView {
-    private final net.minecraft.inventory.Container container;
+    private final net.minecraft.inventory.Container/*was:Container*/ container;
     private final CraftHumanEntity player;
     private final CraftInventory viewing;
 
-    public CraftInventoryView(HumanEntity player, Inventory viewing, net.minecraft.inventory.Container container) {
+    public CraftInventoryView(HumanEntity player, Inventory viewing, net.minecraft.inventory.Container/*was:Container*/ container) {
         // TODO: Should we make sure it really IS a CraftHumanEntity first? And a CraftInventory?
         this.player = (CraftHumanEntity) player;
         this.viewing = (CraftInventory) viewing;
@@ -48,11 +48,11 @@ public class CraftInventoryView extends InventoryView {
 
     @Override
     public void setItem(int slot, ItemStack item) {
-        net.minecraft.item.ItemStack stack = CraftItemStack.asNMSCopy(item);
+        /*was:net.minecraft.server.*/net.minecraft.item.ItemStack/*was:ItemStack*/ stack = CraftItemStack.asNMSCopy(item);
         if (slot != -999) {
-            container.getSlot(slot).putStack(stack);
+            container.getSlot/*was:getSlot*/(slot).putStack/*was:set*/(stack);
         } else {
-            player.getHandle().dropPlayerItem(stack);
+            player.getHandle().dropPlayerItem/*was:drop*/(stack);
         }
     }
 
@@ -61,14 +61,14 @@ public class CraftInventoryView extends InventoryView {
         if (slot == -999) {
             return null;
         }
-        return CraftItemStack.asCraftMirror(container.getSlot(slot).getStack());
+        return CraftItemStack.asCraftMirror(container.getSlot/*was:getSlot*/(slot).getStack/*was:getItem*/());
     }
 
     public boolean isInTop(int rawSlot) {
         return rawSlot < viewing.getSize();
     }
 
-    public net.minecraft.inventory.Container getHandle() {
+    public net.minecraft.inventory.Container/*was:Container*/ getHandle() {
         return container;
     }
 

@@ -12,14 +12,14 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 
 public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderDragon {
-    public CraftEnderDragon(CraftServer server, net.minecraft.entity.boss.EntityDragon entity) {
+    public CraftEnderDragon(CraftServer server, net.minecraft.entity.boss.EntityDragon/*was:EntityEnderDragon*/ entity) {
         super(server, entity);
     }
 
     public Set<ComplexEntityPart> getParts() {
         Builder<ComplexEntityPart> builder = ImmutableSet.builder();
 
-        for (net.minecraft.entity.boss.EntityDragonPart part : getHandle().dragonPartArray) {
+        for (net.minecraft.entity.boss.EntityDragonPart/*was:EntityComplexPart*/ part : getHandle().dragonPartArray/*was:children*/) {
             builder.add((ComplexEntityPart) part.getBukkitEntity());
         }
 
@@ -27,8 +27,8 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
     }
 
     @Override
-    public net.minecraft.entity.boss.EntityDragon getHandle() {
-        return (net.minecraft.entity.boss.EntityDragon) entity;
+    public net.minecraft.entity.boss.EntityDragon/*was:EntityEnderDragon*/ getHandle() {
+        return (net.minecraft.entity.boss.EntityDragon/*was:EntityEnderDragon*/) entity;
     }
 
     @Override

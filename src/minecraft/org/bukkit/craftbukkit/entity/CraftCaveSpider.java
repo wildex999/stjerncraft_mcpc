@@ -6,13 +6,13 @@ import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.EntityType;
 
 public class CraftCaveSpider extends CraftSpider implements CaveSpider {
-    public CraftCaveSpider(CraftServer server, net.minecraft.entity.monster.EntityCaveSpider entity) {
+    public CraftCaveSpider(CraftServer server, net.minecraft.entity.monster.EntityCaveSpider/*was:EntityCaveSpider*/ entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.monster.EntityCaveSpider getHandle() {
-        return (net.minecraft.entity.monster.EntityCaveSpider) entity;
+    public net.minecraft.entity.monster.EntityCaveSpider/*was:EntityCaveSpider*/ getHandle() {
+        return (net.minecraft.entity.monster.EntityCaveSpider/*was:EntityCaveSpider*/) entity;
     }
 
     @Override

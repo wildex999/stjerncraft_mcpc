@@ -16,7 +16,7 @@ public class CraftCrashReport implements Callable {
     public Object call() throws Exception {
         StringWriter value = new StringWriter();
         try {
-            value.append("\n   Running: ").append(Bukkit.getName()).append(" version ").append(Bukkit.getVersion()).append(" (Implementing API version ").append(Bukkit.getBukkitVersion()).append(") ").append(String.valueOf(net.minecraft.server.MinecraftServer.getServer().isServerInOnlineMode()));
+            value.append("\n   Running: ").append(Bukkit.getName()).append(" version ").append(Bukkit.getVersion()).append(" (Implementing API version ").append(Bukkit.getBukkitVersion()).append(") ").append(String.valueOf(net.minecraft.server.MinecraftServer/*was:MinecraftServer*/.getServer/*was:getServer*/().isServerInOnlineMode/*was:getOnlineMode*/()));
             value.append("\n   Plugins: {");
             for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
                 PluginDescriptionFile description = plugin.getDescription();

@@ -20,12 +20,12 @@ import org.bukkit.plugin.Plugin;
 public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializable {
     private final String name;
     private final CraftServer server;
-    private final net.minecraft.world.storage.SaveHandler storage;
+    private final net.minecraft.world.storage.SaveHandler/*was:WorldNBTStorage*/ storage;
 
     protected CraftOfflinePlayer(CraftServer server, String name) {
         this.server = server;
         this.name = name;
-        this.storage = (net.minecraft.world.storage.SaveHandler) (server.console.worlds.get(0).getSaveHandler());
+        this.storage = (net.minecraft.world.storage.SaveHandler/*was:WorldNBTStorage*/) (server.console.worlds.get(0).getSaveHandler/*was:getDataManager*/());
     }
 
     public boolean isOnline() {
@@ -41,43 +41,43 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     }
 
     public boolean isOp() {
-        return server.getHandle().areCommandsAllowed(getName().toLowerCase());
+        return server.getHandle().areCommandsAllowed/*was:isOp*/(getName().toLowerCase());
     }
 
     public void setOp(boolean value) {
         if (value == isOp()) return;
 
         if (value) {
-            server.getHandle().addOp(getName().toLowerCase());
+            server.getHandle().addOp/*was:addOp*/(getName().toLowerCase());
         } else {
-            server.getHandle().removeOp(getName().toLowerCase());
+            server.getHandle().removeOp/*was:removeOp*/(getName().toLowerCase());
         }
     }
 
     public boolean isBanned() {
-        return server.getHandle().getBannedPlayers().isBanned(name.toLowerCase());
+        return server.getHandle().getBannedPlayers/*was:getNameBans*/().isBanned/*was:isBanned*/(name.toLowerCase());
     }
 
     public void setBanned(boolean value) {
         if (value) {
-            net.minecraft.server.management.BanEntry entry = new net.minecraft.server.management.BanEntry(name.toLowerCase());
-            server.getHandle().getBannedPlayers().put(entry);
+            net.minecraft.server.management.BanEntry/*was:BanEntry*/ entry = new net.minecraft.server.management.BanEntry/*was:BanEntry*/(name.toLowerCase());
+            server.getHandle().getBannedPlayers/*was:getNameBans*/().put/*was:add*/(entry);
         } else {
-            server.getHandle().getBannedPlayers().remove(name.toLowerCase());
+            server.getHandle().getBannedPlayers/*was:getNameBans*/().remove/*was:remove*/(name.toLowerCase());
         }
 
-        server.getHandle().getBannedPlayers().saveToFileWithHeader();
+        server.getHandle().getBannedPlayers/*was:getNameBans*/().saveToFileWithHeader/*was:save*/();
     }
 
     public boolean isWhitelisted() {
-        return server.getHandle().getWhiteListedPlayers().contains(name.toLowerCase());
+        return server.getHandle().getWhiteListedPlayers/*was:getWhitelisted*/().contains(name.toLowerCase());
     }
 
     public void setWhitelisted(boolean value) {
         if (value) {
-            server.getHandle().addToWhiteList(name.toLowerCase());
+            server.getHandle().addToWhiteList/*was:addWhitelist*/(name.toLowerCase());
         } else {
-            server.getHandle().removeFromWhitelist(name.toLowerCase());
+            server.getHandle().removeFromWhitelist/*was:removeWhitelist*/(name.toLowerCase());
         }
     }
 
@@ -99,10 +99,10 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     }
 
     public Player getPlayer() {
-        for (Object obj : server.getHandle().playerEntityList) {
-            net.minecraft.entity.player.EntityPlayerMP player = (net.minecraft.entity.player.EntityPlayerMP) obj;
-            if (player.username.equalsIgnoreCase(getName())) {
-                return (player.playerNetServerHandler != null) ? player.playerNetServerHandler.getPlayerB() : null;
+        for (Object obj : server.getHandle().playerEntityList/*was:players*/) {
+            net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/ player = (net.minecraft.entity.player.EntityPlayerMP/*was:EntityPlayer*/) obj;
+            if (player.username/*was:name*/.equalsIgnoreCase(getName())) {
+                return (player.playerNetServerHandler/*was:playerConnection*/ != null) ? player.playerNetServerHandler/*was:playerConnection*/.getPlayerB() : null;
             }
         }
 
@@ -131,18 +131,18 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         return hash;
     }
 
-    private net.minecraft.nbt.NBTTagCompound getData() {
-        return storage.getPlayerData(getName());
+    private net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ getData() {
+        return storage.getPlayerData/*was:getPlayerData*/(getName());
     }
 
-    private net.minecraft.nbt.NBTTagCompound getBukkitData() {
-        net.minecraft.nbt.NBTTagCompound result = getData();
+    private net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ getBukkitData() {
+        net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ result = getData();
 
         if (result != null) {
-            if (!result.hasKey("bukkit")) {
-                result.setCompoundTag("bukkit", new net.minecraft.nbt.NBTTagCompound());
+            if (!result.hasKey/*was:hasKey*/("bukkit")) {
+                result.setCompoundTag/*was:setCompound*/("bukkit", new net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/());
             }
-            result = result.getCompoundTag("bukkit");
+            result = result.getCompoundTag/*was:getCompound*/("bukkit");
         }
 
         return result;
@@ -156,11 +156,11 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         Player player = getPlayer();
         if (player != null) return player.getFirstPlayed();
 
-        net.minecraft.nbt.NBTTagCompound data = getBukkitData();
+        net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ data = getBukkitData();
 
         if (data != null) {
-            if (data.hasKey("firstPlayed")) {
-                return data.getLong("firstPlayed");
+            if (data.hasKey/*was:hasKey*/("firstPlayed")) {
+                return data.getLong/*was:getLong*/("firstPlayed");
             } else {
                 File file = getDataFile();
                 return file.lastModified();
@@ -174,11 +174,11 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         Player player = getPlayer();
         if (player != null) return player.getLastPlayed();
 
-        net.minecraft.nbt.NBTTagCompound data = getBukkitData();
+        net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ data = getBukkitData();
 
         if (data != null) {
-            if (data.hasKey("lastPlayed")) {
-                return data.getLong("lastPlayed");
+            if (data.hasKey/*was:hasKey*/("lastPlayed")) {
+                return data.getLong/*was:getLong*/("lastPlayed");
             } else {
                 File file = getDataFile();
                 return file.lastModified();
@@ -193,15 +193,15 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     }
 
     public Location getBedSpawnLocation() {
-        net.minecraft.nbt.NBTTagCompound data = getData();
+        net.minecraft.nbt.NBTTagCompound/*was:NBTTagCompound*/ data = getData();
         if (data == null) return null;
 
-        if (data.hasKey("SpawnX") && data.hasKey("SpawnY") && data.hasKey("SpawnZ")) {
-            String spawnWorld = data.getString("SpawnWorld");
+        if (data.hasKey/*was:hasKey*/("SpawnX") && data.hasKey/*was:hasKey*/("SpawnY") && data.hasKey/*was:hasKey*/("SpawnZ")) {
+            String spawnWorld = data.getString/*was:getString*/("SpawnWorld");
             if (spawnWorld.equals("")) {
                 spawnWorld = server.getWorlds().get(0).getName();
             }
-            return new Location(server.getWorld(spawnWorld), data.getInteger("SpawnX"), data.getInteger("SpawnY"), data.getInteger("SpawnZ"));
+            return new Location(server.getWorld(spawnWorld), data.getInteger/*was:getInt*/("SpawnX"), data.getInteger/*was:getInt*/("SpawnY"), data.getInteger/*was:getInt*/("SpawnZ"));
         }
         return null;
     }

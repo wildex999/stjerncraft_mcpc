@@ -6,13 +6,13 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.Tameable;
 
 public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creature {
-    public CraftTameableAnimal(CraftServer server, net.minecraft.entity.passive.EntityTameable entity) {
+    public CraftTameableAnimal(CraftServer server, net.minecraft.entity.passive.EntityTameable/*was:EntityTameableAnimal*/ entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.passive.EntityTameable getHandle() {
-        return (net.minecraft.entity.passive.EntityTameable)super.getHandle();
+    public net.minecraft.entity.passive.EntityTameable/*was:EntityTameableAnimal*/ getHandle() {
+        return (net.minecraft.entity.passive.EntityTameable/*was:EntityTameableAnimal*/)super.getHandle();
     }
 
     public AnimalTamer getOwner() {
@@ -27,17 +27,17 @@ public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creat
     }
 
     public String getOwnerName() {
-        return getHandle().getOwnerName();
+        return getHandle().getOwnerName/*was:getOwnerName*/();
     }
 
     public boolean isTamed() {
-        return getHandle().isTamed();
+        return getHandle().isTamed/*was:isTamed*/();
     }
 
     public void setOwner(AnimalTamer tamer) {
         if (tamer != null) {
             setTamed(true);
-            getHandle().setPathToEntity(null);
+            getHandle().setPathToEntity/*was:setPathEntity*/(null);
             setOwnerName(tamer.getName());
         } else {
             setTamed(false);
@@ -46,22 +46,22 @@ public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creat
     }
 
     public void setOwnerName(String ownerName) {
-        getHandle().setOwner(ownerName == null ? "" : ownerName);
+        getHandle().setOwner/*was:setOwnerName*/(ownerName == null ? "" : ownerName);
     }
 
     public void setTamed(boolean tame) {
-        getHandle().setTamed(tame);
+        getHandle().setTamed/*was:setTamed*/(tame);
         if (!tame) {
             setOwnerName("");
         }
     }
 
     public boolean isSitting() {
-        return getHandle().isSitting();
+        return getHandle().isSitting/*was:isSitting*/();
     }
 
     public void setSitting(boolean sitting) {
-        getHandle().func_70907_r().setSitting(sitting);
+        getHandle().func_70907_r/*was:getGoalSit*/().setSitting/*was:setSitting*/(sitting);
     }
 
     @Override

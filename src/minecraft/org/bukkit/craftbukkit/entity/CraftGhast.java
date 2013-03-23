@@ -7,13 +7,13 @@ import org.bukkit.entity.Ghast;
 
 public class CraftGhast extends CraftFlying implements Ghast {
 
-    public CraftGhast(CraftServer server, net.minecraft.entity.monster.EntityGhast entity) {
+    public CraftGhast(CraftServer server, net.minecraft.entity.monster.EntityGhast/*was:EntityGhast*/ entity) {
         super(server, entity);
     }
 
     @Override
-    public net.minecraft.entity.monster.EntityGhast getHandle() {
-        return (net.minecraft.entity.monster.EntityGhast) entity;
+    public net.minecraft.entity.monster.EntityGhast/*was:EntityGhast*/ getHandle() {
+        return (net.minecraft.entity.monster.EntityGhast/*was:EntityGhast*/) entity;
     }
 
     @Override

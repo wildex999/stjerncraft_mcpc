@@ -6,21 +6,21 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Wolf;
 
 public class CraftWolf extends CraftTameableAnimal implements Wolf {
-    public CraftWolf(CraftServer server, net.minecraft.entity.passive.EntityWolf wolf) {
+    public CraftWolf(CraftServer server, net.minecraft.entity.passive.EntityWolf/*was:EntityWolf*/ wolf) {
         super(server, wolf);
     }
 
     public boolean isAngry() {
-        return getHandle().isAngry();
+        return getHandle().isAngry/*was:isAngry*/();
     }
 
     public void setAngry(boolean angry) {
-        getHandle().setAngry(angry);
+        getHandle().setAngry/*was:setAngry*/(angry);
     }
 
     @Override
-    public net.minecraft.entity.passive.EntityWolf getHandle() {
-        return (net.minecraft.entity.passive.EntityWolf) entity;
+    public net.minecraft.entity.passive.EntityWolf/*was:EntityWolf*/ getHandle() {
+        return (net.minecraft.entity.passive.EntityWolf/*was:EntityWolf*/) entity;
     }
 
     @Override
@@ -29,10 +29,10 @@ public class CraftWolf extends CraftTameableAnimal implements Wolf {
     }
 
     public DyeColor getCollarColor() {
-        return DyeColor.getByWoolData((byte) getHandle().getCollarColor());
+        return DyeColor.getByWoolData((byte) getHandle().getCollarColor/*was:getCollarColor*/());
     }
 
     public void setCollarColor(DyeColor color) {
-        getHandle().setCollarColor(color.getWoolData());
+        getHandle().setCollarColor/*was:setCollarColor*/(color.getWoolData());
     }
 }

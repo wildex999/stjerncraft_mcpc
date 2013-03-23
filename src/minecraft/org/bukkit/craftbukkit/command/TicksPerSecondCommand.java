@@ -17,7 +17,7 @@ public class TicksPerSecondCommand extends Command {
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         if (!testPermission(sender)) return true;
 
-        double tps = (double) Math.round(net.minecraft.server.MinecraftServer.currentTPS * 10) / 10;
+        double tps = (double) Math.round(net.minecraft.server.MinecraftServer/*was:MinecraftServer*/.currentTPS * 10) / 10;
         ChatColor color;
         if (tps > 19.2D) {
             color = ChatColor.GREEN;
