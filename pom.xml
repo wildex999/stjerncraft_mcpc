@@ -43,11 +43,6 @@
         <url>http://repo.md-5.net/content/repositories/snapshots/</url>
     </repository>
     <repository>
-        <id>cma-repo</id>
-        <url>http://cmastudios.me/repo/maven/</url>
-        <!-- for paulscode -->
-    </repository>
-    <repository>
         <id>sonatype-nexus-snapshots</id>
         <name>Sonatype Nexus Snapshots</name>
         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -189,22 +184,6 @@
         <artifactId>commons-lang</artifactId>
         <version>2.3</version>
         <scope>provided</scope>
-    </dependency>
-    <!-- Client dependencies -->
-    <dependency>
-        <groupId>org.lwjgl.lwjgl</groupId>
-        <artifactId>lwjgl</artifactId>
-        <version>2.8.0</version>
-    </dependency>
-    <dependency>
-        <groupId>org.lwjgl.lwjgl</groupId>
-        <artifactId>lwjgl_util</artifactId>
-        <version>2.8.4</version>
-    </dependency>
-    <dependency>
-        <groupId>paulscode</groupId>
-        <artifactId>sound</artifactId>
-        <version>1.1</version>
     </dependency>
 </dependencies>
 <!-- builds a jar for extracting into minecraft_server.jar -->
