@@ -479,7 +479,7 @@ public class EntityEnderman extends EntityMob
                     }
                 }
 
-                return false;
+                return super.attackEntityFrom(par1DamageSource, par2);
             }
             else
             {
