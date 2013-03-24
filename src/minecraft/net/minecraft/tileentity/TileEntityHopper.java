@@ -7,6 +7,7 @@ import net.minecraft.block.BlockHopper;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityMinecartHopper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -421,7 +422,16 @@ public class TileEntityHopper extends TileEntity implements Hopper
             if (event.isCancelled())
             {
                 par1IInventory.setInventorySlotContents(par2, itemstack1);
-                ((TileEntityHopper) par0Hopper).func_98046_c(8); // delay hopper checks
+
+                if (par0Hopper instanceof TileEntityHopper)
+                {
+                    ((TileEntityHopper) par0Hopper).func_98046_c(8); // delay hopper checks
+                }
+                else if (par0Hopper instanceof EntityMinecartHopper)
+                {
+                    ((EntityMinecartHopper) par0Hopper).func_98042_n(4); // delay hopper minecart checks
+                }
+                
                 return false;
             }
 
