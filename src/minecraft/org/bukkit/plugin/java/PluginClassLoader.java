@@ -154,17 +154,18 @@ public class PluginClassLoader extends URLClassLoader {
      * Load NMS mappings from CraftBukkit mc-dev to repackaged srgnames for FML runtime deobf
      *
      * @param jarMapping An existing JarMappings instance to load into
-     * @param mcVersion Minecraft version, for loading directory
-     * @param obfVersion CraftBukkit internal obfuscation counter identifier, for shade relocation
+     * @param obfVersion CraftBukkit version with internal obfuscation counter identifier
+     *                   >=1.4.7 this is the major version + R#. v1_4_R1=1.4.7, v1_5_R1=1.5, v1_5_R2=1.5.1..
+     *                   For older versions (including pre-safeguard) it is the full Minecraft version number
      * @throws IOException
      */
-    private void loadNmsMappings(JarMapping jarMapping, String mcVersion, String obfVersion) throws IOException {
+    private void loadNmsMappings(JarMapping jarMapping, String obfVersion) throws IOException {
         Map<String, String> relocations = new HashMap<String, String>();
         // mc-dev jar to CB, apply version shading (aka plugin safeguard)
         relocations.put("net.minecraft.server", "net.minecraft.server." + obfVersion);
 
         jarMapping.loadMappings(
-                new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/"+mcVersion+"cb2numpkg.srg"))),
+                new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/"+obfVersion+"/cb2numpkg.srg"))),
                 new ShadeRelocationSimulator(relocations),
                 null, false);
 
@@ -196,20 +197,20 @@ public class PluginClassLoader extends URLClassLoader {
             }
 
             if ((flags & F_REMAP_NMS151) != 0) {
-                loadNmsMappings(jarMapping, "1.5.1", "v1_5_R2");
+                loadNmsMappings(jarMapping, "v1_5_R2");
             }
 
             if ((flags & F_REMAP_NMS150) != 0) {
-                loadNmsMappings(jarMapping, "1.5.0", "v1_5_R1");
+                loadNmsMappings(jarMapping, "v1_5_R1");
             }
 
 
             if ((flags & F_REMAP_NMS147) != 0) {
-                loadNmsMappings(jarMapping, "1.4.7", "v1_4_R1");
+                loadNmsMappings(jarMapping, "v1_4_R1");
             }
 
             if ((flags & F_REMAP_NMS146) != 0) {
-                loadNmsMappings(jarMapping, "1.4.6", "v1_4_6");
+                loadNmsMappings(jarMapping, "v1_4_6");
             }
 
             if ((flags & F_REMAP_OBC150) != 0) {
@@ -240,16 +241,16 @@ public class PluginClassLoader extends URLClassLoader {
                 String filename;
                 switch (flags & F_REMAP_NMSPRE_MASK)
                 {
-                    case 0x01510000: filename = "mappings/1.5.1/cb2numpkg.srg"; break;
-                    case 0x01500000: filename = "mappings/1.5.0/cb2numpkg.srg"; break;
-                    case 0x01470000: filename = "mappings/1.4.7/cb2numpkg.srg"; break;
-                    case 0x01460000: filename = "mappings/1.4.6/cb2numpkg.srg"; break;
-                    case 0x01450000: filename = "mappings/1.4.5/cb2numpkg.srg"; break;
-                    case 0x01440000: filename = "mappings/1.4.4/cb2numpkg.srg"; break;
-                    case 0x01420000: filename = "mappings/1.4.2/cb2numpkg.srg"; break;
-                    case 0x01320000: filename = "mappings/1.3.2/cb2numpkg.srg"; break;
-                    case 0x01310000: filename = "mappings/1.3.1/cb2numpkg.srg"; break;
-                    case 0x01250000: filename = "mappings/1.2.5/cb2numpkg.srg"; break;
+                    case 0x01510000: filename = "mappings/v1_5_R2/cb2numpkg.srg"; break;
+                    case 0x01500000: filename = "mappings/v1_5_R1/cb2numpkg.srg"; break;
+                    case 0x01470000: filename = "mappings/v1_4_R1/cb2numpkg.srg"; break;
+                    case 0x01460000: filename = "mappings/v1_4_6/cb2numpkg.srg"; break;
+                    case 0x01450000: filename = "mappings/v1_4_5/cb2numpkg.srg"; break;
+                    case 0x01440000: filename = "mappings/v1_4_4/cb2numpkg.srg"; break;
+                    case 0x01420000: filename = "mappings/v1_4_2/cb2numpkg.srg"; break;
+                    case 0x01320000: filename = "mappings/v1_3_2/cb2numpkg.srg"; break;
+                    case 0x01310000: filename = "mappings/v1_3_1/cb2numpkg.srg"; break;
+                    case 0x01250000: filename = "mappings/v1_2_5/cb2numpkg.srg"; break;
                     default: throw new IllegalArgumentException("Invalid unversioned mapping flags: "+Integer.toHexString(flags & F_REMAP_NMSPRE_MASK)+" in "+Integer.toHexString(flags));
                 }
 
