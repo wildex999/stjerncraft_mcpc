@@ -375,6 +375,8 @@ public class CraftEventFactory {
                 }
             }
             // MCPC+ end
+        } else if ("thorns".equals(source.damageType)) {
+            cause = DamageCause.THORNS;
         }
 
         return callEntityDamageEvent(damager, entity, cause, damage);
