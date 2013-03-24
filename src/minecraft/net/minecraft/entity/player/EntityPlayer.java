@@ -86,6 +86,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
+import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 
 public abstract class EntityPlayer extends EntityLiving implements ICommandSender
@@ -1988,6 +1989,10 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
             }
 
             super.fall(par1);
+        }
+        else
+        {
+            MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(this, par1));
         }
     }
 

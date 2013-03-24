@@ -1,8 +1,10 @@
 package net.minecraft.entity;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -66,6 +68,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.plugin.PluginManager;
 // CraftBukkit end
+import net.minecraftforge.common.IExtendedEntityProperties;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityEvent;
 
 public abstract class Entity
 {
@@ -261,6 +266,8 @@ public abstract class Entity
     public ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
     private UUID persistentID;    
 
+    private HashMap<String, IExtendedEntityProperties> extendedProperties;
+
     public Entity(World par1World)
     {
         this.entityId = nextEntityID++;
@@ -309,6 +316,15 @@ public abstract class Entity
         this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
         this.dataWatcher.addObject(1, Short.valueOf((short)300));
         this.entityInit();
+
+        extendedProperties = new HashMap<String, IExtendedEntityProperties>();
+
+        MinecraftForge.EVENT_BUS.post(new EntityEvent.EntityConstructing(this));
+
+        for (IExtendedEntityProperties props : this.extendedProperties.values())
+        {
+            props.init(this, par1World);
+        }
     }
 
     protected abstract void entityInit();
@@ -1638,6 +1654,17 @@ public abstract class Entity
             {
                 par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
             }            
+
+            for (String identifier : this.extendedProperties.keySet()){
+                try{
+                    IExtendedEntityProperties props = this.extendedProperties.get(identifier);
+                    props.saveNBTData(par1NBTTagCompound);
+                }catch (Throwable t){
+                    FMLLog.severe("Failed to save extended properties for %s.  This is a mod issue.", identifier);
+                    t.printStackTrace();
+                }
+            }
+
             this.writeEntityToNBT(par1NBTTagCompound);
 
             if (this.ridingEntity != null)
@@ -1709,12 +1736,23 @@ public abstract class Entity
             {
                 customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
             }
+            
+            for (String identifier : this.extendedProperties.keySet()){
+                try{
+                    IExtendedEntityProperties props = this.extendedProperties.get(identifier);
+                    props.loadNBTData(par1NBTTagCompound);
+                }catch (Throwable t){
+                    FMLLog.severe("Failed to load extended properties for %s.  This is a mod issue.", identifier);
+                    t.printStackTrace();
+                }
+            }
+
             //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly
             if (par1NBTTagCompound.hasKey("PersistentIDMSB") && par1NBTTagCompound.hasKey("PersistentIDLSB"))
             {
                 this.entityUniqueID = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
             }
-            this.readEntityFromNBT(par1NBTTagCompound);
+            this.readEntityFromNBT(par1NBTTagCompound);            
 
             // CraftBukkit start
             if (this instanceof EntityLiving)
@@ -2776,4 +2814,49 @@ public abstract class Entity
     {
         return type.getCreatureClass().isAssignableFrom(this.getClass());
     }    
+
+    /**
+     * Register the instance of IExtendedProperties into the entity's collection.
+     * @param identifier The identifier which you can use to retrieve these properties for the entity.
+     * @param properties The instanceof IExtendedProperties to register
+     * @return The identifier that was used to register the extended properties.  Empty String indicates an error.  If your requested key already existed, this will return a modified one that is unique.
+     */
+    public String registerExtendedProperties(String identifier, IExtendedEntityProperties properties)
+    {
+        if (identifier == null)
+        {
+            FMLLog.warning("Someone is attempting to register extended properties using a null identifier.  This is not allowed.  Aborting.  This may have caused instability.");
+            return "";
+        }
+        if (properties == null)
+        {
+            FMLLog.warning("Someone is attempting to register null extended properties.  This is not allowed.  Aborting.  This may have caused instability.");
+            return "";
+        }
+
+        String baseIdentifier = identifier;
+        int identifierModCount = 1;
+        while (this.extendedProperties.containsKey(identifier))
+        {
+            identifier = String.format("%s%d", baseIdentifier, identifierModCount++);
+        }
+
+        if (baseIdentifier != identifier)
+        {
+            FMLLog.info("An attempt was made to register exended properties using an existing key.  The duplicate identifier (%s) has been remapped to %s.", baseIdentifier, identifier);
+        }
+
+        this.extendedProperties.put(identifier, properties);
+        return identifier;
+    }
+
+    /**
+     * Gets the extended properties identified by the passed in key
+     * @param identifier The key that identifies the extended properties.
+     * @return The instance of IExtendedProperties that was found, or null.
+     */
+    public IExtendedEntityProperties getExtendedProperties(String identifier)
+    {
+        return this.extendedProperties.get(identifier);
+    }
 }

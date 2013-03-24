@@ -9,6 +9,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.PotionHelper;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.brewing.PotionBrewedEvent;
 
 // CraftBukkit start
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
@@ -158,7 +160,7 @@ public class TileEntityBrewingStand extends TileEntity implements ISidedInventor
 
                 for (int i = 0; i < 3; ++i)
                 {
-                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
+                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
                     {
                         int j = this.brewingItemStacks[i].getItemDamage();
                         int k = this.getPotionResult(j, itemstack);
@@ -211,7 +213,7 @@ public class TileEntityBrewingStand extends TileEntity implements ISidedInventor
 
             for (int i = 0; i < 3; ++i)
             {
-                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
+                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
                 {
                     int j = this.brewingItemStacks[i].getItemDamage();
                     int k = this.getPotionResult(j, itemstack);
@@ -245,6 +247,8 @@ public class TileEntityBrewingStand extends TileEntity implements ISidedInventor
                     this.brewingItemStacks[3] = null;
                 }
             }
+            
+            MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(brewingItemStacks));
         }
     }
 
@@ -393,9 +397,9 @@ public class TileEntityBrewingStand extends TileEntity implements ISidedInventor
      */
     public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
     {
-        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.itemID == Item.potion.itemID || par2ItemStack.itemID == Item.glassBottle.itemID;
+        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.getItem() instanceof ItemPotion || par2ItemStack.itemID == Item.glassBottle.itemID;
     }
-
+    
     /**
      * returns an integer with each bit specifying wether that slot of the stand contains a potion
      */
