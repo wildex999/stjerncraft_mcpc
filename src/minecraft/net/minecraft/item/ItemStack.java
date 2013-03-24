@@ -250,6 +250,9 @@ public final class ItemStack
      */
     public void setItemDamage(int par1)
     {
+        // MCPC+ - remove filter (for mods adding new data values on vanilla items, e.g. Railcraft)
+        this.itemDamage = par1;
+        /*
         // CraftBukkit start - filter out data for items that shouldn't have it
         // The crafting system uses this value for a special purpose so we have to allow it
         if (par1 == 32767)
@@ -276,6 +279,7 @@ public final class ItemStack
         {
             this.itemDamage = 0;
         }
+        */
     }
 
     /**

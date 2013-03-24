@@ -28,7 +28,11 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.world.ChunkEvent;
+// CraftBukkit start
+import net.minecraft.entity.player.EntityPlayerMP;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+// CraftBukkit end
 
 public class Chunk
 {

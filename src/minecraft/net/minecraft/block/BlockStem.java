@@ -10,7 +10,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.ForgeDirection;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
 
 public class BlockStem extends BlockFlower
 {
@@ -47,7 +47,7 @@ public class BlockStem extends BlockFlower
         {
             float f = this.getGrowthModifier(par1World, par2, par3, par4);
 
-            if (par5Random.nextInt((int)(25.0F / f) + 1) == 0)
+            if (par5Random.nextInt((int)(par1World.growthOdds / (this.blockID == Block.pumpkinStem.blockID ? par1World.getWorld().pumpkinGrowthModifier : par1World.getWorld().melonGrowthModifier) * (25.0F / f)) + 1) == 0)    // Spigot
             {
                 int l = par1World.getBlockMetadata(par2, par3, par4);
 

@@ -281,6 +281,9 @@ public abstract class EntityLiving extends Entity
     public int maxAirTicks = 300;
     public int maxHealth = this.getMaxHealth();
     // CraftBukkit end
+    // MCPC+ start
+    private int randomDropResult = 0;
+    // MCPC+ end
 
     public EntityLiving(World par1World)
     {
@@ -1400,7 +1403,8 @@ public abstract class EntityLiving extends Entity
             
             captureDrops = true;
             capturedDrops.clear();
-            int j = 0;            
+            int j = 0;
+            randomDropResult = 0; // MCPC+ - ?
 
             if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
             {
@@ -1443,6 +1447,12 @@ public abstract class EntityLiving extends Entity
     }
     // CraftBukkit end
 
+    // MCPC+ start - vanilla compatibility
+    /* TODO
+    protected void dropRareDrop(int par1) {}
+    */
+    // MCPC+ end
+
     /**
      * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
      * par2 - Level of Looting used to kill this mob.
@@ -1482,6 +1492,7 @@ public abstract class EntityLiving extends Entity
                     loot.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack));
                 }
             }
+            randomDropResult = k; // MCPC+
         }
 
         CraftEventFactory.callEntityDeathEvent(this, loot); // raise event even for those times when the entity does not drop loot
@@ -2095,6 +2106,15 @@ public abstract class EntityLiving extends Entity
 
     protected void func_85033_bc()
     {
+        // Spigot start
+        boolean skip = false;
+
+        if (!(this instanceof EntityPlayerMP) && this.ticksExisted % 2 != 0)
+        {
+            skip = true;
+        }
+
+        // Spigot end
         List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
 
         if (list != null && !list.isEmpty())
@@ -2102,6 +2122,11 @@ public abstract class EntityLiving extends Entity
             for (int i = 0; i < list.size(); ++i)
             {
                 Entity entity = (Entity)list.get(i);
+
+                if (!(entity instanceof EntityLiving) && skip)
+                {
+                    continue;    // Spigot
+                }
 
                 if (entity.canBePushed())
                 {

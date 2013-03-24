@@ -47,7 +47,7 @@ public class BlockCrops extends BlockFlower
             {
                 float f = this.getGrowthRate(par1World, par2, par3, par4);
 
-                if (par5Random.nextInt((int)(25.0F / f) + 1) == 0)
+                if (par5Random.nextInt((int)(par1World.growthOdds / par1World.getWorld().wheatGrowthModifier * (25.0F / f)) + 1) == 0)    // Spigot
                 {
                     org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, ++l); // CraftBukkit
                 }

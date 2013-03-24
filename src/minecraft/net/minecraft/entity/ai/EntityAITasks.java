@@ -12,8 +12,8 @@ public class EntityAITasks
     // CraftBukkit start - ArrayList -> UnsafeList
 
     /** A list of EntityAITaskEntrys in EntityAITasks. */
-    private List taskEntries = new UnsafeList();
-
+    public List taskEntries = new ArrayList(); // MCPC+ - private->public, UnsafeList -> ArrayList
+    
     /** A list of EntityAITaskEntrys that are currently being executed. */
     private List executingTaskEntries = new UnsafeList();
     // CraftBukkit end
@@ -166,7 +166,7 @@ public class EntityAITasks
                     if (!this.areTasksCompatible(par1EntityAITaskEntry, entityaitaskentry1) && this.executingTaskEntries.contains(entityaitaskentry1))
                     {
                         this.theProfiler.endSection();
-                        ((UnsafeList.Itr) iterator).valid = false; // CraftBukkit - mark iterator for reuse
+                        //((UnsafeList.Itr) iterator).valid = false; // CraftBukkit - mark iterator for reuse // MCPC+
                         return false;
                     }
 
@@ -175,7 +175,7 @@ public class EntityAITasks
                 else if (!entityaitaskentry1.action.isInterruptible() && this.executingTaskEntries.contains(entityaitaskentry1))
                 {
                     this.theProfiler.endSection();
-                    ((UnsafeList.Itr) iterator).valid = false; // CraftBukkit - mark iterator for reuse
+                    //((UnsafeList.Itr) iterator).valid = false; // CraftBukkit - mark iterator for reuse // MCPC+
                     return false;
                 }
             }

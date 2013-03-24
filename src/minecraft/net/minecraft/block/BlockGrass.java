@@ -45,7 +45,9 @@ public class BlockGrass extends Block
             }
             else if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9)
             {
-                for (int l = 0; l < 4; ++l)
+                int numGrowth = Math.min(4, Math.max(20, (int)(4 * 100F / par1World.growthOdds)));  // Spigot
+
+                for (int l = 0; l < numGrowth; ++l)   // Spigot
                 {
                     int i1 = par2 + par5Random.nextInt(3) - 1;
                     int j1 = par3 + par5Random.nextInt(5) - 3;

@@ -645,7 +645,7 @@ public class Block
      */
     protected void dropBlockAsItem_do(World par1World, int par2, int par3, int par4, ItemStack par5ItemStack)
     {
-        if (!par1World.isRemote && par1World.getGameRules().getGameRuleBooleanValue("doTileDrops"))
+        if (!par1World.isRemote && par1World.getGameRules().getGameRuleBooleanValue("doTileDrops") && !par1World.callingPlaceEvent) // MCPC+ do not drop items during a place event, prevents item dupe
         {
             float f = 0.7F;
             double d0 = (double)(par1World.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
@@ -1332,6 +1332,23 @@ public class Block
     public void func_71923_g_CodeFix_Public(net.minecraft.world.World a, int b, int c, int d, int e){
         dropXpOnBlockBreak(a, b, c, d, e);
     }
+    
+    // Spigot start
+    public static float range(float min, float value, float max)
+    {
+        if (value < min)
+        {
+            return min;
+        }
+
+        if (value > max)
+        {
+            return max;
+        }
+
+        return value;
+    }
+    // Spigot end    
     
     /* =================================================== FORGE START =====================================*/
     /**
@@ -2067,6 +2084,7 @@ public class Block
      */
     public void onPlantGrow(World world, int x, int y, int z, int sourceX, int sourceY, int sourceZ)
     {
+        if (world == null) return; // MCPC+ - safeguard
         if (blockID == grass.blockID)
         {
             world.setBlock(x, y, z, dirt.blockID, 0, 2);

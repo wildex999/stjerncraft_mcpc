@@ -41,7 +41,7 @@ public class BlockCactus extends Block implements IPlantable
             {
                 int i1 = par1World.getBlockMetadata(par2, par3, par4);
 
-                if (i1 == 15)
+                if (i1 >= (byte) range(3, (par1World.growthOdds / par1World.getWorld().cactusGrowthModifier * 15) + 0.5F, 15))   // Spigot
                 {
                     org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3 + 1, par4, this.blockID, 0); // CraftBukkit
                     par1World.setBlockMetadataWithNotify(par2, par3, par4, 0, 4);

@@ -553,7 +553,8 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
             }
             else
             {
-                if (par1DamageSource instanceof EntityDamageSource)
+                // CraftBukkit - this.server.getPvP() -> this.world.pvpMode
+                if (!this.worldObj.pvpMode && par1DamageSource instanceof EntityDamageSource)
                 {
                     Entity entity = par1DamageSource.getEntity();
 

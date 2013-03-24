@@ -25,7 +25,11 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.IShearable;
+// CraftBukkit start
 import org.bukkit.event.entity.SheepRegrowWoolEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
+import net.minecraft.inventory.InventoryCraftResult;
+// CraftBukkit end
 
 public class EntitySheep extends EntityAnimal implements IShearable
 {

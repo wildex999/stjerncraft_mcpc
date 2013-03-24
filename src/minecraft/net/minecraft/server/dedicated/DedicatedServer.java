@@ -54,6 +54,15 @@ public class DedicatedServer extends MinecraftServer implements IServer
     private NetworkListenThread networkThread;
     private boolean guiIsEnabled = false;
 
+    // MCPC+ start - vanilla compatibility
+    public DedicatedServer(File par1File)
+    {
+        super(par1File);
+        this.field_98131_l = new LogAgent("Minecraft-Server", (String)null, (new File(par1File, "server.log")).getAbsolutePath());
+        new DedicatedServerSleepThread(this);
+    }
+    // MCPC+ end
+
     // CraftBukkit start - Signature changed
     public DedicatedServer(joptsimple.OptionSet options)
     {

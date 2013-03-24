@@ -75,9 +75,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.WorldEvent;
 
+// CraftBukkit start
 import org.bukkit.WeatherType;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.util.LongHash;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
@@ -129,13 +129,13 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
     public WorldServer(MinecraftServer minecraftserver, ISaveHandler isavehandler, String s, int i, WorldSettings worldsettings, Profiler profiler, ILogAgent ilogagent, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen)
     {
-        super(isavehandler, s, worldsettings, WorldProvider.getProviderForDimension(env.getId()), profiler, ilogagent, gen, env);
+        super(isavehandler, s, worldsettings, env.name().equals("MYST") ? WorldProvider.getProviderForDimension(i) : WorldProvider.getProviderForDimension(env.getId()), profiler, ilogagent, gen, env);
         this.dimension = i;
         this.pvpMode = minecraftserver.isPVPEnabled();
         // CraftBukkit end
         this.mcServer = minecraftserver;
         this.theEntityTracker = new EntityTracker(this);
-        this.thePlayerManager = new PlayerManager(this, minecraftserver.getConfigurationManager().getViewDistance());
+        this.thePlayerManager = new PlayerManager(this, getWorld().viewDistance); // Spigot
 
         if (this.entityIdMap == null)
         {
@@ -166,6 +166,13 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         ((ServerScoreboard)this.worldScoreboard).func_96547_a(scoreboardsavedata);
         DimensionManager.setWorld(i, this);
     }
+
+    // MCPC+ start - wrapper to get CB support
+    public WorldServer(MinecraftServer par1MinecraftServer, ISaveHandler par2ISaveHandler, String par3Str, int par4, ILogAgent ilogagent, WorldSettings par5WorldSettings, Profiler par6Profiler)
+    {
+        this(par1MinecraftServer, par2ISaveHandler, par3Str, par4, par5WorldSettings, par6Profiler, ilogagent, null, null);
+    }
+    // MCPC+ end
 
     // CraftBukkit start
     @Override
@@ -338,7 +345,8 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }        
         this.theProfiler.endSection();
         this.sendAndApplyBlockEvents();
-        this.getWorld().processChunkGC(); // CraftBukkit
+        if (this.getWorld() != null) // MCPC+
+            this.getWorld().processChunkGC(); // CraftBukkit
     }
 
     /**
@@ -1174,6 +1182,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
      */
     public boolean addWeatherEffect(Entity par1Entity)
     {
+        if (par1Entity instanceof net.minecraft.entity.effect.EntityLightningBolt) {       // MCPC+ - vanilla compatibility
         // CraftBukkit start
         LightningStrikeEvent lightning = new LightningStrikeEvent(this.getWorld(), (org.bukkit.entity.LightningStrike) par1Entity.getBukkitEntity());
         this.getServer().getPluginManager().callEvent(lightning);
@@ -1182,7 +1191,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         {
             return false;
         }
-
+        } // MCPC+ end
         if (super.addWeatherEffect(par1Entity))
         {
             this.mcServer.getConfigurationManager().sendToAllNear(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 512.0D, this.dimension, new Packet71Weather(par1Entity));

@@ -3,6 +3,14 @@ package net.minecraft.tileentity;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+// CraftBukkit start
+import java.util.List;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.inventory.FurnaceBurnEvent;
+import org.bukkit.event.inventory.FurnaceSmeltEvent;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+// CraftBukkit end
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.material.Material;
@@ -386,6 +394,18 @@ public class TileEntityFurnace extends TileEntity implements ISidedInventory, ne
         if (this.canSmelt())
         {
             ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
+            // CraftBukkit start
+            CraftItemStack source = CraftItemStack.asCraftMirror(this.furnaceItemStacks[0]);
+            CraftItemStack result = CraftItemStack.asCraftMirror(itemstack.copy());
+            FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(this.worldObj.getWorld().getBlockAt(this.xCoord, this.yCoord, this.zCoord), source, result);
+            this.worldObj.getServer().getPluginManager().callEvent(furnaceSmeltEvent);
+
+            if (furnaceSmeltEvent.isCancelled())
+            {
+                return;
+            }
+
+            itemstack = CraftItemStack.asNMSCopy(furnaceSmeltEvent.getResult());
 
             if (this.furnaceItemStacks[2] == null)
             {
@@ -393,7 +413,12 @@ public class TileEntityFurnace extends TileEntity implements ISidedInventory, ne
             }
             else if (this.furnaceItemStacks[2].isItemEqual(itemstack))
             {
-                furnaceItemStacks[2].stackSize += itemstack.stackSize;
+                // CraftBukkit - compare damage too
+                if (this.furnaceItemStacks[2].getItemDamage() == itemstack.getItemDamage())
+                {
+                    this.furnaceItemStacks[2].stackSize += itemstack.stackSize;
+                }
+                // CraftBukkit end
             }
 
             --this.furnaceItemStacks[0].stackSize;

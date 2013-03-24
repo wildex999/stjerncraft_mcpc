@@ -237,7 +237,7 @@ public class CrashReport
             StackTraceElement stacktraceelement = null;
             StackTraceElement stacktraceelement1 = null;
 
-            if (astacktraceelement != null && astacktraceelement.length - j < astacktraceelement.length)
+            if (astacktraceelement != null && astacktraceelement.length - j < astacktraceelement.length && astacktraceelement.length - j >= 0) // MCPC+ - negative check
             {
                 stacktraceelement = astacktraceelement[astacktraceelement.length - j];
 

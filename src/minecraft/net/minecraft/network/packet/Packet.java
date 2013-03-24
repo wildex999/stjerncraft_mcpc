@@ -56,7 +56,7 @@ public abstract class Packet
     /**
      * Adds a two way mapping between the packet ID and packet class.
      */
-    static void addIdClassMapping(int par0, boolean par1, boolean par2, Class par3Class)
+    public static void addIdClassMapping(int par0, boolean par1, boolean par2, Class par3Class)
     {
         if (packetIdToClassMap.containsItem(par0))
         {

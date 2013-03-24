@@ -312,6 +312,12 @@ public class CraftingManager
                 j1 = 0;
             }
 
+            // MCPC+ start - vanilla compatibility
+            if (par1InventoryCrafting.resultInventory == null)
+            {
+                return new ItemStack(itemstack.itemID, 1, j1);
+            }
+            // MCPC+ end
             // CraftBukkit start - construct a dummy repair recipe
             ItemStack result = new ItemStack(itemstack.itemID, 1, j1);
             List<ItemStack> ingredients = new ArrayList<ItemStack>();
@@ -328,8 +334,7 @@ public class CraftingManager
             for (j = 0; j < this.recipes.size(); ++j)
             {
                 IRecipe irecipe = (IRecipe)this.recipes.get(j);
-
-                if (irecipe.matches(par1InventoryCrafting, par2World))
+                if (irecipe.matches(par1InventoryCrafting, par2World) && par1InventoryCrafting.resultInventory != null) // MCPC+ - add null check for vanilla compatibility
                 {
                     // CraftBukkit start - INVENTORY_PRE_CRAFT event
                     par1InventoryCrafting.currentRecipe = irecipe;
@@ -337,6 +342,12 @@ public class CraftingManager
                     return CraftEventFactory.callPreCraftEvent(par1InventoryCrafting, result, lastCraftView, false);
                     // CraftBukkit end
                 }
+                // MCPC+ start - vanilla
+                else if (irecipe.matches(par1InventoryCrafting, par2World))
+                {
+                    return irecipe.getCraftingResult(par1InventoryCrafting);
+                }
+                // MCPC+ end
             }
 
             return null;

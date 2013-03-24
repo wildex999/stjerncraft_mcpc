@@ -66,11 +66,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 
 // CraftBukkit start
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -1493,6 +1496,11 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
         if (this.openContainer != null)
         {
+            // MCPC+ - note: though it says 'CraftBukkit' this might come from https://github.com/EcoCityCraft/Spigot/blob/master/CraftBukkit-Patches/0007-Address-BUKKIT-3286-by-firing-the-inventory-close-ev.patch
+            // CraftBukkit start
+            InventoryCloseEvent event = new InventoryCloseEvent(this.openContainer.getBukkitView());
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            // CraftBukkit end
             this.openContainer.onCraftGuiClosed(this);
         }
     }

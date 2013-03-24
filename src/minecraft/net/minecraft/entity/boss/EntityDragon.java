@@ -29,7 +29,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.Bukkit;
 // CraftBukkit end
 
-public class EntityDragon extends EntityLiving implements IEntityMultiPart
+public class EntityDragon extends EntityLiving implements IBossDisplayData, IEntityMultiPart
 {
     public double targetX;
     public double targetY;
@@ -824,6 +824,16 @@ public class EntityDragon extends EntityLiving implements IEntityMultiPart
     public boolean canBeCollidedWith()
     {
         return false;
+    }
+
+    //@SideOnly(Side.CLIENT) // MCPC+ - server-side, too
+
+    /**
+     * Returns the health points of the dragon.
+     */
+    public int getDragonHealth()
+    {
+        return this.dataWatcher.getWatchableObjectInt(16);
     }
 
     public World func_82194_d()

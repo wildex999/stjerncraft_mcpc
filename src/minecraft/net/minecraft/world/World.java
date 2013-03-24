@@ -66,6 +66,7 @@ import net.minecraft.world.storage.WorldInfo;
 
 import com.google.common.collect.ImmutableSetMultimap;
 
+
 import net.minecraftforge.common.*;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -73,6 +74,20 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.item.ItemBlock; // MCPC+
+// CraftBukkit start
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityGolem;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.passive.EntityWaterMob;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.gen.ChunkProviderServer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -84,6 +99,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.generator.ChunkGenerator;
+// CraftBukkit end
+
 
 public abstract class World implements IBlockAccess
 {
@@ -1660,6 +1677,32 @@ public abstract class World implements IBlockAccess
         else if (entity instanceof EntityItem)
         {
             event = CraftEventFactory.callItemSpawnEvent((EntityItem) entity);
+            // Spigot start
+            if (entity instanceof EntityXPOrb)
+            {
+                EntityXPOrb xp = (EntityXPOrb)entity;
+                double radius = this.getWorld().expMergeRadius;
+    
+                if (radius > 0)
+                {
+                    List<Entity> entities = this.getEntitiesWithinAABBExcludingEntity(entity, entity.boundingBox.expand(radius, radius, radius));
+    
+                    for (Entity e : entities)
+                    {
+                        if (e instanceof EntityXPOrb)
+                        {
+                            EntityXPOrb loopItem = (EntityXPOrb) e;
+    
+                            if (!loopItem.isDead)
+                            {
+                                xp.xpValue += loopItem.xpValue;
+                                loopItem.setDead();
+                            }
+                        }
+                    }
+                }
+            }
+            // Spigot end
         }
         else if (entity.getBukkitEntity() instanceof org.bukkit.entity.Projectile)
         {
@@ -1689,6 +1732,11 @@ public abstract class World implements IBlockAccess
                 this.updateAllPlayersSleepingFlag();
             }
 
+            if (!flag && MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, this)))
+            {
+                return false;
+            }
+
             this.getChunkFromChunkCoords(i, j).addEntity(entity);
             this.loadedEntityList.add(entity);
             this.obtainEntitySkin(entity);
@@ -1712,7 +1760,7 @@ public abstract class World implements IBlockAccess
     /**
      * Decrement the reference counter for this entity's skin image data
      */
-    protected void releaseEntitySkin(Entity par1Entity)
+    public void releaseEntitySkin(Entity par1Entity)
     {
         for (int i = 0; i < this.worldAccesses.size(); ++i)
         {

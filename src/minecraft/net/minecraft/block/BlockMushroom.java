@@ -36,7 +36,7 @@ public class BlockMushroom extends BlockFlower
     {
         final int sourceX = par2, sourceY = par3, sourceZ = par4; // CraftBukkit
 
-        if (par5Random.nextInt(25) == 0)
+        if (par5Random.nextInt(Math.max(1, (int) par1World.growthOdds / par1World.getWorld().mushroomGrowthModifier * 25)) == 0)   // Spigot
         {
             byte b0 = 4;
             int l = 5;
@@ -134,6 +134,13 @@ public class BlockMushroom extends BlockFlower
             return false;
         }
     }
+    
+    // MCPC+ start - wrapper for vanilla compatibility
+    public boolean fertilizeMushroom(World world, int i, int j, int k, Random random)
+    {
+        return this.fertilizeMushroom(world, i, j, k, random, false, null, null);
+    }
+    // MCPC+ end    
 
     // CraftBukkit - added bonemeal, player and itemstack
 
@@ -150,32 +157,58 @@ public class BlockMushroom extends BlockFlower
         Location location = new Location(par1World.getWorld(), par2, par3, par4);
         WorldGenBigMushroom worldgenbigmushroom = null;
 
-        if (this.blockID == Block.mushroomBrown.blockID)
+        // MCPC+ start - add support for Twilight Forest; CB only if non-null player, otherwise vanilla
+        if (player != null)
         {
-            event = new StructureGrowEvent(location, TreeType.BROWN_MUSHROOM, bonemeal, player, new ArrayList<BlockState>());
-            worldgenbigmushroom = new WorldGenBigMushroom(0);
-        }
-        else if (this.blockID == Block.mushroomRed.blockID)
-        {
-            event = new StructureGrowEvent(location, TreeType.RED_MUSHROOM, bonemeal, player, new ArrayList<BlockState>());
-            worldgenbigmushroom = new WorldGenBigMushroom(1);
-        }
-
-        if (worldgenbigmushroom != null && event != null)
-        {
-            grown = worldgenbigmushroom.grow((org.bukkit.BlockChangeDelegate)par1World, par5Random, par2, par3, par4, event, itemstack, par1World.getWorld());
-
-            if (event.isFromBonemeal() && itemstack != null)
+            if (this.blockID == Block.mushroomBrown.blockID)
             {
-                --itemstack.stackSize;
+                event = new StructureGrowEvent(location, TreeType.BROWN_MUSHROOM, bonemeal, player, new ArrayList<BlockState>());
+                worldgenbigmushroom = new WorldGenBigMushroom(0);
+            }
+            else if (this.blockID == Block.mushroomRed.blockID)
+            {
+                event = new StructureGrowEvent(location, TreeType.RED_MUSHROOM, bonemeal, player, new ArrayList<BlockState>());
+                worldgenbigmushroom = new WorldGenBigMushroom(1);
+            }
+
+            if (worldgenbigmushroom != null && event != null)
+            {
+                grown = worldgenbigmushroom.grow((org.bukkit.BlockChangeDelegate)par1World, par5Random, par2, par3, par4, event, itemstack, par1World.getWorld());
+
+                if (event.isFromBonemeal() && itemstack != null)
+                {
+                    --itemstack.stackSize;
+                }
+            }
+
+            if (!grown || event.isCancelled())
+            {
+                par1World.setBlock(par2, par3, par4, this.blockID, l, 4);
+                return false;
             }
         }
+        else 
+        { // do vanilla
+            if (this.blockID == Block.mushroomBrown.blockID)
+            {
+                worldgenbigmushroom = new WorldGenBigMushroom(0);
+            }
+            else if (this.blockID == Block.mushroomRed.blockID)
+            {
+                worldgenbigmushroom = new WorldGenBigMushroom(1);
+            }
 
-        if (!grown || event.isCancelled())
-        {
-            par1World.setBlock(par2, par3, par4, this.blockID, l, 3);
-            return false;
+            if (worldgenbigmushroom != null && worldgenbigmushroom.generate(par1World, par5Random, par2, par3, par4))
+            {
+                return true;
+            }
+            else
+            {
+                par1World.setBlock(par2, par3, par4, this.blockID, l, 3);
+                return false;
+            }
         }
+        // MCPC+ end        
 
         return true;
         // CraftBukkit end

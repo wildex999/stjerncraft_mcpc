@@ -46,7 +46,7 @@ public class ProxyInjector
                     throw new LoaderException();
                 }
 
-                String targetType = side.isClient() ? target.getAnnotation(SidedProxy.class).clientSide() : target.getAnnotation(SidedProxy.class).serverSide();
+                String targetType = side.isClient() ? target.getAnnotation(SidedProxy.class).clientSide() : target.getAnnotation(SidedProxy.class).bukkitSide().equals("") ? target.getAnnotation(SidedProxy.class).serverSide() : target.getAnnotation(SidedProxy.class).bukkitSide();
                 Object proxy=Class.forName(targetType, true, mcl).newInstance();
 
                 if ((target.getModifiers() & Modifier.STATIC) == 0 )

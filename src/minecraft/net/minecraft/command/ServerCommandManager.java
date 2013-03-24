@@ -36,7 +36,7 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
         this.registerCommand(new CommandShowSeed());
         this.registerCommand(new CommandHelp());
         */        
-        this.registerCommand(new CommandDebug());
+        this.registerCommand("vanilla.command", new CommandDebug()); // MCPC+ - add permission node
         /*        
         this.registerCommand(new CommandServerMessage());
         this.registerCommand(new CommandServerSay());
@@ -45,7 +45,7 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
         this.registerCommand(new CommandClearInventory());
         this.registerCommand(new ServerCommandTestFor());
         */
-        this.registerCommand(new ServerCommandScoreboard()); // TODO: remove once Bukkit implements
+        this.registerCommand("vanilla.command", new ServerCommandScoreboard()); // MCPC+ - add permission node // TODO: remove once Bukkit implements
 
         if (MinecraftServer.getServer().isDedicatedServer())
         {
@@ -68,7 +68,7 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
         }
         else
         {
-            this.registerCommand(new CommandServerPublishLocal());
+            this.registerCommand("vanilla.command", new CommandServerPublishLocal()); // MCPC+ - add permission node
         }
     }
     // MCPC+ end

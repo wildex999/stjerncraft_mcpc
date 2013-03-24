@@ -1172,10 +1172,26 @@ public class NetServerHandler extends NetHandler
                 }
 
                 this.chat(s, par1Packet3Chat.canProcessAsync());
+                
+                // Spigot start
+                boolean isCounted = true;
+
+                if (server.spamGuardExclusions != null)
+                {
+                    for (String excluded : server.spamGuardExclusions)
+                    {
+                        if (s.startsWith(excluded))
+                        {
+                            isCounted = false;
+                            break;
+                        }
+                    }
+                }                
 
                 // This section stays because it is only applicable to packets
-                if (chatSpamField.addAndGet(this, 20) > 200 && !this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username))   // CraftBukkit use thread-safe spam
+                if (isCounted && chatSpamField.addAndGet(this, 20) > 200 && !this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username))   // CraftBukkit use thread-safe spam
                 {
+                    // Spigot end
                     // CraftBukkit start
                     if (par1Packet3Chat.canProcessAsync())
                     {
@@ -1361,8 +1377,10 @@ public class NetServerHandler extends NetHandler
 
         try
         {
-            this.mcServer.getLogAgent().logInfo(event.getPlayer().getName() + " issued server command: " + event.getMessage()); // CraftBukkit
-
+            if (server.logCommands)
+            {
+                this.mcServer.getLogAgent().logInfo(event.getPlayer().getName() + " issued server command: " + event.getMessage()); // Spigot
+            }
             // MCPC+ start - handle bukkit/vanilla commands
             int space = event.getMessage().indexOf(" ");
             // if bukkit command exists then execute it over vanilla
@@ -1667,16 +1685,21 @@ public class NetServerHandler extends NetHandler
                 return;
             }
 
-            if (this.playerEntity.openContainer.getBukkitView() == null) return; // MCPC - allow vanilla to bypass
-
+            // MCPC+ start - allow vanilla to bypass (mod containers)
+            ItemStack itemstack = null;
+            SlotType type = null;
+            if (this.playerEntity.openContainer.getBukkitView() == null) {
+                itemstack = this.playerEntity.openContainer.slotClick(par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick, par1Packet102WindowClick.holdingShift, this.playerEntity);;
+            } else {
+            // MCPC+ end
             InventoryView inventory = this.playerEntity.openContainer.getBukkitView();
-            SlotType type = CraftInventoryView.getSlotType(inventory, par1Packet102WindowClick.inventorySlot);
+            type = CraftInventoryView.getSlotType(inventory, par1Packet102WindowClick.inventorySlot); // MCPC+ - moved declaration up
             InventoryClickEvent event = new InventoryClickEvent(inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1);
             org.bukkit.inventory.Inventory top = inventory.getTopInventory();
 
             if (par1Packet102WindowClick.inventorySlot == 0 && top instanceof CraftingInventory)
             {
-                // MCPC+ start - vanilla compatibility
+                // MCPC+ start - vanilla compatibility (mod recipes)
                 org.bukkit.inventory.Recipe recipe = null;
                 try {
                     recipe = ((CraftingInventory) top).getRecipe();
@@ -1694,7 +1717,7 @@ public class NetServerHandler extends NetHandler
             }
 
             server.getPluginManager().callEvent(event);
-            ItemStack itemstack = null;
+            //ItemStack itemstack = null; // MCPC+ - moved declaration up
             boolean defaultBehaviour = false;
             switch (event.getResult())
             {
@@ -1738,6 +1761,7 @@ public class NetServerHandler extends NetHandler
 
                     break;
             }
+            } // MCPC+
 
             // CraftBukkit end
 

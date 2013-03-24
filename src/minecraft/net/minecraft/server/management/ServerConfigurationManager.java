@@ -365,13 +365,6 @@ public abstract class ServerConfigurationManager
         par1EntityPlayerMP.getServerForPlayer().getPlayerManager().updateMountedMovingPlayer(par1EntityPlayerMP);
     }
     
-    // MCPC+ start - vanilla compatibility
-    public void playerLoggedOut(EntityPlayerMP entityPlayerMP)
-    {
-        disconnect(entityPlayerMP);
-    }
-    // MCPC+ end    
-
     public String disconnect(EntityPlayerMP entityplayermp)   // CraftBukkit - return string
     {
         if (entityplayermp.playerNetServerHandler.connectionClosed)
@@ -414,6 +407,13 @@ public abstract class ServerConfigurationManager
         return playerQuitEvent.getQuitMessage();
         // CraftBukkit end
     }
+    
+    // MCPC+ start - vanilla compatibility
+    public void playerLoggedOut(EntityPlayerMP entityPlayerMP)
+    {
+        disconnect(entityPlayerMP);
+    }
+    // MCPC+ end    
 
     // CraftBukkit start - Whole method and signature
     public EntityPlayerMP attemptLogin(NetLoginHandler pendingconnection, String s, String hostname)
@@ -481,6 +481,13 @@ public abstract class ServerConfigurationManager
         return entity;
         // CraftBukkit end
     }
+
+    // MCPC+ start - vanilla compatibility
+    public EntityPlayerMP processLogin(String player)
+    {
+        return processLogin(getPlayerForUsername(player));
+    }
+    // MCPC+ end
 
     public EntityPlayerMP processLogin(EntityPlayerMP player)   // CraftBukkit - String -> EntityPlayer
     {
@@ -1429,7 +1436,16 @@ public abstract class ServerConfigurationManager
     {
         while (!this.playerEntityList.isEmpty())
         {
-            ((EntityPlayerMP) this.playerEntityList.get(0)).playerNetServerHandler.kickPlayerFromServer(this.mcServer.server.getShutdownMessage()); // CraftBukkit - add custom shutdown message
+            // Spigot start
+            EntityPlayerMP p = (EntityPlayerMP) this.playerEntityList.get(0);
+            p.playerNetServerHandler.kickPlayerFromServer(this.mcServer.server.getShutdownMessage());
+
+            if ((!this.playerEntityList.isEmpty()) && (this.playerEntityList.get(0) == p))
+            {
+                this.playerEntityList.remove(0); // Prevent shutdown hang if already disconnected
+            }
+
+            // Spigot end
         }
     }
 

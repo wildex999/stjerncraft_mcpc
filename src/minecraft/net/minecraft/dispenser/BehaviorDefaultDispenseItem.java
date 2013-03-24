@@ -43,6 +43,25 @@ public class BehaviorDefaultDispenseItem implements IBehaviorDispenseItem
         // CraftBukkit end
         return par2ItemStack;
     }
+    
+    // MCPC+ start - vanilla compatibility
+    public static void func_82486_a(World par0World, ItemStack par1ItemStack, int par2, EnumFacing par3EnumFacing, IPosition par4IPosition)
+    {
+        double d0 = par4IPosition.getX();
+        double d1 = par4IPosition.getY();
+        double d2 = par4IPosition.getZ();
+        EntityItem entityitem = new EntityItem(par0World, d0, d1 - 0.3D, d2, par1ItemStack);
+        double d3 = par0World.rand.nextDouble() * 0.1D + 0.2D;
+        entityitem.motionX = (double)par3EnumFacing.getFrontOffsetX() * d3;
+        entityitem.motionY = 0.20000000298023224D;
+        entityitem.motionZ = (double)par3EnumFacing.getFrontOffsetZ() * d3;
+        entityitem.motionX += par0World.rand.nextGaussian() * 0.007499999832361937D * (double)par2;
+        entityitem.motionY += par0World.rand.nextGaussian() * 0.007499999832361937D * (double)par2;
+        entityitem.motionZ += par0World.rand.nextGaussian() * 0.007499999832361937D * (double)par2;
+        par0World.spawnEntityInWorld(entityitem);
+        // TODO: add CB event?
+    }
+    // MCPC+ end
 
     // CraftBukkit start - void -> boolean return, IPosition -> ISourceBlock last argument
     public static boolean doDispense(World par0World, ItemStack par1ItemStack, int par2, EnumFacing par3EnumFacing, IBlockSource par4IPosition)

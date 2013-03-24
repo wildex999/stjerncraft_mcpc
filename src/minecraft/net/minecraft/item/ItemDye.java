@@ -25,8 +25,11 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.entity.player.BonemealEvent;
+// CraftBukkit start
+import net.minecraft.entity.player.EntityPlayerMP;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
+// CraftBukkit end
 
 public class ItemDye extends Item
 {

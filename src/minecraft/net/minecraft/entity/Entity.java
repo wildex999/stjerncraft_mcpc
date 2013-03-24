@@ -712,6 +712,11 @@ public abstract class Entity
      */
     public void moveEntity(double par1, double par3, double par5)
     {
+        if (par1 == 0 && par3 == 0 && par5 == 0)
+        {
+            return;    // Spigot
+        }
+
         if (this.noClip)
         {
             this.boundingBox.offset(par1, par3, par5);

@@ -112,7 +112,7 @@ public class BlockPistonBase extends Block
             if (flag && !isExtended(l))
             {
                 // CraftBukkit start
-                int length = canExtend(par1World, par2, par3, par4, i1);
+                int length = canExtend_IntCB(par1World, par2, par3, par4, i1); // MCPC+ - update from rename
 
                 if (length >= 0)
                 {
@@ -410,13 +410,19 @@ public class BlockPistonBase extends Block
             return !par1World.blockHasTileEntity(par2, par3, par4);
         }
     }
+    
+    // MCPC+ start - vanilla compatibility
+    private static boolean canExtend(World world, int i, int j, int k, int l) {
+        return canExtend_IntCB(world, i, j, k, l) >= 0;
+    }
+    // MCPC+ end    
 
     // CraftBukkit - boolean -> int return
 
     /**
      * checks to see if this piston could push the blocks in front of it.
      */
-    private static int canExtend(World par0World, int par1, int par2, int par3, int par4)
+    private static int canExtend_IntCB(World par0World, int par1, int par2, int par3, int par4) // MCPC+ - rename and wrap
     {
         int i1 = par1 + Facing.offsetsXForSide[par4];
         int j1 = par2 + Facing.offsetsYForSide[par4];

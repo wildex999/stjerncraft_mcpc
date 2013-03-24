@@ -9,9 +9,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.ForgeDirection;
-import org.bukkit.event.block.BlockRedstoneEvent;
-
 import static net.minecraftforge.common.ForgeDirection.*;
+import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 
 public class BlockTripWireSource extends Block
 {

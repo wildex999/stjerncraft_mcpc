@@ -15,8 +15,12 @@ import net.minecraft.util.EnumChatFormatting;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
+// MCPC+ start
 import org.bukkit.craftbukkit.command.CraftSimpleCommandMap;
 import org.bukkit.craftbukkit.command.ModCustomCommand;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+// MCPC+ end
 
 public class CommandHandler implements ICommandManager
 {

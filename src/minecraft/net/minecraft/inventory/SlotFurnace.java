@@ -94,6 +94,7 @@ public class SlotFurnace extends Slot
                 i = j;
             }
 
+            if (this.inventory instanceof TileEntityFurnace) { // MCPC+ - fix IC2 crash
             // CraftBukkit start
             Player player = (Player) thePlayer.getBukkitEntity();
             TileEntityFurnace furnace = ((TileEntityFurnace) this.inventory);
@@ -102,6 +103,7 @@ public class SlotFurnace extends Slot
             thePlayer.worldObj.getServer().getPluginManager().callEvent(event);
             i = event.getExpToDrop();
             // CraftBukkit end
+            } // MCPC+
 
             while (i > 0)
             {

@@ -6,7 +6,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 // CraftBukkit start
+import org.bukkit.Bukkit;
 import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.block.BlockFromToEvent;
 // CraftBukkit end
 
@@ -99,17 +101,22 @@ public class BlockFlowing extends BlockFluid
                 }
             }
 
-            if (this.numAdjacentSources >= 2 && this.blockMaterial == Material.water)
+            // MCPC+ start - allow disabling infinite water sources
+            if(((CraftServer)(Bukkit.getServer())).getInfiniteWaterSource())
             {
-                if (par1World.getBlockMaterial(par2, par3 - 1, par4).isSolid())
+                if (this.numAdjacentSources >= 2 && this.blockMaterial == Material.water)
                 {
-                    i1 = 0;
-                }
-                else if (par1World.getBlockMaterial(par2, par3 - 1, par4) == this.blockMaterial && par1World.getBlockMetadata(par2, par3 - 1, par4) == 0)
-                {
-                    i1 = 0;
+                    if (par1World.getBlockMaterial(par2, par3 - 1, par4).isSolid())
+                    {
+                        i1 = 0;
+                    }
+                    else if (par1World.getBlockMaterial(par2, par3 - 1, par4) == this.blockMaterial && par1World.getBlockMetadata(par2, par3 - 1, par4) == 0)
+                    {
+                        i1 = 0;
+                    }
                 }
             }
+            // MCPC+ end
 
             if (this.blockMaterial == Material.lava && l < 8 && i1 < 8 && i1 > l && par5Random.nextInt(4) != 0)
             {

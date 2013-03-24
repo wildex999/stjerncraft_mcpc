@@ -230,6 +230,7 @@ public class EntityPigZombie extends EntityZombie
     {
         return new ItemStack(Item.ingotGold.itemID, 1, 0);
     }
+    // MCPC+ - TODO: vanilla compatibility with void dropRareDrop() + all other mobs using dropRareDrop()
 
     /**
      * Returns the item ID for the item the mob drops on death.

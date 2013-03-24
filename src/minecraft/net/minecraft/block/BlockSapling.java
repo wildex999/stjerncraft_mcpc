@@ -5,17 +5,16 @@ import net.minecraft.block.BlockSapling.TreeGenerator;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenBigTree;
-import net.minecraft.world.gen.feature.WorldGenForest;
-import net.minecraft.world.gen.feature.WorldGenHugeTrees;
-import net.minecraft.world.gen.feature.WorldGenTaiga2;
-import net.minecraft.world.gen.feature.WorldGenTrees;
+import net.minecraft.world.gen.feature.*;
 
 import net.minecraftforge.event.terraingen.TerrainGen;
+// CraftBukkit start
+import net.minecraft.block.BlockSapling.TreeGenerator;
 import org.bukkit.Location;
 import org.bukkit.TreeType;
 import org.bukkit.craftbukkit.util.StructureGrowDelegate;
 import org.bukkit.event.world.StructureGrowEvent;
+// CraftBukkit end
 
 public class BlockSapling extends BlockFlower
 {
@@ -45,6 +44,94 @@ public class BlockSapling extends BlockFlower
             }
         }
     }
+    
+    // MCPC+ start - added for vanilla compatibility - copy vanilla method
+    /**
+     * Attempts to grow a sapling into a tree
+     */
+    public void growTree(World par1World, int par2, int par3, int par4, Random par5Random)
+    {
+        if (!TerrainGen.saplingGrowTree(par1World, par5Random, par2, par3, par4)) return;
+
+        int l = par1World.getBlockMetadata(par2, par3, par4) & 3;
+        Object object = null;
+        int i1 = 0;
+        int j1 = 0;
+        boolean flag = false;
+
+        if (l == 1)
+        {
+            object = new WorldGenTaiga2(true);
+        }
+        else if (l == 2)
+        {
+            object = new WorldGenForest(true);
+        }
+        else if (l == 3)
+        {
+            for (i1 = 0; i1 >= -1; --i1)
+            {
+                for (j1 = 0; j1 >= -1; --j1)
+                {
+                    if (this.isSameSapling(par1World, par2 + i1, par3, par4 + j1, 3) && this.isSameSapling(par1World, par2 + i1 + 1, par3, par4 + j1, 3) && this.isSameSapling(par1World, par2 + i1, par3, par4 + j1 + 1, 3) && this.isSameSapling(par1World, par2 + i1 + 1, par3, par4 + j1 + 1, 3))
+                    {
+                        object = new WorldGenHugeTrees(true, 10 + par5Random.nextInt(20), 3, 3);
+                        flag = true;
+                        break;
+                    }
+                }
+
+                if (object != null)
+                {
+                    break;
+                }
+            }
+
+            if (object == null)
+            {
+                j1 = 0;
+                i1 = 0;
+                object = new WorldGenTrees(true, 4 + par5Random.nextInt(7), 3, 3, false);
+            }
+        }
+        else
+        {
+            object = new WorldGenTrees(true);
+
+            if (par5Random.nextInt(10) == 0)
+            {
+                object = new WorldGenBigTree(true);
+            }
+        }
+
+        if (flag)
+        {
+            par1World.setBlock(par2 + i1, par3, par4 + j1, 0, 0, 4);
+            par1World.setBlock(par2 + i1 + 1, par3, par4 + j1, 0, 0, 4);
+            par1World.setBlock(par2 + i1, par3, par4 + j1 + 1, 0, 0, 4);
+            par1World.setBlock(par2 + i1 + 1, par3, par4 + j1 + 1, 0, 0, 4);
+        }
+        else
+        {
+            par1World.setBlock(par2, par3, par4, 0, 0, 4);
+        }
+
+        if (!((WorldGenerator)object).generate(par1World, par5Random, par2 + i1, par3, par4 + j1))
+        {
+            if (flag)
+            {
+                par1World.setBlock(par2 + i1, par3, par4 + j1, this.blockID, l, 4);
+                par1World.setBlock(par2 + i1 + 1, par3, par4 + j1, this.blockID, l, 4);
+                par1World.setBlock(par2 + i1, par3, par4 + j1 + 1, this.blockID, l, 4);
+                par1World.setBlock(par2 + i1 + 1, par3, par4 + j1 + 1, this.blockID, l, 4);
+            }
+            else
+            {
+                par1World.setBlock(par2, par3, par4, this.blockID, l, 4);
+            }
+        }
+    }
+    // MCPC+ end 
 
     // CraftBukkit - added bonemeal, player and itemstack
 

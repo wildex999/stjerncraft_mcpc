@@ -7,13 +7,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.IPlantable;
 // CraftBukkit start
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 // CraftBukkit end
-
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.IPlantable;
 
 public class BlockFarmland extends Block
 {

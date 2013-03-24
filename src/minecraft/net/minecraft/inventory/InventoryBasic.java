@@ -1,10 +1,15 @@
 package net.minecraft.inventory;
 
 import java.util.List;
+// MCPC+ start
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.inventory.InventoryHolder;
+// MCPC+ end
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-public abstract class InventoryBasic implements IInventory   // CraftBukkit - abstract
+public class InventoryBasic implements IInventory   // CraftBukkit - abstract // MCPC+ - concrete
 {
     private String inventoryTitle;
     private int slotsCount;
@@ -156,6 +161,44 @@ public abstract class InventoryBasic implements IInventory   // CraftBukkit - ab
     public void openChest() {}
 
     public void closeChest() {}
+    
+    // MCPC+ start - stubs for non-abstract vanilla class
+    @Override
+    public ItemStack[] getContents() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void onOpen(CraftHumanEntity who) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onClose(CraftHumanEntity who) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public List<HumanEntity> getViewers() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryHolder getOwner() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setMaxStackSize(int size) {
+        // TODO Auto-generated method stub
+        
+    }
+    // MCPC+ end    
 
     /**
      * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.

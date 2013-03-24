@@ -94,8 +94,8 @@ public class GameRegistry
         else 
         {
             FMLLog.info(Loader.instance().activeModContainer().getModId() + " registered world generator " + generator);
-        worldGenerators.add(generator);
-    }
+            worldGenerators.add(generator);
+        }
         config.save();
         // MCPC+ end
     }

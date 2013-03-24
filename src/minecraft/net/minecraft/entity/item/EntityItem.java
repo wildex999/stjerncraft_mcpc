@@ -109,6 +109,9 @@ public class EntityItem extends Entity
         this.delayBeforeCanPickup -= (currentTick - this.lastTick);
         this.lastTick = currentTick;
         // CraftBukkit end
+
+        if (lastTick % 2 == 0)   // Spigot
+        {
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
@@ -154,6 +157,7 @@ public class EntityItem extends Entity
         {
             this.motionY *= -0.5D;
         }
+        } // Spigot
 
         ++this.age;
 
@@ -199,8 +203,11 @@ public class EntityItem extends Entity
      */
     private void searchForOtherItemsNearby()
     {
-        Iterator iterator = this.worldObj.getEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(0.5D, 0.0D, 0.5D)).iterator();
-
+        // Spigot start
+        double radius = worldObj.getWorld().itemMergeRadius;
+        Iterator iterator = this.worldObj.getEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(radius, radius, radius)).iterator();
+        // Spigot end
+        
         while (iterator.hasNext())
         {
             EntityItem entityitem = (EntityItem)iterator.next();

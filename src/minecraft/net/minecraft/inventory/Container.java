@@ -36,7 +36,7 @@ public abstract class Container
 
     // CraftBukkit start
     public boolean checkReachable = true;
-    public abstract InventoryView getBukkitView();
+    public InventoryView getBukkitView() { return null; } // MCPC+ - concrete, return null - for mod containers
     public void transferTo(Container other, org.bukkit.craftbukkit.entity.CraftHumanEntity player)
     {
         InventoryView source = this.getBukkitView(), destination = other.getBukkitView();

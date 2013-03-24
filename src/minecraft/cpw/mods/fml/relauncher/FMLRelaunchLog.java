@@ -197,8 +197,8 @@ public class FMLRelaunchLog
         // MCPC+ start - conditional
         if (useOnlyThisLogger)
         {
-        System.setOut(new PrintStream(new LoggingOutStream(stdOut), true));
-        System.setErr(new PrintStream(new LoggingOutStream(stdErr), true));
+            System.setOut(new PrintStream(new LoggingOutStream(stdOut), true));
+            System.setErr(new PrintStream(new LoggingOutStream(stdErr), true));
         }
         // MCPC+ end
 

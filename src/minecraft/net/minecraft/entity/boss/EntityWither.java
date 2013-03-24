@@ -30,7 +30,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 // CraftBukkit end
 
-public class EntityWither extends EntityMob implements IRangedAttackMob
+public class EntityWither extends EntityMob implements IBossDisplayData, IRangedAttackMob
 {
     private float[] field_82220_d = new float[2];
     private float[] field_82221_e = new float[2];

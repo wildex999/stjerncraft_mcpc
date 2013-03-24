@@ -330,7 +330,7 @@ public class Item
     /**
      * set max damage of an Item
      */
-    protected Item setMaxDamage(int par1)
+    public Item setMaxDamage(int par1)
     {
         this.maxDamage = par1;
         return this;

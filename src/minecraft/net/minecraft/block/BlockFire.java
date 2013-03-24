@@ -8,11 +8,12 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProviderEnd;
 
 import net.minecraftforge.common.ForgeDirection;
+import static net.minecraftforge.common.ForgeDirection.*;
+// CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
-
-import static net.minecraftforge.common.ForgeDirection.*;
+// CraftBukkit end
 
 public class BlockFire extends Block
 {

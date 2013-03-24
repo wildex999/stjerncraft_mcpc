@@ -17,7 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.IShearable;
-import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.block.LeavesDecayEvent; // CraftBukkit
 
 public class BlockLeaves extends BlockLeavesBase implements IShearable
 {
