@@ -16,9 +16,9 @@
     <forge.build>605</forge.build>
     <forge.version>7.7.0.${forge.build}</forge.version>
     <forge.remapped.revision>R1-MCPC</forge.remapped.revision>
-    <fml.at>https://raw.github.com/MinecraftForge/FML/9565529baf77de27ed8b75be2065da3ba08d16c8/common/fml_at.cfg</fml.at>
-    <forge.at>https://raw.github.com/MinecraftForge/MinecraftForge/3d9629013b50900e7257f0a8648dc4b0e1190cca/common/forge_at.cfg</forge.at>
-    <mcp.mappings>https://raw.github.com/MinecraftForge/FML/9565529baf77de27ed8b75be2065da3ba08d16c8/conf/</mcp.mappings>
+    <fml.at>${basedir}/resources/fml_at.cfg</fml.at>
+    <fml.at>${basedir}/resources/forge_at.cfg</fml.at>
+    <mcp.mappings>${basedir}/resources/mappings/v${minecraft_version}/mcp/</mcp.mappings>
     <buildNumber>0</buildNumber>
 </properties>
 <pluginRepositories>
@@ -344,7 +344,6 @@
                         </manifestEntries>
                     </transformer>
                 </transformers>
-                <finalName>mcpc-plus-${project.version}-f${forge.build}-${buildNumber}</finalName>
             </configuration>
         </plugin>
         <plugin>
@@ -383,11 +382,15 @@
                         <goal>remap</goal>
                     </goals>
                     <configuration>
+                        <!--
                         <srgIn>${mcp.mappings}</srgIn>
-                        <numeric>true</numeric>
+                        <reverse>true</reverse>
+                        -->
+                        <srgIn>${basedir}/resources/mappings/v${minecraft_version}/pkgmcp2numpkg.srg</srgIn>
                         <remappedDependencies>
                             <param>net.minecraftforge:minecraft-forge:${forge.version}-${forge.remapped.revision}:jar</param>
                         </remappedDependencies>
+                        <finalName>mcpc-plus-${project.version}-f${forge.build}-${buildNumber}</finalName>
                     </configuration>
                 </execution>
             </executions>

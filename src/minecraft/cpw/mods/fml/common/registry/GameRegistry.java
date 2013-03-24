@@ -334,7 +334,7 @@ public class GameRegistry
     public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
     {
         TileEntity.addMapping(tileEntityClass, id);
-        Map<String,Class> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "nameToClassMap", "a");
+        Map<String,Class> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_70326_a", "nameToClassMap", "a"); // MCPC+ - add srgname - TODO: fix ObfuscationReflectionHelper?
         for (String s: alternatives)
         {
             if (!teMappings.containsKey(s))

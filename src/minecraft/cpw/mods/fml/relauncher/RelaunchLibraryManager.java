@@ -56,6 +56,7 @@ public class RelaunchLibraryManager
         {
             // Are we in a 'decompiled' environment?
             byte[] bs = actualClassLoader.getClassBytes("net.minecraft.world.World");
+            // MCPC+ - TODO: re-enable for mods for non-version-independent support, but not for pre-deobfuscated server.. (or reobf then deobf)
             if (bs != null)
             {
                 FMLRelaunchLog.info("Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation");

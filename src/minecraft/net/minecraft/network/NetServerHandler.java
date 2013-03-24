@@ -163,7 +163,7 @@ public class NetServerHandler extends NetHandler
     private volatile int chatSpamThresholdCount = 0;
     // MCPC - IMPORTANT: UPDATE THIS MAPPING FOR TESTING IN ECLIPSE
     // MCP mapping = chatSpamThresholdCount, CB mapping: chatThrottle, srg mapping: field_72581_m, obf mapping = l
-    private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(NetServerHandler.class, "chatSpamThresholdCount"); // CraftBukkit - multithreaded field // MCPC+ - runtime deobf srgname
+    private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(NetServerHandler.class, "field_72581_m"); // CraftBukkit - multithreaded field // MCPC+ - runtime deobf srgname - TODO: use FML reflection helpers?
     private int creativeItemCreationSpamThresholdTally = 0;
 
     /** The last known x position for this connection. */
