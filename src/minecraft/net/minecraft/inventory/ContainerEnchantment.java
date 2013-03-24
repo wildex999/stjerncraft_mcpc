@@ -109,7 +109,7 @@ public class ContainerEnchantment extends Container
             ItemStack itemstack = par1IInventory.getStackInSlot(0);
             int i;
 
-            if (itemstack != null && itemstack.isItemEnchantable())
+            if (itemstack != null)   // CraftBukkit - relax condition
             {
                 this.nameSeed = this.rand.nextLong();
 
@@ -168,6 +168,7 @@ public class ContainerEnchantment extends Container
                     // CraftBukkit start
                     CraftItemStack item = CraftItemStack.asCraftMirror(itemstack);
                     PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(player, this.getBukkitView(), this.worldPointer.getWorld().getBlockAt(this.posX, this.posY, this.posZ), item, this.enchantLevels, i);
+                    event.setCancelled(!itemstack.isItemEnchantable())
                     this.worldPointer.getServer().getPluginManager().callEvent(event);
 
                     if (event.isCancelled())
