@@ -13,6 +13,7 @@ import net.minecraft.block.BlockSapling.TreeGenerator;
 import org.bukkit.Location;
 import org.bukkit.TreeType;
 import org.bukkit.craftbukkit.util.StructureGrowDelegate;
+import org.bukkit.entity.Player;
 import org.bukkit.event.world.StructureGrowEvent;
 // CraftBukkit end
 
@@ -138,7 +139,7 @@ public class BlockSapling extends BlockFlower
     /**
      * Attempts to grow a sapling into a tree
      */
-    public void growTree(World par1World, int par2, int par3, int par4, Random par5Random, boolean bonemeal, org.bukkit.entity.Player player, ItemStack itemstack)
+    public void growTree(World par1World, int par2, int par3, int par4, Random par5Random, boolean bonemeal, Player player, ItemStack itemstack)
     {
         if (!TerrainGen.saplingGrowTree(par1World, par5Random, par2, par3, par4)) return;
     
@@ -154,15 +155,15 @@ public class BlockSapling extends BlockFlower
         }
     }
 
-    // CraftBukkit - added bonemeal, player and itemstack
-    public void d(World world, int i, int j, int k, Random random, boolean bonemeal, org.bukkit.entity.Player player, ItemStack itemstack)
+    // CraftBukkit - Added bonemeal, player and itemstack
+    public void d(World world, int i, int j, int k, Random random, boolean bonemeal, Player player, ItemStack itemstack)
     {
         int l = world.getBlockMetadata(i, j, k) & 3;
         Object object = null;
         int i1 = 0;
         int j1 = 0;
         boolean flag = false;
-        // CraftBukkit start - records tree generation and calls StructureGrowEvent
+        // CraftBukkit start - Records tree generation and calls StructureGrowEvent
         StructureGrowDelegate delegate = new StructureGrowDelegate(world);
         TreeType treeType = null;
         TreeGenerator gen = null;

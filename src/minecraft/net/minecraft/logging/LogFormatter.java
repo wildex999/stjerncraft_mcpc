@@ -15,7 +15,7 @@ class LogFormatter extends Formatter
     private SimpleDateFormat field_98228_b;
 
     final LogAgent field_98229_a;
-    // CraftBukkit start - add color stripping
+    // CraftBukkit start - Add color stripping
     private Pattern pattern = Pattern.compile("\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})*)?[m|K]");
     private boolean strip = false;
     // CraftBukkit end

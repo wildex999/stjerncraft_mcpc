@@ -299,8 +299,8 @@ class CraftMetaItem implements ItemMeta, Repairable {
         }
 
         net.minecraft.nbt.NBTTagList tagList = new net.minecraft.nbt.NBTTagList(key.NBT);
-        for (int i = 0; i < list.size(); i++) {
-            tagList.appendTag(new net.minecraft.nbt.NBTTagString("", list.get(i)));
+        for (String value : list) {
+            tagList.appendTag(new net.minecraft.nbt.NBTTagString("", value));
         }
 
         return tagList;
@@ -366,7 +366,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
     }
 
     public boolean hasEnchant(Enchantment ench) {
-        return hasEnchants() ? enchantments.containsKey(ench) : false;
+        return hasEnchants() && enchantments.containsKey(ench);
     }
 
     public int getEnchantLevel(Enchantment ench) {
@@ -394,7 +394,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
     }
 
     public boolean removeEnchant(Enchantment ench) {
-        return hasEnchants() ? enchantments.remove(ench) != null : false;
+        return hasEnchants() && enchantments.remove(ench) != null;
     }
 
     public boolean hasEnchants() {

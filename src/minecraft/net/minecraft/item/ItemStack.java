@@ -75,7 +75,7 @@ public final class ItemStack
         this.itemFrame = null;
         this.itemID = par1;
         this.stackSize = par2;
-        // CraftBukkit start - pass to setData to do filtering
+        // CraftBukkit start - Pass to setData to do filtering
         this.setItemDamage(par3);
         //if (this.damage < 0) {
         //    this.damage = 0;
@@ -253,7 +253,7 @@ public final class ItemStack
         // MCPC+ - remove filter (for mods adding new data values on vanilla items, e.g. Railcraft)
         this.itemDamage = par1;
         /*
-        // CraftBukkit start - filter out data for items that shouldn't have it
+        // CraftBukkit start - Filter out data for items that shouldn't have it
         // The crafting system uses this value for a special purpose so we have to allow it
         if (par1 == 32767)
         {

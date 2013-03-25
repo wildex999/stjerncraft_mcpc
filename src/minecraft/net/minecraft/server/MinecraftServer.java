@@ -243,7 +243,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 this.reader = new ConsoleReader(System.in, System.out);
                 this.reader.setExpandEvents(false);
             }
-            catch (java.io.IOException ex)
+            catch (IOException ex)
             {
                 Logger.getLogger(MinecraftServer.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -307,10 +307,10 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         // MCPC+ end
         this.convertMapIfNeeded(par1Str);
         this.setUserMessage("menu.loadingLevel");
-        // CraftBukkit - removed ticktime arrays
+        // CraftBukkit - Removed ticktime arrays
         ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
         WorldInfo worldinfo = isavehandler.loadWorldInfo();
-        // CraftBukkit start - removed worldsettings
+        // CraftBukkit start - Removed worldsettings
         
         WorldSettings worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
         worldsettings.func_82750_a(par6Str);
@@ -368,7 +368,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                         // Migrate world data too.
                         try
                         {
-                            Files.copy(new File(new File(par1Str), "level.dat"), new File(new File(name), "level.dat"));
+                                com.google.common.io.Files.copy(new File(new File(par1Str), "level.dat"), new File(new File(name), "level.dat"));
                         }
                         catch (IOException exception)
                         {
@@ -628,7 +628,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 e.printStackTrace();
             }
 
-            /* CraftBukkit start - handled in saveChunks
+            /* CraftBukkit start - Handled in saveChunks
             for (int i = 0; i < this.worldServer.length; ++i) {
                 WorldServer worldserver = this.worldServer[i];
 
@@ -770,7 +770,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             }
             finally
             {
-                // CraftBukkit start - restore terminal to original settings
+                // CraftBukkit start - Restore terminal to original settings
                 try
                 {
                     this.reader.getTerminal().restore();
@@ -861,7 +861,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     public void updateTimeLightAndEntities()
     {
         this.theProfiler.startSection("levels");
-        // CraftBukkit start - only send timeupdates to the people in that world
+        // CraftBukkit start
         this.server.getScheduler().mainThreadHeartbeat(this.tickCounter);
 
         // Run tasks that are waiting on processing
@@ -872,7 +872,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         org.bukkit.craftbukkit.chunkio.ChunkIOExecutor.tick();
 
-        // Send timeupdates to everyone, it will get the right time from the world the player is in.
+        // Send time updates to everyone, it will get the right time from the world the player is in.
         if (this.tickCounter % 20 == 0)
         {
             for (int i = 0; i < this.getConfigurationManager().playerEntityList.size(); ++i)
@@ -1084,7 +1084,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     public String getPlugins()
     {
-        // CraftBukkit start - whole method
+        // CraftBukkit start - Whole method
         StringBuilder result = new StringBuilder();
         org.bukkit.plugin.Plugin[] plugins = server.getPluginManager().getPlugins();
         result.append(server.getName());
@@ -1137,7 +1137,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         {
             return waitable.get();
         }
-        catch (ExecutionException e)
+        catch (java.util.concurrent.ExecutionException e)
         {
             throw new RuntimeException("Exception processing rcon command " + par1Str, e.getCause());
         }

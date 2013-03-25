@@ -1,13 +1,10 @@
 package net.minecraft.item;
 
-// CraftBukkit start
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.entity.Fish;
+import org.bukkit.event.player.PlayerFishEvent; // CraftBukkit
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.world.World;
-// CraftBukkit end
 
 public class ItemFishingRod extends Item
 {
@@ -34,7 +31,7 @@ public class ItemFishingRod extends Item
         {
             // CraftBukkit start
             EntityFishHook hook = new EntityFishHook(par2World, par3EntityPlayer);
-            PlayerFishEvent playerFishEvent = new PlayerFishEvent((org.bukkit.entity.Player) par3EntityPlayer.getBukkitEntity(), null, (Fish) hook.getBukkitEntity(), PlayerFishEvent.State.FISHING);
+            PlayerFishEvent playerFishEvent = new PlayerFishEvent((org.bukkit.entity.Player) par3EntityPlayer.getBukkitEntity(), null, (org.bukkit.entity.Fish) hook.getBukkitEntity(), PlayerFishEvent.State.FISHING);
             par2World.getServer().getPluginManager().callEvent(playerFishEvent);
 
             if (playerFishEvent.isCancelled())

@@ -47,14 +47,14 @@ public class Teleporter
         }
         else
         {
-            // CraftBukkit start - modularize end portal creation
+            // CraftBukkit start - Modularize end portal creation
             ChunkCoordinates created = this.createEndPortal(par2, par4, par6);
             par1Entity.setLocationAndAngles((double) created.posX, (double) created.posY, (double) created.posZ, par1Entity.rotationYaw, 0.0F);
             par1Entity.motionX = par1Entity.motionY = par1Entity.motionZ = 0.0D;
         }
     }
 
-    // split out from original a(Entity, double, double, double, float) method in order to enable being called from createPortal
+    // Split out from original a(Entity, double, double, double, float) method in order to enable being called from createPortal
     private ChunkCoordinates createEndPortal(double x, double y, double z)
     {
         int i = MathHelper.floor_double(x);
@@ -120,7 +120,7 @@ public class Teleporter
      */
     public boolean placeInExistingPortal(Entity par1Entity, double par2, double par4, double par6, float par8)
     {
-        // CraftBukkit start - modularize portal search process and entity teleportation
+        // CraftBukkit start - Modularize portal search process and entity teleportation
         ChunkCoordinates found = this.findPortal(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 128);
 
         if (found == null)
@@ -215,7 +215,7 @@ public class Teleporter
                 this.field_85190_d.add(Long.valueOf(j1));
             }
 
-            // CraftBukkit start - moved entity teleportation logic into exit
+            // CraftBukkit start - Moved entity teleportation logic into exit
             return new ChunkCoordinates(i, j, k);
         }
         else
@@ -223,7 +223,7 @@ public class Teleporter
             return null;
         }
     }
-    // entity repositioning logic split out from original b method and combined with repositioning logic for The End from original a method
+    // Entity repositioning logic split out from original b method and combined with repositioning logic for The End from original a method
     public void adjustExit(Entity entity, Location position, Vector velocity)
     {
         Location from = position.clone();
@@ -348,7 +348,7 @@ public class Teleporter
                 double d10 = velocity.getX();
                 double d11 = velocity.getZ();
                 // CraftBukkit end
-                // CraftBukkit start - adjust position and velocity instances instead of entity
+                // CraftBukkit start - Adjust position and velocity instances instead of entity
                 velocity.setX(d10 * (double) f3 + d11 * (double) f6);
                 velocity.setZ(d10 * (double) f5 + d11 * (double) f4);
                 f = f - (float)(k2 * 90) + (float)(j2 * 90);
@@ -396,7 +396,7 @@ public class Teleporter
 
     public boolean makePortal(Entity par1Entity)
     {
-        // CraftBukkit start - allow for portal creation to be based on coordinates instead of entity
+        // CraftBukkit start - Allow for portal creation to be based on coordinates instead of entity
         return this.createPortal(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 16);
     }
 

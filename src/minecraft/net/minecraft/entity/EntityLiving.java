@@ -643,7 +643,7 @@ public abstract class EntityLiving extends Entity
         }
         else
         {
-            // CraftBukkit start - only set if needed to work around a datawatcher inefficiency
+            // CraftBukkit start - Only set if needed to work around a DataWatcher inefficiency
             if (this.getAir() != 300)
             {
                 this.setAir(maxAirTicks);
@@ -751,7 +751,7 @@ public abstract class EntityLiving extends Entity
         if (this.deathTime >= 20 && !this.isDead)   // CraftBukkit - (this.deathTicks == 20) -> (this.deathTicks >= 20 && !this.dead)
         {
             int i;
-            // CraftBukkit start - update getExpReward() above if the removed if() changes!
+            // CraftBukkit start - Update getExpReward() above if the removed if() changes!
             i = this.expToDrop;
 
             while (i > 0)
@@ -1000,7 +1000,7 @@ public abstract class EntityLiving extends Entity
         this.field_70764_aw += f2;
     }
 
-    // CraftBukkit start - delegate so we can handle providing a reason for health being regained
+    // CraftBukkit start - Delegate so we can handle providing a reason for health being regained
 
     /**
      * Heal living entity (param: amount of half-hearts)
@@ -1440,7 +1440,7 @@ public abstract class EntityLiving extends Entity
         this.worldObj.setEntityState(this, (byte)3);
     }
 
-    // CraftBukkit start - change return type to ItemStack
+    // CraftBukkit start - Change return type to ItemStack
     protected ItemStack dropRareDrop(int i)
     {
         return null;
@@ -1459,7 +1459,7 @@ public abstract class EntityLiving extends Entity
      */
     protected void dropFewItems(boolean par1, int par2)
     {
-        // CraftBukkit start - whole method
+        // CraftBukkit start - Whole method
         List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
         int j = this.getDropItemId();
 
@@ -1808,6 +1808,8 @@ public abstract class EntityLiving extends Entity
             this.maxHealth = par1NBTTagCompound.getInteger("Bukkit.MaxHealth");
         }
 
+        // CraftBukkit end
+
         if (!par1NBTTagCompound.hasKey("Health"))
         {
             this.health = this.maxHealth; // CraftBukkit - this.getMaxHealth() -> this.maxHealth
@@ -1816,7 +1818,7 @@ public abstract class EntityLiving extends Entity
         this.hurtTime = par1NBTTagCompound.getShort("HurtTime");
         this.deathTime = par1NBTTagCompound.getShort("DeathTime");
         this.attackTime = par1NBTTagCompound.getShort("AttackTime");
-        // CraftBukkit start - if looting or persistence is false only use it if it was set after we started using it
+        // CraftBukkit start - If looting or persistence is false only use it if it was set after we started using it
         boolean data = par1NBTTagCompound.getBoolean("CanPickUpLoot");
 
         if (isLevelAtLeast(par1NBTTagCompound, 1) || data)
@@ -2782,7 +2784,7 @@ public abstract class EntityLiving extends Entity
         }
         else
         {
-            int i = (int)((float) this.health - (float) this.maxHealth * 0.33F);  // this.getMaxHealth() -> this.maxHealth
+            int i = (int)((float) this.health - (float) this.maxHealth * 0.33F);  // CraftBukkit - this.getMaxHealth() -> this.maxHealth
             i -= (3 - this.worldObj.difficultySetting) * 4;
 
             if (i < 0)

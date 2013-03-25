@@ -220,7 +220,7 @@ public class ExtendedBlockStorage
 
     public void removeInvalidBlocks()
     {
-        // CraftBukkit start - optimize for speed
+        // CraftBukkit start - Optimize for speed
         byte[] blkIds = this.blockLSBArray;
         int cntNonEmpty = 0;
         int cntTicking = 0;
@@ -401,7 +401,7 @@ public class ExtendedBlockStorage
      */
     public void setBlockMSBArray(NibbleArray par1NibbleArray)
     {
-        // CraftBukkit start - don't hang on to an empty nibble array
+        // CraftBukkit start - Don't hang on to an empty nibble array
         boolean empty = true;
 
         // Spigot start

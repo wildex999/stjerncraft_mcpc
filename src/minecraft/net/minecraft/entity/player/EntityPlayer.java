@@ -1456,7 +1456,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
                         if (l > 0 && flag2)
                         {
-                            // CraftBukkit start - raise a combust event when somebody hits with a fire enchanted item
+                            // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
                             EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), par1Entity.getBukkitEntity(), l * 4);
                             org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 
@@ -2222,7 +2222,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         return super.func_94062_bN();
     }
 
-    /* CraftBukkit start - we use canPickUpLoot on players, can't have this
+    /* CraftBukkit start - We use canPickUpLoot on players, can't have this
     public boolean bS() {
         return false;
     }

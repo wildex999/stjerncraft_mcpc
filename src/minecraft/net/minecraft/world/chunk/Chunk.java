@@ -28,11 +28,8 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.world.ChunkEvent;
-// CraftBukkit start
-import net.minecraft.entity.player.EntityPlayerMP;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-// CraftBukkit end
+
+import org.bukkit.Bukkit; // CraftBukkit
 
 public class Chunk
 {
@@ -743,7 +740,7 @@ public class Chunk
 
                     if (Block.blocksList[par4] != null && Block.blocksList[par4].hasTileEntity(par5))
                     {
-                        // CraftBukkit start - don't create tile entity if placement failed
+                        // CraftBukkit start - Don't create tile entity if placement failed
                         if (this.getBlockID(par1, par2, par3) != par4)
                         {
                             return false;

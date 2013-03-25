@@ -49,7 +49,7 @@ public class ContainerChest extends Container
         this.numRows = par2IInventory.getSizeInventory() / 9;
         par2IInventory.openChest();
         int i = (this.numRows - 4) * 18;
-        // CraftBukkit start - save player
+        // CraftBukkit start - Save player
         // TODO: Should we check to make sure it really is an InventoryPlayer?
         this.player = (InventoryPlayer)par1IInventory;
         // CraftBukkit end

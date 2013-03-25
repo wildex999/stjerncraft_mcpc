@@ -57,7 +57,7 @@ public class CraftEventFactory {
 
         net.minecraft.util.ChunkCoordinates chunkcoordinates = worldServer.getSpawnPoint();
 
-        int distanceFromSpawn = (int) Math.max(Math.abs(x - chunkcoordinates.posX), Math.abs(z - chunkcoordinates.posZ));
+        int distanceFromSpawn = Math.max(Math.abs(x - chunkcoordinates.posX), Math.abs(z - chunkcoordinates.posZ));
         return distanceFromSpawn >= spawnSize;
     }
 
@@ -70,8 +70,8 @@ public class CraftEventFactory {
      * Block place methods
      */
     public static BlockPlaceEvent callBlockPlaceEvent(net.minecraft.world.World world, net.minecraft.entity.player.EntityPlayer who, BlockState replacedBlockState, int clickedX, int clickedY, int clickedZ) {
-        CraftWorld craftWorld = ((net.minecraft.world.WorldServer) world).getWorld();
-        CraftServer craftServer = ((net.minecraft.world.WorldServer) world).getServer();
+        CraftWorld craftWorld = world.getWorld();
+        CraftServer craftServer = world.getServer();
 
         Player player = (who == null) ? null : (Player) who.getBukkitEntity();
 
@@ -217,7 +217,7 @@ public class CraftEventFactory {
      */
     public static EntityTameEvent callEntityTameEvent(net.minecraft.entity.EntityLiving entity, net.minecraft.entity.player.EntityPlayer tamer) {
         org.bukkit.entity.Entity bukkitEntity = entity.getBukkitEntity();
-        org.bukkit.entity.AnimalTamer bukkitTamer = (tamer != null ? (AnimalTamer) tamer.getBukkitEntity() : null);
+        org.bukkit.entity.AnimalTamer bukkitTamer = (tamer != null ? tamer.getBukkitEntity() : null);
         CraftServer craftServer = (CraftServer) bukkitEntity.getServer();
 
         entity.persistenceRequired = true;
@@ -248,7 +248,7 @@ public class CraftEventFactory {
 
         ItemDespawnEvent event = new ItemDespawnEvent(entity, entity.getLocation());
 
-        ((CraftServer) entity.getServer()).getPluginManager().callEvent(event);
+        entity.getServer().getPluginManager().callEvent(event);
         return event;
     }
 
@@ -310,7 +310,7 @@ public class CraftEventFactory {
     }
 
     public static PlayerDeathEvent callPlayerDeathEvent(net.minecraft.entity.player.EntityPlayerMP victim, List<org.bukkit.inventory.ItemStack> drops, String deathMessage) {
-        CraftPlayer entity = (CraftPlayer) victim.getBukkitEntity();
+        CraftPlayer entity = victim.getBukkitEntity();
         PlayerDeathEvent event = new PlayerDeathEvent(entity, drops, victim.getExpReward(), 0, deathMessage);
         org.bukkit.World world = entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);
@@ -419,7 +419,7 @@ public class CraftEventFactory {
     }
 
     public static FoodLevelChangeEvent callFoodLevelChangeEvent(net.minecraft.entity.player.EntityPlayer entity, int level) {
-        FoodLevelChangeEvent event = new FoodLevelChangeEvent((Player) entity.getBukkitEntity(), level);
+        FoodLevelChangeEvent event = new FoodLevelChangeEvent(entity.getBukkitEntity(), level);
         entity.getBukkitEntity().getServer().getPluginManager().callEvent(event);
         return event;
     }
@@ -484,8 +484,8 @@ public class CraftEventFactory {
             player.playerNetServerHandler.handleCloseWindow(new net.minecraft.network.packet.Packet101CloseWindow(player.openContainer.windowId));
         }
 
-        CraftServer server = ((net.minecraft.world.WorldServer) player.worldObj).getServer();
-        CraftPlayer craftPlayer = (CraftPlayer) player.getBukkitEntity();
+        CraftServer server = player.worldObj.getServer();
+        CraftPlayer craftPlayer = player.getBukkitEntity();
         // MCPC+ start - vanilla compatibility
         try {
             player.openContainer.transferTo(container, craftPlayer);

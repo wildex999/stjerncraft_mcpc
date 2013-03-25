@@ -59,7 +59,7 @@ public class BlockStationary extends BlockFluid
             int l = par5Random.nextInt(3);
             int i1;
             int j1;
-            // CraftBukkit start - prevent lava putting something on fire, remember igniter block coords
+            // CraftBukkit start - Prevent lava putting something on fire, remember igniter block coords
             int x = par2;
             int y = par3;
             int z = par4;
@@ -76,7 +76,7 @@ public class BlockStationary extends BlockFluid
                 {
                     if (this.isFlammable(par1World, par2 - 1, par3, par4) || this.isFlammable(par1World, par2 + 1, par3, par4) || this.isFlammable(par1World, par2, par3, par4 - 1) || this.isFlammable(par1World, par2, par3, par4 + 1) || this.isFlammable(par1World, par2, par3 - 1, par4) || this.isFlammable(par1World, par2, par3 + 1, par4))
                     {
-                        // CraftBukkit start - prevent lava putting something on fire
+                        // CraftBukkit start - Prevent lava putting something on fire
                         if (par1World.getBlockId(par2, par3, par4) != Block.fire.blockID)
                         {
                             if (CraftEventFactory.callBlockIgniteEvent(par1World, par2, par3, par4, x, y, z).isCancelled())
@@ -108,7 +108,7 @@ public class BlockStationary extends BlockFluid
 
                     if (par1World.isAirBlock(par2, par3 + 1, par4) && this.isFlammable(par1World, par2, par3, par4))
                     {
-                        // CraftBukkit start - prevent lava putting something on fire
+                        // CraftBukkit start - Prevent lava putting something on fire
                         if (par1World.getBlockId(par2, par3 + 1, par4) != Block.fire.blockID)
                         {
                             if (CraftEventFactory.callBlockIgniteEvent(par1World, par2, par3 + 1, par4, x, y, z).isCancelled())

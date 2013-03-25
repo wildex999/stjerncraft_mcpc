@@ -86,7 +86,7 @@ public class EntitySquid extends EntityWaterMob
      */
     protected void dropFewItems(boolean par1, int par2)
     {
-        // CraftBukkit start - whole method
+        // CraftBukkit start - Whole method
         java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
         int count = this.rand.nextInt(3 + par2) + 1;
 

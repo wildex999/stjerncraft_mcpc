@@ -13,7 +13,7 @@ public class TileEntitySign extends TileEntity
      * really used when the > < are going to be visible.
      */
     public int lineBeingEdited = -1;
-    public boolean isEditable = true; // CraftBukkit - privite -> public
+    public boolean isEditable = true; // CraftBukkit - private -> public
 
     public TileEntitySign() {}
 
@@ -55,7 +55,7 @@ public class TileEntitySign extends TileEntity
     {
         String[] astring = new String[4];
 
-        // CraftBukkit start - limit sign text to 15 chars per line
+        // CraftBukkit start - Limit sign text to 15 chars per line
         for (int i = 0; i < 4; ++i)
         {
             astring[i] = this.signText[i];

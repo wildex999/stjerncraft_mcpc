@@ -20,7 +20,7 @@ public class WorldGenShrub extends WorldGenerator implements TreeGenerator   // 
 
     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
     {
-        // CraftBukkit start - moved to generate
+        // CraftBukkit start - Moved to generate
         return this.generate((BlockChangeDelegate) par1World, par2Random, par3, par4, par5);
     }
 
@@ -62,7 +62,7 @@ public class WorldGenShrub extends WorldGenerator implements TreeGenerator   // 
                 }
             }
 
-            // CraftBukkit start - return false if gen was unsuccessful
+            // CraftBukkit start - Return false if gen was unsuccessful
         }
         else
         {

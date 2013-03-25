@@ -290,7 +290,7 @@ public class BlockVine extends Block implements IShearable
 
                     if (l1 > 0)
                     {
-                        // CraftBukkit start - fire BlockSpreadEvent
+                        // CraftBukkit start - Call BlockSpreadEvent
                         org.bukkit.block.Block source = par1World.getWorld().getBlockAt(par2, par3, par4);
                         org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3 + 1, par4);
                         CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, l1);
@@ -322,7 +322,7 @@ public class BlockVine extends Block implements IShearable
                     {
                         i2 = k1 + 1 & 3;
                         j2 = k1 + 3 & 3;
-                        // CraftBukkit start - fire BlockSpreadEvent
+                        // CraftBukkit start - Call BlockSpreadEvent
                         org.bukkit.block.Block source = par1World.getWorld().getBlockAt(par2, par3, par4);
                         org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2 + Direction.offsetX[k1], par3, par4 + Direction.offsetZ[k1]);
 
@@ -362,7 +362,7 @@ public class BlockVine extends Block implements IShearable
 
                         if (i2 > 0)
                         {
-                            // CraftBukkit start - fire BlockSpreadEvent
+                            // CraftBukkit start - Call BlockSpreadEvent
                             org.bukkit.block.Block source = par1World.getWorld().getBlockAt(par2, par3, par4);
                             org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3 - 1, par4);
                             CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, i2);

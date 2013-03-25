@@ -1,10 +1,13 @@
 package net.minecraft.item;
 
-import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
+// CraftBukkit start
+import org.bukkit.craftbukkit.block.CraftBlockState;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+// CraftBukkit end
 
 public class ItemFlintAndSteel extends Item
 {
@@ -64,8 +67,8 @@ public class ItemFlintAndSteel extends Item
 
             if (i1 == 0)
             {
-                // CraftBukkit start - store the clicked block
-                if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(par3World, par4, par5, par6, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, par2EntityPlayer).isCancelled())
+                // CraftBukkit start - Store the clicked block
+                if (CraftEventFactory.callBlockIgniteEvent(par3World, par4, par5, par6, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, par2EntityPlayer).isCancelled())
                 {
                     par1ItemStack.damageItem(1, par2EntityPlayer);
                     return false;
@@ -76,7 +79,7 @@ public class ItemFlintAndSteel extends Item
                 par3World.playSoundEffect((double)par4 + 0.5D, (double)par5 + 0.5D, (double)par6 + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
                 par3World.setBlock(par4, par5, par6, Block.fire.blockID);
                 // CraftBukkit start
-                org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockState, clickedX, clickedY, clickedZ);
+                org.bukkit.event.block.BlockPlaceEvent placeEvent = CraftEventFactory.callBlockPlaceEvent(par3World, par2EntityPlayer, blockState, clickedX, clickedY, clickedZ);
 
                 if (placeEvent.isCancelled() || !placeEvent.canBuild())
                 {

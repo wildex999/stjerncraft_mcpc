@@ -29,7 +29,7 @@ public class ContainerWorkbench extends Container
 
     public ContainerWorkbench(InventoryPlayer par1InventoryPlayer, World par2World, int par3, int par4, int par5)
     {
-        // CraftBukkit start - switched order of IInventory construction and stored player
+        // CraftBukkit start - Switched order of IInventory construction and stored player
         this.craftResult = new InventoryCraftResult();
         this.craftMatrix = new InventoryCrafting(this, 3, 3, par1InventoryPlayer.player); // CraftBukkit - pass player
         this.craftMatrix.resultInventory = this.craftResult;

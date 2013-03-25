@@ -135,7 +135,7 @@ public class InventoryPlayer implements IInventory
         return -1;
     }
 
-    // CraftBukkit start - watch method above! :D
+    // CraftBukkit start - Watch method above! :D
     public int canHold(ItemStack itemstack)
     {
         int remains = itemstack.stackSize;

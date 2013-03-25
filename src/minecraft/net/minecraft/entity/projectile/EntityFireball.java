@@ -60,7 +60,7 @@ public abstract class EntityFireball extends Entity
         this.setPosition(this.posX, this.posY, this.posZ);
         this.yOffset = 0.0F;
         this.motionX = this.motionY = this.motionZ = 0.0D;
-        // CraftBukkit start - (added setDirection method)
+        // CraftBukkit start - Added setDirection method
         this.setDirection(par3, par5, par7);
     }
 
@@ -265,7 +265,7 @@ public abstract class EntityFireball extends Entity
         this.inTile = par1NBTTagCompound.getByte("inTile") & 255;
         this.inGround = par1NBTTagCompound.getByte("inGround") == 1;
 
-        // CraftBukkit - direction -> power
+        // CraftBukkit start - direction -> power
         if (par1NBTTagCompound.hasKey("power"))
         {
             NBTTagList nbttaglist = par1NBTTagCompound.getTagList("power");

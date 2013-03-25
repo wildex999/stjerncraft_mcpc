@@ -12,11 +12,7 @@ import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-// CraftBukkit start
-import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.inventory.CraftInventoryAnvil;
-import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-// CraftBukkit end
+import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
 
 public class ContainerRepair extends Container
 {
@@ -490,7 +486,7 @@ public class ContainerRepair extends Container
             return bukkitEntity;
         }
 
-        CraftInventory inventory = new CraftInventoryAnvil(this.inputSlots);
+        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(this.inputSlots);
         bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
         return bukkitEntity;
     }

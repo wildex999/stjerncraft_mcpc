@@ -28,11 +28,11 @@ public class Vec3Pool
     /**
      * extends the pool if all vecs are currently "out"
      */
-    public final Vec3 getVecFromPool(double par1, double par3, double par5)   // CraftBukkit - add final
+    public final Vec3 getVecFromPool(double par1, double par3, double par5)   // CraftBukkit - Add final
     {
         if (this.resetCount == 0)
         {
-            return Vec3.createVectorHelper(par1, par3, par5);    // CraftBukkit - don't pool objects indefinitely if thread doesn't adhere to contract
+            return Vec3.createVectorHelper(par1, par3, par5);    // CraftBukkit - Don't pool objects indefinitely if thread doesn't adhere to contract
         }
 
         Vec3 vec3;
@@ -57,14 +57,14 @@ public class Vec3Pool
             this.alloclisthead = vec3;
         }
 
-        vec3.next = this.alloclist; // add to allocated list
+        vec3.next = this.alloclist; // Add to allocated list
         this.alloclist = vec3;
         // CraftBukkit end
         ++this.nextFreeSpace;
         return vec3;
     }
 
-    // CraftBukkit start - offer back vector (can save LOTS of unneeded bloat) - works about 90% of the time
+    // CraftBukkit start - Offer back vector (can save LOTS of unneeded bloat) - works about 90% of the time
     public void release(Vec3 v)
     {
         if (this.alloclist == v)
@@ -94,7 +94,7 @@ public class Vec3Pool
             this.maximumSizeSinceLastTruncation = this.nextFreeSpace;
         }
 
-        // CraftBukkit start - intelligent cache
+        // CraftBukkit start - Intelligent cache
         // Take any allocated blocks and put them on free list
         if (this.alloclist != null)
         {

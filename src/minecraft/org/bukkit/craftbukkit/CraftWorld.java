@@ -346,7 +346,7 @@ public class CraftWorld implements World {
         }
 
         world.theChunkProviderServer.chunksToUnload.remove(x, z);
-        net.minecraft.world.chunk.Chunk chunk = (net.minecraft.world.chunk.Chunk) world.theChunkProviderServer.loadedChunkHashMap.get(LongHash.toLong(x, z));
+        net.minecraft.world.chunk.Chunk chunk = world.theChunkProviderServer.loadedChunkHashMap.get(LongHash.toLong(x, z));
 
         if (chunk == null) {
             chunk = world.theChunkProviderServer.safeLoadChunk(x, z);
@@ -785,7 +785,7 @@ public class CraftWorld implements World {
     public void setStorm(boolean hasStorm) {
         CraftServer server = world.getServer();
 
-        WeatherChangeEvent weather = new WeatherChangeEvent((org.bukkit.World) this, hasStorm);
+        WeatherChangeEvent weather = new WeatherChangeEvent(this, hasStorm);
         server.getPluginManager().callEvent(weather);
         if (!weather.isCancelled()) {
             world.worldInfo.setRaining(hasStorm);
@@ -815,7 +815,7 @@ public class CraftWorld implements World {
         if (thundering && !hasStorm()) setStorm(true);
         CraftServer server = world.getServer();
 
-        ThunderChangeEvent thunder = new ThunderChangeEvent((org.bukkit.World) this, thundering);
+        ThunderChangeEvent thunder = new ThunderChangeEvent(this, thundering);
         server.getPluginManager().callEvent(thunder);
         if (!thunder.isCancelled()) {
             world.worldInfo.setThundering(thundering);
@@ -962,7 +962,7 @@ public class CraftWorld implements World {
                 } else {
                     entity = new net.minecraft.entity.projectile.EntityLargeFireball(world);
                 }
-                ((net.minecraft.entity.projectile.EntityFireball) entity).setLocationAndAngles(x, y, z, yaw, pitch);
+                entity.setLocationAndAngles(x, y, z, yaw, pitch);
                 Vector direction = location.getDirection().multiply(10);
                 ((net.minecraft.entity.projectile.EntityFireball) entity).setDirection(direction.getX(), direction.getY(), direction.getZ());
             }
@@ -1369,9 +1369,7 @@ public class CraftWorld implements World {
         }
 
         net.minecraft.world.gen.ChunkProviderServer cps = world.theChunkProviderServer;
-        Iterator<net.minecraft.world.chunk.Chunk> iter = cps.loadedChunkHashMap.values().iterator();
-        while (iter.hasNext()) {
-            net.minecraft.world.chunk.Chunk chunk = iter.next();
+        for (net.minecraft.world.chunk.Chunk chunk : cps.loadedChunkHashMap.values()) {
             // If in use, skip it
             if (isChunkInUse(chunk.xPosition, chunk.zPosition)) {
                 continue;
@@ -1383,7 +1381,7 @@ public class CraftWorld implements World {
             }
 
             // Add unload request
-            cps.unloadChunksIfNotNearSpawn(chunk.xPosition,  chunk.zPosition);
+            cps.unloadChunksIfNotNearSpawn(chunk.xPosition, chunk.zPosition);
         }
     }
 }

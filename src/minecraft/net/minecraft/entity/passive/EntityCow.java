@@ -103,7 +103,7 @@ public class EntityCow extends EntityAnimal
      */
     protected void dropFewItems(boolean par1, int par2)
     {
-        // CraftBukkit start - whole method
+        // CraftBukkit start - Whole method
         java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
         int j = this.rand.nextInt(3) + this.rand.nextInt(1 + par2);
         int k;
@@ -133,7 +133,7 @@ public class EntityCow extends EntityAnimal
 
         if (itemstack != null && itemstack.itemID == Item.bucketEmpty.itemID)
         {
-            // CraftBukkit start - got milk?
+            // CraftBukkit start - Got milk?
             org.bukkit.Location loc = this.getBukkitEntity().getLocation();
             org.bukkit.event.player.PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(par1EntityPlayer, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), -1, itemstack, Item.bucketMilk);
 

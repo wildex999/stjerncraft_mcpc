@@ -3,7 +3,6 @@ package net.minecraft.block;
 // CraftBukkit start
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.inventory.Inventory;
 import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
 import net.minecraft.dispenser.IBehaviorDispenseItem;
 import net.minecraft.inventory.IInventory;
@@ -60,9 +59,9 @@ public class BlockDropper extends BlockDispenser
 
                 if (iinventory != null)
                 {
-                    // CraftBukkit start - fire event when pushing items into other inventories
+                    // CraftBukkit start - Fire event when pushing items into other inventories
                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(itemstack.copy().splitStack(1));
-                    Inventory destinationInventory = iinventory.getOwner() != null ? iinventory.getOwner().getInventory() : null;
+                    org.bukkit.inventory.Inventory destinationInventory = iinventory.getOwner() != null ? iinventory.getOwner().getInventory() : null;
                     InventoryMoveItemEvent event = new InventoryMoveItemEvent(tileentitydispenser.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
                     par1World.getServer().getPluginManager().callEvent(event);
 

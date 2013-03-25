@@ -234,7 +234,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         this.getBukkitEntity().setExtraData(par1NBTTagCompound); // CraftBukkit
     }
 
-    // CraftBukkit start - world fallback code, either respawn location or global spawn
+    // CraftBukkit start - World fallback code, either respawn location or global spawn
 
     /**
      * Sets the reference to the World object.
@@ -602,7 +602,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
             if (this.dimension == 1 && par1 == 0)
             {
                 this.triggerAchievement((StatBase) AchievementList.theEnd);
-                // CraftBukkit start - rely on custom portal management
+                // CraftBukkit start - Rely on custom portal management
                 /*
                 ChunkCoordinates chunkcoordinates = this.server.getWorldServer(i).getDimensionSpawn();
 
@@ -746,7 +746,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public void displayGUIWorkbench(int par1, int par2, int par3)
     {
-        // CraftBukkit start - inventory open hook
+        // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerWorkbench(this.inventory, this.worldObj, par1, par2, par3));
 
         if (container == null)
@@ -764,7 +764,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
     public void displayGUIEnchantment(int par1, int par2, int par3, String par4Str)
     {
-        // CraftBukkit start - inventory open hook
+        // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerEnchantment(this.inventory, this.worldObj, par1, par2, par3));
 
         if (container == null)
@@ -785,7 +785,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public void displayGUIAnvil(int par1, int par2, int par3)
     {
-        // CraftBukkit start - inventory open hook
+        // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerRepair(this.inventory, this.worldObj, par1, par2, par3, this));
 
         if (container == null)
@@ -811,7 +811,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
             this.closeScreen();
         }
 
-        // CraftBukkit start - inventory open hook
+        // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerChest(this.inventory, par1IInventory));
 
         if (container == null)
@@ -829,7 +829,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
     public void func_94064_a(TileEntityHopper par1TileEntityHopper)
     {
-        // CraftBukkit start - inventory open hook
+        // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerHopper(this.inventory, par1TileEntityHopper));
 
         if (container == null)
@@ -847,7 +847,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
     public void func_96125_a(EntityMinecartHopper par1EntityMinecartHopper)
     {
-        // CraftBukkit start - inventory open hook
+        // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerHopper(this.inventory, par1EntityMinecartHopper));
 
         if (container == null)
@@ -868,7 +868,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public void displayGUIFurnace(TileEntityFurnace par1TileEntityFurnace)
     {
-        // CraftBukkit start - inventory open hook
+        // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerFurnace(this.inventory, par1TileEntityFurnace));
 
         if (container == null)
@@ -889,7 +889,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public void displayGUIDispenser(TileEntityDispenser par1TileEntityDispenser)
     {
-        // CraftBukkit start - inventory open hook
+        // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerDispenser(this.inventory, par1TileEntityDispenser));
 
         if (container == null)
@@ -910,7 +910,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public void displayGUIBrewingStand(TileEntityBrewingStand par1TileEntityBrewingStand)
     {
-        // CraftBukkit start - inventory open hook
+        // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerBrewingStand(this.inventory, par1TileEntityBrewingStand));
 
         if (container == null)
@@ -931,7 +931,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public void displayGUIBeacon(TileEntityBeacon par1TileEntityBeacon)
     {
-        // CraftBukkit start - inventory open hook
+        // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerBeacon(this.inventory, par1TileEntityBeacon));
 
         if (container == null)
@@ -949,7 +949,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
     public void displayGUIMerchant(IMerchant par1IMerchant, String par2Str)
     {
-        // CraftBukkit start - inventory open hook
+        // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerMerchant(this.inventory, par1IMerchant, this.worldObj));
 
         if (container == null)
@@ -1009,7 +1009,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         this.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(-1, -1, this.inventory.getItemStack()));
 
         if (par1Container.getBukkitView() == null) return;         // MCPC+ - allow vanilla mods to bypass
-        // CraftBukkit start - send a Set Slot to update the crafting result slot
+        // CraftBukkit start - Send a Set Slot to update the crafting result slot
         if (java.util.EnumSet.of(InventoryType.CRAFTING, InventoryType.WORKBENCH).contains(par1Container.getBukkitView().getType()))
         {
             this.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(par1Container.windowId, 0, par1Container.getSlot(0).getStack()));

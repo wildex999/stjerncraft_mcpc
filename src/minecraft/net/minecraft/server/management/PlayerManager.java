@@ -11,7 +11,6 @@ import net.minecraft.world.WorldServer;
 // CraftBukkit start
 import java.util.Collections;
 import java.util.Queue;
-import java.util.Iterator;
 import java.util.LinkedList;
 // CraftBukkit end
 
@@ -69,8 +68,8 @@ public class PlayerManager
      */
     public void updatePlayerInstances()
     {
-        // CraftBukkit start - use iterator
-        Iterator iterator = this.chunkWatcherWithPlayers.iterator();
+        // CraftBukkit start - Use iterator
+        java.util.Iterator iterator = this.chunkWatcherWithPlayers.iterator();
 
         while (iterator.hasNext())
         {
@@ -81,12 +80,12 @@ public class PlayerManager
 
         // CraftBukkit end
 
-        // this.d.clear(); // CraftBukkit - removals are already covered
+        // this.d.clear(); // CraftBukkit - Removals are already covered
         if (this.players.isEmpty())
         {
             if (!wasNotEmpty)
             {
-                return;    // CraftBukkit - only do unload when we go from non-empty to empty
+                return;    // CraftBukkit - Only do unload when we go from non-empty to empty
             }
 
             WorldProvider worldprovider = this.theWorldServer.provider;
@@ -158,7 +157,7 @@ public class PlayerManager
         int j = (int)par1EntityPlayerMP.posZ >> 4;
         par1EntityPlayerMP.managedPosX = par1EntityPlayerMP.posX;
         par1EntityPlayerMP.managedPosZ = par1EntityPlayerMP.posZ;
-        // CraftBukkit start - load nearby chunks first
+        // CraftBukkit start - Load nearby chunks first
         List<ChunkCoordIntPair> chunkList = new LinkedList<ChunkCoordIntPair>();
 
         for (int k = i - this.playerViewRadius; k <= i + this.playerViewRadius; ++k)
@@ -362,7 +361,7 @@ public class PlayerManager
         return playermanager.chunkWatcherWithPlayers;
     }
 
-    // CraftBukkit start - sorter to load nearby chunks first
+    // CraftBukkit start - Sorter to load nearby chunks first
     private static class ChunkCoordComparator implements java.util.Comparator<ChunkCoordIntPair>
     {
         private int x;

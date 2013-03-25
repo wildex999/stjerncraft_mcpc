@@ -1,6 +1,8 @@
 package net.minecraft.entity.ai;
 
-import org.bukkit.event.entity.EntityTargetEvent; // CraftBukkit
+// CraftBukkit start
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.event.entity.EntityTargetEvent;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.passive.EntityTameable;
@@ -8,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.MathHelper;
+// CraftBukkit end
 
 public abstract class EntityAITarget extends EntityAIBase
 {
@@ -163,7 +166,7 @@ public abstract class EntityAITarget extends EntityAIBase
                     }
                 }
 
-                // CraftBukkit start - check all the different target goals for the reason, default to RANDOM_TARGET
+                // CraftBukkit start - Check all the different target goals for the reason, default to RANDOM_TARGET
                 EntityTargetEvent.TargetReason reason = EntityTargetEvent.TargetReason.RANDOM_TARGET;
 
                 if (this instanceof EntityAIDefendVillage)
@@ -199,12 +202,12 @@ public abstract class EntityAITarget extends EntityAIBase
                 }
                 else if (par1EntityLiving.getBukkitEntity() != event.getTarget())
                 {
-                    this.taskOwner.setAttackTarget((EntityLiving)((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle());
+                    this.taskOwner.setAttackTarget((EntityLiving)((CraftEntity) event.getTarget()).getHandle());
                 }
 
                 if (this.taskOwner instanceof EntityCreature)
                 {
-                    ((EntityCreature) this.taskOwner).entityToAttack = ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
+                    ((EntityCreature) this.taskOwner).entityToAttack = ((CraftEntity) event.getTarget()).getHandle();
                 }
 
                 // CraftBukkit end

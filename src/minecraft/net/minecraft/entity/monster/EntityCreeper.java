@@ -202,7 +202,7 @@ public class EntityCreeper extends EntityMob
      */
     public void onDeath(DamageSource par1DamageSource)
     {
-        // CraftBukkit start - rearranged the method (super call to end, drop to dropDeathLoot)
+        // CraftBukkit start - Rearranged the method (super call to end, drop to dropDeathLoot)
         if (par1DamageSource.getEntity() instanceof EntitySkeleton)
         {
             int i = Item.record13.itemID + this.rand.nextInt(Item.recordWait.itemID - Item.record13.itemID + 1);
@@ -214,7 +214,7 @@ public class EntityCreeper extends EntityMob
         // CraftBukkit end
     }
 
-    // CraftBukkit start - whole method
+    // CraftBukkit start - Whole method
 
     /**
      * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param

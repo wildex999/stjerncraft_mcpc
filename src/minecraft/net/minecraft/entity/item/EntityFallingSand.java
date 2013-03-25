@@ -15,7 +15,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-//CraftBukkit start
+// CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityDamageEvent;
 // CraftBukkit end
@@ -315,7 +315,7 @@ public class EntityFallingSand extends Entity
             this.fallingBlockTileEntityData = par1NBTTagCompound.getCompoundTag("TileEntityData");
         }
 
-        // CraftBukkit start - backward compatibility, remove in 1.6
+        // CraftBukkit start - Backward compatibility, remove in 1.6
         if (par1NBTTagCompound.hasKey("Bukkit.tileData"))
         {
             this.fallingBlockTileEntityData = (NBTTagCompound) par1NBTTagCompound.getCompoundTag("Bukkit.tileData").copy();

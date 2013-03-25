@@ -7,8 +7,8 @@ import org.bukkit.inventory.Recipe;
 
 
 public class RecipeIterator implements Iterator<Recipe> {
-    private Iterator<net.minecraft.item.crafting.IRecipe> recipes;
-    private Iterator<Integer> smelting;
+    private final Iterator<net.minecraft.item.crafting.IRecipe> recipes;
+    private final Iterator<Integer> smelting;
     private Iterator<?> removeFrom = null;
 
     public RecipeIterator() {
@@ -40,8 +40,7 @@ public class RecipeIterator implements Iterator<Recipe> {
             removeFrom = smelting;
             int id = smelting.next();
             CraftItemStack stack = CraftItemStack.asCraftMirror(net.minecraft.item.crafting.FurnaceRecipes.smelting().getSmeltingResult(id)); // MCPC+ - TODO: use metadata-aware smelting result
-            CraftFurnaceRecipe recipe = new CraftFurnaceRecipe(stack, new ItemStack(id, 1, (short) -1));
-            return recipe;
+            return new CraftFurnaceRecipe(stack, new ItemStack(id, 1, (short) -1));
         }
     }
 

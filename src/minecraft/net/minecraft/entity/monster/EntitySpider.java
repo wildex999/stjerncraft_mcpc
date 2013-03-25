@@ -166,7 +166,7 @@ public class EntitySpider extends EntityMob
      */
     protected void dropFewItems(boolean par1, int par2)
     {
-        // CraftBukkit start - whole method; adapted from super.dropDeathLoot.
+        // CraftBukkit start - Whole method; adapted from super.dropDeathLoot.
         java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
         int k = this.rand.nextInt(3);
 

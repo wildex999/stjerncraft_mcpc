@@ -188,7 +188,7 @@ public class Potion
      */
     public void affectEntity(EntityLiving par1EntityLiving, EntityLiving par2EntityLiving, int par3, double par4)
     {
-        // CraftBukkit start - delegate; we need EntityPotion
+        // CraftBukkit start - Delegate; we need EntityPotion
         applyInstantEffect(par1EntityLiving, par2EntityLiving, par3, par4, null);
     }
 

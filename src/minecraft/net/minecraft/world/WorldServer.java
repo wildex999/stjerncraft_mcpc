@@ -738,7 +738,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         {
             if (i > 1000)
             {
-                // CraftBukkit start - if the server has too much to process over time, try to alleviate that
+                // CraftBukkit start - If the server has too much to process over time, try to alleviate that
                 if (i > 20 * 1000)
                 {
                     i = i / 20;
@@ -843,7 +843,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
             else
             {
                 iterator = this.field_94579_S.iterator();
-                /* CraftBukkit start - comment out debug spam
+                /* CraftBukkit start - Comment out debug spam
                 if (!this.T.isEmpty()) {
                     System.out.println(this.T.size());
                 }
@@ -942,7 +942,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     public List getAllTileEntityInBox(int par1, int par2, int par3, int par4, int par5, int par6)
     {
         ArrayList arraylist = new ArrayList();
-        // CraftBukkit start - use iterator
+        // CraftBukkit start - Use iterator
         Iterator iterator = this.loadedTileEntityList.iterator();
 
         while (iterator.hasNext())
@@ -1330,7 +1330,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
         if (flag != this.isRaining())
         {
-            // CraftBukkit start - only sending weather packets to those affected
+            // CraftBukkit start - Only send weather packets to those affected
             for (int i = 0; i < this.playerEntities.size(); ++i)
             {
                 if (((EntityPlayerMP) this.playerEntities.get(i)).worldObj == this)

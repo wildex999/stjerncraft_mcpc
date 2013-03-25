@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 
 public class CraftInventory implements Inventory {
-    protected net.minecraft.inventory.IInventory inventory;
+    protected final net.minecraft.inventory.IInventory inventory;
 
     public CraftInventory(net.minecraft.inventory.IInventory inventory) {
         this.inventory = inventory;

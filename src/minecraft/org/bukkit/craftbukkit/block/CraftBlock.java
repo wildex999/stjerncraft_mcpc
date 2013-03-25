@@ -341,7 +341,7 @@ public class CraftBlock implements Block {
 
     public int getBlockPower(BlockFace face) {
         int power = 0;
-        net.minecraft.block.BlockRedstoneWire wire = (net.minecraft.block.BlockRedstoneWire) net.minecraft.block.Block.redstoneWire;
+        net.minecraft.block.BlockRedstoneWire wire = net.minecraft.block.Block.redstoneWire;
         net.minecraft.world.World world = chunk.getHandle().worldObj;
         if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.getIndirectPowerOutput(x, y - 1, z, 0)) power = wire.getMaxCurrentStrength(world, x, y - 1, z, power);
         if ((face == BlockFace.UP || face == BlockFace.SELF) && world.getIndirectPowerOutput(x, y + 1, z, 1)) power = wire.getMaxCurrentStrength(world, x, y + 1, z, power);

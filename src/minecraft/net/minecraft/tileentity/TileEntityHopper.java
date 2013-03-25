@@ -321,7 +321,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
                 if (this.getStackInSlot(i) != null)
                 {
                     ItemStack itemstack = this.getStackInSlot(i).copy();
-                    // CraftBukkit start - fire event when pushing items into other inventories
+                    // CraftBukkit start - Call event when pushing items into other inventories
                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(this.decrStackSize(i, 1));
                     Inventory destinationInventory = iinventory.getOwner() != null ? iinventory.getOwner().getInventory() : null;
                     InventoryMoveItemEvent event = new InventoryMoveItemEvent(this.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
@@ -330,7 +330,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
                     if (event.isCancelled())
                     {
                         this.setInventorySlotContents(i, itemstack);
-                        this.func_98046_c(8); // delay hopper checks
+                        this.func_98046_c(8); // Delay hopper checks
                         return false;
                     }
 
@@ -413,7 +413,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
         if (itemstack != null && func_102013_b(par1IInventory, itemstack, par2, par3))
         {
             ItemStack itemstack1 = itemstack.copy();
-            // CraftBukkit start - fire event on collection of items from inventories into the hopper
+            // CraftBukkit start - Call event on collection of items from inventories into the hopper
             CraftItemStack oitemstack = CraftItemStack.asCraftMirror(par1IInventory.decrStackSize(par2, 1));
             Inventory sourceInventory = par1IInventory.getOwner() != null ? par1IInventory.getOwner().getInventory() : null;
             InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), par0Hopper.getOwner().getInventory(), false);
@@ -425,11 +425,11 @@ public class TileEntityHopper extends TileEntity implements Hopper
 
                 if (par0Hopper instanceof TileEntityHopper)
                 {
-                    ((TileEntityHopper) par0Hopper).func_98046_c(8); // delay hopper checks
+                    ((TileEntityHopper) par0Hopper).func_98046_c(8); // Delay hopper checks
                 }
                 else if (par0Hopper instanceof EntityMinecartHopper)
                 {
-                    ((EntityMinecartHopper) par0Hopper).func_98042_n(4); // delay hopper minecart checks
+                    ((EntityMinecartHopper) par0Hopper).func_98042_n(4); // Delay hopper minecart checks
                 }
                 
                 return false;

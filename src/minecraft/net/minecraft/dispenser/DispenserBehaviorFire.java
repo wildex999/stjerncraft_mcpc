@@ -1,7 +1,6 @@
 package net.minecraft.dispenser;
 
 // CraftBukkit start
-import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.block.BlockDispenseEvent;
 import net.minecraft.block.Block;
@@ -59,8 +58,8 @@ final class DispenserBehaviorFire extends BehaviorDefaultDispenseItem
 
         if (world.isAirBlock(i, j, k))
         {
-            // CraftBukkit - ignition by dispensing flint and steel
-            if (!CraftEventFactory.callBlockIgniteEvent(world, i, j, k, par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt()).isCancelled())
+            // CraftBukkit start - Ignition by dispensing flint and steel
+            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(world, i, j, k, par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt()).isCancelled())
             {
                 world.setBlock(i, j, k, Block.fire.blockID);
 

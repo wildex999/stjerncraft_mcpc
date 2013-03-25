@@ -334,7 +334,7 @@ public class EntityBoat extends Entity
                 this.motionX += this.riddenByEntity.motionX * this.field_70276_b;
                 this.motionZ += this.riddenByEntity.motionZ * this.field_70276_b;
             }
-            // CraftBukkit start - block not in vanilla
+            // CraftBukkit start - Support unoccupied deceleration
             else if (unoccupiedDeceleration >= 0)
             {
                 this.motionX *= unoccupiedDeceleration;

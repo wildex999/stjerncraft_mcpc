@@ -266,7 +266,7 @@ public abstract class Container
 
                         if (par2 == 1)
                         {
-                            // CraftBukkit start - store a reference
+                            // CraftBukkit start - Store a reference
                             ItemStack itemstack4 = inventoryplayer.getItemStack();
 
                             if (itemstack4.stackSize > 0)

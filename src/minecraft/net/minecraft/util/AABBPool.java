@@ -75,7 +75,7 @@ public class AABBPool
             this.maxPoolIndex = this.nextPoolIndex;
         }
 
-        // CraftBukkit start - intelligent cache
+        // CraftBukkit start - Intelligent cache
         if ((this.numCleans++ & 0xff) == 0)
         {
             int newSize = this.listAABB.size() - (this.listAABB.size() >> 3);

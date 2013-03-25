@@ -78,7 +78,7 @@ public abstract class EntityMob extends EntityCreature implements IMob
             {
                 if (entity != this)
                 {
-                    // CraftBukkit start - we still need to call events for entities without goals
+                    // CraftBukkit start - We still need to call events for entities without goals
                     if (entity != this.entityToAttack && (this instanceof EntityBlaze || this instanceof EntityEnderman || this instanceof EntitySpider || this instanceof EntityGiantZombie || this instanceof EntitySilverfish))
                     {
                         EntityTargetEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetEvent(this, entity, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY);

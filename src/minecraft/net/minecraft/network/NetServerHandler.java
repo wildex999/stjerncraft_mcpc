@@ -77,20 +77,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
-// CraftBukkit start
-import java.io.UnsupportedEncodingException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-import java.util.logging.Level;
-import java.util.HashSet;
-
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
@@ -103,17 +89,34 @@ import net.minecraft.network.packet.Packet70GameEvent;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.CraftWorld;
+
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.Event;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+// CraftBukkit start
+import java.io.UnsupportedEncodingException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.util.HashSet;
+
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.LazyPlayerSet;
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+//import org.bukkit.event.Event; // MCPC+ - use fully-qualified name to avoid clash with Forge
+//import org.bukkit.event.block.Action; // MCPC+ - use fully-qualified name to avoid clash with Forge
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerChatEvent;
@@ -123,13 +126,9 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
-import org.bukkit.event.inventory.*;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.InventoryView;
 // CraftBukkit end
@@ -954,11 +953,11 @@ public class NetServerHandler extends NetHandler
     {
         if (this.connectionClosed)
         {
-            return;    // CraftBukkit - rarely it would send a disconnect line twice
+            return;    // CraftBukkit - Rarely it would send a disconnect line twice
         }
 
         this.mcServer.getLogAgent().logInfo(this.playerEntity.username + " lost connection: " + par1Str);
-        // CraftBukkit start - we need to handle custom quit messages
+        // CraftBukkit start - We need to handle custom quit messages
         String quitMessage = this.mcServer.getConfigurationManager().disconnect(this.playerEntity);
 
         if ((quitMessage != null) && (quitMessage.length() > 0))
@@ -1199,7 +1198,6 @@ public class NetServerHandler extends NetHandler
                 if (isCounted && chatSpamField.addAndGet(this, 20) > 200 && !this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username))   // CraftBukkit use thread-safe spam
                 {
                     // Spigot end
-                    // CraftBukkit start
                     if (par1Packet3Chat.canProcessAsync())
                     {
                         Waitable waitable = new Waitable()
@@ -1230,8 +1228,6 @@ public class NetServerHandler extends NetHandler
                     {
                         this.kickPlayerFromServer("disconnect.spam");
                     }
-
-                    // CraftBukkit end
                 }
             }
         }
@@ -1284,7 +1280,7 @@ public class NetServerHandler extends NetHandler
                         @Override
                         protected Object evaluate()
                         {
-                            Bukkit.getPluginManager().callEvent(queueEvent);
+                            org.bukkit.Bukkit.getPluginManager().callEvent(queueEvent);
 
                             if (queueEvent.isCancelled())
                             {
@@ -1405,7 +1401,7 @@ public class NetServerHandler extends NetHandler
         catch (org.bukkit.command.CommandException ex)
         {
             player.sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
-            java.util.logging.Logger.getLogger(NetServerHandler.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NetServerHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             return;
         }
 
@@ -1424,7 +1420,7 @@ public class NetServerHandler extends NetHandler
 
         if (par1Packet18Animation.animate == 1)
         {
-            // CraftBukkit start - raytrace to look for 'rogue armswings'
+            // CraftBukkit start - Raytrace to look for 'rogue armswings'
             float f = 1.0F;
             float f1 = this.playerEntity.prevRotationPitch + (this.playerEntity.rotationPitch - this.playerEntity.prevRotationPitch) * f;
             float f2 = this.playerEntity.prevRotationYaw + (this.playerEntity.rotationYaw - this.playerEntity.prevRotationYaw) * f;
@@ -1570,7 +1566,7 @@ public class NetServerHandler extends NetHandler
                     // CraftBukkit end
                     this.playerEntity.interactWith(entity);
 
-                    // CraftBukkit start - update the client if the item is an infinite one
+                    // CraftBukkit start - Update the client if the item is an infinite one
                     if (itemInHand != null && itemInHand.stackSize <= -1)
                     {
                         this.playerEntity.sendContainerToPlayer(this.playerEntity.openContainer);
@@ -1605,7 +1601,7 @@ public class NetServerHandler extends NetHandler
         {
             if (this.playerEntity.playerConqueredTheEnd)
             {
-                this.mcServer.getConfigurationManager().changeDimension(this.playerEntity, 0, TeleportCause.END_PORTAL); // CraftBukkit - reroute logic through custom portal management
+                this.mcServer.getConfigurationManager().changeDimension(this.playerEntity, 0, PlayerTeleportEvent.TeleportCause.END_PORTAL); // CraftBukkit - reroute logic through custom portal management
             }
             else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
             {
@@ -1661,7 +1657,7 @@ public class NetServerHandler extends NetHandler
         {
             if (this.playerEntity.openContainer.getBukkitView() != null)
             {
-                // CraftBukkit start - INVENTORY_CLOSE hook
+                // CraftBukkit start
                 InventoryCloseEvent event = new InventoryCloseEvent(this.playerEntity.openContainer.getBukkitView());
                 server.getPluginManager().callEvent(event);
                 this.playerEntity.openContainer.transferTo(this.playerEntity.inventoryContainer, getPlayerB());
@@ -1685,7 +1681,7 @@ public class NetServerHandler extends NetHandler
 
         if (this.playerEntity.openContainer.windowId == par1Packet102WindowClick.window_Id && this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
         {
-            // CraftBukkit start - fire InventoryClickEvent
+            // CraftBukkit start - Call InventoryClickEvent
             if (par1Packet102WindowClick.inventorySlot == -1)
             {
                 // Vanilla doesn't do anything with this, neither should we
@@ -1719,7 +1715,7 @@ public class NetServerHandler extends NetHandler
 
                 if (recipe != null)
                 {
-                    event = new CraftItemEvent(recipe, inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1);
+                    event = new org.bukkit.event.inventory.CraftItemEvent(recipe, inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1);
                 }
             }
 
@@ -1794,7 +1790,7 @@ public class NetServerHandler extends NetHandler
 
                 this.playerEntity.sendContainerAndContentsToPlayer(this.playerEntity.openContainer, arraylist);
 
-                // CraftBukkit start - send a Set Slot to update the crafting result slot
+                // CraftBukkit start - Send a Set Slot to update the crafting result slot
                 if (type == SlotType.RESULT && itemstack != null)
                 {
                     this.playerEntity.playerNetServerHandler.sendPacketToPlayer((Packet)(new Packet103SetSlot(this.playerEntity.openContainer.windowId, 0, itemstack)));
@@ -1827,7 +1823,7 @@ public class NetServerHandler extends NetHandler
             // CraftBukkit
             boolean flag2 = itemstack == null || itemstack.itemID < Item.itemsList.length && itemstack.itemID >= 0 && Item.itemsList[itemstack.itemID] != null && !invalidItems.contains(itemstack.itemID);
             boolean flag3 = itemstack == null || itemstack.getItemDamage() >= 0 && itemstack.getItemDamage() >= 0 && itemstack.stackSize <= 64 && itemstack.stackSize > 0;
-            // CraftBukkit start - Fire INVENTORY_CLICK event
+            // CraftBukkit start - Call click event
             org.bukkit.entity.HumanEntity player = this.playerEntity.getBukkitEntity();
             InventoryView inventory = new CraftInventoryView(player, player.getInventory(), this.playerEntity.inventoryContainer);
             SlotType slot = SlotType.QUICKBAR;
@@ -2086,7 +2082,7 @@ public class NetServerHandler extends NetHandler
         ItemStack itemstack;
         ItemStack itemstack1;
 
-        // CraftBukkit start - ignore empty payloads
+        // CraftBukkit start - Ignore empty payloads
         if (par1Packet250CustomPayload.length <= 0)
         {
             return;

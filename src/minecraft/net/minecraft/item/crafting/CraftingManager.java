@@ -318,7 +318,7 @@ public class CraftingManager
                 return new ItemStack(itemstack.itemID, 1, j1);
             }
             // MCPC+ end
-            // CraftBukkit start - construct a dummy repair recipe
+            // CraftBukkit start - Construct a dummy repair recipe
             ItemStack result = new ItemStack(itemstack.itemID, 1, j1);
             List<ItemStack> ingredients = new ArrayList<ItemStack>();
             ingredients.add(itemstack.copy());

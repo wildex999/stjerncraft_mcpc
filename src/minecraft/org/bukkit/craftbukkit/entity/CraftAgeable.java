@@ -53,12 +53,12 @@ public class CraftAgeable extends CraftCreature implements Ageable {
             setAge(6000);
         }
     }
-    
+
     @Override
     public net.minecraft.entity.EntityAgeable getHandle() {
         return (net.minecraft.entity.EntityAgeable) entity;
     }
-    
+
     @Override
     public String toString() {
         return "CraftAgeable";

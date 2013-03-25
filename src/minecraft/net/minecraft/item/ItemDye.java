@@ -305,7 +305,7 @@ public class ItemDye extends Item
             {
                 if ((double)par1World.rand.nextFloat() < 0.4D)
                 {
-                    // CraftBukkit start - validate // MCPC+
+                    // CraftBukkit start - Validate // MCPC+
                     Player cbPlayer = (player instanceof EntityPlayerMP) ? (Player) player.getBukkitEntity() : null;
                     ((BlockMushroom) Block.blocksList[l]).fertilizeMushroom(par1World, par2, par3, par4, par1World.rand, true, cbPlayer, par0ItemStack);
                 }

@@ -150,7 +150,7 @@ public class EntityChicken extends EntityAnimal
      */
     protected void dropFewItems(boolean par1, int par2)
     {
-        // CraftBukkit start - whole method
+        // CraftBukkit start - Whole method
         java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
         int j = this.rand.nextInt(3) + this.rand.nextInt(1 + par2);
 

@@ -201,7 +201,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     }
 
     public World getWorld() {
-        return ((net.minecraft.world.WorldServer) entity.worldObj).getWorld();
+        return entity.worldObj.getWorld();
     }
 
     public boolean teleport(Location location) {
@@ -279,7 +279,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     }
 
     public org.bukkit.entity.Entity getPassenger() {
-        return isEmpty() ? null : (CraftEntity) getHandle().riddenByEntity.getBukkitEntity();
+        return isEmpty() ? null : getHandle().riddenByEntity.getBukkitEntity();
     }
 
     public boolean setPassenger(org.bukkit.entity.Entity passenger) {

@@ -154,7 +154,7 @@ public class BlockFlowing extends BlockFluid
 
         if (this.liquidCanDisplaceBlock(par1World, par2, par3 - 1, par4))
         {
-            // CraftBukkit start - send "down" to the server
+            // CraftBukkit start - Send "down" to the server
             BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
 
             if (server != null)
@@ -198,7 +198,7 @@ public class BlockFlowing extends BlockFluid
                 return;
             }
 
-            // CraftBukkit start - all four cardinal directions. Do not change the order!
+            // CraftBukkit start - All four cardinal directions. Do not change the order!
             BlockFace[] faces = new BlockFace[] { BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH };
             int index = 0;
 

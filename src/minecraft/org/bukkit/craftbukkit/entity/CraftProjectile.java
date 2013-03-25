@@ -11,7 +11,7 @@ public class CraftProjectile extends AbstractProjectile implements Projectile { 
     }
 
     public LivingEntity getShooter() {
-        if (getHandle().getThrower() instanceof net.minecraft.entity.EntityLiving) {
+        if (getHandle().getThrower() != null) {
             return (LivingEntity) getHandle().getThrower().getBukkitEntity();
         }
 

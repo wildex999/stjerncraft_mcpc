@@ -236,7 +236,7 @@ public class NetLoginHandler extends NetHandler
 
             if (par1Packet254ServerPing.field_82559_a == 1)
             {
-                // CraftBukkit start - fix decompile issues, don't create a list from an array
+                // CraftBukkit start - Fix decompile issues, don't create a list from an array
                 Object[] list = new Object[] { 1, 60, this.mcServer.getMinecraftVersion(), pingEvent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), pingEvent.getMaxPlayers() };
 
                 for (Object object : list)

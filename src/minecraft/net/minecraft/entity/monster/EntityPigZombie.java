@@ -225,11 +225,12 @@ public class EntityPigZombie extends EntityZombie
         return false;
     }
 
-    // CraftBukkit start - return rare dropped item instead of dropping it
+    // CraftBukkit start - Return rare dropped item instead of dropping it
     protected ItemStack dropRareDrop(int i)
     {
         return new ItemStack(Item.ingotGold.itemID, 1, 0);
     }
+    // CraftBukkit end    
     // MCPC+ - TODO: vanilla compatibility with void dropRareDrop() + all other mobs using dropRareDrop()
 
     /**

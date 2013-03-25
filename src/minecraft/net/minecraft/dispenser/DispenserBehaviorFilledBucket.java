@@ -70,7 +70,7 @@ final class DispenserBehaviorFilledBucket extends BehaviorDefaultDispenseItem
 
         if (itembucket.tryPlaceContainedLiquid(par1IBlockSource.getWorld(), (double)i, (double)j, (double)k, i + enumfacing.getFrontOffsetX(), j + enumfacing.getFrontOffsetY(), k + enumfacing.getFrontOffsetZ()))
         {
-            // CraftBukkit start - handle stacked buckets
+            // CraftBukkit start - Handle stacked buckets
             Item item = Item.bucketEmpty;
 
             if (--par2ItemStack.stackSize == 0)

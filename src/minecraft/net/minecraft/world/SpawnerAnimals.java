@@ -96,7 +96,7 @@ public final class SpawnerAnimals
             for (int j1 = 0; j1 < j; ++j1)
             {
                 EnumCreatureType enumcreaturetype = aenumcreaturetype[j1];
-                // CraftBukkit start - use per-world spawn limits
+                // CraftBukkit start - Use per-world spawn limits
                 int limit = enumcreaturetype.getMaxNumberOfCreature();
 
                 switch (enumcreaturetype)
@@ -207,7 +207,7 @@ public final class SpawnerAnimals
                                                             if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && entityliving.getCanSpawnHere()))
                                                             {
                                                                 ++j2;
-                                                                // CraftBukkit start - added a reason for spawning this creature, moved a(entityliving, world...) up
+                                                                // CraftBukkit start - Added a reason for spawning this creature, moved a(entityliving, world...) up
                                                                 creatureSpecificInit(entityliving, par0WorldServer, f, f1, f2);
                                                                 par0WorldServer.addEntity(entityliving, CreatureSpawnEvent.SpawnReason.NATURAL);
 
@@ -320,7 +320,7 @@ public final class SpawnerAnimals
                             }
 
                             entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par6Random.nextFloat() * 360.0F, 0.0F);
-                            // CraftBukkit start - added a reason for spawning this creature, moved a(entity, world...) up
+                            // CraftBukkit start - Added a reason for spawning this creature, moved a(entity, world...) up
                             creatureSpecificInit(entityliving, par0World, f, f1, f2);
                             par0World.addEntity(entityliving, CreatureSpawnEvent.SpawnReason.CHUNK_GEN);
                             // CraftBukkit end

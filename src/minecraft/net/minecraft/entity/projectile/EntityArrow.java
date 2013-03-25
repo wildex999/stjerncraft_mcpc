@@ -297,7 +297,7 @@ public class EntityArrow extends Entity implements IProjectile
                         damagesource = DamageSource.causeArrowDamage(this, this.shootingEntity);
                     }
 
-                    // CraftBukkit start - moved damage call
+                    // CraftBukkit start - Moved damage call
                     if (movingobjectposition.entityHit.attackEntityFrom(damagesource, i1))
                     {
                         if (this.isBurning() && !(movingobjectposition.entityHit instanceof EntityEnderman) && (!(movingobjectposition.entityHit instanceof EntityPlayerMP) || !(this.shootingEntity instanceof EntityPlayerMP) || this.worldObj.pvpMode))   // CraftBukkit - abide by pvp setting if destination is a player

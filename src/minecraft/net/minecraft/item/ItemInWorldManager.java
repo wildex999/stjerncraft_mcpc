@@ -56,13 +56,6 @@ public class ItemInWorldManager
         this.theWorld = par1World;
     }
 
-    // CraftBukkit start - keep this for backwards compatibility
-    public ItemInWorldManager(WorldServer world)
-    {
-        this((World) world);
-    }
-    // CraftBukkit end
-
     public void setGameType(EnumGameType par1EnumGameType)
     {
         this.gameType = par1EnumGameType;
@@ -306,11 +299,11 @@ public class ItemInWorldManager
                 }
             }
 
-            // CraftBukkit start - force blockreset to client
+            // CraftBukkit start - Force block reset to client
         }
         else
         {
-            ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
+            this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
             // CraftBukkit end
         }
     }
@@ -429,12 +422,12 @@ public class ItemInWorldManager
 
             if (Block.blocksList[l] == null)
             {
-                return false;    // CraftBukkit - a plugin set block to air without cancelling
+                return false;    // CraftBukkit - A plugin set block to air without cancelling
             }
 
             int i1 = this.theWorld.getBlockMetadata(par1, par2, par3);
 
-            // CraftBukkit start - special case skulls, their item data comes from a tile entity
+            // CraftBukkit start - Special case skulls, their item data comes from a tile entity
             if (l == Block.skull.blockID && !this.isCreative())
             {
                 Block.skull.dropBlockAsItemWithChance(theWorld, par1, par2, par3, i1, 1.0F, 0);
@@ -477,7 +470,7 @@ public class ItemInWorldManager
                 }
             }
 
-            // CraftBukkit start - drop event experience
+            // CraftBukkit start - Drop event experience
             if (flag && event != null)
             {
                 Block.blocksList[l].func_71923_g_CodeFix_Public(this.theWorld, par1, par2, par3, event.getExpToDrop());

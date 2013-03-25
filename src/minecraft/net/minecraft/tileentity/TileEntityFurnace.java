@@ -308,7 +308,7 @@ public class TileEntityFurnace extends TileEntity implements ISidedInventory, ne
 
         if (!this.worldObj.isRemote)
         {
-            // CraftBukkit start - handle multiple elapsed ticks
+            // CraftBukkit start - Handle multiple elapsed ticks
             if (this.furnaceBurnTime <= 0 && this.canSmelt() && this.furnaceItemStacks[1] != null)   // CraftBukkit - == to <=
             {
                 CraftItemStack fuel = CraftItemStack.asCraftMirror(this.furnaceItemStacks[1]);
@@ -340,7 +340,7 @@ public class TileEntityFurnace extends TileEntity implements ISidedInventory, ne
                 }
             }
 
-            /* CraftBukkit start - moved up
+            /* CraftBukkit start - Moved up
             if (this.isBurning() && this.canBurn()) {
                 ++this.cookTime;
                 if (this.cookTime == 200) {

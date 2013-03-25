@@ -1,14 +1,11 @@
 package net.minecraft.entity.projectile;
 
-// CraftBukkit start
-import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent; // CraftBukkit
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-// CraftBukkit end
 
 public class EntitySmallFireball extends EntityFireball
 {
@@ -41,7 +38,7 @@ public class EntitySmallFireball extends EntityFireball
             {
                 if (!par1MovingObjectPosition.entityHit.isImmuneToFire() && par1MovingObjectPosition.entityHit.attackEntityFrom(DamageSource.causeFireballDamage(this, this.shootingEntity), 5))
                 {
-                    // CraftBukkit start - entity damage by entity event + combust event
+                    // CraftBukkit start - Entity damage by entity event + combust event
                     EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), par1MovingObjectPosition.entityHit.getBukkitEntity(), 5);
                     par1MovingObjectPosition.entityHit.worldObj.getServer().getPluginManager().callEvent(event);
 
@@ -83,7 +80,7 @@ public class EntitySmallFireball extends EntityFireball
                 if (this.worldObj.isAirBlock(i, j, k))
                 {
                     // CraftBukkit start
-                    if (!CraftEventFactory.callBlockIgniteEvent(worldObj, i, j, k, this).isCancelled())
+                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(worldObj, i, j, k, this).isCancelled())
                     {
                         this.worldObj.setBlock(i, j, k, Block.fire.blockID);
                     }

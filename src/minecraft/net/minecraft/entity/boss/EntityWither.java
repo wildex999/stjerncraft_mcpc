@@ -26,7 +26,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 // CraftBukkit start
-import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 // CraftBukkit end
 
@@ -257,7 +257,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
 
             if (this.ticksExisted % 10 == 0)
             {
-                this.heal(10, EntityRegainHealthEvent.RegainReason.WITHER_SPAWN); // CraftBukkit
+                this.heal(10, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER_SPAWN); // CraftBukkit
             }
         }
         else
@@ -371,7 +371,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
                                 if (i3 > 0 && i3 != Block.bedrock.blockID && i3 != Block.endPortal.blockID && i3 != Block.endPortalFrame.blockID)
                                 {
                                     // CraftBukkit start
-                                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, j2, k2, l2, 0, 0).isCancelled())
+                                    if (CraftEventFactory.callEntityChangeBlockEvent(this, j2, k2, l2, 0, 0).isCancelled())
                                     {
                                         continue;
                                     }
@@ -564,7 +564,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
         // CraftBukkit start
         java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
         loot.add(new org.bukkit.inventory.ItemStack(Item.netherStar.itemID, 1));
-        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
+        CraftEventFactory.callEntityDeathEvent(this, loot);
         // CraftBukkit end
     }
 

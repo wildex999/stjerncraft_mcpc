@@ -37,7 +37,6 @@ import net.minecraft.block.BlockSand;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
 import org.bukkit.craftbukkit.util.LongHash;
 import org.bukkit.craftbukkit.util.LongHashSet;
 import org.bukkit.craftbukkit.util.LongObjectHashMap;
@@ -129,7 +128,7 @@ public class ChunkProviderServer implements IChunkProvider
         }
     }
 
-    // CraftBukkit start - add async variant, provide compatibility
+    // CraftBukkit start - Add async variant, provide compatibility
 
     /**
      * loads or generates the chunk at the chunk location specified
@@ -154,7 +153,7 @@ public class ChunkProviderServer implements IChunkProvider
         // If the chunk exists but isn't loaded do it async
         if (chunk == null && runnable != null && loader != null && loader.chunkExists(this.worldObj, i, j))
         {
-            ChunkIOExecutor.queueChunkLoad(this.worldObj, loader, this, i, j, runnable);
+            org.bukkit.craftbukkit.chunkio.ChunkIOExecutor.queueChunkLoad(this.worldObj, loader, this, i, j, runnable);
             return null;
         }
 
@@ -181,7 +180,7 @@ public class ChunkProviderServer implements IChunkProvider
                         CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception generating new chunk");
                         CrashReportCategory crashreportcategory = crashreport.makeCategory("Chunk to be generated");
                         crashreportcategory.addCrashSection("Location", String.format("%d,%d", new Object[] { Integer.valueOf(i), Integer.valueOf(j)}));
-                        crashreportcategory.addCrashSection("Position hash", Long.valueOf(LongHash.toLong(i, j)));
+                        crashreportcategory.addCrashSection("Position hash", Long.valueOf(LongHash.toLong(i, j))); // CraftBukkit - Use LongHash
                         crashreportcategory.addCrashSection("Generator", this.currentChunkProvider.makeString());
                         throw new ReportedException(crashreport);
                     }
@@ -321,7 +320,7 @@ public class ChunkProviderServer implements IChunkProvider
             catch (Exception ioexception)     // CraftBukkit - IOException -> Exception
             {
                 ioexception.printStackTrace();
-                // CraftBukkit start - remove extra exception
+                // CraftBukkit start - Remove extra exception
             }
 
             // } catch (ExceptionWorldConflict exceptionworldconflict) {

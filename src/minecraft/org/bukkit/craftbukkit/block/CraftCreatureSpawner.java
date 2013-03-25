@@ -8,14 +8,12 @@ import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.EntityType;
 
 public class CraftCreatureSpawner extends CraftBlockState implements CreatureSpawner {
-    private final CraftWorld world;
     private final net.minecraft.tileentity.TileEntityMobSpawner spawner;
 
     public CraftCreatureSpawner(final Block block) {
         super(block);
 
-        world = (CraftWorld) block.getWorld();
-        spawner = (net.minecraft.tileentity.TileEntityMobSpawner) world.getTileEntityAt(getX(), getY(), getZ());
+        spawner = (net.minecraft.tileentity.TileEntityMobSpawner) ((CraftWorld) block.getWorld()).getTileEntityAt(getX(), getY(), getZ());
     }
 
     @Deprecated

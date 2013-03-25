@@ -92,6 +92,18 @@ public class ItemBlock extends Item
             Block block = Block.blocksList[this.blockID];
             int j1 = this.getMetadata(par1ItemStack.getItemDamage());
             int k1 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, j1);
+            // CraftBukkit start - Redirect to common function handler
+            /*
+            if (world.setTypeIdAndData(i, j, k, this.id, k1, 3)) {
+                if (world.getTypeId(i, j, k) == this.id) {
+                    Block.byId[this.id].postPlace(world, i, j, k, entityplayer, itemstack);
+                    Block.byId[this.id].postPlace(world, i, j, k, k1);
+                }
+
+                world.makeSound((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume1() + 1.0F) / 2.0F, block.stepSound.getVolume2() * 0.8F);
+                --itemstack.count;
+            }
+            */            
             // MCPC+ start - seperate forge/vanilla process block calls            
             if (block.isForgeBlock) // process forge block
             {
@@ -107,6 +119,7 @@ public class ItemBlock extends Item
             // MCPC+ end
                 return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, k1, clickedX, clickedY, clickedZ);
             }
+            // CraftBukkit end            
         }
         else
         {
@@ -114,7 +127,7 @@ public class ItemBlock extends Item
         }
     }
 
-    // CraftBukkit start - add method to process block placement
+    // CraftBukkit start - Add method to process block placement
     static boolean processBlockPlace(final World world, final EntityPlayer entityplayer, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data, final int clickedX, final int clickedY, final int clickedZ)
     {
         org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);

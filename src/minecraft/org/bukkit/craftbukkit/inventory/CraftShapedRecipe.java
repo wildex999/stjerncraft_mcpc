@@ -9,11 +9,11 @@ import org.bukkit.inventory.ShapedRecipe;
 public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
     // TODO: Could eventually use this to add a matches() method or some such
     private net.minecraft.item.crafting.ShapedRecipes recipe;
-    
+
     public CraftShapedRecipe(ItemStack result) {
         super(result);
     }
-    
+
     public CraftShapedRecipe(ItemStack result, net.minecraft.item.crafting.ShapedRecipes recipe) {
         this(result);
         this.recipe = recipe;

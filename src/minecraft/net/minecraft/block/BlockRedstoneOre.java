@@ -137,7 +137,7 @@ public class BlockRedstoneOre extends Block
     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
     {
         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
-        /* CraftBukkit start - delegate to getExpDrop
+        /* CraftBukkit start - Delegated to getExpDrop
         if (this.getDropType(l, world.random, i1) != this.id) {
             int j1 = 1 + world.random.nextInt(5);
 

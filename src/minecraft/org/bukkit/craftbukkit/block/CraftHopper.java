@@ -7,14 +7,12 @@ import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 
 public class CraftHopper extends CraftBlockState implements Hopper {
-    private final CraftWorld world;
     private final net.minecraft.tileentity.TileEntityHopper hopper;
 
     public CraftHopper(final Block block) {
         super(block);
 
-        world = (CraftWorld) block.getWorld();
-        hopper = (net.minecraft.tileentity.TileEntityHopper) world.getTileEntityAt(getX(), getY(), getZ());
+        hopper = (net.minecraft.tileentity.TileEntityHopper) ((CraftWorld) block.getWorld()).getTileEntityAt(getX(), getY(), getZ());
     }
 
     public Inventory getInventory() {

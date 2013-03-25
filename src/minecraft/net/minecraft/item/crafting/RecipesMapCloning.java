@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 public class RecipesMapCloning extends ShapelessRecipes implements IRecipe   // CraftBukkit - added extends
 {
-    // CraftBukkit start - delegate to new parent class
+    // CraftBukkit start - Delegate to new parent class
     public RecipesMapCloning()
     {
         super(new ItemStack(Item.map, 0, -1), java.util.Arrays.asList(new ItemStack(Item.emptyMap, 0, 0)));

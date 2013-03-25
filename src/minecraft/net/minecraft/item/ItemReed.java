@@ -75,7 +75,7 @@ public class ItemReed extends Item
             {
                 Block block = Block.blocksList[this.spawnID];
                 int j1 = block.onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, 0);
-                // CraftBukkit start - redirect to common handler
+                // CraftBukkit start - Redirect to common handler
                 ItemBlock.processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.spawnID, j1, clickedX, clickedY, clickedZ);
                 /*
                 if (world.setTypeIdAndData(i, j, k, this.id, j1, 3)) {

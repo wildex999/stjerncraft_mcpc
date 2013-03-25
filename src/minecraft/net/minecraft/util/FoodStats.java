@@ -9,7 +9,7 @@ import net.minecraft.network.packet.Packet8UpdateHealth;
 
 public class FoodStats
 {
-    // CraftBukkit start - all made public
+    // CraftBukkit start - All made public
 
     /** The player's food level. */
     public int foodLevel = 20;

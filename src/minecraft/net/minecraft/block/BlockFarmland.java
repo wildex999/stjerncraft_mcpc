@@ -95,7 +95,7 @@ public class BlockFarmland extends Block
                 return;
             }
 
-            // CraftBukkit start - interact soil
+            // CraftBukkit start - Interact soil
             org.bukkit.event.Cancellable cancellable;
 
             if (par5Entity instanceof EntityPlayer)

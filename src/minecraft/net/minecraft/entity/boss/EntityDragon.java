@@ -483,7 +483,7 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
 
             if (entity instanceof EntityLiving)
             {
-                // CraftBukkit start - throw damage events when the dragon attacks
+                // CraftBukkit start - Throw damage events when the dragon attacks
                 // The EntityHuman case is handled in EntityHuman, so don't throw it here
                 if (!(entity instanceof EntityPlayer))
                 {
@@ -560,7 +560,7 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
         int j1 = MathHelper.floor_double(par1AxisAlignedBB.maxZ);
         boolean flag = false;
         boolean flag1 = false;
-        // CraftBukkit start - create a list to hold all the destroyed blocks
+        // CraftBukkit start - Create a list to hold all the destroyed blocks
         List<org.bukkit.block.Block> destroyedBlocks = new java.util.ArrayList<org.bukkit.block.Block>();
         org.bukkit.craftbukkit.CraftWorld craftWorld = this.worldObj.getWorld();
         // CraftBukkit end
@@ -578,7 +578,7 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
                     {
                         if (block.canDragonDestroy(worldObj, k1, l1, i2) && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
                         {
-                            // CraftBukkit start - add blocks to list rather than destroying them
+                            // CraftBukkit start - Add blocks to list rather than destroying them
                             // flag1 = this.world.setAir(k1, l1, i2) || flag1;
                             flag1 = true;
                             destroyedBlocks.add(craftWorld.getBlockAt(k1, l1, i2));
@@ -595,14 +595,14 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
 
         if (flag1)
         {
-            // CraftBukkit start - set off an EntityExplodeEvent for the dragon exploding all these blocks
+            // CraftBukkit start - Set off an EntityExplodeEvent for the dragon exploding all these blocks
             org.bukkit.entity.Entity bukkitEntity = this.getBukkitEntity();
             EntityExplodeEvent event = new EntityExplodeEvent(bukkitEntity, bukkitEntity.getLocation(), destroyedBlocks, 0F);
             Bukkit.getPluginManager().callEvent(event);
 
             if (event.isCancelled())
             {
-                // this flag literally means 'Dragon hit something hard' (Obsidian, White Stone or Bedrock) and will cause the dragon to slow down.
+                // This flag literally means 'Dragon hit something hard' (Obsidian, White Stone or Bedrock) and will cause the dragon to slow down.
                 // We should consider adding an event extension for it, or perhaps returning true if the event is cancelled.
                 return flag;
             }

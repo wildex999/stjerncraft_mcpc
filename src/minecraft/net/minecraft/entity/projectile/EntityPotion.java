@@ -150,7 +150,7 @@ public class EntityPotion extends EntityThrowable
                                 PotionEffect potioneffect = (PotionEffect)iterator1.next();
                                 int i = potioneffect.getPotionID();
 
-                                // CraftBukkit start - abide by PVP settings - for players only!
+                                // CraftBukkit start - Abide by PVP settings - for players only!
                                 if (!this.worldObj.pvpMode && this.getThrower() instanceof EntityPlayerMP && entityliving instanceof EntityPlayerMP && entityliving != this.getThrower())
                                 {
                                     // Block SLOWER_MOVEMENT, SLOWER_DIG, HARM, BLINDNESS, HUNGER, WEAKNESS and POISON potions
@@ -164,7 +164,7 @@ public class EntityPotion extends EntityThrowable
 
                                 if (Potion.potionTypes[i].isInstant())
                                 {
-                                    // CraftBukkit - added 'this'
+                                    // CraftBukkit - Added 'this'
                                     Potion.potionTypes[i].applyInstantEffect(this.getThrower(), entityliving, potioneffect.getAmplifier(), d1, this);
                                 }
                                 else

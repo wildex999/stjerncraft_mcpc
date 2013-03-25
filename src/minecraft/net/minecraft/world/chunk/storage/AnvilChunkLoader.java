@@ -64,7 +64,7 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
     }
     // CraftBukkit end
 
-    // CraftBukkit start - add async variant, provide compatibility
+    // CraftBukkit start - Add async variant, provide compatibility
 
     /**
      * Loads the specified(XZ) chunk into the specified world.
@@ -476,7 +476,7 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
             chunk.setBiomeArray(par2NBTTagCompound.getByteArray("Biomes"));
         }
 
-        // CraftBukkit start - end this method here and split off entity loading to another method
+        // CraftBukkit start - End this method here and split off entity loading to another method
         return chunk;
     }
 

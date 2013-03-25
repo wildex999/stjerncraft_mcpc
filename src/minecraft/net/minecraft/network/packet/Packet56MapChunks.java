@@ -70,8 +70,22 @@ public class Packet56MapChunks extends Packet
             this.field_73588_b[k] = packet51mapchunkdata.chunkHasAddSectionFlag;
             this.field_73584_f[k] = packet51mapchunkdata.compressedData;
         }
+        /* CraftBukkit start - Moved to compress()
+        Deflater deflater = new Deflater(-1);
+
+        try {
+            deflater.setInput(buildBuffer, 0, j);
+            deflater.finish();
+            this.buffer = new byte[j];
+            this.size = deflater.deflate(this.buffer);
+        } finally {
+            deflater.end();
+        }
+        */
+        // MCPC+ start - use Forge's chunk packet compression
         deflateGate = new Semaphore(1);
         maxLen = j;
+        // MCPC+ end      
     }
 
     private void deflate()

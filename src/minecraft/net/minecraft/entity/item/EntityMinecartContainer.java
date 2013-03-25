@@ -228,6 +228,13 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
      */
     public void travelToDimension(int par1)
     {
+        // CraftBukkit start
+        for (HumanEntity human : transaction)
+        {
+            ((org.bukkit.craftbukkit.entity.CraftHumanEntity) human).getHandle().closeScreen();
+        }
+
+        // CraftBukkit end
         this.field_94112_b = false;
         super.travelToDimension(par1);
     }

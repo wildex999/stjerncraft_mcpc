@@ -13,7 +13,7 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // Cr
 {
     private ItemStack field_92102_a;
 
-    // CraftBukkit start - delegate to new parent class with bogus info
+    // CraftBukkit start - Delegate to new parent class with bogus info
     public RecipeFireworks()
     {
         super(new ItemStack(Item.firework, 0, 0), java.util.Arrays.asList(new ItemStack(Item.gunpowder, 0, 5)));

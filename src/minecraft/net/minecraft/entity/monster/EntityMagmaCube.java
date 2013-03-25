@@ -63,7 +63,7 @@ public class EntityMagmaCube extends EntitySlime
      */
     protected void dropFewItems(boolean par1, int par2)
     {
-        // CraftBukkit start - whole method
+        // CraftBukkit start - Whole method
         java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
         int j = this.getDropItemId();
 

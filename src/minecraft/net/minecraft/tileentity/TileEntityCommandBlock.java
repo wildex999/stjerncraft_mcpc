@@ -2,7 +2,6 @@ package net.minecraft.tileentity;
 
 // CraftBukkit start
 import java.util.ArrayList;
-import java.util.Arrays;
 import com.google.common.base.Joiner;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerSelector;
@@ -55,7 +54,7 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
 
             if (minecraftserver != null && minecraftserver.isCommandBlockEnabled())
             {
-                // CraftBukkit start - handle command block commands using Bukkit dispatcher
+                // CraftBukkit start - Handle command block commands using Bukkit dispatcher
                 org.bukkit.command.SimpleCommandMap commandMap = minecraftserver.server.getCommandMap();
                 Joiner joiner = Joiner.on(" ");
                 String command = this.command;
@@ -68,7 +67,7 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
                 String[] args = command.split(" ");
                 ArrayList<String[]> commands = new ArrayList<String[]>();
 
-                // block disallowed commands
+                // Block disallowed commands
                 if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("op") ||
                         args[0].equalsIgnoreCase("deop") || args[0].equalsIgnoreCase("ban") || args[0].equalsIgnoreCase("ban-ip") ||
                         args[0].equalsIgnoreCase("pardon") || args[0].equalsIgnoreCase("pardon-ip") || args[0].equalsIgnoreCase("reload"))
@@ -76,13 +75,13 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
                     return 0;
                 }
 
-                // make sure this is a valid command
+                // Make sure this is a valid command
                 if (commandMap.getCommand(args[0]) == null)
                 {
                     return 0;
                 }
 
-                // if the world has no players don't run
+                // If the world has no players don't run
                 if (this.worldObj.playerEntities.isEmpty())
                 {
                     return 0;
@@ -118,7 +117,7 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
                 }
 
                 commands.add(args);
-                // find positions of command block syntax, if any
+                // Find positions of command block syntax, if any
                 ArrayList<String[]> newCommands = new ArrayList<String[]>();
 
                 for (int i = 0; i < args.length; i++)
@@ -139,12 +138,12 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
 
                 int completed = 0;
 
-                // now dispatch all of the commands we ended up with
+                // Now dispatch all of the commands we ended up with
                 for (int i = 0; i < commands.size(); i++)
                 {
                     try
                     {
-                        if (commandMap.dispatch(sender, joiner.join(Arrays.asList(commands.get(i)))))
+                        if (commandMap.dispatch(sender, joiner.join(java.util.Arrays.asList(commands.get(i)))))
                         {
                             completed++;
                         }

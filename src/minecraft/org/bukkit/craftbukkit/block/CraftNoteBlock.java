@@ -38,39 +38,33 @@ public class CraftNoteBlock extends CraftBlockState implements NoteBlock {
     public boolean play() {
         Block block = getBlock();
 
-        synchronized (block) {
-            if (block.getType() == Material.NOTE_BLOCK) {
-                note.triggerNote(world.getHandle(), getX(), getY(), getZ());
-                return true;
-            } else {
-                return false;
-            }
+        if (block.getType() == Material.NOTE_BLOCK) {
+            note.triggerNote(world.getHandle(), getX(), getY(), getZ());
+            return true;
+        } else {
+            return false;
         }
     }
 
     public boolean play(byte instrument, byte note) {
         Block block = getBlock();
 
-        synchronized (block) {
-            if (block.getType() == Material.NOTE_BLOCK) {
-                world.getHandle().addBlockEvent(getX(), getY(), getZ(), block.getTypeId(), instrument, note);
-                return true;
-            } else {
-                return false;
-            }
+        if (block.getType() == Material.NOTE_BLOCK) {
+            world.getHandle().addBlockEvent(getX(), getY(), getZ(), block.getTypeId(), instrument, note);
+            return true;
+        } else {
+            return false;
         }
     }
 
     public boolean play(Instrument instrument, Note note) {
         Block block = getBlock();
 
-        synchronized (block) {
-            if (block.getType() == Material.NOTE_BLOCK) {
-                world.getHandle().addBlockEvent(getX(), getY(), getZ(), block.getTypeId(), instrument.getType(), note.getId());
-                return true;
-            } else {
-                return false;
-            }
+        if (block.getType() == Material.NOTE_BLOCK) {
+            world.getHandle().addBlockEvent(getX(), getY(), getZ(), block.getTypeId(), instrument.getType(), note.getId());
+            return true;
+        } else {
+            return false;
         }
     }
 }

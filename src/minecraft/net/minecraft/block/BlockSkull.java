@@ -128,7 +128,7 @@ public class BlockSkull extends BlockContainer
         return par1;
     }
 
-    // CraftBukkit start - special case dropping so we can get info from the tile entity
+    // CraftBukkit start - Special case dropping so we can get info from the tile entity
 
     /**
      * Drops the block items with a specified chance of dropping the specified items
@@ -174,7 +174,7 @@ public class BlockSkull extends BlockContainer
     {
         if (!par1World.isRemote)
         {
-            /* CraftBukkit start - drop item in code above, not here
+            /* CraftBukkit start - Drop item in code above, not here
             if ((i1 & 8) == 0) {
                 ItemStack itemstack = new ItemStack(Item.SKULL.id, 1, this.getDropData(world, i, j, k));
                 TileEntitySkull tileentityskull = (TileEntitySkull) world.getTileEntity(i, j, k);
@@ -238,7 +238,7 @@ public class BlockSkull extends BlockContainer
             {
                 if (par1World.getBlockId(par2, par3 - 1, par4 + i1) == l && par1World.getBlockId(par2, par3 - 1, par4 + i1 + 1) == l && par1World.getBlockId(par2, par3 - 2, par4 + i1 + 1) == l && par1World.getBlockId(par2, par3 - 1, par4 + i1 + 2) == l && this.func_82528_d(par1World, par2, par3, par4 + i1, 1) && this.func_82528_d(par1World, par2, par3, par4 + i1 + 1, 1) && this.func_82528_d(par1World, par2, par3, par4 + i1 + 2, 1))
                 {
-                    // CraftBukkit start - use BlockStateListPopulator
+                    // CraftBukkit start - Use BlockStateListPopulator
                     BlockStateListPopulator blockList = new BlockStateListPopulator(par1World.getWorld());
                     par1World.setBlockMetadataWithNotify(par2, par3, par4 + i1, 8, 2);
                     par1World.setBlockMetadataWithNotify(par2, par3, par4 + i1 + 1, 8, 2);
@@ -278,7 +278,7 @@ public class BlockSkull extends BlockContainer
             {
                 if (par1World.getBlockId(par2 + i1, par3 - 1, par4) == l && par1World.getBlockId(par2 + i1 + 1, par3 - 1, par4) == l && par1World.getBlockId(par2 + i1 + 1, par3 - 2, par4) == l && par1World.getBlockId(par2 + i1 + 2, par3 - 1, par4) == l && this.func_82528_d(par1World, par2 + i1, par3, par4, 1) && this.func_82528_d(par1World, par2 + i1 + 1, par3, par4, 1) && this.func_82528_d(par1World, par2 + i1 + 2, par3, par4, 1))
                 {
-                    // CraftBukkit start - use BlockStateListPopulator
+                    // CraftBukkit start - Use BlockStateListPopulator
                     BlockStateListPopulator blockList = new BlockStateListPopulator(par1World.getWorld());
                     par1World.setBlockMetadataWithNotify(par2 + i1, par3, par4, 8, 2);
                     par1World.setBlockMetadataWithNotify(par2 + i1 + 1, par3, par4, 8, 2);

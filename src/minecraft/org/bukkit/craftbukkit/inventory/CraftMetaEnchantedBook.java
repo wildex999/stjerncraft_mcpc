@@ -126,7 +126,7 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
     }
 
     public boolean hasStoredEnchant(Enchantment ench) {
-        return hasStoredEnchants() ? enchantments.containsKey(ench) : false;
+        return hasStoredEnchants() && enchantments.containsKey(ench);
     }
 
     public int getStoredEnchantLevel(Enchantment ench) {
@@ -154,7 +154,7 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
     }
 
     public boolean removeStoredEnchant(Enchantment ench) {
-        return hasStoredEnchants() ? enchantments.remove(ench) != null : false;
+        return hasStoredEnchants() && enchantments.remove(ench) != null;
     }
 
     public boolean hasStoredEnchants() {

@@ -1,11 +1,13 @@
 package net.minecraft.entity.item;
 
+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 public class EntityEnderCrystal extends Entity
 {
     /** Used to create the rotation animation when rendering the crystal. */
@@ -53,7 +55,7 @@ public class EntityEnderCrystal extends Entity
         if (this.worldObj.getBlockId(i, j, k) != Block.fire.blockID)
         {
             // CraftBukkit start
-            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.worldObj, i, j, k, this).isCancelled())
+            if (!CraftEventFactory.callBlockIgniteEvent(this.worldObj, i, j, k, this).isCancelled())
             {
                 this.worldObj.setBlock(i, j, k, Block.fire.blockID);
             }
@@ -94,7 +96,7 @@ public class EntityEnderCrystal extends Entity
             if (!this.isDead && !this.worldObj.isRemote)
             {
                 // CraftBukkit start - All non-living entities need this
-                if (org.bukkit.craftbukkit.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, par1DamageSource, par2))
+                if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, par1DamageSource, par2))
                 {
                     return false;
                 }

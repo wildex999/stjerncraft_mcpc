@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 
 public class RecipesArmorDyes extends ShapelessRecipes implements IRecipe   // CraftBukkit - added extends
 {
-    // CraftBukkit start - delegate to new parent class with bogus info
+    // CraftBukkit start - Delegate to new parent class with bogus info
     public RecipesArmorDyes()
     {
         super(new ItemStack(Item.helmetLeather, 0, 0), java.util.Arrays.asList(new ItemStack(Item.dyePowder, 0, 5)));

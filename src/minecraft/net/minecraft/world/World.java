@@ -1628,7 +1628,7 @@ public abstract class World implements IBlockAccess
         return true;
     }
 
-    // CraftBukkit start - used for entities other than creatures
+    // CraftBukkit start - Used for entities other than creatures
 
     /**
      * Called to place all entities as part of a world
@@ -2023,7 +2023,7 @@ public abstract class World implements IBlockAccess
         {
             entity = (Entity)this.weatherEffects.get(i);
 
-            // CraftBukkit start - fixed an NPE, don't process entities in chunks queued for unload
+            // CraftBukkit start - Fixed an NPE, don't process entities in chunks queued for unload
             if (entity == null)
             {
                 continue;
@@ -2102,7 +2102,7 @@ public abstract class World implements IBlockAccess
         for (i = 0; i < this.loadedEntityList.size(); ++i)
         {
             entity = (Entity)this.loadedEntityList.get(i);
-            // CraftBukkit start - don't tick entities in chunks queued for unload
+            // CraftBukkit start - Don't tick entities in chunks queued for unload
             ChunkProviderServer chunkProviderServer = ((WorldServer) this).theChunkProviderServer;
 
             if (chunkProviderServer.chunksToUnload.contains(MathHelper.floor_double(entity.posX) >> 4, MathHelper.floor_double(entity.posZ) >> 4))
@@ -2168,7 +2168,7 @@ public abstract class World implements IBlockAccess
         while (iterator.hasNext())
         {
             TileEntity tileentity = (TileEntity)iterator.next();
-            // CraftBukkit start - don't tick entities in chunks queued for unload
+            // CraftBukkit start - Don't tick entities in chunks queued for unload
             ChunkProviderServer chunkProviderServer = ((WorldServer) this).theChunkProviderServer;
 
             if (chunkProviderServer.chunksToUnload.contains(tileentity.xCoord >> 4, tileentity.zCoord >> 4))
@@ -2241,7 +2241,7 @@ public abstract class World implements IBlockAccess
 
                 if (!tileentity1.isInvalid())
                 {
-                    /* CraftBukkit start - order matters, moved down
+                    /* CraftBukkit start - Order matters, moved down
                     if (!this.tileEntityList.contains(tileentity1)) {
                         this.tileEntityList.add(tileentity1);
                     }
@@ -2254,7 +2254,7 @@ public abstract class World implements IBlockAccess
                         {
                             chunk1.cleanChunkBlockTileEntity(tileentity1.xCoord & 15, tileentity1.yCoord, tileentity1.zCoord & 15);
                             
-                            // CraftBukkit start - moved down from above
+                            // CraftBukkit start - Moved down from above
                             if (!this.loadedTileEntityList.contains(tileentity1))
                             {
                                 this.loadedTileEntityList.add(tileentity1);
@@ -4037,7 +4037,7 @@ public abstract class World implements IBlockAccess
         {
             EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
 
-            // CraftBukkit start - fixed an NPE
+            // CraftBukkit start - Fixed an NPE
             if (entityplayer1 == null || entityplayer1.isDead)
             {
                 continue;
@@ -4076,7 +4076,7 @@ public abstract class World implements IBlockAccess
         {
             EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
 
-            // CraftBukkit start - fixed an NPE
+            // CraftBukkit start - Fixed an NPE
             if (entityplayer1 == null || entityplayer1.isDead)
             {
                 continue;

@@ -146,15 +146,15 @@ public class EntityTrackerEntry
             this.sendPacketToAllTrackingPlayers(new Packet39AttachEntity(this.myEntity, this.myEntity.ridingEntity));
         }
 
-        if (this.myEntity instanceof EntityItemFrame && this.ticks % 10 == 0)
+        if (this.myEntity instanceof EntityItemFrame /*&& this.m % 10 == 0*/)   // CraftBukkit - Moved below, should always enter this block
         {
             EntityItemFrame i4 = (EntityItemFrame) this.myEntity;
             ItemStack i5 = i4.getDisplayedItem();
 
-            if (i5 != null && i5.getItem() instanceof ItemMap)
+            if (this.ticks % 10 == 0 && i5 != null && i5.getItem() instanceof ItemMap)   // CraftBukkit - Moved this.m % 10 logic here so item frames do not enter the other blocks
             {
                 MapData i7 = Item.map.getMapData(i5, this.myEntity.worldObj);
-                Iterator j0 = par1List.iterator();
+                Iterator j0 = this.trackingPlayers.iterator(); // CraftBukkit
 
                 while (j0.hasNext())
                 {
@@ -201,7 +201,7 @@ public class EntityTrackerEntry
                 boolean flag = Math.abs(j1) >= 4 || Math.abs(k1) >= 4 || Math.abs(l1) >= 4 || this.ticks % 60 == 0;
                 boolean flag1 = Math.abs(l - this.lastYaw) >= 4 || Math.abs(i1 - this.lastPitch) >= 4;
 
-                // CraftBukkit start - code moved from below
+                // CraftBukkit start - Code moved from below
                 if (flag)
                 {
                     this.lastScaledXPosition = i;
@@ -238,7 +238,7 @@ public class EntityTrackerEntry
                     {
                         this.ticksSinceLastForcedTeleport = 0;
 
-                        // CraftBukkit start - refresh list of who can see a player before sending teleport packet
+                        // CraftBukkit start - Refresh list of who can see a player before sending teleport packet
                         if (this.myEntity instanceof EntityPlayerMP)
                         {
                             this.sendEventsToPlayers(new java.util.ArrayList(this.trackingPlayers));
@@ -278,7 +278,7 @@ public class EntityTrackerEntry
                     this.sendPacketToAllAssociatedPlayers(new Packet40EntityMetadata(this.myEntity.entityId, datawatcher1, false));
                 }
 
-                /* CraftBukkit start - code moved up
+                /* CraftBukkit start - Code moved up
                 if (flag) {
                     this.xLoc = i;
                     this.yLoc = j;
@@ -333,7 +333,7 @@ public class EntityTrackerEntry
 
         if (this.myEntity.velocityChanged)
         {
-            // CraftBukkit start - create PlayerVelocity event
+            // CraftBukkit start - Create PlayerVelocity event
             boolean cancelled = false;
 
             if (this.myEntity instanceof EntityPlayerMP)
@@ -534,7 +534,7 @@ public class EntityTrackerEntry
     {
         if (this.myEntity.isDead)
         {
-            // CraftBukkit start - remove useless error spam, just return
+            // CraftBukkit start - Remove useless error spam, just return
             // this.tracker.world.getLogger().warning("Fetching addPacket for removed entity");
             return null;
             // CraftBukkit end

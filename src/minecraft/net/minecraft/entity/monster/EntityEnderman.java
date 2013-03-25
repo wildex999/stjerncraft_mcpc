@@ -157,7 +157,7 @@ public class EntityEnderman extends EntityMob
 
                     if (carriableBlocks[l])
                     {
-                        // CraftBukkit start - pickup event
+                        // CraftBukkit start - Pickup event
                         if (!CraftEventFactory.callEntityChangeBlockEvent(this, this.worldObj.getWorld().getBlockAt(i, j, k), org.bukkit.Material.AIR).isCancelled())
                         {
                             this.setCarried(this.worldObj.getBlockId(i, j, k));
@@ -179,7 +179,7 @@ public class EntityEnderman extends EntityMob
 
                 if (l == 0 && i1 > 0 && Block.blocksList[i1].renderAsNormalBlock())
                 {
-                    // CraftBukkit start - place event
+                    // CraftBukkit start - Place event
                     if (!CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, this.getCarried(), this.getCarryingData()).isCancelled())
                     {
                         this.worldObj.setBlock(i, j, k, this.getCarried(), this.getCarryingData(), 3);
@@ -321,7 +321,7 @@ public class EntityEnderman extends EntityMob
 
             if (flag1)
             {
-                // CraftBukkit start - teleport event
+                // CraftBukkit start - Teleport event
                 EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.worldObj.getWorld(), d3, d4, d5), new Location(this.worldObj.getWorld(), this.posX, this.posY, this.posZ));
                 this.worldObj.getServer().getPluginManager().callEvent(teleport);
 
@@ -410,7 +410,7 @@ public class EntityEnderman extends EntityMob
 
         if (j > 0)
         {
-            // CraftBukkit start - whole method
+            // CraftBukkit start - Whole method
             java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
             int count = this.rand.nextInt(2 + par2);
 

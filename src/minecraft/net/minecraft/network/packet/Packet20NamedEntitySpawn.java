@@ -44,7 +44,7 @@ public class Packet20NamedEntitySpawn extends Packet
     {
         this.entityId = par1EntityPlayer.entityId;
 
-        // CraftBukkit start - limit name length to 16 characters
+        // CraftBukkit start - Limit name length to 16 characters
         if (par1EntityPlayer.username.length() > 16)
         {
             this.name = par1EntityPlayer.username.substring(0, 16);

@@ -38,7 +38,7 @@ public class BlockPumpkin extends BlockDirectional
         {
             if (!par1World.isRemote)
             {
-                // CraftBukkit start - use BlockStateListPopulator
+                // CraftBukkit start - Use BlockStateListPopulator
                 BlockStateListPopulator blockList = new BlockStateListPopulator(par1World.getWorld());
                 blockList.setTypeId(par2, par3, par4, 0);
                 blockList.setTypeId(par2, par3 - 1, par4, 0);
@@ -66,7 +66,7 @@ public class BlockPumpkin extends BlockDirectional
 
             if (flag || flag1)
             {
-                // CraftBukkit start - use BlockStateListPopulator
+                // CraftBukkit start - Use BlockStateListPopulator
                 BlockStateListPopulator blockList = new BlockStateListPopulator(par1World.getWorld());
                 blockList.setTypeId(par2, par3, par4, 0);
                 blockList.setTypeId(par2, par3 - 1, par4, 0);

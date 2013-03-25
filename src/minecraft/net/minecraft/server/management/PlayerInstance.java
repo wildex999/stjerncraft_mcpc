@@ -42,6 +42,7 @@ public class PlayerInstance
                 PlayerInstance.this.loaded = true;
             }
         });
+        // CraftBukkit end
     }
 
     /**

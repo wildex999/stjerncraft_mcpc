@@ -75,7 +75,7 @@ public class ItemSkull extends Item
             }
             else
             {
-                // CraftBukkit start - handle in ItemBlock
+                // CraftBukkit start - Handle in ItemBlock
                 // world.setTypeIdAndData(i, j, k, Block.SKULL.id, l, 2);
                 if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, Block.skull.blockID, par7, clickedX, clickedY, clickedZ))
                 {

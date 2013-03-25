@@ -44,7 +44,7 @@ public abstract class Packet
      * separate them into a different send queue.
      */
     public boolean isChunkDataPacket = false;
-    // CraftBukkit start - calculate packet ID once - used a bunch of times
+    // CraftBukkit start - Calculate packet ID once - used a bunch of times
     private int packetID;
 
     public Packet()

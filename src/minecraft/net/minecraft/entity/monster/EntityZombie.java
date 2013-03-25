@@ -282,7 +282,7 @@ public class EntityZombie extends EntityMob
         return EnumCreatureAttribute.UNDEAD;
     }
 
-    // CraftBukkit start - return rare dropped item instead of dropping it
+    // CraftBukkit start - Return rare dropped item instead of dropping it
     protected ItemStack dropRareDrop(int i)
     {
         switch (this.rand.nextInt(3))

@@ -1,8 +1,6 @@
 package net.minecraft.entity.projectile;
 
-// CraftBukkit start
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent; // CraftBukkit
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.potion.Potion;
@@ -11,7 +9,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-// CraftBukkit end
 
 public class EntityWitherSkull extends EntityFireball
 {
@@ -68,7 +65,7 @@ public class EntityWitherSkull extends EntityFireball
                 {
                     if (par1MovingObjectPosition.entityHit.attackEntityFrom(DamageSource.causeMobDamage(this.shootingEntity), 8) && !par1MovingObjectPosition.entityHit.isEntityAlive())
                     {
-                        this.shootingEntity.heal(5, EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
+                        this.shootingEntity.heal(5, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
                     }
                 }
                 else

@@ -487,7 +487,7 @@ public class WorldGenBigTree extends WorldGenerator implements TreeGenerator   /
 
     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
     {
-        // CraftBukkit start - moved to generate
+        // CraftBukkit start - Moved to generate
         // sk: The idea is to have (our) WorldServer implement
         // BlockChangeDelegate and then we can implicitly cast World to
         // WorldServer (a safe cast, AFAIK) and no code will be broken. This

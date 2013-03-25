@@ -46,7 +46,7 @@ public class ItemSeeds extends Item implements IPlantable
 
             if (soil != null && soil.canSustainPlant(par3World, par4, par5, par6, ForgeDirection.UP, this) && par3World.isAirBlock(par4, par5 + 1, par6))
             {
-                // CraftBukkit start - seeds
+                // CraftBukkit start - Seeds
                 // world.setTypeIdUpdate(i, j + 1, k, this.id);
                 if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5 + 1, par6, this.blockType, 0, clickedX, clickedY, clickedZ))
                 {

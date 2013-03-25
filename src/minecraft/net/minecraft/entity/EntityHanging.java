@@ -14,7 +14,6 @@ import net.minecraft.world.World;
 // CraftBukkit start
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Painting;
-import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
 // CraftBukkit end
@@ -284,7 +283,7 @@ public abstract class EntityHanging extends Entity
 
                 if (par1DamageSource.getEntity() != null)
                 {
-                    event = new HangingBreakByEntityEvent((Hanging) this.getBukkitEntity(), par1DamageSource.getEntity() == null ? null : par1DamageSource.getEntity().getBukkitEntity());
+                    event = new org.bukkit.event.hanging.HangingBreakByEntityEvent((Hanging) this.getBukkitEntity(), par1DamageSource.getEntity() == null ? null : par1DamageSource.getEntity().getBukkitEntity());
 
                     if (this instanceof EntityPainting)
                     {

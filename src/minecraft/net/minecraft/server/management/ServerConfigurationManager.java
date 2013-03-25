@@ -54,30 +54,28 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.demo.DemoWorldManager;
 import net.minecraft.world.storage.IPlayerFileData;
+import net.minecraft.network.NetLoginHandler;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import net.minecraftforge.common.DimensionManager;
 // CraftBukkit start
-import net.minecraft.network.NetLoginHandler;
-import org.bukkit.Location;
-import org.bukkit.TravelAgent;
-import org.bukkit.WeatherType;
-import org.bukkit.World.Environment;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.TravelAgent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
-import org.bukkit.Bukkit;
 // CraftBukkit end
 
 public abstract class ServerConfigurationManager
@@ -320,7 +318,7 @@ public abstract class ServerConfigurationManager
         ChunkIOExecutor.adjustPoolSize(this.getCurrentPlayerCount());
         // CraftBukkit end
 
-        // CraftBukkit start - only add if the player wasn't moved in the event
+        // CraftBukkit start - Only add if the player wasn't moved in the event
         if (par1EntityPlayerMP.worldObj == worldserver && !worldserver.playerEntities.contains(par1EntityPlayerMP))
         {
             worldserver.spawnEntityInWorld(par1EntityPlayerMP);
@@ -372,7 +370,7 @@ public abstract class ServerConfigurationManager
             return null;    // CraftBukkit - exploitsies fix
         }
 
-        // CraftBukkit start - quitting must be before we do final save of data, in case plugins need to modify it
+        // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
         PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(this.cserver.getPlayer(entityplayermp), "\u00A7e" + entityplayermp.username + " left the game.");
         this.cserver.getPluginManager().callEvent(playerQuitEvent);
         entityplayermp.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
@@ -634,7 +632,7 @@ public abstract class ServerConfigurationManager
         worldserver.getPlayerManager().addPlayer(entityplayermp1);
         worldserver.spawnEntityInWorld(entityplayermp1);
         this.playerEntityList.add(entityplayermp1);
-        // CraftBukkit start - added from changeDimension
+        // CraftBukkit start - Added from changeDimension
         this.syncPlayerInventory(entityplayermp1); // CraftBukkit
         entityplayermp1.sendPlayerAbilities();
         Iterator iterator = entityplayermp1.getActivePotionEffects().iterator();
@@ -649,7 +647,7 @@ public abstract class ServerConfigurationManager
         // CraftBukkit end
         entityplayermp1.setEntityHealth(entityplayermp1.getHealth());
 
-        // CraftBukkit start - don't fire on respawn
+        // CraftBukkit start - Don't fire on respawn
         if (fromWorld != location.getWorld())
         {
             PlayerChangedWorldEvent event = new PlayerChangedWorldEvent((Player) entityplayermp1.getBukkitEntity(), fromWorld);
@@ -687,7 +685,7 @@ public abstract class ServerConfigurationManager
             if ((cause == TeleportCause.END_PORTAL) && (i == 0))
             {
                 // THE_END -> NORMAL; use bed if available, otherwise default spawn
-                exit = ((CraftPlayer) entityplayermp.getBukkitEntity()).getBedSpawnLocation();
+                exit = ((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayermp.getBukkitEntity()).getBedSpawnLocation();
 
                 if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().dimension != 0)
                 {
@@ -740,12 +738,12 @@ public abstract class ServerConfigurationManager
      */
     public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
     {
-        // CraftBukkit start - split into modular functions
+        // CraftBukkit start - Split into modular functions
         Location exit = this.calculateTarget(par1Entity.getBukkitEntity().getLocation(), par4WorldServer);
         this.repositionEntity(par1Entity, exit, true);
     }
 
-    // copy of original a(Entity, int, WorldServer, WorldServer) method with only location calculation logic
+    // Copy of original a(Entity, int, WorldServer, WorldServer) method with only location calculation logic
     public Location calculateTarget(Location enter, World target)
     {
         WorldServer worldserver = ((CraftWorld) enter.getWorld()).getHandle();
@@ -941,7 +939,7 @@ public abstract class ServerConfigurationManager
             this.playerPingIndex = 0;
         }
 
-        /* CraftBukkit start - remove updating of lag to players -- it spams way to much on big servers.
+        /* CraftBukkit start - Remove updating of lag to players -- it spams way to much on big servers.
         if (this.n < this.players.size()) {
             EntityPlayer entityplayermp = (EntityPlayer) this.players.get(this.n);
 
@@ -1328,7 +1326,7 @@ public abstract class ServerConfigurationManager
 
         if (par2WorldServer.isRaining())
         {
-            par1EntityPlayerMP.setPlayerWeather(WeatherType.DOWNFALL, false); // CraftBukkit - handle player specific weather
+            par1EntityPlayerMP.setPlayerWeather(org.bukkit.WeatherType.DOWNFALL, false); // CraftBukkit - handle player specific weather
         }
     }
 

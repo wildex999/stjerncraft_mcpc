@@ -7,14 +7,12 @@ import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
 import org.bukkit.inventory.BrewerInventory;
 
 public class CraftBrewingStand extends CraftBlockState implements BrewingStand {
-    private final CraftWorld world;
     private final net.minecraft.tileentity.TileEntityBrewingStand brewingStand;
 
     public CraftBrewingStand(Block block) {
         super(block);
 
-        world = (CraftWorld) block.getWorld();
-        brewingStand = (net.minecraft.tileentity.TileEntityBrewingStand) world.getTileEntityAt(getX(), getY(), getZ());
+        brewingStand = (net.minecraft.tileentity.TileEntityBrewingStand) ((CraftWorld) block.getWorld()).getTileEntityAt(getX(), getY(), getZ());
     }
 
     public BrewerInventory getInventory() {
