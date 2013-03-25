@@ -5,9 +5,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import net.minecraft.server.MinecraftServer;
 
 import java.io.File; // CraftBukkit
@@ -31,7 +28,7 @@ public class LogAgent implements ILogAgent
 
     private void func_98238_b()
     {
-        this.field_98242_a.setParent(FMLLog.getLogger());
+        this.field_98242_a.setUseParentHandlers(false);
         Handler[] ahandler = this.field_98242_a.getHandlers();
         int i = ahandler.length;
 
@@ -46,7 +43,6 @@ public class LogAgent implements ILogAgent
         MinecraftServer server = MinecraftServer.getServer();
         ConsoleHandler consolehandler = new org.bukkit.craftbukkit.util.TerminalConsoleHandler(server.reader);
         // CraftBukkit end
-        // MCPC+ - TODO: FML removes these two lines, should we?
         consolehandler.setFormatter(logformatter);
         this.field_98242_a.addHandler(consolehandler);
 
