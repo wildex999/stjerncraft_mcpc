@@ -112,7 +112,7 @@ public class XmlConfigLoader {
                 } else {
                     // this is not expected
                     String msg = "Not a Jar or Directory? " + classPath.getAbsolutePath();
-                    logger.log(Level.SEVERE, msg);
+                    //logger.log(Level.SEVERE, msg); // MCPC+ - disable log spam when Bukkit plugins use ebean and it gets confused by .zip in classpath, fixes #396
                 }
 
             } catch (UnsupportedEncodingException e) {

@@ -199,7 +199,7 @@ public class ClassPathSearch {
 				// this is not expected
 				String msg = "Error: expected classPath entry ["+classPath.getAbsolutePath()
 				+"] to be a directory or a .jar file but it is not either of those?";
-				logger.log(Level.SEVERE, msg);
+				//logger.log(Level.SEVERE, msg); // MCPC+ - disable log spam when Bukkit plugins use ebean and it gets confused by .zip in classpath, fixes #396
 			}
 
 			searchFiles(files, jarFileName);
