@@ -1,5 +1,8 @@
 package net.minecraft.logging;
 
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -8,6 +11,14 @@ import java.util.logging.Logger;
 import net.minecraft.server.MinecraftServer;
 
 import java.io.File; // CraftBukkit
+// Forge start
+import java.text.MessageFormat;
+import java.util.logging.Formatter;
+import java.util.logging.LogRecord;
+
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
+// Forge end
 
 public class LogAgent implements ILogAgent
 {
@@ -29,6 +40,7 @@ public class LogAgent implements ILogAgent
     private void func_98238_b()
     {
         this.field_98242_a.setUseParentHandlers(false);
+        //this.field_98242_a.setParent(FMLLog.getLogger()); // MCPC+ - do not send to FML log, only CB
         Handler[] ahandler = this.field_98242_a.getHandlers();
         int i = ahandler.length;
 
@@ -52,7 +64,23 @@ public class LogAgent implements ILogAgent
             global.removeHandler(handler);
         }
 
-        consolehandler.setFormatter(new org.bukkit.craftbukkit.util.ShortConsoleLogFormatter(server));
+        // MCPC+ start
+        if (!FMLRelaunchLog.useOnlyThisLogger)
+        {
+            consolehandler.setFormatter(new org.bukkit.craftbukkit.util.ShortConsoleLogFormatter(server));
+        }
+        else
+        {
+            consolehandler.setFormatter(new Formatter()
+            {
+                @Override
+                public String format(final LogRecord record)
+                {
+                    return MessageFormat.format(record.getMessage(), record.getParameters()).concat("\n");
+                }
+            });
+        }
+        // MCPC+ end
         global.addHandler(consolehandler);
         // CraftBukkit end
 
