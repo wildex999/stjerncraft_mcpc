@@ -168,7 +168,7 @@ public class ContainerEnchantment extends Container
                     // CraftBukkit start
                     CraftItemStack item = CraftItemStack.asCraftMirror(itemstack);
                     PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(player, this.getBukkitView(), this.worldPointer.getWorld().getBlockAt(this.posX, this.posY, this.posZ), item, this.enchantLevels, i);
-                    event.setCancelled(!itemstack.isItemEnchantable())
+                    event.setCancelled(!itemstack.isItemEnchantable());
                     this.worldPointer.getServer().getPluginManager().callEvent(event);
 
                     if (event.isCancelled())
