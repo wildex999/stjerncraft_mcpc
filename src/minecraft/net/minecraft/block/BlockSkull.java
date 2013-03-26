@@ -162,7 +162,7 @@ public class BlockSkull extends BlockContainer
             par1World.setBlockMetadataWithNotify(par2, par3, par4, par5, 4);
         }
 
-        dropBlockAsItem(par1World, par2, par3, par4, par5, 0);
+        //dropBlockAsItem(par1World, par2, par3, par4, par5, 0); // MCPC+ - disable Forge's drops for now, use CB drop instead
 
         super.onBlockHarvested(par1World, par2, par3, par4, par5, par6EntityPlayer);
     }
