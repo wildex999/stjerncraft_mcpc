@@ -1552,7 +1552,7 @@ public class NetServerHandler extends NetHandler
                 if (par1Packet7UseEntity.isLeftClick == 0)
                 {
                     // CraftBukkit start
-                    PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) this.getPlayer(), entity.getBukkitEntity());
+                    PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) this.getPlayerB(), entity.getBukkitEntity());
                     this.server.getPluginManager().callEvent(event);
 
                     if (event.isCancelled())
