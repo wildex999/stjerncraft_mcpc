@@ -12,9 +12,7 @@
 
 package cpw.mods.fml.relauncher;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -318,6 +316,18 @@ public class RelaunchClassLoader extends URLClassLoader
                 FMLRelaunchLog.finest("After  Transformer %s: %d", transName, (basicClass == null ? 0 : basicClass.length));
             }
             FMLRelaunchLog.finest("Ending transform of %s (%s) Start Length: %d", name, transformedName, (basicClass == null ? 0 : basicClass.length));
+
+            // MCPC+ start - add for debugging
+            File file = new File("remapped-mod-classes/"+name+"--"+transformedName+".class");
+            file.getParentFile().mkdirs();
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(basicClass);
+                fileOutputStream.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            // MCPC+ end
         }
         else
         {
