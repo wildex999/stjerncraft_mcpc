@@ -12,9 +12,9 @@ public class ForgeVersion
     //This number is incremented every minecraft release, never reset
     public static final int minorVersion    = 7;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
-    public static final int revisionVersion = 0;
+    public static final int revisionVersion = 1;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
-    public static final int buildVersion    = 608; // MCPC+ - update when updating Forge
+    public static final int buildVersion    = 611; // MCPC+ - update when updating Forge
 
     public static int getMajorVersion()
     {

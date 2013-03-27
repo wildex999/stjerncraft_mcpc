@@ -5,6 +5,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -29,6 +31,8 @@ public class Event
     private final boolean hasResult;
     private static ListenerList listeners = new ListenerList();
     
+    private static final Map<Class, Map<Class, Boolean>> annotationMap = new ConcurrentHashMap<Class, Map<Class, Boolean>>();
+    
     public Event()
     {
         setup();
@@ -38,18 +42,35 @@ public class Event
 
     private boolean hasAnnotation(Class annotation)
     {
-        Class cls = this.getClass();
+        Class me = this.getClass();
+        Map<Class, Boolean> list = annotationMap.get(me);
+        if (list == null)
+        {
+            list = new ConcurrentHashMap<Class, Boolean>();
+            annotationMap.put(me, list);
+        }
+
+        Boolean cached = list.get(annotation);
+        if (cached != null)
+        {
+            return cached;
+        }
+
+        Class cls = me;
         while (cls != Event.class)
         {
-            if (cls.isAnnotationPresent(Cancelable.class))
+            if (cls.isAnnotationPresent(annotation))
             {
+                list.put(annotation, true);
                 return true;
             }
             cls = cls.getSuperclass();
         }
+
+        list.put(annotation, false);
         return false;
     }
-
+    
     /**
      * Determine if this function is cancelable at all. 
      * @return If access to setCanceled should be allowed
