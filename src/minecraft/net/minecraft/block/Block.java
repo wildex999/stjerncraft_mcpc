@@ -347,7 +347,7 @@ public class Block
             canBlockGrass[par1] = !par2Material.getCanBlockGrass();
         }
         org.bukkit.Material.addMaterial(this.blockID); // MCPC+ - many mods do not register blocks through GameRegistry so to be safe we need to add materials here
-        this.isForgeBlock = (this.getClass().getName().length() > 3) ? true : false; // MCPC+
+        this.isForgeBlock = (this.getClass().getName().length() > 3 && !this.getClass().getName().startsWith("net.minecraft.block")) ? true : false; // MCPC+
     }
 
     /**
