@@ -95,6 +95,7 @@ public class RelaunchClassLoader extends URLClassLoader
         addTransformerExclusion("javax."); // javax.persistence:persistence-api
         addTransformerExclusion("org.apache.commons.lang."); // commons-lang:commons-lang
         //addTransformerExclusion("org.bukkit."); // za.co.mcportcentral:mcpc-api // enabled for runtime deobfuscation of NMS references in OBC
+        addTransformerExclusion("org.bukkit.craftbukkit.libs."); // relocated libraries
         addTransformerExclusion("org.json.simple."); // com.googlecode.json-simple:json-simple
         addTransformerExclusion("org.yaml.snakeyaml."); // org.yaml:snakeyaml
 
