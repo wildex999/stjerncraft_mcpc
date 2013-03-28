@@ -28,7 +28,7 @@ public class Vec3Pool
     /**
      * extends the pool if all vecs are currently "out"
      */
-    public final Vec3 getVecFromPool(double par1, double par3, double par5)   // CraftBukkit - Add final
+    public synchronized final Vec3 getVecFromPool(double par1, double par3, double par5)   // CraftBukkit - add final // MCPC+ - synchronize
     {
         if (this.resetCount == 0)
         {
@@ -65,7 +65,7 @@ public class Vec3Pool
     }
 
     // CraftBukkit start - Offer back vector (can save LOTS of unneeded bloat) - works about 90% of the time
-    public void release(Vec3 v)
+    public synchronized void release(Vec3 v) // MCPC+ - synchronize
     {
         if (this.alloclist == v)
         {
@@ -87,7 +87,7 @@ public class Vec3Pool
     /**
      * Will truncate the array everyN clears to the maximum size observed since the last truncation.
      */
-    public void clear()
+    public synchronized void clear() // MCPC+ - synchronize
     {
         if (this.nextFreeSpace > this.maximumSizeSinceLastTruncation)
         {
