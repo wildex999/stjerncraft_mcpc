@@ -99,7 +99,7 @@ public class EntityPotion extends EntityThrowable
         {
             List list = Item.potion.getEffects(this.potionDamage);
 
-            if (list != null && !list.isEmpty())
+            if (true || list != null && !list.isEmpty())   // CraftBukkit - Call event even if no effects to apply
             {
                 AxisAlignedBB axisalignedbb = this.boundingBox.expand(4.0D, 2.0D, 4.0D);
                 List list1 = this.worldObj.getEntitiesWithinAABB(EntityLiving.class, axisalignedbb);
@@ -131,7 +131,7 @@ public class EntityPotion extends EntityThrowable
 
                     org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPotionSplashEvent(this, affected);
 
-                    if (!event.isCancelled())
+                    if (!event.isCancelled() && list != null && !list.isEmpty())   // do not process effects if there are no effects to process
                     {
                         for (LivingEntity victim : event.getAffectedEntities())
                         {
