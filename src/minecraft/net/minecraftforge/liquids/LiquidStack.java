@@ -37,8 +37,8 @@ public class LiquidStack
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
-        nbt.setShort("Id", (short)itemID);
         nbt.setInteger("Amount", amount);
+        nbt.setShort("Id", (short)itemID);
         nbt.setShort("Meta", (short)itemMeta);
         nbt.setString("LiquidName", LiquidDictionary.findLiquidName(this));
         return nbt;
@@ -47,16 +47,12 @@ public class LiquidStack
     public void readFromNBT(NBTTagCompound nbt)
     {
         String liquidName = nbt.getString("LiquidName");
-        if (liquidName != null)
-        {
-            LiquidStack liquid = LiquidDictionary.getCanonicalLiquid(liquidName);
+        itemID = nbt.getShort("Id");
+        itemMeta = nbt.getShort("Meta");
+        LiquidStack liquid = LiquidDictionary.getCanonicalLiquid(liquidName);
+        if(liquid != null) {
             itemID = liquid.itemID;
             itemMeta = liquid.itemMeta;
-        }
-        else
-        {
-            itemID = nbt.getShort("Id");
-            itemMeta = nbt.getShort("Meta");
         }
         amount = nbt.getInteger("Amount");
     }

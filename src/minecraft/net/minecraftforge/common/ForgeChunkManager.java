@@ -499,6 +499,10 @@ public class ForgeChunkManager
             for (String modId : loadedTickets.keySet())
             {
                 LoadingCallback loadingCallback = callbacks.get(modId);
+                if (loadingCallback == null)
+                {
+                    continue;
+                }
                 int maxTicketLength = getMaxTicketLengthFor(modId);
                 List<Ticket> tickets = loadedTickets.get(modId);
                 if (loadingCallback instanceof OrderedLoadingCallback)
@@ -517,6 +521,10 @@ public class ForgeChunkManager
             for (String modId : playerLoadedTickets.keySet())
             {
                 LoadingCallback loadingCallback = callbacks.get(modId);
+                if (loadingCallback == null)
+                {
+                    continue;
+                }
                 ListMultimap<String,Ticket> tickets = playerLoadedTickets.get(modId);
                 if (loadingCallback instanceof PlayerOrderedLoadingCallback)
                 {
