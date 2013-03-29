@@ -382,12 +382,8 @@
                         <goal>remap</goal>
                     </goals>
                     <configuration>
-                        <!--
-                        <srgIn>${mcp.mappings}</srgIn>
-                        <reverse>true</reverse>
-                        -->
-                        <srgIn>${basedir}/resources/mappings/v${minecraft_version}/pkgmcp2numpkg.srg</srgIn>
-                        <!-- <srgIn>${basedir}/resources/mappings/v${minecraft_version}/pkgmcp2obf.srg</srgIn> --> <!-- TODO: enable obfuscation, after fixing https://gist.github.com/agaricusb/5234401 java.lang.NoSuchFieldError: field_98131_l -->
+                        <!-- <srgIn>${basedir}/resources/mappings/v${minecraft_version}/pkgmcp2numpkg.srg</srgIn> -->
+                        <srgIn>${basedir}/resources/mappings/v${minecraft_version}/pkgmcp2obf.srg</srgIn> <!-- TODO: enable obfuscation, after fixing https://gist.github.com/agaricusb/5234401 java.lang.NoSuchFieldError: field_98131_l -->
                         <remappedDependencies>
                             <param>net.minecraftforge:minecraft-forge:${forge.version}-${forge.remapped.revision}:jar</param>
                         </remappedDependencies>
