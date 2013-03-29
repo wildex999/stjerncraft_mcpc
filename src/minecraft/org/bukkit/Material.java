@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import net.minecraftforge.common.EnumHelper;
 // MCPC+ end
 
 import org.apache.commons.lang.Validate;
@@ -618,7 +619,7 @@ public enum Material {
 
     public static void addMaterial(int id, String name) {
       if (byId[id] == null) {
-        Material material = (Material)addEnum(Material.class, name, new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
+        Material material = (Material) EnumHelper.addEnum(Material.class, name, new Class[]{Integer.TYPE}, new Object[]{Integer.valueOf(id)});
         String material_name = name.toUpperCase().trim();
         material_name = material_name.replaceAll("[^A-Za-z0-9]", "_");
 
@@ -637,15 +638,17 @@ public enum Material {
       } 
       else // replace existing enum
       {
+          /* TODO: find out how to do this with Forge's EnumHelper (addEnum?) - used for enabling descriptive (vs numeric) Material names
           Material material = getMaterial(id);
           BY_NAME.remove(material);
-          Material newMaterial = replaceEnum(Material.class, material_name, material.ordinal(), new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
+          Material newMaterial = EnumHelper.addEnum(Material.class, material_name, material.ordinal(), new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
           if (newMaterial == null)
               System.out.println("Error replacing Material " + name + " with id " + id);
           else {
               byId[id] = newMaterial;
               BY_NAME.put(material_name, newMaterial);
           }
+          */
       }
     }
     
@@ -715,39 +718,6 @@ public enum Material {
       blankField(enumClass, "enumConstants");
     }
     
-    public static <T extends Enum<?>> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object[] paramValues)
-    {
-      if (!isSetup) setup();
-      Field valuesField = null;
-      Field[] fields = enumType.getDeclaredFields();
-      int flags = 4122;
-      String valueType = String.format("[L%s;", new Object[] { enumType.getName() });
-
-      for (Field field : fields) {
-        if (((field.getModifiers() & flags) != flags) || (!field.getType().getName().equals(valueType))) {
-          continue;
-        }
-        valuesField = field;
-        break;
-      }
-
-      valuesField.setAccessible(true);
-      try
-      {
-        Enum[] previousValues = (Enum[])(Enum[])valuesField.get(enumType);
-        List values = new ArrayList(Arrays.asList(previousValues));
-        Enum newValue = makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
-        values.add(newValue);
-        setFailsafeFieldValue(valuesField, null, values.toArray((Enum[])(Enum[])Array.newInstance(enumType, 0)));
-        cleanEnumCache(enumType);
-
-        return (T) newValue;
-      } catch (Exception e) {
-        e.printStackTrace();
-        throw new RuntimeException(e.getMessage(), e);
-      }
-    }
-
     public static <T extends Enum<?>> T replaceEnum(Class<T> enumType, String enumName, int ordinal,  Class<?>[] paramTypes, Object[] paramValues)
     {
       if (!isSetup) setup();
