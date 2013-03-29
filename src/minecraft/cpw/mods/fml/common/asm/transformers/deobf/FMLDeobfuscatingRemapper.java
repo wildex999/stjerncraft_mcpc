@@ -127,7 +127,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
     public boolean isRemappedClass(String className)
     {
-        return classNameBiMap.containsKey(className) || mcpNameBiMap.containsKey(className);// || (!classNameBiMap.isEmpty() && className.indexOf('/') == -1); // MCPC+ - we're pre-deobfuscated - TODO: remove after #643
+        return classNameBiMap.containsKey(className) || mcpNameBiMap.containsKey(className) || (!classNameBiMap.isEmpty() && className.indexOf('/') == -1);
     }
 
     private void parseField(String[] parts)
