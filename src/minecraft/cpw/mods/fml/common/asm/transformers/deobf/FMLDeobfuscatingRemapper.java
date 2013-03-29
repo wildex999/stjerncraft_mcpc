@@ -49,6 +49,8 @@ import com.google.common.io.InputSupplier;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.RelaunchClassLoader;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 
 public class FMLDeobfuscatingRemapper extends Remapper {
     public static final FMLDeobfuscatingRemapper INSTANCE = new FMLDeobfuscatingRemapper();
@@ -137,12 +139,40 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         String newSrg = parts[2];
         int lastNew = newSrg.lastIndexOf('/');
         String newName = newSrg.substring(lastNew+1);
+        oldName += ":" + getFieldType(cl, oldName); // MCPC+ - add type info
         if (!rawFieldMaps.containsKey(cl))
         {
             rawFieldMaps.put(cl, Maps.<String,String>newHashMap());
         }
         rawFieldMaps.get(cl).put(oldName, newName);
     }
+
+    // MCPC+ start - lookup field type descriptor
+    @SuppressWarnings("unchecked")
+    private String getFieldType(String owner, String name) {
+        try
+        {
+            byte[] classBytes = classLoader.getClassBytes(owner);
+            if (classBytes == null)
+            {
+                return "";
+            }
+            ClassReader cr = new ClassReader(classBytes);
+            ClassNode classNode = new ClassNode();
+            cr.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+            for (FieldNode fieldNode : (List<FieldNode>) classNode.fields) {
+                if (fieldNode.name.equals(name)) {
+                    return fieldNode.desc;
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    // MCPC+ end
 
     private void parseClass(Builder<String, String> builder, String[] parts)
     {
@@ -180,7 +210,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             return name;
         }
         Map<String, String> fieldMap = getFieldMap(owner);
-        return fieldMap!=null && fieldMap.containsKey(name) ? fieldMap.get(name) : name;
+        return fieldMap!=null && fieldMap.containsKey(name+":"+desc) ? fieldMap.get(name+":"+desc) : name; // MCPC+ - add desc
     }
 
     @Override
