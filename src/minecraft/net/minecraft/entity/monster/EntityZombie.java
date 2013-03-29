@@ -25,7 +25,10 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-import org.bukkit.event.entity.EntityCombustEvent; // CraftBukkit
+//CraftBukkit start
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
+//CraftBukkit end
 
 public class EntityZombie extends EntityMob
 {
@@ -211,7 +214,16 @@ public class EntityZombie extends EntityMob
 
         if (flag && this.getHeldItem() == null && this.isBurning() && this.rand.nextFloat() < (float)this.worldObj.difficultySetting * 0.3F)
         {
-            par1Entity.setFire(2 * this.worldObj.difficultySetting);
+            // CraftBukkit start
+            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this.getBukkitEntity(), par1Entity.getBukkitEntity(), 2 * this.worldObj.difficultySetting);
+            this.worldObj.getServer().getPluginManager().callEvent(event);
+
+            if (!event.isCancelled())
+            {
+                par1Entity.setFire(event.getDuration());
+            }
+
+            // CraftBukkit end
         }
 
         return flag;
