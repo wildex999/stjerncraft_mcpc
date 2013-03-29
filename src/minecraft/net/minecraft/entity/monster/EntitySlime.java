@@ -1,6 +1,11 @@
 package net.minecraft.entity.monster;
 
-import org.bukkit.event.entity.SlimeSplitEvent; // CraftBukkit
+// CraftBukkit start
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.SlimeSplitEvent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -11,9 +16,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
+// CraftBukkit end
 
 public class EntitySlime extends EntityLiving implements IMob
 {
+    /** Chances for slimes to spawn in swamps for every moon phase. */
     private static final float[] spawnChances = new float[] {1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
     public float field_70813_a;
     public float field_70811_b;
@@ -21,6 +28,7 @@ public class EntitySlime extends EntityLiving implements IMob
 
     /** the time between each jump of the slime */
     private int slimeJumpDelay = 0;
+    private Entity lastTarget; // CraftBukkit
 
     public EntitySlime(World par1World)
     {
@@ -158,18 +166,37 @@ public class EntitySlime extends EntityLiving implements IMob
     protected void updateEntityActionState()
     {
         this.despawnEntity();
-        EntityPlayer entityplayer = this.worldObj.getClosestVulnerablePlayerToEntity(this, 16.0D); // CraftBukkit TODO: EntityTargetEvent
+        // CraftBukkit start
+        Entity entityhuman = this.worldObj.getClosestVulnerablePlayerToEntity(this, 16.0D); // EntityHuman -> Entity
+        EntityTargetEvent event = null;
 
-        if (entityplayer != null)
+        if (entityhuman != null && !entityhuman.equals(lastTarget))
         {
-            this.faceEntity(entityplayer, 10.0F, 20.0F);
+            event = CraftEventFactory.callEntityTargetEvent(this, entityhuman, EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
+        }
+        else if (lastTarget != null && entityhuman == null)
+        {
+            event = CraftEventFactory.callEntityTargetEvent(this, entityhuman, EntityTargetEvent.TargetReason.FORGOT_TARGET);
+        }
+
+        if (event != null && !event.isCancelled())
+        {
+            entityhuman = event.getTarget() == null ? null : ((CraftEntity) event.getTarget()).getHandle();
+        }
+
+        this.lastTarget = entityhuman;
+        // CraftBukkit end
+
+        if (entityhuman != null)
+        {
+            this.faceEntity(entityhuman, 10.0F, 20.0F);
         }
 
         if (this.onGround && this.slimeJumpDelay-- <= 0)
         {
             this.slimeJumpDelay = this.getJumpDelay();
 
-            if (entityplayer != null)
+            if (entityhuman != null)
             {
                 this.slimeJumpDelay /= 3;
             }
