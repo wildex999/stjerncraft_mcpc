@@ -57,25 +57,28 @@ public class BlockPressurePlate extends BlockBasePressurePlate
             while (iterator.hasNext())
             {
                 Entity entity = (Entity)iterator.next();
-                // CraftBukkit start - Fire interact event when turning on a pressure plate
-                org.bukkit.World bworld = par1World.getWorld();
-                org.bukkit.plugin.PluginManager manager = par1World.getServer().getPluginManager();
-                org.bukkit.event.Cancellable cancellable;
+                // CraftBukkit start - Call interact event when turning on a pressure plate
+                if (this.func_94350_c(par1World.getBlockMetadata(par2, par3, par4)) == 0)
+                {
+                    org.bukkit.World bworld = par1World.getWorld();
+                    org.bukkit.plugin.PluginManager manager = par1World.getServer().getPluginManager();
+                    org.bukkit.event.Cancellable cancellable;
 
-                if (entity instanceof EntityPlayer)
-                {
-                    cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) entity, org.bukkit.event.block.Action.PHYSICAL, par2, par3, par4, -1, null);
-                }
-                else
-                {
-                    cancellable = new EntityInteractEvent(entity.getBukkitEntity(), bworld.getBlockAt(par2, par3, par4));
-                    manager.callEvent((EntityInteractEvent) cancellable);
-                }
+                    if (entity instanceof EntityPlayer)
+                    {
+                        cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) entity, org.bukkit.event.block.Action.PHYSICAL, par2, par3, par4, -1, null);
+                    }
+                    else
+                    {
+                        cancellable = new EntityInteractEvent(entity.getBukkitEntity(), bworld.getBlockAt(par2, par3, par4));
+                        manager.callEvent((EntityInteractEvent) cancellable);
+                    }
 
-                // We only want to block turning the plate on if all events are cancelled
-                if (cancellable.isCancelled())
-                {
-                    continue;
+                    // We only want to block turning the plate on if all events are cancelled
+                    if (cancellable.isCancelled())
+                    {
+                        continue;
+                    }
                 }
 
                 // CraftBukkit end
