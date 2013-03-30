@@ -2858,7 +2858,7 @@ public abstract class World implements IBlockAccess
     public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
     {
         if (par4TileEntity == null || par4TileEntity.isInvalid())
-            {
+        {
             return;
         }
 
@@ -2870,26 +2870,25 @@ public abstract class World implements IBlockAccess
                 while (iterator.hasNext())
                 {
                     TileEntity tileentity1 = (TileEntity)iterator.next();
-
+    
                     if (tileentity1.xCoord == par1 && tileentity1.yCoord == par2 && tileentity1.zCoord == par3)
                     {
                         tileentity1.invalidate();
                         iterator.remove();
                     }
                 }
-
-                this.addedTileEntityList.add(par4TileEntity);
+                addedTileEntityList.add(par4TileEntity);
             }
             else
             {
-                this.loadedTileEntityList.add(par4TileEntity);
-                Chunk chunk = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
-
-                if (chunk != null)
-                {
-                    chunk.setChunkBlockTileEntity(par1 & 15, par2, par3 & 15, par4TileEntity);
-                }
+                loadedTileEntityList.add(par4TileEntity);
             }
+        }
+
+        Chunk chunk = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+        if (chunk != null)
+        {
+            chunk.setChunkBlockTileEntity(par1 & 15, par2, par3 & 15, par4TileEntity);
         }
     }
 
