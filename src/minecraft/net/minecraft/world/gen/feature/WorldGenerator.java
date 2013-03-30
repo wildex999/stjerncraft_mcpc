@@ -48,4 +48,29 @@ public abstract class WorldGenerator
             world.setTypeIdAndData(i, j, k, l, i1);
         }
     }
+    
+    // MCPC+ start - vanilla compatibility
+    /**
+     * Sets the block without metadata in the world, notifying neighbors if enabled.
+     */
+    protected void setBlock(World par1World, int par2, int par3, int par4, int par5)
+    {
+        this.setBlockAndMetadata(par1World, par2, par3, par4, par5, 0);
+    }
+
+    /**
+     * Sets the block in the world, notifying neighbors if enabled.
+     */
+    protected void setBlockAndMetadata(World par1World, int par2, int par3, int par4, int par5, int par6)
+    {
+        if (this.doBlockNotify)
+        {
+            par1World.setBlock(par2, par3, par4, par5, par6, 3);
+        }
+        else
+        {
+            par1World.setBlock(par2, par3, par4, par5, par6, 2);
+        }
+    }
+    // MCPC+ end    
 }
