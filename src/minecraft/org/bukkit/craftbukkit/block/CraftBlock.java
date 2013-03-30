@@ -31,8 +31,10 @@ public class CraftBlock implements Block {
     private final int x;
     private final int y;
     private final int z;
-    private static final Biome BIOME_MAPPING[];
-    private static final net.minecraft.world.biome.BiomeGenBase BIOMEBASE_MAPPING[];
+    // MCPC+ start - add support for custom biomes
+    private static final Biome[] BIOME_MAPPING = new Biome[net.minecraft.world.biome.BiomeGenBase.biomeList.length];
+    private static final net.minecraft.world.biome.BiomeGenBase[] BIOMEBASE_MAPPING = new net.minecraft.world.biome.BiomeGenBase[net.minecraft.world.biome.BiomeGenBase.biomeList.length];
+    // MCPC+ end
     
     public CraftBlock(CraftChunk chunk, int x, int y, int z) {
         this.x = x;
@@ -438,8 +440,8 @@ public class CraftBlock implements Block {
 
     /* Build biome index based lookup table for BiomeBase to Biome mapping */
     static {
-        BIOME_MAPPING = new Biome[net.minecraft.world.biome.BiomeGenBase.biomeList.length];
-        BIOMEBASE_MAPPING = new net.minecraft.world.biome.BiomeGenBase[Biome.values().length];
+        //BIOME_MAPPING = new Biome[net.minecraft.world.biome.BiomeGenBase.biomeList.length]; // MCPC+ - move up
+        //BIOMEBASE_MAPPING = new net.minecraft.world.biome.BiomeGenBase[Biome.values().length]; // MCPC+ - move up
         BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.swampland.biomeID] = Biome.SWAMPLAND;
         BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.forest.biomeID] = Biome.FOREST;
         BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.taiga.biomeID] = Biome.TAIGA;
@@ -467,7 +469,15 @@ public class CraftBlock implements Block {
         /* Helps avoid missed biomes when we upgrade bukkit to new code with new biomes */
         for (int i = 0; i < BIOME_MAPPING.length; i++) {
             if ((net.minecraft.world.biome.BiomeGenBase.biomeList[i] != null) && (BIOME_MAPPING[i] == null)) {
-                throw new IllegalArgumentException("Missing Biome mapping for BiomeBase[" + i + "]");
+                // MCPC+ start - add support for mod biomes
+                //throw new IllegalArgumentException("Missing Biome mapping for BiomeBase[" + i + "]");
+                String name = net.minecraft.world.biome.BiomeGenBase.biomeList[i].biomeName;
+                int id = net.minecraft.world.biome.BiomeGenBase.biomeList[i].biomeID;
+
+                System.out.println("Adding biome mapping " + net.minecraft.world.biome.BiomeGenBase.biomeList[i].biomeID + " " + name + " at BiomeBase[" + i + "]");
+                net.minecraftforge.common.EnumHelper.addBukkitBiome(name); // Forge
+                BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.biomeList[i].biomeID] = ((Biome) Enum.valueOf(Biome.class, name));
+                // MCPC+ end           
             }
             if (BIOME_MAPPING[i] != null) {  /* Build reverse mapping for setBiome */
                 BIOMEBASE_MAPPING[BIOME_MAPPING[i].ordinal()] = net.minecraft.world.biome.BiomeGenBase.biomeList[i];
