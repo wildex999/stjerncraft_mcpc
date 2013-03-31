@@ -1179,7 +1179,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
     public String getServerModName()
     {
-        return "mcpc,craftbukkit,forge,fml"; // MCPC+
+        return FMLCommonHandler.instance().getModName();
     }
 
     /**

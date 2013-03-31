@@ -142,10 +142,7 @@ public class LiquidStack
         return liquidstack.itemID == 0 ? null : liquidstack;
     }
 
-    /* MCPC+ - disable client
-    @SideOnly(CLIENT)
     private String textureSheet = "/terrain.png";
-    // MCPC+ end */
 
     /**
      * Return the textureSheet used for this liquid stack's texture Icon
@@ -157,7 +154,7 @@ public class LiquidStack
      */
     public String getTextureSheet()
     {
-        return ""; //textureSheet; // MCPC+ - disable client
+        return textureSheet;
     }
 
     /**
@@ -170,7 +167,7 @@ public class LiquidStack
      */
     public LiquidStack setTextureSheet(String textureSheet)
     {
-        //this.textureSheet = textureSheet; // MCPC+ - disable client
+        this.textureSheet = textureSheet;
         return this;
     }
     @SideOnly(CLIENT)
