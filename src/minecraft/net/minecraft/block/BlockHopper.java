@@ -226,7 +226,7 @@ public class BlockHopper extends BlockContainer
 
     public static int func_94451_c(int par0)
     {
-        return par0 & 7;
+        return Math.min(par0 & 7, 5); // CraftBukkit - Fix AIOOBE in callers
     }
 
     public static boolean func_94452_d(int par0)
