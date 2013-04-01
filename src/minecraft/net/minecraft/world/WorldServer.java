@@ -41,10 +41,14 @@ import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerManager;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityBeacon;
+import net.minecraft.tileentity.TileEntityBrewingStand;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.tileentity.TileEntityDropper;
 import net.minecraft.tileentity.TileEntityEnderChest;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.tileentity.TileEntityNote;
 import net.minecraft.tileentity.TileEntityRecordPlayer;
@@ -199,6 +203,13 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                 result = fixTileEntity(i, j, k, type, result);
             }
         }
+        else if (type == Block.dropper.blockID)
+        {
+            if (!(result instanceof TileEntityDropper))
+            {
+                result = fixTileEntity(i, j, k, type, result);
+            }
+        }
         else if (type == Block.dispenser.blockID)
         {
             if (!(result instanceof TileEntityDispenser))
@@ -237,6 +248,27 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         else if (type == Block.enderChest.blockID)
         {
             if (!(result instanceof TileEntityEnderChest))
+            {
+                result = fixTileEntity(i, j, k, type, result);
+            }
+        }
+        else if (type == Block.brewingStand.blockID)
+        {
+            if (!(result instanceof TileEntityBrewingStand))
+            {
+                result = fixTileEntity(i, j, k, type, result);
+            }
+        }
+        else if (type == Block.beacon.blockID)
+        {
+            if (!(result instanceof TileEntityBeacon))
+            {
+                result = fixTileEntity(i, j, k, type, result);
+            }
+        }
+        else if (type == Block.hopperBlock.blockID)
+        {
+            if (!(result instanceof TileEntityHopper))
             {
                 result = fixTileEntity(i, j, k, type, result);
             }
