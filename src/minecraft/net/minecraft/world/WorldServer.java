@@ -285,6 +285,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         if (Block.blocksList[type] instanceof BlockContainer)
         {
             TileEntity replacement = ((BlockContainer) Block.blocksList[type]).createNewTileEntity(this);
+            replacement.worldObj = this;
             this.setBlockTileEntity(x, y, z, replacement);
             return replacement;
         }
