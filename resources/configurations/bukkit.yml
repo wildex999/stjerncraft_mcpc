@@ -44,6 +44,7 @@ mcpc:
     connection-logging: false
     dump-materials: false
     infinite-water-source: true
+    flowing-lava-decay: false
     fake-players:
       com/eloraam/redpower/machine/EntityPlayerFake:
         username: '[RedPower]'

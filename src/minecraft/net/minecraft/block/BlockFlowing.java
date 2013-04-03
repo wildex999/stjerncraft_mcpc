@@ -130,6 +130,13 @@ public class BlockFlowing extends BlockFluid
                 {
                     this.updateFlow(par1World, par2, par3, par4);
                 }
+                // MCPC+ start - allow lava decaying at a 'natural' rate - see https://mojang.atlassian.net/browse/MC-4631 Lava decay fails to schedule block update
+                else if (((CraftServer)(Bukkit.getServer())).getFlowingLavaDecay())
+                {
+                    // Ensure that even if the flow decay was skipped, it will retry at the material's natural flow period.
+                    par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
+                }
+                // MCPC+ end
             }
             else
             {

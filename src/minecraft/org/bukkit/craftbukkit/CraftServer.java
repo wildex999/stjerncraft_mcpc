@@ -571,6 +571,10 @@ public final class CraftServer implements Server {
         return this.configuration.getBoolean("mcpc.infinite-water-source", true);
     }
 
+    public boolean getFlowingLavaDecay() {
+        return this.configuration.getBoolean("mcpc.flowing-lava-decay", false);
+    }
+
     public boolean getDumpMaterials() {
         return this.configuration.getBoolean("mcpc.dump-materials", false);
     }
