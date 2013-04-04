@@ -427,7 +427,18 @@ public class TileEntityHopper extends TileEntity implements Hopper
             ItemStack itemstack1 = itemstack.copy();
             // CraftBukkit start - Call event on collection of items from inventories into the hopper
             CraftItemStack oitemstack = CraftItemStack.asCraftMirror(par1IInventory.decrStackSize(par2, 1));
-            Inventory sourceInventory = par1IInventory.getOwner() != null ? par1IInventory.getOwner().getInventory() : null;
+            Inventory sourceInventory;
+
+            // Have to special case large chests as they work oddly
+            if (par1IInventory instanceof InventoryLargeChest)
+            {
+                sourceInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) par1IInventory);
+            }
+            else
+            {
+                sourceInventory = par1IInventory.getOwner().getInventory();
+            }
+
             InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), par0Hopper.getOwner().getInventory(), false);
             par0Hopper.getWorldObj().getServer().getPluginManager().callEvent(event);
 
