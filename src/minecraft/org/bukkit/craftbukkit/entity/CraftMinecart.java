@@ -5,10 +5,16 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Minecart;
 import org.bukkit.util.Vector;
 
-public abstract class CraftMinecart extends CraftVehicle implements Minecart {
+public class CraftMinecart extends CraftVehicle implements Minecart { // MCPC+ - concrete for modded minecarts
     public CraftMinecart(CraftServer server, net.minecraft.entity.item.EntityMinecart entity) {
         super(server, entity);
     }
+
+    // MCPC+ start
+    public org.bukkit.entity.EntityType getType() {
+        return org.bukkit.entity.EntityType.MINECART;
+    }
+    // MCPC+ end
 
     public void setDamage(int damage) {
         getHandle().setDamage(damage);
