@@ -605,7 +605,7 @@ public class Chunk
      */
     public int getBlockID(int par1, int par2, int par3)
     {
-        if (par2 >> 4 >= this.storageArrays.length || par2 >> 4 < 0)
+        if (par2 >> 4 >= this.storageArrays.length)
         {
             return 0;
         }
@@ -621,7 +621,7 @@ public class Chunk
      */
     public int getBlockMetadata(int par1, int par2, int par3)
     {
-        if (par2 >> 4 >= this.storageArrays.length || par2 >> 4 < 0)
+        if (par2 >> 4 >= this.storageArrays.length)
         {
             return 0;
         }
@@ -654,11 +654,6 @@ public class Chunk
         }
         else
         {
-            if (par2 >> 4 >= storageArrays.length || par2 >> 4 < 0)
-            {
-                return false;
-            }
-
             ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
             boolean flag = false;
 
@@ -783,7 +778,7 @@ public class Chunk
      */
     public boolean setBlockMetadata(int par1, int par2, int par3, int par4)
     {
-        ExtendedBlockStorage extendedblockstorage = (par2 >> 4 >= storageArrays.length || par2 >> 4 < 0 ? null : storageArrays[par2 >> 4]);
+        ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
 
         if (extendedblockstorage == null)
         {
@@ -824,7 +819,7 @@ public class Chunk
      */
     public int getSavedLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
     {
-        ExtendedBlockStorage extendedblockstorage = (par3 >> 4 >= storageArrays.length || par3 >> 4 < 0 ? null : storageArrays[par3 >> 4]);
+        ExtendedBlockStorage extendedblockstorage = this.storageArrays[par3 >> 4];
         return extendedblockstorage == null ? (this.canBlockSeeTheSky(par2, par3, par4) ? par1EnumSkyBlock.defaultLightValue : 0) : (par1EnumSkyBlock == EnumSkyBlock.Sky ? (this.worldObj.provider.hasNoSky ? 0 : extendedblockstorage.getExtSkylightValue(par2, par3 & 15, par4)) : (par1EnumSkyBlock == EnumSkyBlock.Block ? extendedblockstorage.getExtBlocklightValue(par2, par3 & 15, par4) : par1EnumSkyBlock.defaultLightValue));
     }
 
@@ -834,11 +829,6 @@ public class Chunk
      */
     public void setLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4, int par5)
     {
-        if (par3 >> 4 >= storageArrays.length || par3 >> 4 < 0)
-        {
-            return;
-        }
-
         ExtendedBlockStorage extendedblockstorage = this.storageArrays[par3 >> 4];
 
         if (extendedblockstorage == null)
@@ -867,7 +857,7 @@ public class Chunk
      */
     public int getBlockLightValue(int par1, int par2, int par3, int par4)
     {
-        ExtendedBlockStorage extendedblockstorage = (par2 >> 4 >= storageArrays.length || par2 >> 4 < 0 ? null : storageArrays[par2 >> 4]);
+        ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
 
         if (extendedblockstorage == null)
         {
