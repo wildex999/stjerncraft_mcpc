@@ -777,8 +777,9 @@ public final class CraftServer implements Server {
         }
 
         internal.mapStorage = console.worlds.get(0).mapStorage;
+        internal.worldScoreboard = getScoreboardManager().getMainScoreboard().getHandle();
 
-        internal.theEntityTracker = new net.minecraft.entity.EntityTracker(internal); // CraftBukkit
+        internal.theEntityTracker = new net.minecraft.entity.EntityTracker(internal);
         internal.addWorldAccess(new net.minecraft.world.WorldManager(console, internal));
         internal.difficultySetting = 1;
         internal.setAllowedSpawnTypes(true, true);

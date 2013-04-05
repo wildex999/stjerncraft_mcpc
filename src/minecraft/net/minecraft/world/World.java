@@ -192,7 +192,7 @@ public abstract class World implements IBlockAccess
     /** The world-local pool of vectors */
     private final Vec3Pool vecPool = new Vec3Pool(300, 2000);
     private final Calendar theCalendar = Calendar.getInstance();
-    protected Scoreboard worldScoreboard = new Scoreboard();
+    public Scoreboard worldScoreboard = new Scoreboard(); // CraftBukkit - protected -> public
     private final ILogAgent field_98181_L;
     private ArrayList collidingBoundingBoxes = new ArrayList();    
     private boolean scanningTileEntities;
