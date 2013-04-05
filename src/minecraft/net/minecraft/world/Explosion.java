@@ -327,8 +327,7 @@ public class Explosion
                         block.dropBlockAsItemWithChance(this.worldObj, i, j, k, this.worldObj.getBlockMetadata(i, j, k), event.getYield(), 0);
                     }
 
-                    this.worldObj.setBlock(i, j, k, 0, 0, 3);
-                    block.onBlockDestroyedByExplosion(this.worldObj, i, j, k, this);
+                    block.onBlockExploded(this.worldObj, i, j, k, this);
                 }
             }
         }

@@ -254,16 +254,17 @@ public class EnumHelper
         
         for (Field field : fields)
         {
-            if (field.getName().equals("$VALUES"))
+            String name = field.getName();
+            if (name.equals("$VALUES") || name.equals("ENUM$VALUES")) //Added 'ENUM$VALUES' because Eclipse's internal compiler doesn't follow standards
             {
                 valuesField = field;
                 break;
             }
         }
 
+        int flags = (FMLForgePlugin.RUNTIME_DEOBF ? Modifier.PUBLIC : Modifier.PRIVATE) | Modifier.STATIC | Modifier.FINAL | 0x1000 /*SYNTHETIC*/;
         if (valuesField == null)
         {
-            int flags = (FMLForgePlugin.RUNTIME_DEOBF ? Modifier.PUBLIC : Modifier.PRIVATE) | Modifier.STATIC | Modifier.FINAL | 0x1000 /*SYNTHETIC*/;
             String valueType = String.format("[L%s;", enumType.getName().replace('.', '/'));
     
             for (Field field : fields)
@@ -281,10 +282,12 @@ public class EnumHelper
         {
             FMLLog.severe("Could not find $VALUES field for enum: %s", enumType.getName());
             FMLLog.severe("Runtime Deobf: %s", FMLForgePlugin.RUNTIME_DEOBF);
+            FMLLog.severe("Flags: %s", String.format("%16s", Integer.toBinaryString(flags)).replace(' ', '0'));
             FMLLog.severe("Fields:");
             for (Field field : fields)
             {
-                FMLLog.severe("    %s: %s", field.getName(), field.getType().getName());
+                String mods = String.format("%16s", Integer.toBinaryString(field.getModifiers())).replace(' ', '0');
+                FMLLog.severe("       %s %s: %s", mods, field.getName(), field.getType().getName());
             }
             return null;
         }

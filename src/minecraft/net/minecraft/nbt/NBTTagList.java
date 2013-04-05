@@ -1,7 +1,5 @@
 package net.minecraft.nbt;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -32,7 +30,7 @@ public class NBTTagList extends NBTBase
     /**
      * Write the actual data contents of the tag, implemented in NBT extension classes
      */
-    void write(DataOutput par1DataOutput) throws IOException
+    void write(DataOutput par1DataOutput) //throws IOException // MCPC+ - remove throw, added by MCP
     {
         if (!this.tagList.isEmpty())
         {
@@ -43,8 +41,17 @@ public class NBTTagList extends NBTBase
             this.tagType = 1;
         }
 
-        par1DataOutput.writeByte(this.tagType);
-        par1DataOutput.writeInt(this.tagList.size());
+        // MCPC+ start - catch - remapping binary compatibility
+        try
+        {
+            par1DataOutput.writeByte(this.tagType);
+            par1DataOutput.writeInt(this.tagList.size());
+        }
+        catch (Throwable t)
+        {
+            throw new RuntimeException(t);
+        }
+        // MCPC+ end
 
         for (int i = 0; i < this.tagList.size(); ++i)
         {
@@ -55,10 +62,20 @@ public class NBTTagList extends NBTBase
     /**
      * Read the actual data contents of the tag, implemented in NBT extension classes
      */
-    void load(DataInput par1DataInput) throws IOException
+    void load(DataInput par1DataInput) //throws IOException // MCPC+ - remove throw, added by MCP
     {
-        this.tagType = par1DataInput.readByte();
-        int i = par1DataInput.readInt();
+        // MCPC+ start - catch - remapping binary compatibility
+        int i;
+        try
+        {
+            this.tagType = par1DataInput.readByte();
+            i = par1DataInput.readInt();
+        }
+        catch  (Throwable t)
+        {
+            throw new RuntimeException(t);
+        }
+        // MCPC+ end
         this.tagList = new ArrayList();
 
         for (int j = 0; j < i; ++j)
@@ -91,8 +108,6 @@ public class NBTTagList extends NBTBase
         this.tagType = par1NBTBase.getId();
         this.tagList.add(par1NBTBase);
     }
-
-    @SideOnly(Side.CLIENT)
 
     /**
      * Removes a tag at the given index.

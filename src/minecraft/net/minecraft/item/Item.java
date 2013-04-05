@@ -17,15 +17,16 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionHelper;
 import net.minecraft.stats.StatList;
+import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.WeightedRandomChestContent;
-import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ChestGenHooks;
+import net.minecraftforge.common.IArmorTextureProvider;
 
 public class Item
 {
@@ -950,4 +951,22 @@ public class Item
         return getDamageVsEntity(par1Entity);
     }
 
+    @Deprecated private final boolean isArmorProvider = this instanceof IArmorTextureProvider;
+    /**
+     * Called by RenderBiped and RenderPlayer to determine the armor texture that 
+     * should be use for the currently equiped item.
+     * This will only be called on instances of ItemArmor. 
+     * 
+     * Returning null from this function will use the default value.
+     * 
+     * @param stack ItemStack for the equpt armor
+     * @param entity The entity wearing the armor
+     * @param slot The slot the armor is in
+     * @param layer The render layer, either 1 or 2, 2 is only used for CLOTH armor by default
+     * @return Path of texture to bind, or null to use default
+     */
+    public String getArmorTexture(ItemStack stack, Entity entity, int slot, int layer)
+    {
+        return isArmorProvider ? ((IArmorTextureProvider)this).getArmorTextureFile(stack) : null;
+    }
 }

@@ -1914,6 +1914,23 @@ public class Block
     }
 
     /**
+     * Called when the block is destroyed by an explosion.
+     * Useful for allowing the block to take into account tile entities,
+     * metadata, etc. when exploded, before it is removed.
+     *
+     * @param world The current world
+     * @param x X Position
+     * @param y Y Position
+     * @param z Z Position
+     * @param Explosion The explosion instance affecting the block
+     */
+    public void onBlockExploded(World world, int x, int y, int z, Explosion explosion)
+    {
+        world.setBlockToAir(x, y, z);
+        onBlockDestroyedByExplosion(world, x, y, z, explosion);
+    }
+
+    /**
      * Determine if this block can make a redstone connection on the side provided,
      * Useful to control which sides are inputs and outputs for redstone wires.
      *

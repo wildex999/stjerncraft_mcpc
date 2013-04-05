@@ -2154,8 +2154,16 @@ public abstract class World implements IBlockAccess
 
             if (entity.isDead)
             {
-                // If it's dead, move it to the unloaded list for removal on the next tick
-                unloadedEntityList.add(entity);
+                j = entity.chunkCoordX;
+                k = entity.chunkCoordZ;
+
+                if (entity.addedToChunk && this.chunkExists(j, k))
+                {
+                    this.getChunkFromChunkCoords(j, k).removeEntity(entity);
+                }
+
+                this.loadedEntityList.remove(i--);
+                this.releaseEntitySkin(entity);
             }
 
             this.theProfiler.endSection();

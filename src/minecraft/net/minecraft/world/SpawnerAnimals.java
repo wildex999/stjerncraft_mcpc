@@ -212,7 +212,7 @@ public final class SpawnerAnimals
                                                                 par0WorldServer.addEntity(entityliving, CreatureSpawnEvent.SpawnReason.NATURAL);
 
                                                                 // CraftBukkit end
-                                                                if (j2 >= entityliving.getMaxSpawnedInChunk())
+                                                                if (j2 >= ForgeEventFactory.getMaxSpawnPackSize(entityliving))
                                                                 {
                                                                     continue label110;
                                                                 }
