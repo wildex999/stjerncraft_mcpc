@@ -661,6 +661,37 @@ public abstract class ServerConfigurationManager
         return entityplayermp1;
     }
 
+    public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
+    {
+        transferPlayerToDimension(par1EntityPlayerMP, par2, mcServer.worldServerForDimension(par2).getDefaultTeleporter());
+    }
+
+    public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2, Teleporter teleporter)
+    {
+        int j = par1EntityPlayerMP.dimension;
+        WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+        par1EntityPlayerMP.dimension = par2;
+        WorldServer worldserver1 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, worldserver1.getWorldInfo().getTerrainType(), worldserver1.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
+        worldserver.removePlayerEntityDangerously(par1EntityPlayerMP);
+        par1EntityPlayerMP.isDead = false;
+        this.transferEntityToWorld(par1EntityPlayerMP, j, worldserver, worldserver1, teleporter);
+        this.func_72375_a(par1EntityPlayerMP, worldserver);
+        par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
+        par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
+        this.updateTimeAndWeatherForPlayer(par1EntityPlayerMP, worldserver1);
+        this.syncPlayerInventory(par1EntityPlayerMP);
+        Iterator iterator = par1EntityPlayerMP.getActivePotionEffects().iterator();
+
+        while (iterator.hasNext())
+        {
+            PotionEffect potioneffect = (PotionEffect)iterator.next();
+            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet41EntityEffect(par1EntityPlayerMP.entityId, potioneffect));
+        }
+
+        GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
+    }
+
     // CraftBukkit start - Replaced the standard handling of portals with a more customised method.
     public void changeDimension(EntityPlayerMP entityplayermp, int i, TeleportCause cause)
     {
@@ -743,6 +774,65 @@ public abstract class ServerConfigurationManager
         // CraftBukkit start - Split into modular functions
         Location exit = this.calculateTarget(par1Entity.getBukkitEntity().getLocation(), par4WorldServer);
         this.repositionEntity(par1Entity, exit, true);
+    }
+
+    public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer, Teleporter teleporter)
+    {
+        WorldProvider pOld = par3WorldServer.provider;
+        WorldProvider pNew = par4WorldServer.provider;
+        double moveFactor = pOld.getMovementFactor() / pNew.getMovementFactor();
+        double d0 = par1Entity.posX * moveFactor;
+        double d1 = par1Entity.posZ * moveFactor;
+        double d3 = par1Entity.posX;
+        double d4 = par1Entity.posY;
+        double d5 = par1Entity.posZ;
+        float f = par1Entity.rotationYaw;
+        par3WorldServer.theProfiler.startSection("moving");
+
+        if (par1Entity.dimension == 1)
+        {
+            ChunkCoordinates chunkcoordinates;
+
+            if (par2 == 1)
+            {
+                chunkcoordinates = par4WorldServer.getSpawnPoint();
+            }
+            else
+            {
+                chunkcoordinates = par4WorldServer.getEntrancePortalLocation();
+            }
+
+            d0 = (double)chunkcoordinates.posX;
+            par1Entity.posY = (double)chunkcoordinates.posY;
+            d1 = (double)chunkcoordinates.posZ;
+            par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, 90.0F, 0.0F);
+
+            if (par1Entity.isEntityAlive())
+            {
+                par3WorldServer.updateEntityWithOptionalForce(par1Entity, false);
+            }
+        }
+
+        par3WorldServer.theProfiler.endSection();
+
+        if (par2 != 1)
+        {
+            par3WorldServer.theProfiler.startSection("placing");
+            d0 = (double)MathHelper.clamp_int((int)d0, -29999872, 29999872);
+            d1 = (double)MathHelper.clamp_int((int)d1, -29999872, 29999872);
+
+            if (par1Entity.isEntityAlive())
+            {
+                par4WorldServer.spawnEntityInWorld(par1Entity);
+                par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
+                par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
+                teleporter.placeInPortal(par1Entity, d3, d4, d5, f);
+            }
+
+            par3WorldServer.theProfiler.endSection();
+        }
+
+        par1Entity.setWorld(par4WorldServer);
     }
 
     // Copy of original a(Entity, int, WorldServer, WorldServer) method with only location calculation logic
