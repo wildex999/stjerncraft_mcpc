@@ -394,7 +394,7 @@ public class EntityBoat extends Entity
 
             if (this.isCollidedHorizontally && d3 > 0.2D)
             {
-                if (!this.worldObj.isRemote)
+                if (!this.worldObj.isRemote && !this.isDead)   // Spigot - Boat dupe fix
                 {
                     // CraftBukkit start
                     Vehicle vehicle = (Vehicle) this.getBukkitEntity();
