@@ -343,9 +343,10 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
                     // MCPC - fixes unable to locate sign bug, do not remove
                     //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
                     //ToDo: Find a way to efficiently clean abandoned chunks.
-                    // MCPC+ - keep the 16 to include tile entity updates on chunk boundaries - see #677
-                    arraylist1.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 16));
+                    // MCPC+ - add entities from loaded chunk instead of bounding box, see #677
+                    //arraylist1.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 16));
                     //arraylist1.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 15, 256, chunkcoordintpair.chunkZPos * 16 + 15));
+                    arraylist1.addAll(this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos).chunkTileEntityMap.values());
                 }
             }
 
