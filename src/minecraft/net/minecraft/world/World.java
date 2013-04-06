@@ -3830,6 +3830,11 @@ public abstract class World implements IBlockAccess
         {
             if (par7Entity instanceof EntityPlayer)
             {
+                if (!getServer().getSimulateBlockPlaceEvent(block1.blockID)) {
+                    // Not all mods react well to our block placement simulation. See issue #456, among others.
+                    return result;
+                }
+
                 EntityPlayer player = (EntityPlayer)par7Entity;
                 ItemStack itemstack = (player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem() : null);
                 org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(this, par2, par3, par4);
