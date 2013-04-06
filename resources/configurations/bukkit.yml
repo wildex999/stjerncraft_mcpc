@@ -46,7 +46,7 @@ mcpc:
     infinite-water-source: true
     flowing-lava-decay: false
     simulate-block-place-event-IDs: []
-    simulate-block-place-event-default: true
+    simulate-block-place-event-default: false
     fake-players:
       com/eloraam/redpower/machine/EntityPlayerFake:
         username: '[RedPower]'
