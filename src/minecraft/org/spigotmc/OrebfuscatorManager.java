@@ -12,7 +12,6 @@ public class OrebfuscatorManager {
     private static Byte[] ores;
     private static final CustomTimingsHandler obfuscate = new CustomTimingsHandler("xray - obfuscate");
     private static final CustomTimingsHandler update = new CustomTimingsHandler("xray - update");
-    private static int ITERATOR = 0;
 
     // Default blocks
     static {
@@ -59,6 +58,7 @@ public class OrebfuscatorManager {
     }
 
     public static void obfuscate(int chunkX, int chunkY, int bitmask, byte[] buffer, net.minecraft.world.World world, int initialRadius) {
+        int ITERATOR = 0;
         if (world.getServer().orebfuscatorEnabled && world.getWorld().obfuscated) {
             int index = 0;
             int startX = chunkX << 4;
