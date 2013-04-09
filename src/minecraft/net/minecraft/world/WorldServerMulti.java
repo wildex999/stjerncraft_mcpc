@@ -3,6 +3,7 @@ package net.minecraft.world;
 import net.minecraft.logging.ILogAgent;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.storage.DerivedWorldInfo;
 import net.minecraft.world.storage.ISaveHandler;
 public class WorldServerMulti extends WorldServer
 {
@@ -20,7 +21,9 @@ public class WorldServerMulti extends WorldServer
 
     // MCPC+ start - vanilla compatibility
     public WorldServerMulti(MinecraftServer minecraftserver, ISaveHandler isavehandler, String s, int i, WorldSettings worldsettings, WorldServer worldserver, Profiler profiler, ILogAgent ilogagent) {
-        this(minecraftserver, isavehandler, s, i, worldsettings, worldserver, profiler, ilogagent, null, null);
+        super(minecraftserver, isavehandler, s, i, ilogagent, worldsettings, profiler);
+        this.mapStorage = worldserver.mapStorage;
+        this.worldInfo = new DerivedWorldInfo(worldserver.getWorldInfo());
     }
     // MCPC+ end
 }
