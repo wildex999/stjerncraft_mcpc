@@ -47,7 +47,7 @@ public class PlayerManager
         {
             throw new IllegalArgumentException("Too big view radius!");
         }
-        else if (par2 < 3)
+        else if (par2 < 1) // Spigot
         {
             throw new IllegalArgumentException("Too small view radius!");
         }
