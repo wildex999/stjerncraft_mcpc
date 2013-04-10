@@ -982,4 +982,16 @@ public class Item
     {
         return isArmorProvider ? ((IArmorTextureProvider)this).getArmorTextureFile(stack) : null;
     }
+    
+    /**
+     * Called when a entity tries to play the 'swing' animation.
+     *  
+     * @param entityLiving The entity swinging the item.
+     * @param stack The Item stack
+     * @return True to cancel any further processing by EntityLiving 
+     */
+    public boolean onEntitySwing(EntityLiving entityLiving, ItemStack stack)
+    {
+        return false;
+    }    
 }

@@ -3068,6 +3068,17 @@ public abstract class EntityLiving extends Entity
      */
     public void swingItem()
     {
+        ItemStack stack = this.getHeldItem();
+
+        if (stack != null && stack.getItem() != null)
+        {
+            Item item = stack.getItem();
+            if (item.onEntitySwing(this, stack))
+            {
+                return;
+            }
+        }
+
         if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
         {
             this.swingProgressInt = -1;
