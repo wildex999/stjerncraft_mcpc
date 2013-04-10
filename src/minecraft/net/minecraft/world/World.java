@@ -687,20 +687,18 @@ public abstract class World implements IBlockAccess
      */
     public Chunk getChunkFromChunkCoords(int par1, int par2)
     {
-        Chunk result = null;
+        // Spigot start - Alternate, sync-free-but-safe chunk reference cache
+        //synchronized (this.chunkLock) {
+        Chunk result = this.lastChunkAccessed; // Exploit fact that read is atomic
 
-        synchronized (this.chunkLock)
+        if (result == null || result.xPosition != par1 || result.zPosition != par2)
         {
-            if (this.lastChunkAccessed == null || this.lastXAccessed != par1 || this.lastZAccessed != par2)
-            {
-                this.lastChunkAccessed = this.chunkProvider.provideChunk(par1, par2);
-                this.lastXAccessed = par1;
-                this.lastZAccessed = par2;
-            }
-
-            result = this.lastChunkAccessed;
+            result = this.chunkProvider.provideChunk(par1, par2);
+            this.lastChunkAccessed = result; // Exploit fact that write is atomic
         }
 
+        //}
+        // Spigot end
         return result;
     }
     // CraftBukkit end
