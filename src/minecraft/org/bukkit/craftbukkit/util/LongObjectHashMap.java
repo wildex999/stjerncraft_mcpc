@@ -28,6 +28,7 @@ public class LongObjectHashMap<V> implements Cloneable, Serializable {
     private transient V[][]    values;
     private transient int      modCount;
     private transient int      size;
+    private final FlatMap<V> flat = new FlatMap<V>(); // Spigot
 
     public LongObjectHashMap() {
         initialize();
@@ -61,6 +62,8 @@ public class LongObjectHashMap<V> implements Cloneable, Serializable {
     }
 
     public V get(long key) {
+        V val = flat.get(key); // Spigot
+        if (val != null) return val; // Spigot
         int index = (int) (keyIndex(key) & (BUCKET_SIZE - 1));
         long[] inner = keys[index];
         if (inner == null) return null;
@@ -78,6 +81,7 @@ public class LongObjectHashMap<V> implements Cloneable, Serializable {
     }
 
     public V put(long key, V value) {
+        flat.put(key, value); // Spigot
         int index = (int) (keyIndex(key) & (BUCKET_SIZE - 1));
         long[] innerKeys = keys[index];
         V[] innerValues = values[index];
@@ -124,6 +128,7 @@ public class LongObjectHashMap<V> implements Cloneable, Serializable {
     }
 
     public V remove(long key) {
+        flat.put(key, null); // Spigot
         int index = (int) (keyIndex(key) & (BUCKET_SIZE - 1));
         long[] inner = keys[index];
         if (inner == null) {

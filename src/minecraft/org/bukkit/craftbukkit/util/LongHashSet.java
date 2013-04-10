@@ -31,6 +31,8 @@ public class LongHashSet {
     private int elements;
     private long[] values;
     private int modCount;
+    private static final Object PRESENT = new Object();
+    private final FlatMap<Object> flat = new FlatMap<Object>();
 
     public LongHashSet() {
         this(INITIAL_SIZE);
@@ -56,10 +58,12 @@ public class LongHashSet {
     }
 
     public boolean contains(int msw, int lsw) {
+        if (flat.get(msw, lsw) != null) return true; // Spigot
         return contains(LongHash.toLong(msw, lsw));
     }
 
     public boolean contains(long value) {
+        if (flat.get(value) != null) return true; // Spigot
         int hash = hash(value);
         int index = (hash & 0x7FFFFFFF) % values.length;
         int offset = 1;
@@ -82,6 +86,7 @@ public class LongHashSet {
     }
 
     public boolean add(long value) {
+        flat.put(value, PRESENT); // Spigot
         int hash = hash(value);
         int index = (hash & 0x7FFFFFFF) % values.length;
         int offset = 1;
@@ -125,10 +130,11 @@ public class LongHashSet {
     }
 
     public void remove(int msw, int lsw) {
+        flat.put(msw, lsw, null); // Spigot
         remove(LongHash.toLong(msw, lsw));
     }
 
-    public boolean remove(long value) {
+    private boolean remove(long value) { // Spigot
         int hash = hash(value);
         int index = (hash & 0x7FFFFFFF) % values.length;
         int offset = 1;
