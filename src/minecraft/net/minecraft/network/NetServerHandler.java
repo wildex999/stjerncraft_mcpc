@@ -1178,7 +1178,6 @@ public class NetServerHandler extends NetHandler
                 }
 
                 this.chat(s, par1Packet3Chat.canProcessAsync());
-                
                 // Spigot start
                 boolean isCounted = true;
 
@@ -1198,6 +1197,7 @@ public class NetServerHandler extends NetHandler
                 if (isCounted && chatSpamField.addAndGet(this, 20) > 200 && !this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.username))   // CraftBukkit use thread-safe spam
                 {
                     // Spigot end
+                    // CraftBukkit start
                     if (par1Packet3Chat.canProcessAsync())
                     {
                         Waitable waitable = new Waitable()
@@ -1958,10 +1958,13 @@ public class NetServerHandler extends NetHandler
                 {
                     for (i = 0; i < par1Packet130UpdateSign.signLines[j].length(); ++i)
                     {
-                        if (ChatAllowedCharacters.allowedCharacters.indexOf(par1Packet130UpdateSign.signLines[j].charAt(i)) < 0)
+                        // Spigot start
+                        if (!ChatAllowedCharacters.isAllowedCharacter(par1Packet130UpdateSign.signLines[j].charAt(i)))
                         {
                             flag = false;
+                            break;
                         }
+                        // Spigot end
                     }
                 }
 

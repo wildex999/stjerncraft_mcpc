@@ -39,8 +39,7 @@ public class Spigot {
         server.orebfuscatorDisabledWorlds = configuration.getStringList("orebfuscator.disabled-worlds");
 
         if (server.chunkGCPeriod == 0) {
-            server.getLogger().severe("[Spigot] You should not disable chunk-gc. Resetting period-in-ticks to 600 ticks.");
-            server.chunkGCPeriod = 600;
+            server.getLogger().severe("[Spigot] You should not disable chunk-gc, unexpected behaviour may occur!");
         }
     }
 }

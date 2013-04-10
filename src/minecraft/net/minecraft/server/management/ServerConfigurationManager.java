@@ -440,7 +440,7 @@ public abstract class ServerConfigurationManager
         }
         else if (!this.isAllowedToLogin(s))
         {
-            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, "You are not white-listed on this server!");
+            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, cserver.whitelistMessage); // Spigot
         }
         else
         {

@@ -94,11 +94,11 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
         synchronized (this.syncLockObject)
         {
             // Spigot start
-            AnvilChunkLoaderPending pendingchunktosave = pendingSaves.get(chunkcoordintpair);
+            AnvilChunkLoaderPending anvilchunkloaderpending = pendingSaves.get(chunkcoordintpair);
 
-            if (pendingchunktosave != null)
+            if (anvilchunkloaderpending != null)
             {
-                nbttagcompound = pendingchunktosave.nbtTags;
+                nbttagcompound = anvilchunkloaderpending.nbtTags;
             }
 
             /*
@@ -224,7 +224,7 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
 
             this.chunksToRemove.add(new AnvilChunkLoaderPending(par1ChunkCoordIntPair, par2NBTTagCompound));
             this.pendingAnvilChunksCoordinates.add(par1ChunkCoordIntPair);
-            */
+            */// Spigot end
             ThreadedFileIOBase.threadedIOInstance.queueIO(this);
         }
     }

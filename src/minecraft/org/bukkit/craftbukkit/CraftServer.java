@@ -207,7 +207,7 @@ public final class CraftServer implements Server {
         dumpMaterials = configuration.getBoolean("mcpc.dump-materials"); // MCPC+ - dumps all materials with their corresponding id's
 
         updater = new AutoUpdater(new BukkitDLUpdaterService(configuration.getString("auto-updater.host")), getLogger(), configuration.getString("auto-updater.preferred-channel"));
-        updater.setEnabled(configuration.getBoolean("auto-updater.enabled"));
+        updater.setEnabled(false); // Spigot
         updater.setSuggestChannels(configuration.getBoolean("auto-updater.suggest-channels"));
         updater.getOnBroken().addAll(configuration.getStringList("auto-updater.on-broken"));
         updater.getOnUpdate().addAll(configuration.getStringList("auto-updater.on-update"));
@@ -220,13 +220,7 @@ public final class CraftServer implements Server {
             configuration.save(getConfigFile());
         } catch (IOException e) {
         }
-        try {
-            new org.bukkit.craftbukkit.util.Metrics().start();
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Could not start metrics", e);
-        }
         // Spigot end
-
         loadPlugins();
         enablePlugins(PluginLoadOrder.STARTUP);
     }
@@ -1134,13 +1128,8 @@ public final class CraftServer implements Server {
         return count;
     }
 
+    // Spigot start
     public OfflinePlayer getOfflinePlayer(String name) {
-        return getOfflinePlayer(name, true);
-    }
-
-    public OfflinePlayer getOfflinePlayer(String name, boolean search) {
-        Validate.notNull(name, "Name cannot be null");
-
         OfflinePlayer result = getPlayerExact(name);
         String lname = name.toLowerCase();
 
@@ -1148,17 +1137,7 @@ public final class CraftServer implements Server {
             result = offlinePlayers.get(lname);
 
             if (result == null) {
-                if (search) {
-                    net.minecraft.world.storage.SaveHandler storage = (net.minecraft.world.storage.SaveHandler) console.worlds.get(0).getSaveHandler();
-                    for (String dat : storage.getPlayerDir().list(new DatFileFilter())) {
-                        String datName = dat.substring(0, dat.length() - 4);
-                        if (datName.equalsIgnoreCase(name)) {
-                            name = datName;
-                            break;
-                        }
-                    }
-                }
-
+                // Spigot end
                 result = new CraftOfflinePlayer(this, name);
                 offlinePlayers.put(lname, result);
             }
@@ -1296,7 +1275,7 @@ public final class CraftServer implements Server {
         Set<OfflinePlayer> players = new HashSet<OfflinePlayer>();
 
         for (String file : files) {
-            players.add(getOfflinePlayer(file.substring(0, file.length() - 4), false));
+            players.add(getOfflinePlayer(file.substring(0, file.length() - 4))); // Spigot
         }
         players.addAll(Arrays.asList(getOnlinePlayers()));
 

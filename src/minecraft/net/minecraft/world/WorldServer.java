@@ -499,23 +499,36 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
      */
     protected void tickBlocksAndAmbiance()
     {
-        super.tickBlocksAndAmbiance();
+        // Spigot start
+        this.aggregateTicks--;
+
+        if (this.aggregateTicks != 0)
+        {
+            return;
+        }
+
+        aggregateTicks = this.getWorld().aggregateTicks;
+        // Spigot end
         int i = 0;
         int j = 0;
         // CraftBukkit start
         // Iterator iterator = this.chunkTickList.iterator();
         
         // Spigot start
-        for (TLongShortIterator iter = activeChunkSet.iterator(); iter.hasNext();) {
+        for (TLongShortIterator iter = activeChunkSet.iterator(); iter.hasNext();)
+        {
             iter.advance();
             long chunkCoord = iter.key();
             int chunkX = World.keyToX(chunkCoord);
             int chunkZ = World.keyToZ(chunkCoord);
+
             // If unloaded, or in procedd of being unloaded, drop it
-            if ((!this.chunkExists(chunkX, chunkZ)) || (this.theChunkProviderServer.chunksToUnload.contains(chunkX, chunkZ))) {
+            if ((!this.chunkExists(chunkX, chunkZ)) || (this.theChunkProviderServer.chunksToUnload.contains(chunkX, chunkZ)))
+            {
                 iter.remove();
                 continue;
             }
+
             int players = iter.value();
             // Spigot end
             // ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair) iterator.next();
@@ -629,18 +642,24 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                         if (block != null && block.getTickRandomly())
                         {
                             ++i;
+                            
                             // Spigot start
-                            if (players < 1) {
+                            if (players < 1)
+                            {
                                 // grow fast if no players are in this chunk
                                 this.growthOdds = modifiedOdds;
-                            } else {
+                            }
+                            else
+                            {
                                 this.growthOdds = 100;
                             }
-                            for (int c = 0; c < getWorld().aggregateTicks; c++) {
+
+                            for (int c = 0; c < ((block.blockID == Block.sapling.blockID) ? 1 : getWorld().aggregateTicks); c++)
+                            {
                                 block.updateTick(this, k2 + k, i3 + extendedblockstorage.getYLocation(), l2 + l, this.rand);
                             }
-                            // Spigot end
 
+                            // Spigot end
                         }
                     }
                 }

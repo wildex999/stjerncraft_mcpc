@@ -62,9 +62,7 @@ class ThreadLoginVerifier extends Thread
 
                         if (java.net.InetAddress.getByName(lookup.toString()) != null)
                         {
-                            this.loginHandler.myTCPConnection.addToSendQueue(new Packet255KickDisconnect("Your IP address (" + ip + ") is flagged as unsafe by spamhaus.org/xbl"));
-                            this.loginHandler.myTCPConnection.serverShutdown();
-                            this.loginHandler.connectionComplete = true;
+                            loginHandler.raiseErrorAndDisconnect("Your IP address (" + ip + ") is flagged as unsafe by spamhaus.org/xbl");
                             return;
                         }
                     }

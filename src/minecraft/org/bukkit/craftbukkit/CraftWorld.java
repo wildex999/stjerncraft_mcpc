@@ -104,6 +104,7 @@ public class CraftWorld implements World {
     }
 
         //load defaults first
+        boolean info = configuration.getBoolean("world-settings.default.info", true);         
         growthPerTick = configuration.getInt("world-settings.default.growth-chunks-per-tick", growthPerTick);
         itemMergeRadius = configuration.getDouble("world-settings.default.item-merge-radius", itemMergeRadius);
         expMergeRadius = configuration.getDouble("world-settings.default.exp-merge-radius", expMergeRadius);
@@ -120,6 +121,7 @@ public class CraftWorld implements World {
         mushroomGrowthModifier = configuration.getInt("world-settings.default.mushroom-growth-modifier", mushroomGrowthModifier);
 
         //override defaults with world specific, if they exist
+        info = configuration.getBoolean("world-settings." + name + ".info", info);        
         growthPerTick = configuration.getInt("world-settings." + name + ".growth-chunks-per-tick", growthPerTick);
         itemMergeRadius = configuration.getDouble("world-settings." + name + ".item-merge-radius", itemMergeRadius);
         expMergeRadius = configuration.getDouble("world-settings." + name + ".exp-merge-radius", expMergeRadius);
@@ -140,7 +142,7 @@ public class CraftWorld implements World {
 
         obfuscated = !world.getServer().orebfuscatorDisabledWorlds.contains(name);
 
-        if (!configuration.getBoolean("world-settings.default.verbose", false)) return; // MCPC+
+        if (!info) return;
         server.getLogger().info("-------------- Spigot ----------------");
         server.getLogger().info("-------- World Settings For [" + name + "] --------");
         server.getLogger().info("Growth Per Chunk: " + growthPerTick);

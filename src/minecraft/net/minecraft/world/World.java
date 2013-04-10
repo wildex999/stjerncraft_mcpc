@@ -232,17 +232,17 @@ public abstract class World implements IBlockAccess
     // MCPC+ end
     // Spigot start
 
-    public static final long chunkToKey(int x, int z)
+    public static long chunkToKey(int x, int z)
     {
         long k = ((((long)x) & 0xFFFF0000L) << 16) | ((((long)x) & 0x0000FFFFL) << 0);
         k |= ((((long)z) & 0xFFFF0000L) << 32) | ((((long)z) & 0x0000FFFFL) << 16);
         return k;
     }
-    public static final int keyToX(long k)
+    public static int keyToX(long k)
     {
         return (int)(((k >> 16) & 0xFFFF0000) | (k & 0x0000FFFF));
     }
-    public static final int keyToZ(long k)
+    public static int keyToZ(long k)
     {
         return (int)(((k >> 32) & 0xFFFF0000L) | ((k >> 16) & 0x0000FFFF));
     }
@@ -285,7 +285,7 @@ public abstract class World implements IBlockAccess
     int lastXAccessed = Integer.MIN_VALUE;
     int lastZAccessed = Integer.MIN_VALUE;
     final Object chunkLock = new Object();
-    private byte chunkTickRadius;
+    private byte chunkTickRadius; // Spigot
 
     public CraftWorld getWorld()
     {
@@ -308,8 +308,8 @@ public abstract class World implements IBlockAccess
         this.chunkTickRadius = (byte)((this.getServer().getViewDistance() < 7) ? this.getServer().getViewDistance() : 7); // CraftBukkit - don't tick chunks we don't load for player
         // CraftBukkit end
         // Spigot start
-        this.activeChunkSet = new gnu.trove.map.hash.TLongShortHashMap(getWorld().growthPerTick * 5, 0.7f, Long.MIN_VALUE, Short.MIN_VALUE);
-        activeChunkSet.setAutoCompactionFactor(0.0F);
+        activeChunkSet = new gnu.trove.map.hash.TLongShortHashMap(world.growthPerTick * 5, 0.7f, Long.MIN_VALUE, Short.MIN_VALUE);
+        activeChunkSet.setAutoCompactionFactor(0);
         // Spigot end
         this.ambientTickCountdown = this.rand.nextInt(12000);
         this.lightUpdateBlockList = new int[32768];
@@ -329,7 +329,7 @@ public abstract class World implements IBlockAccess
         }
         // MCPC+ end
         this.field_98181_L = ilogagent;
-        this.worldInfo = idatamanager.loadWorldInfo();
+        // this.worldInfo = idatamanager.loadWorldInfo(); // Spigot - Moved up
 
         if (worldprovider != null)
         {
@@ -1840,26 +1840,67 @@ public abstract class World implements IBlockAccess
         int l = MathHelper.floor_double(par2AxisAlignedBB.maxY + 1.0D);
         int i1 = MathHelper.floor_double(par2AxisAlignedBB.minZ);
         int j1 = MathHelper.floor_double(par2AxisAlignedBB.maxZ + 1.0D);
+        // Spigot start
+        int ystart = ((k - 1) < 0) ? 0 : (k - 1);
 
-        for (int k1 = i; k1 < j; ++k1)
+        for (int chunkx = (i >> 4); chunkx <= ((j - 1) >> 4); chunkx++)
         {
-            for (int l1 = i1; l1 < j1; ++l1)
-            {
-                if (this.blockExists(k1, 64, l1))
-                {
-                    for (int i2 = k - 1; i2 < l; ++i2)
-                    {
-                        Block block = Block.blocksList[this.getBlockId(k1, i2, l1)];
+            int cx = chunkx << 4;
 
-                        if (block != null)
+            for (int chunkz = (i1 >> 4); chunkz <= ((j1 - 1) >> 4); chunkz++)
+            {
+                if (!this.chunkExists(chunkx, chunkz))
+                {
+                    continue;
+                }
+
+                int cz = chunkz << 4;
+                Chunk chunk = this.getChunkFromChunkCoords(chunkx, chunkz);
+                // Compute ranges within chunk
+                int xstart = (i < cx) ? cx : i;
+                int xend = (j < (cx + 16)) ? j : (cx + 16);
+                int zstart = (i1 < cz) ? cz : i1;
+                int zend = (j1 < (cz + 16)) ? j1 : (cz + 16);
+
+                // Loop through blocks within chunk
+                for (int x = xstart; x < xend; x++)
+                {
+                    for (int z = zstart; z < zend; z++)
+                    {
+                        for (int y = ystart; y < l; y++)
                         {
-                            block.addCollisionBoxesToList(this, k1, i2, l1, par2AxisAlignedBB, this.collidingBoundingBoxes, par1Entity);
+                            int blkid = chunk.getBlockID(x - cx, y, z - cz);
+
+                            if (blkid > 0)
+                            {
+                                Block block = Block.blocksList[blkid];
+
+                                if (block != null)
+                                {
+                                    block.addCollisionBoxesToList(this, x, y, z, par2AxisAlignedBB, this.collidingBoundingBoxes, par1Entity);
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
+        /*
+        for (int k1 = i; k1 < j; ++k1) {
+            for (int l1 = i1; l1 < j1; ++l1) {
+                if (this.isLoaded(k1, 64, l1)) {
+                    for (int i2 = k - 1; i2 < l; ++i2) {
+                        Block block = Block.byId[this.getTypeId(k1, i2, l1)];
+
+                        if (block != null) {
+                            block.a(this, k1, i2, l1, axisalignedbb, this.M, entity);
+                        }
+                    }
+                }
+            }
+        }
+        */// Spigot end
         double d0 = 0.25D;
         List list = this.getEntitiesWithinAABBExcludingEntity(par1Entity, par2AxisAlignedBB.expand(d0, d0, d0));
 
@@ -1882,7 +1923,6 @@ public abstract class World implements IBlockAccess
 
         return this.collidingBoundingBoxes;
     }
-
     /**
      * calculates and returns a list of colliding bounding boxes within a given AABB
      */
@@ -3184,9 +3224,9 @@ public abstract class World implements IBlockAccess
         EntityPlayer entityplayer;
         int j;
         int k;
-        final int l = this.getWorld().growthPerTick;
+        final int optimalChunks = this.getWorld().growthPerTick;
 
-        if (l <= 0)
+        if (optimalChunks <= 0)
         {
             return;
         }
@@ -3196,31 +3236,31 @@ public abstract class World implements IBlockAccess
             return;
         }
 
-        //Keep chunks with growth inside of the optimal chunk range
-        int chunksPerPlayer = Math.min(200, Math.max(1, (int)(((l - playerEntities.size()) / (double)playerEntities.size()) + 0.5)));
+        // Keep chunks with growth inside of the optimal chunk range
+        int chunksPerPlayer = Math.min(200, Math.max(1, (int)(((optimalChunks - playerEntities.size()) / (double) playerEntities.size()) + 0.5)));
         int randRange = 3 + chunksPerPlayer / 30;
 
-        if (randRange > chunkTickRadius)  // Limit to normal tick radius - including view distance
+        if (randRange > chunkTickRadius)   // Limit to normal tick radius - including view distance
         {
             randRange = chunkTickRadius;
         }
 
-        //odds of growth happening vs growth happening in vanilla
-        final float f = Math.max(35, Math.min(100, ((chunksPerPlayer + 1) * 100F) / 15F));
-        this.modifiedOdds = f;
-        this.growthOdds = f;
+        // odds of growth happening vs growth happening in vanilla
+        final float modifiedOdds = Math.max(35, Math.min(100, ((chunksPerPlayer + 1) * 100F) / 15F));
+        this.modifiedOdds = modifiedOdds;
+        this.growthOdds = modifiedOdds;
 
         for (i = 0; i < this.playerEntities.size(); ++i)
         {
             entityplayer = (EntityPlayer)this.playerEntities.get(i);
             int chunkX = MathHelper.floor_double(entityplayer.posX / 16.0D);
             int chunkZ = MathHelper.floor_double(entityplayer.posZ / 16.0D);
-            //Always update the chunk the player is on
+            // Always update the chunk the player is on
             long key = chunkToKey(chunkX, chunkZ);
             int existingPlayers = Math.max(0, activeChunkSet.get(key)); //filter out -1's
             activeChunkSet.put(key, (short)(existingPlayers + 1));
 
-            //Check and see if we update the chunks surrounding the player this tick
+            // Check and see if we update the chunks surrounding the player this tick
             for (int chunk = 0; chunk < chunksPerPlayer; chunk++)
             {
                 int dx = (rand.nextBoolean() ? 1 : -1) * rand.nextInt(randRange);
@@ -3233,6 +3273,7 @@ public abstract class World implements IBlockAccess
                 }
             }
         }
+
         // Spigot End
         this.theProfiler.endSection();
 

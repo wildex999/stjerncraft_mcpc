@@ -39,7 +39,7 @@ public class BlockSapling extends BlockFlower
         {
             super.updateTick(par1World, par2, par3, par4, par5Random);
 
-            if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9 && par5Random.nextInt(7) == 0)
+            if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9 && (par5Random.nextInt(Math.max(2, (int)((par1World.growthOdds / par1World.getWorld().aggregateTicks / par1World.getWorld().treeGrowthModifier * 7) + 0.5F))) == 0))    // Spigot
             {
                 this.growTree(par1World, par2, par3, par4, par5Random, false, null, null); // CraftBukkit - added bonemeal, player and itemstack
             }
