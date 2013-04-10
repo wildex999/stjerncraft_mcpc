@@ -203,6 +203,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     private static final int TPS = 20;
     private static final int TICK_TIME = 1000000000 / TPS;
     public static double currentTPS = 0;
+    private static long catchupTime = 0;
     // Spigot end
 
     // MCPC+ start - vanilla compatibility
@@ -696,12 +697,17 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 for (long lastTick = 0L; this.serverRunning; this.serverIsRunning = true)
                 {
                     long curTime = System.nanoTime();
-                    long wait = TICK_TIME - (curTime - lastTick);
+                    long wait = TICK_TIME - (curTime - lastTick) - catchupTime;
 
                     if (wait > 0)
                     {
                         Thread.sleep(wait / 1000000);
+                        catchupTime = 0;
                         continue;
+                    }
+                    else
+                    {
+                        catchupTime = Math.min(TICK_TIME * TPS, Math.abs(wait));
                     }
 
                     currentTPS = (currentTPS * 0.95) + (1E9 / (curTime - lastTick) * 0.05);
