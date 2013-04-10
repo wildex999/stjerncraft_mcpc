@@ -196,7 +196,8 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         {
             if (!(result instanceof TileEntityChest))
             {
-                result = fixTileEntity(i, j, k, type, result);
+                // MCPC+ - allow non-vanilla tile entities on chests for Terrafirmacraft, fixes #724
+                //result = fixTileEntity(i, j, k, type, result);
             }
         }
         else if (type == Block.furnaceIdle.blockID)
