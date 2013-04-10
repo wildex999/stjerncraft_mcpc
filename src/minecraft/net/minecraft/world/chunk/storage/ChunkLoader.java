@@ -111,9 +111,11 @@ public class ChunkLoader
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                 nbttagcompound1.setByte("Y", (byte)(k & 255));
                 nbttagcompound1.setByteArray("Blocks", abyte);
-                nbttagcompound1.setByteArray("Data", nibblearray.getValueArray()); // Spigot
-                nbttagcompound1.setByteArray("SkyLight", nibblearray1.getValueArray()); // Spigot
-                nbttagcompound1.setByteArray("BlockLight", nibblearray2.getValueArray()); // Spigot
+                // Spigot start - a -> getValueArray() accessor
+                nbttagcompound1.setByteArray("Data", nibblearray.getValueArray());
+                nbttagcompound1.setByteArray("SkyLight", nibblearray1.getValueArray());
+                nbttagcompound1.setByteArray("BlockLight", nibblearray2.getValueArray());
+                // Spigot end
                 nbttaglist.appendTag(nbttagcompound1);
             }
         }
