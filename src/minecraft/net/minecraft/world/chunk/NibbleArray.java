@@ -213,6 +213,7 @@ public class NibbleArray
                return;
            }
         }
+
         // Spigot end
         int i1 = par2 << this.depthBitsPlusFour | par3 << this.depthBits | par1;
         int j1 = i1 >> 1;

@@ -301,12 +301,15 @@ public class ExtendedBlockStorage
                 off++;
                 off2++;
             }
+
             // Spigot start
             this.blockMSBArray.detectAndProcessTrivialArray();
+
             if (this.blockMSBArray.isTrivialArray() && (this.blockMSBArray.getTrivialArrayValue() == 0))
             {
                 this.blockMSBArray = null;
             }
+
             // Spigot end
         }
 
@@ -409,6 +412,7 @@ public class ExtendedBlockStorage
             {
                 empty = false;
         }
+
         // Spigot end
 
         if (empty)
