@@ -1,6 +1,13 @@
 package net.minecraftforge.common;
 
 import java.util.*;
+import java.util.Map.Entry;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
@@ -109,7 +116,7 @@ public class ForgeHooks
         }
         return true;
     }
-    
+
     public static boolean canToolHarvestBlock(Block block, int metadata, ItemStack stack)
     {
         if (stack == null) return false;
@@ -362,5 +369,16 @@ public class ForgeHooks
 
         player.joinEntityItemWithWorld(event.entityItem);
         return event.entityItem;
+    }
+
+    public static float getEnchantPower(World world, int x, int y, int z)
+    {
+        if (world.isAirBlock(x, y, z))
+        {
+            return 0;
+        }
+
+        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        return (block == null ? 0 : block.getEnchantPower(world, x, y, z));
     }
 }

@@ -2206,4 +2206,17 @@ public class Block
     {
         return RotationHelper.getValidVanillaBlockRotations(this);
     }
+
+    /**
+     * Determines the amount of enchanting power this block can provide to an enchanting table.
+     * @param world The World
+     * @param x X position
+     * @param y Y position
+     * @param z Z position
+     * @return The amount of enchanting power this block produces.
+     */
+    public int getEnchantPower(World world, int x, int y, int z)
+    {
+        return blockID == bookShelf.blockID ? 1 : 0;
+    }
 }
