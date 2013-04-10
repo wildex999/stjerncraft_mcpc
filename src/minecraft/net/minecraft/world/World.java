@@ -1677,38 +1677,37 @@ public abstract class World implements IBlockAccess
         else if (entity instanceof EntityItem)
         {
             event = CraftEventFactory.callItemSpawnEvent((EntityItem) entity);
-            // Spigot start
-            if (entity instanceof EntityXPOrb)
-            {
-                EntityXPOrb xp = (EntityXPOrb)entity;
-                double radius = this.getWorld().expMergeRadius;
-    
-                if (radius > 0)
-                {
-                    List<Entity> entities = this.getEntitiesWithinAABBExcludingEntity(entity, entity.boundingBox.expand(radius, radius, radius));
-    
-                    for (Entity e : entities)
-                    {
-                        if (e instanceof EntityXPOrb)
-                        {
-                            EntityXPOrb loopItem = (EntityXPOrb) e;
-    
-                            if (!loopItem.isDead)
-                            {
-                                xp.xpValue += loopItem.xpValue;
-                                loopItem.setDead();
-                            }
-                        }
-                    }
-                }
-            }
-            // Spigot end
         }
         else if (entity.getBukkitEntity() instanceof org.bukkit.entity.Projectile)
         {
             // Not all projectiles extend EntityProjectile, so check for Bukkit interface instead
             event = CraftEventFactory.callProjectileLaunchEvent(entity);
         }
+        // Spigot start
+        else if (entity instanceof EntityXPOrb)
+        {
+            EntityXPOrb xp = (EntityXPOrb) entity;
+            double radius = this.getWorld().expMergeRadius;
+
+            if (radius > 0)
+            {
+                List<Entity> entities = this.getEntitiesWithinAABBExcludingEntity(entity, entity.boundingBox.expand(radius, radius, radius));
+
+                for (Entity e : entities)
+                {
+                    if (e instanceof EntityXPOrb)
+                    {
+                        EntityXPOrb loopItem = (EntityXPOrb) e;
+
+                        if (!loopItem.isDead)
+                        {
+                            xp.xpValue += loopItem.xpValue;
+                            loopItem.setDead();
+                        }
+                    }
+                }
+            }
+        } // Spigot end
 
         if (event != null && (event.isCancelled() || entity.isDead))
         {

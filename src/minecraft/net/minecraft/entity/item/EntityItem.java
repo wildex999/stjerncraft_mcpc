@@ -256,11 +256,13 @@ public class EntityItem extends Entity
             }
             else
             {
-                itemstack1.stackSize += itemstack.stackSize;
-                par1EntityItem.delayBeforeCanPickup = Math.max(par1EntityItem.delayBeforeCanPickup, this.delayBeforeCanPickup);
-                par1EntityItem.age = Math.min(par1EntityItem.age, this.age);
-                par1EntityItem.setEntityItemStack(itemstack1);
-                this.setDead();
+                // Spigot start
+                itemstack.stackSize += itemstack1.stackSize;
+                this.delayBeforeCanPickup = Math.max(par1EntityItem.delayBeforeCanPickup, this.delayBeforeCanPickup);
+                this.age = Math.min(par1EntityItem.age, this.age);
+                this.setEntityItemStack(itemstack);
+                par1EntityItem.setDead();
+                // Spigot end
                 return true;
             }
         }

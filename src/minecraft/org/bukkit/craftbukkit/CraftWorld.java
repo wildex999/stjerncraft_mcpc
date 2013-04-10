@@ -106,11 +106,11 @@ public class CraftWorld implements World {
         //load defaults first
         boolean info = configuration.getBoolean("world-settings.default.info", true);         
         growthPerTick = configuration.getInt("world-settings.default.growth-chunks-per-tick", growthPerTick);
-        itemMergeRadius = configuration.getDouble("world-settings.default.item-merge-radius", itemMergeRadius);
-        expMergeRadius = configuration.getDouble("world-settings.default.exp-merge-radius", expMergeRadius);
         randomLightingUpdates = configuration.getBoolean("world-settings.default.random-light-updates", randomLightingUpdates);
         mobSpawnRange = configuration.getInt("world-settings.default.mob-spawn-range", mobSpawnRange);
         aggregateTicks = Math.max(1, configuration.getInt("world-settings.default.aggregate-chunkticks", aggregateTicks));
+        itemMergeRadius = configuration.getDouble("world-settings.default.item-merge-radius", itemMergeRadius);
+        expMergeRadius = configuration.getDouble("world-settings.default.exp-merge-radius", expMergeRadius);
 
         wheatGrowthModifier = configuration.getInt("world-settings.default.wheat-growth-modifier", wheatGrowthModifier);
         cactusGrowthModifier = configuration.getInt("world-settings.default.cactus-growth-modifier", cactusGrowthModifier);
@@ -128,6 +128,8 @@ public class CraftWorld implements World {
         randomLightingUpdates = configuration.getBoolean("world-settings." + name + ".random-light-updates", randomLightingUpdates);
         mobSpawnRange = configuration.getInt("world-settings." + name + ".mob-spawn-range", mobSpawnRange);
         aggregateTicks = Math.max(1, configuration.getInt("world-settings." + name + ".aggregate-chunkticks", aggregateTicks));
+        itemMergeRadius = configuration.getDouble("world-settings." + name + ".item-merge-radius", itemMergeRadius);
+        expMergeRadius = configuration.getDouble("world-settings." + name + ".exp-merge-radius", expMergeRadius);
 
         wheatGrowthModifier = configuration.getInt("world-settings." + name + ".wheat-growth-modifier", wheatGrowthModifier);
         cactusGrowthModifier = configuration.getInt("world-settings." + name + ".cactus-growth-modifier", cactusGrowthModifier);
@@ -146,8 +148,6 @@ public class CraftWorld implements World {
         server.getLogger().info("-------------- Spigot ----------------");
         server.getLogger().info("-------- World Settings For [" + name + "] --------");
         server.getLogger().info("Growth Per Chunk: " + growthPerTick);
-        server.getLogger().info("Item Merge Radius: " + itemMergeRadius);
-        server.getLogger().info("Experience Merge Radius: " + expMergeRadius);
         server.getLogger().info("Random Lighting Updates: " + randomLightingUpdates);
         server.getLogger().info("Mob Spawn Range: " + mobSpawnRange);
         server.getLogger().info("Aggregate Ticks: " + aggregateTicks);
@@ -165,11 +165,11 @@ public class CraftWorld implements World {
     }
     // Spigot Start
     public int growthPerTick = 650;
-    public double itemMergeRadius = 3;
-    public double expMergeRadius = 3;
     public boolean randomLightingUpdates = false;
     public int mobSpawnRange = 4;
     public int aggregateTicks = 4;
+    public double itemMergeRadius = 3.5;
+    public double expMergeRadius = 3.5;
     public int viewDistance;
     public boolean obfuscated = false;
     //Crop growth rates:
