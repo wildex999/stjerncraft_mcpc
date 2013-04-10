@@ -83,7 +83,7 @@ public class PlayerInstance
     {
         if (this.playersInChunk.contains(par1EntityPlayerMP))
         {
-            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet51MapChunk(PlayerManager.getWorldServer(this.myManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), true, 0));
+            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet51MapChunk(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos)); // Spigot - remove chunk load call just to unload in favour of specialized constructor
             this.playersInChunk.remove(par1EntityPlayerMP);
             par1EntityPlayerMP.loadedChunks.remove(this.chunkLocation);
 
