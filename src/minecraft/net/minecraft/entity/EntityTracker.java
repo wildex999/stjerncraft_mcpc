@@ -36,6 +36,7 @@ import net.minecraft.entity.projectile.EntityPotion;
 import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IntHashMap;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.WorldServer;
@@ -190,6 +191,10 @@ public class EntityTracker
 
     public void addEntityToTracker(Entity par1Entity, int par2, int par3, boolean par4)
     {
+        if (Thread.currentThread() != MinecraftServer.getServer().primaryThread)
+        {
+            throw new IllegalStateException("Asynchronous entity track!");    // Spigot
+        }    
         if (par2 > this.entityViewDistance)
         {
             par2 = this.entityViewDistance;
@@ -231,6 +236,11 @@ public class EntityTracker
 
     public void removeEntityFromAllTrackingPlayers(Entity par1Entity)
     {
+        if (Thread.currentThread() != MinecraftServer.getServer().primaryThread)
+        {
+            throw new IllegalStateException("Asynchronous entity untrack!");    // Spigot
+        }
+
         if (par1Entity instanceof EntityPlayerMP)
         {
             EntityPlayerMP entityplayermp = (EntityPlayerMP)par1Entity;

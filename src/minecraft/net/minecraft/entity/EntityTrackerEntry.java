@@ -52,6 +52,7 @@ import net.minecraft.network.packet.Packet40EntityMetadata;
 import net.minecraft.network.packet.Packet41EntityEffect;
 import net.minecraft.network.packet.Packet5PlayerInventory;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.storage.MapData;
 
@@ -415,6 +416,11 @@ public class EntityTrackerEntry
      */
     public void tryStartWachingThis(EntityPlayerMP par1EntityPlayerMP)
     {
+        if (Thread.currentThread() != MinecraftServer.getServer().primaryThread)
+        {
+            throw new IllegalStateException("Asynchronous player tracker update!");    // Spigot
+        }
+
         if (par1EntityPlayerMP != this.myEntity)
         {
             double d0 = par1EntityPlayerMP.posX - (double)(this.lastScaledXPosition / 32);
@@ -682,6 +688,11 @@ public class EntityTrackerEntry
 
     public void removePlayerFromTracker(EntityPlayerMP par1EntityPlayerMP)
     {
+        if (Thread.currentThread() != MinecraftServer.getServer().primaryThread)
+        {
+            throw new IllegalStateException("Asynchronous player tracker clear!");    // Spigot
+        }
+
         if (this.trackingPlayers.contains(par1EntityPlayerMP))
         {
             this.trackingPlayers.remove(par1EntityPlayerMP);

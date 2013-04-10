@@ -42,6 +42,7 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -1640,6 +1641,11 @@ public abstract class World implements IBlockAccess
 
     public boolean addEntity(Entity entity, CreatureSpawnEvent.SpawnReason spawnReason)   // Changed signature, added SpawnReason
     {
+        if (Thread.currentThread() != MinecraftServer.getServer().primaryThread)
+        {
+            throw new IllegalStateException("Asynchronous entity add!");    // Spigot
+        }
+
         if (entity == null)
         {
             return false;
@@ -1798,6 +1804,11 @@ public abstract class World implements IBlockAccess
      */
     public void removePlayerEntityDangerously(Entity par1Entity)
     {
+        if (Thread.currentThread() != MinecraftServer.getServer().primaryThread)
+        {
+            throw new IllegalStateException("Asynchronous entity remove!");    // Spigot
+        }
+
         par1Entity.setDead();
 
         if (par1Entity instanceof EntityPlayer)
