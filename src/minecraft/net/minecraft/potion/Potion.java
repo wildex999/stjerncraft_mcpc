@@ -135,28 +135,12 @@ public class Potion
         {
             if (par1EntityLiving.getHealth() > 1)
             {
-                // CraftBukkit start
-                EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(null, par1EntityLiving, EntityDamageEvent.DamageCause.POISON, 1);
-
-                if (!event.isCancelled() && event.getDamage() > 0)
-                {
-                    par1EntityLiving.attackEntityFrom(DamageSource.magic, event.getDamage());
-                }
-
-                // CraftBukkit end
+                par1EntityLiving.attackEntityFrom(CraftEventFactory.POISON, 1); // CraftBukkit - DamageSource.MAGIC -> CraftEventFactory.POISON
             }
         }
         else if (this.id == wither.id)
         {
-            // CraftBukkit start
-            EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(null, par1EntityLiving, EntityDamageEvent.DamageCause.WITHER, 1);
-
-            if (!event.isCancelled() && event.getDamage() > 0)
-            {
-                par1EntityLiving.attackEntityFrom(DamageSource.wither, event.getDamage());
-            }
-
-            // CraftBukkit end
+            par1EntityLiving.attackEntityFrom(DamageSource.wither, 1);
         }
         else if (this.id == hunger.id && par1EntityLiving instanceof EntityPlayer)
         {
@@ -166,15 +150,7 @@ public class Potion
         {
             if (this.id == harm.id && !par1EntityLiving.isEntityUndead() || this.id == heal.id && par1EntityLiving.isEntityUndead())
             {
-                // CraftBukkit start
-                EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(null, par1EntityLiving, EntityDamageEvent.DamageCause.MAGIC, 6 << par2);
-
-                if (!event.isCancelled() && event.getDamage() > 0)
-                {
-                    par1EntityLiving.attackEntityFrom(DamageSource.magic, event.getDamage());
-                }
-
-                // CraftBukkit end
+                par1EntityLiving.attackEntityFrom(DamageSource.magic, 6 << par2);
             }
         }
         else

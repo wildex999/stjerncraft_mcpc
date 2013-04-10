@@ -64,7 +64,6 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.plugin.PluginManager;
@@ -581,24 +580,7 @@ public abstract class Entity
             {
                 if (this.fire % 20 == 0)
                 {
-                    // CraftBukkit start - TODO: this event spams!
-                    if (this instanceof EntityLiving)
-                    {
-                        EntityDamageEvent event = new EntityDamageEvent(this.getBukkitEntity(), EntityDamageEvent.DamageCause.FIRE_TICK, 1);
-                        this.worldObj.getServer().getPluginManager().callEvent(event);
-
-                        if (!event.isCancelled())
-                        {
-                            event.getEntity().setLastDamageCause(event);
-                            this.attackEntityFrom(DamageSource.onFire, event.getDamage());
-                        }
-                    }
-                    else
-                    {
-                        this.attackEntityFrom(DamageSource.onFire, 1);
-                    }
-
-                    // CraftBukkit end
+                    this.attackEntityFrom(DamageSource.onFire, 1);
                 }
 
                 --this.fire;
@@ -1220,22 +1202,6 @@ public abstract class Entity
     {
         if (!this.isImmuneToFire)
         {
-            // CraftBukkit start
-            if (this instanceof EntityLiving)
-            {
-                EntityDamageEvent event = new EntityDamageEvent(this.getBukkitEntity(), EntityDamageEvent.DamageCause.FIRE, par1);
-                this.worldObj.getServer().getPluginManager().callEvent(event);
-
-                if (event.isCancelled())
-                {
-                    return;
-                }
-
-                par1 = event.getDamage();
-                event.getEntity().setLastDamageCause(event);
-            }
-
-            // CraftBukkit end
             this.attackEntityFrom(DamageSource.inFire, par1);
         }
     }
@@ -2399,15 +2365,13 @@ public abstract class Entity
             }
         }
 
-        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(stormBukkitEntity, thisBukkitEntity, EntityDamageEvent.DamageCause.LIGHTNING, 5);
-        pluginManager.callEvent(event);
+        EntityDamageEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDamageEvent(par1EntityLightningBolt, this, EntityDamageEvent.DamageCause.LIGHTNING, 5);
 
         if (event.isCancelled())
         {
             return;
         }
 
-        thisBukkitEntity.setLastDamageCause(event);
         this.dealFireDamage(event.getDamage());
         // CraftBukkit end
         ++this.fire;

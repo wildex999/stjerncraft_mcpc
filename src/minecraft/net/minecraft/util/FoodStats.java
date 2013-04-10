@@ -94,17 +94,7 @@ public class FoodStats
             {
                 if (par1EntityPlayer.getHealth() > 10 || i >= 3 || par1EntityPlayer.getHealth() > 1 && i >= 2)
                 {
-                    // CraftBukkit start
-                    EntityDamageEvent event = new EntityDamageEvent(par1EntityPlayer.getBukkitEntity(), EntityDamageEvent.DamageCause.STARVATION, 1);
-                    par1EntityPlayer.worldObj.getServer().getPluginManager().callEvent(event);
-
-                    if (!event.isCancelled())
-                    {
-                        event.getEntity().setLastDamageCause(event);
-                        par1EntityPlayer.attackEntityFrom(DamageSource.starve, event.getDamage());
-                    }
-
-                    // CraftBukkit end
+                    par1EntityPlayer.attackEntityFrom(DamageSource.starve, 1);
                 }
 
                 this.foodTimer = 0;

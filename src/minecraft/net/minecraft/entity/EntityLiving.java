@@ -588,20 +588,10 @@ public abstract class EntityLiving extends Entity
             this.playLivingSound();
         }
 
-        // CraftBukkit start
-        if (this.isEntityAlive() && this.isEntityInsideOpaqueBlock() && !(this instanceof EntityDragon))   // EnderDragon's don't suffocate.
+        if (this.isEntityAlive() && this.isEntityInsideOpaqueBlock())
         {
-            EntityDamageEvent event = new EntityDamageEvent(this.getBukkitEntity(), EntityDamageEvent.DamageCause.SUFFOCATION, 1);
-            this.worldObj.getServer().getPluginManager().callEvent(event);
-
-            if (!event.isCancelled())
-            {
-                event.getEntity().setLastDamageCause(event);
-                this.attackEntityFrom(DamageSource.inWall, event.getDamage());
-            }
+            this.attackEntityFrom(DamageSource.inWall, 1);
         }
-
-        // CraftBukkit end
 
         if (this.isImmuneToFire() || this.worldObj.isRemote)
         {
@@ -626,17 +616,7 @@ public abstract class EntityLiving extends Entity
                     this.worldObj.spawnParticle("bubble", this.posX + (double)f, this.posY + (double)f1, this.posZ + (double)f2, this.motionX, this.motionY, this.motionZ);
                 }
 
-                // CraftBukkit start
-                EntityDamageEvent event = new EntityDamageEvent(this.getBukkitEntity(), EntityDamageEvent.DamageCause.DROWNING, 2);
-                this.worldObj.getServer().getPluginManager().callEvent(event);
-
-                if (!event.isCancelled() && event.getDamage() != 0)
-                {
-                    event.getEntity().setLastDamageCause(event);
-                    this.attackEntityFrom(DamageSource.drown, event.getDamage());
-                }
-
-                // CraftBukkit end
+                this.attackEntityFrom(DamageSource.drown, 2);
             }
 
             this.extinguish();
@@ -1094,12 +1074,11 @@ public abstract class EntityLiving extends Entity
 
                 this.limbYaw = 1.5F;
                 boolean flag = true;
-
                 // CraftBukkit start
-                if (par1DamageSource instanceof EntityDamageSource)
-                {
-                    EntityDamageEvent event = CraftEventFactory.handleEntityDamageEvent(this, par1DamageSource, par2);
+                EntityDamageEvent event = CraftEventFactory.handleEntityDamageEvent(this, par1DamageSource, par2);
 
+                if (event != null)
+                {
                     if (event.isCancelled())
                     {
                         return false;
@@ -1524,31 +1503,37 @@ public abstract class EntityLiving extends Entity
 
         super.fall(par1);
         int i = MathHelper.ceiling_float_int(par1 - 3.0F);
-
+        
+        // CraftBukkit start
         if (i > 0)
         {
-            // CraftBukkit start
-            EntityDamageEvent event = new EntityDamageEvent(this.getBukkitEntity(), EntityDamageEvent.DamageCause.FALL, i);
-            this.worldObj.getServer().getPluginManager().callEvent(event);
+            EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(null, this, EntityDamageEvent.DamageCause.FALL, i);
 
-            if (!event.isCancelled() && event.getDamage() != 0)
+            if (!event.isCancelled())
             {
                 i = event.getDamage();
 
-                if (i > 4)
+                if (i > 0)
                 {
-                    this.playSound("damage.fallbig", 1.0F, 1.0F);
+                    this.getBukkitEntity().setLastDamageCause(event);
                 }
-                else
-                {
-                    this.playSound("damage.fallsmall", 1.0F, 1.0F);
-                }
+            }
+        }
 
-                this.getBukkitEntity().setLastDamageCause(event);
-                this.attackEntityFrom(DamageSource.fall, i);
+        // CraftBukkit end
+
+        if (i > 0)
+        {
+            if (i > 4)
+            {
+                this.playSound("damage.fallbig", 1.0F, 1.0F);
+            }
+            else
+            {
+                this.playSound("damage.fallsmall", 1.0F, 1.0F);
             }
 
-            // CraftBukkit end
+            this.attackEntityFrom(DamageSource.fall, i);
             int j = this.worldObj.getBlockId(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY - 0.20000000298023224D - (double)this.yOffset), MathHelper.floor_double(this.posZ));
 
             if (j > 0)
@@ -2437,18 +2422,7 @@ public abstract class EntityLiving extends Entity
      */
     protected void kill()
     {
-        // CraftBukkit start
-        EntityDamageByBlockEvent event = new EntityDamageByBlockEvent(null, this.getBukkitEntity(), EntityDamageEvent.DamageCause.VOID, 4);
-        this.worldObj.getServer().getPluginManager().callEvent(event);
-
-        if (event.isCancelled() || event.getDamage() == 0)
-        {
-            return;
-        }
-
-        event.getEntity().setLastDamageCause(event);
-        this.attackEntityFrom(DamageSource.outOfWorld, event.getDamage());
-        // CraftBukkit end
+        this.attackEntityFrom(DamageSource.outOfWorld, 4);
     }
 
     /**
