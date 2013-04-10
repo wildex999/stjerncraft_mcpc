@@ -10,6 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.player.EntityPlayer;
@@ -795,6 +796,18 @@ public class Item
     {
         return null;
     }
+    
+    /**
+     * Called by the default implemetation of EntityItem's onUpdate method, allowing for cleaner 
+     * control over the update of the item without having to write a subclass.
+     * 
+     * @param entityItem The entity Item
+     * @return Return true to skip any further update code.
+     */
+    public boolean onEntityItemUpdate(EntityItem entityItem)
+    {
+        return false;
+    }    
 
     /**
      * Gets a list of tabs that items belonging to this class can display on,

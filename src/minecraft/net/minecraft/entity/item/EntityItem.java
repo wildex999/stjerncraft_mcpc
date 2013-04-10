@@ -104,6 +104,15 @@ public class EntityItem extends Entity
      */
     public void onUpdate()
     {
+        ItemStack stack = this.getDataWatcher().getWatchableObjectItemStack(10);
+        if (stack != null && stack.getItem() != null)
+        {
+            if (stack.getItem().onEntityItemUpdate(this))
+            {
+                return;
+            }
+        }
+            
         super.onUpdate();
         // CraftBukkit start - Use wall time for pickup and despawn timers
         int elapsedTicks = Math.max(1, MinecraftServer.currentTick - this.lastTick);
