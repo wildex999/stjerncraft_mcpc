@@ -1,14 +1,21 @@
 package org.bukkit.craftbukkit;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.YamlConfiguration;
-/* TODO: update
+
+import java.util.List;
+import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.spigotmc.Metrics;
-import org.spigotmc.RestartCommand;
-import org.spigotmc.WatchdogThread;
- */
 
 public class Spigot {
+
+    public static boolean tabPing = false;
+    private static Metrics metrics;
+
     public static void initialize(CraftServer server, SimpleCommandMap commandMap, YamlConfiguration configuration) {
         if (configuration.getBoolean("settings.tps-command", true)) { // MCPC+ - config option to allow mods to replace command
             commandMap.register("bukkit", new org.bukkit.craftbukkit.command.TicksPerSecondCommand("tps"));
@@ -41,5 +48,16 @@ public class Spigot {
         if (server.chunkGCPeriod == 0) {
             server.getLogger().severe("[Spigot] You should not disable chunk-gc, unexpected behaviour may occur!");
         }
+        
+        tabPing = configuration.getBoolean("settings.tab-ping", tabPing);
+
+        if (metrics == null) {
+            try {
+                metrics = new Metrics();
+                metrics.start();
+            } catch (IOException ex) {
+                Bukkit.getServer().getLogger().log(Level.SEVERE, "Could not start metrics service", ex);
+            }
+        }        
     }
 }
