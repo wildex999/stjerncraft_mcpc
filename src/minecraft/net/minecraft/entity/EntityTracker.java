@@ -132,11 +132,11 @@ public class EntityTracker
         }
         else if (par1Entity instanceof EntityMinecart)
         {
-            this.addEntityToTracker(par1Entity, 80, 3, true);
+            this.addEntityToTracker(par1Entity, 80, 2, true); // CraftBukkit - Send updates at same rate as players
         }
         else if (par1Entity instanceof EntityBoat)
         {
-            this.addEntityToTracker(par1Entity, 80, 2, true); // Spigot - send at same speed as player
+            this.addEntityToTracker(par1Entity, 80, 2, true); // CraftBukkit - Send updates at same rate as players
         }
         else if (par1Entity instanceof EntitySquid)
         {

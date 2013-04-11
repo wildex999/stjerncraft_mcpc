@@ -141,7 +141,7 @@ public class EntityTrackerEntry
             this.sendEventsToPlayers(par1List);
         }
 
-        if (this.field_85178_v != this.myEntity.ridingEntity || this.myEntity.ridingEntity != null && this.ticks % 60 == 0)
+        if (this.field_85178_v != this.myEntity.ridingEntity /* || this.tracker.vehicle != null && this.m % 60 == 0 */)   // CraftBukkit - Revert to 1.4 logic, this packet is a toggle
         {
             this.field_85178_v = this.myEntity.ridingEntity;
             this.sendPacketToAllTrackingPlayers(new Packet39AttachEntity(this.myEntity, this.myEntity.ridingEntity));
@@ -464,15 +464,17 @@ public class EntityTrackerEntry
                         FMLNetworkHandler.makeEntitySpawnAdjustment(this.myEntity.entityId, par1EntityPlayerMP, this.lastScaledXPosition, this.lastScaledYPosition, this.lastScaledZPosition);
                     }
 
-                    if (this.sendVelocityUpdates && !(packet instanceof Packet24MobSpawn))
-                    {
-                        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet28EntityVelocity(this.myEntity.entityId, this.myEntity.motionX, this.myEntity.motionY, this.myEntity.motionZ));
-                    }
-
-                    if (this.myEntity.ridingEntity != null)
+                    // CraftBukkit start
+                    if (this.myEntity.ridingEntity != null && this.myEntity.entityId > this.myEntity.ridingEntity.entityId)
                     {
                         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(this.myEntity, this.myEntity.ridingEntity));
                     }
+                    else if (this.myEntity.riddenByEntity != null && this.myEntity.entityId > this.myEntity.riddenByEntity.entityId)
+                    {
+                        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(this.myEntity.riddenByEntity, this.myEntity));
+                    }
+
+                    // CraftBukkit end
 
                     if (this.myEntity instanceof EntityLiving)
                     {
