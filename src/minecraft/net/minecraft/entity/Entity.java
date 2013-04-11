@@ -710,10 +710,13 @@ public abstract class Entity
      */
     public void moveEntity(double par1, double par3, double par5)
     {
+        // CraftBukkit start - Don't do anything if we aren't moving
         if (par1 == 0 && par3 == 0 && par5 == 0)
         {
-            return;    // Spigot
+            return;
         }
+
+        // CraftBukkit end
 
         org.bukkit.craftbukkit.SpigotTimings.entityMoveTimer.startTiming(); // Spigot
 

@@ -2104,15 +2104,6 @@ public abstract class EntityLiving extends Entity
 
     protected void func_85033_bc()
     {
-        // Spigot start
-        boolean skip = false;
-
-        if (!(this instanceof EntityPlayerMP) && this.ticksExisted % 2 != 0)
-        {
-            skip = true;
-        }
-
-        // Spigot end
         List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
 
         if (list != null && !list.isEmpty())
@@ -2121,10 +2112,13 @@ public abstract class EntityLiving extends Entity
             {
                 Entity entity = (Entity)list.get(i);
 
-                if (entity instanceof EntityLiving && skip)
+                // CraftBukkit start - Only handle mob (non-player) collisions every other tick
+                if (entity instanceof EntityLiving && !(this instanceof EntityPlayerMP) && this.ticksExisted % 2 == 0)
                 {
-                    continue;    // Spigot
+                    continue;
                 }
+
+                // CraftBukkit end
 
                 if (entity.canBePushed())
                 {

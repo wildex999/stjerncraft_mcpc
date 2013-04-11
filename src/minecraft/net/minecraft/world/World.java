@@ -129,7 +129,7 @@ public abstract class World implements IBlockAccess
     protected List unloadedEntityList = new ArrayList();
 
     /** A list of all TileEntities in all currently-loaded chunks */
-    public List loadedTileEntityList = new ArrayList();
+    public Set loadedTileEntityList = new HashSet(); // CraftBukkit - ArrayList -> HashSet
     private List addedTileEntityList = new ArrayList();
 
     /** Entities marked for removal. */
@@ -166,7 +166,6 @@ public abstract class World implements IBlockAccess
      * unused.
      */
     public int lastLightningBolt = 0;
-    // public boolean editingBlocks = false; // CraftBukkit (removed in vanilla)
     public boolean callingPlaceEvent = false; // CraftBukkit
 
     /** Option > Difficulty setting (0 - 3) */

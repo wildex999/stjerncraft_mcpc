@@ -103,12 +103,12 @@ public class EntitySquid extends EntityWaterMob
      * Checks if this entity is inside water (if inWater field is true as a result of handleWaterMovement() returning
      * true)
      */
-     /* Spigot start - remove useless slow check and fallback to the superclass instead
+    /* CraftBukkit start - Delegate to Entity to use existing inWater value
     public boolean isInWater()
     {
         return this.worldObj.handleMaterialAcceleration(this.boundingBox.expand(0.0D, -0.6000000238418579D, 0.0D), Material.water, (Entity) this);
     }
-    // Spigot end*/
+    // CraftBukkit end */
 
     /**
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
