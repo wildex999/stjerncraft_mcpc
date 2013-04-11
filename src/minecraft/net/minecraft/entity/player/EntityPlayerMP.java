@@ -340,9 +340,11 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
                 if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                 {
-                    Chunk chunk = this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos); // Spigot
-                    arraylist.add(chunk); // Spigot
-                    arraylist1.addAll(chunk.chunkTileEntityMap.values()); // Spigot
+                    // CraftBukkit start - Get tile entities directly from the chunk instead of the world
+                    Chunk chunk = this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
+                    arraylist.add(chunk);
+                    arraylist1.addAll(chunk.chunkTileEntityMap.values());
+                    // CraftBukkit end
                     //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
                     //ToDo: Find a way to efficiently clean abandoned chunks.
                     //arraylist1.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 16));

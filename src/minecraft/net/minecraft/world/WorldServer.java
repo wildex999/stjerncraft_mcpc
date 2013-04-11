@@ -1005,19 +1005,19 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     {
         ArrayList arraylist = new ArrayList();
         
-        // Spigot start - check in chunks: usually just from one
-        for (int cx = (par1 >> 4); cx <= ((par4 - 1) >> 4); cx++)
+        // CraftBukkit start - Get tile entities from chunks instead of world
+        for (int chunkX = (par1 >> 4); chunkX <= ((par4 - 1) >> 4); chunkX++)
         {
-            for (int cz = (par3 >> 4); cz <= ((par6 - 1) >> 4); cz++)
+            for (int chunkZ = (par3 >> 4); chunkZ <= ((par6 - 1) >> 4); chunkZ++)
             {
-                Chunk c = getChunkFromChunkCoords(cx, cz);
+                Chunk chunk = getChunkFromChunkCoords(chunkX, chunkZ);
 
-                if (c == null)
+                if (chunk == null)
                 {
                     continue;
                 }
 
-                for (Object te : c.chunkTileEntityMap.values())
+                for (Object te : chunk.chunkTileEntityMap.values())
                 {
                     TileEntity tileentity = (TileEntity) te;
 
@@ -1029,7 +1029,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
             }
         }
 
-        // Spigot end
+        // CraftBukkit end
         return arraylist;
     }
 
