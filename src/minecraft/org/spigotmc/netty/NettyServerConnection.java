@@ -32,7 +32,7 @@ public class NettyServerConnection extends net.minecraft.network.NetworkListenTh
     private final ChannelFuture socket;
     final List<net.minecraft.network.NetLoginHandler> pendingConnections = Collections.synchronizedList(new ArrayList<net.minecraft.network.NetLoginHandler>());
 
-    public NettyServerConnection(net.minecraft.server.MinecraftServer ms, InetAddress host, int port) {
+    public NettyServerConnection(net.minecraft.server.MinecraftServer ms, InetAddress host, int port) throws java.io.IOException { // MCPC+ - throws IOException for MCP compatibility
         super(ms);
         int threads = Integer.getInteger("org.spigotmc.netty.threads", 3);
         socket = new ServerBootstrap().channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer() {
