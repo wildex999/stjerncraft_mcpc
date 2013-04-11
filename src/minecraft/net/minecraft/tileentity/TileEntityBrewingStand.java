@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.PotionHelper;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.brewing.PotionBrewedEvent;
 
@@ -33,6 +34,7 @@ public class TileEntityBrewingStand extends TileEntity implements ISidedInventor
     private int filledSlots;
     private int ingredientID;
     private String field_94132_e;
+    private int lastTick = MinecraftServer.currentTick; // CraftBukkit
 
     public TileEntityBrewingStand() {}
 
@@ -102,12 +104,17 @@ public class TileEntityBrewingStand extends TileEntity implements ISidedInventor
      */
     public void updateEntity()
     {
+        // CraftBukkit start - Use wall time instead of ticks for brewing
+        int elapsedTicks = Math.max(1, MinecraftServer.currentTick - this.lastTick);
+        this.lastTick = MinecraftServer.currentTick;
+
         if (this.brewTime > 0)
         {
-            --this.brewTime;
+            this.brewTime -= elapsedTicks;
 
-            if (this.brewTime == 0)
+            if (this.brewTime <= 0)   // == -> <=
             {
+                // CraftBukkit end
                 this.brewPotions();
                 this.onInventoryChanged();
             }

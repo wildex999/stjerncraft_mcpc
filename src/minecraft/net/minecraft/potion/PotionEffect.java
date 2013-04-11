@@ -2,6 +2,7 @@ package net.minecraft.potion;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 public class PotionEffect
 {
     /** ID value of the potion this effect matches. */
@@ -18,6 +19,7 @@ public class PotionEffect
 
     /** Whether the potion effect came from a beacon */
     private boolean isAmbient;
+    private int lastTick = MinecraftServer.currentTick; // CraftBukkit
 
     public PotionEffect(int par1, int par2)
     {
@@ -126,7 +128,12 @@ public class PotionEffect
 
     private int deincrementDuration()
     {
-        return --this.duration;
+        // CraftBukkit start - Use wall time instead of ticks for potion effects
+        int elapsedTicks = Math.max(1, MinecraftServer.currentTick - this.lastTick);
+        this.lastTick = MinecraftServer.currentTick;
+        this.duration -= elapsedTicks;
+        return this.duration;
+        // CraftBukkit end
     }
 
     public void performEffect(EntityLiving par1EntityLiving)

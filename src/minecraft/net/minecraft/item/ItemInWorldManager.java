@@ -8,10 +8,12 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet53BlockChange;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+// CraftBukkit end
 
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
@@ -91,7 +93,7 @@ public class ItemInWorldManager
 
     public void updateBlockRemoving()
     {
-        this.curblockDamage = (int)(System.currentTimeMillis() / 50);  // CraftBukkit
+        this.curblockDamage = MinecraftServer.currentTick; // CraftBukkit
         int i;
         float f;
         int j;
@@ -273,7 +275,7 @@ public class ItemInWorldManager
     {
         if (par1 == this.partiallyDestroyedBlockX && par2 == this.partiallyDestroyedBlockY && par3 == this.partiallyDestroyedBlockZ)
         {
-            this.curblockDamage = (int)(System.currentTimeMillis() / 50);  // CraftBukkit
+            this.curblockDamage = MinecraftServer.currentTick; // CraftBukkit
             int l = this.curblockDamage - this.initialDamage;
             int i1 = this.theWorld.getBlockId(par1, par2, par3);
 

@@ -22,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
@@ -36,6 +37,7 @@ public class EntityZombie extends EntityMob
      * Ticker used to determine the time remaining for this zombie to convert into a villager when cured.
      */
     private int conversionTime = 0;
+    private int lastTick = MinecraftServer.currentTick; // CraftBukkit
 
     public EntityZombie(World par1World)
     {
@@ -197,6 +199,11 @@ public class EntityZombie extends EntityMob
         if (!this.worldObj.isRemote && this.isConverting())
         {
             int i = this.getConversionTimeBoost();
+            // CraftBukkit start - Use wall time instead of ticks for villager conversion
+            int elapsedTicks = Math.max(1, MinecraftServer.currentTick - this.lastTick);
+            this.lastTick = MinecraftServer.currentTick;
+            i *= elapsedTicks;
+            // CraftBukkit end
             this.conversionTime -= i;
 
             if (this.conversionTime <= 0)

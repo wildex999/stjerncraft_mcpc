@@ -5,6 +5,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 // CraftBukkit start
 import java.util.List;
+
+import net.minecraft.server.MinecraftServer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
@@ -58,7 +60,7 @@ public class TileEntityFurnace extends TileEntity implements ISidedInventory, ne
     private String field_94130_e;
 
     // CraftBukkit start
-    private int lastTick = (int)(System.currentTimeMillis() / 50);
+    private int lastTick = MinecraftServer.currentTick;
     private int maxStack = MAX_STACK;
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 
@@ -277,10 +279,9 @@ public class TileEntityFurnace extends TileEntity implements ISidedInventory, ne
     {
         boolean flag = this.furnaceBurnTime > 0;
         boolean flag1 = false;
-        // CraftBukkit start
-        int currentTick = (int)(System.currentTimeMillis() / 50);  // CraftBukkit
-        int elapsedTicks = currentTick - this.lastTick;
-        this.lastTick = currentTick;
+        // CraftBukkit start - Use wall time instead of ticks for cooking
+        int elapsedTicks = Math.max(1, MinecraftServer.currentTick - this.lastTick);
+        this.lastTick = MinecraftServer.currentTick;
 
         // CraftBukkit - moved from below
         if (this.isBurning() && this.canSmelt())

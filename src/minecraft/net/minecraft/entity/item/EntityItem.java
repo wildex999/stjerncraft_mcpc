@@ -2,6 +2,7 @@ package net.minecraft.entity.item;
 
 import java.util.Iterator;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
@@ -37,7 +38,7 @@ public class EntityItem extends Entity
 
     /** The EntityItem's random initial float height. */
     public float hoverStart;
-    private int lastTick = (int)(System.currentTimeMillis() / 50);  // CraftBukkit
+    private int lastTick = MinecraftServer.currentTick; // CraftBukkit
 
     /**
      * The maximum age of this EntityItem.  The item is expired once this is reached.
@@ -104,10 +105,11 @@ public class EntityItem extends Entity
     public void onUpdate()
     {
         super.onUpdate();
-        // CraftBukkit start
-        int currentTick = (int)(System.currentTimeMillis() / 50);
-        this.delayBeforeCanPickup -= (currentTick - this.lastTick);
-        this.lastTick = currentTick;
+        // CraftBukkit start - Use wall time for pickup and despawn timers
+        int elapsedTicks = Math.max(1, MinecraftServer.currentTick - this.lastTick);
+        this.delayBeforeCanPickup -= elapsedTicks;
+        this.age += elapsedTicks;
+        this.lastTick = MinecraftServer.currentTick;
         // CraftBukkit end
 
         if (lastTick % 2 == 0)   // Spigot
@@ -159,7 +161,7 @@ public class EntityItem extends Entity
         }
         } // Spigot
 
-        this.age = ticksExisted;
+        // ++this.age; // CraftBukkit - Moved up
 
         ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
         
