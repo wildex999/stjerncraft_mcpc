@@ -86,9 +86,9 @@ world-settings:
         sugar-growth-modifier: 100
         tree-growth-modifier: 100
         mushroom-growth-modifier: 100
-        entity-activation-range-animals: 32
-        entity-activation-range-monsters: 32
-        entity-activation-range-misc: 16
+        entity-activation-range-animals: 0
+        entity-activation-range-monsters: 0
+        entity-activation-range-misc: 0
         info: false
     world:
         growth-chunks-per-tick: 1000
