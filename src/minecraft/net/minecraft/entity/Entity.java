@@ -2370,6 +2370,7 @@ public abstract class Entity
         // CraftBukkit start
         final org.bukkit.entity.Entity thisBukkitEntity = this.getBukkitEntity();
         if (thisBukkitEntity == null) return; // MCPC+ - skip mod entities with no wrapper (TODO: create a wrapper)
+        if (par1EntityLightningBolt == null) return; // MCPC+ - skip null entities, see #392
         final org.bukkit.entity.Entity stormBukkitEntity = par1EntityLightningBolt.getBukkitEntity();
         if (stormBukkitEntity == null) return; // MCPC+ - skip mod entities with no wrapper (TODO: create a wrapper)
         final PluginManager pluginManager = Bukkit.getPluginManager();
