@@ -174,7 +174,7 @@ public class PlayerInstance
                 {
                     i = this.chunkLocation.chunkXPos * 16;
                     j = this.chunkLocation.chunkZPos * 16;
-                    this.sendToAllPlayersWatchingChunk(new Packet51MapChunk(PlayerManager.getWorldServer(this.myManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), (this.field_73260_f == 0xFFFF), this.field_73260_f)); // CraftBukkit - send everything (including biome) if all sections flagged
+                    this.sendToAllPlayersWatchingChunk(new Packet51MapChunk(PlayerManager.getWorldServer(this.myManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), (this.field_73260_f == 0xFFFF), this.field_73260_f, PlayerManager.getWorldServer(this.myManager).getServer().orebfuscatorUpdateRadius)); // Spigot (Orebfuscator) - CraftBukkit - send everything (including biome) if all sections flagged
 
                     /* Forge: Grabs ALL tile entities is costly on a modded server, only send needed ones
                     for (k = 0; k < 16; ++k)

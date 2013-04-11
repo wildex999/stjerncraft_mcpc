@@ -42,8 +42,14 @@ public class Spigot {
         server.spamGuardExclusions = configuration.getStringList("settings.spam-exclusions");
 
         server.orebfuscatorEnabled = configuration.getBoolean("orebfuscator.enable", false);
+        server.orebfuscatorEngineMode = configuration.getInt("orebfuscator.engine-mode", 1);
         server.orebfuscatorUpdateRadius = configuration.getInt("orebfuscator.update-radius", 2);
         server.orebfuscatorDisabledWorlds = configuration.getStringList("orebfuscator.disabled-worlds");
+        server.orebfuscatorBlocks = configuration.getShortList("orebfuscator.blocks");
+        if (server.orebfuscatorEngineMode != 1 && server.orebfuscatorEngineMode != 2) {
+            server.orebfuscatorEngineMode = 1;
+        }
+        server.orebfuscatorForgeOredictBlocks = configuration.getBoolean("orebfuscator.forge-oredict-blocks", true); // MCPC+
 
         if (server.chunkGCPeriod == 0) {
             server.getLogger().severe("[Spigot] You should not disable chunk-gc, unexpected behaviour may occur!");

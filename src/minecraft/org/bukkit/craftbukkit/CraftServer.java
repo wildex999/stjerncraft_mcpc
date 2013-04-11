@@ -143,6 +143,22 @@ public final class CraftServer implements Server {
     public int chunkGCLoadThresh = 0;
     private File container;
     private WarningState warningState = WarningState.DEFAULT;
+    private final BooleanWrapper online = new BooleanWrapper();
+    public CraftScoreboardManager scoreboardManager;    
+
+    private boolean dumpMaterials = false; // MCPC+
+
+    // Orebfuscator use
+    public boolean orebfuscatorEnabled = false;
+    public int orebfuscatorEngineMode = 1;
+    public int orebfuscatorUpdateRadius = 2;
+    public List<String> orebfuscatorDisabledWorlds;
+    public List<Short> orebfuscatorBlocks;
+    public boolean orebfuscatorForgeOredictBlocks = true; // MCPC+
+
+    private final class BooleanWrapper {
+        private boolean value = true;
+    }
     // Spigot start
     public String whitelistMessage = "You are not white-listed on this server!";
     public String stopMessage = "Server restarting. Brb";
@@ -151,20 +167,7 @@ public final class CraftServer implements Server {
     public boolean commandComplete = true;
     public List<String> spamGuardExclusions;
     // Spigot end
-    private boolean dumpMaterials = false; // MCPC+
-
-    private final BooleanWrapper online = new BooleanWrapper();
-    public CraftScoreboardManager scoreboardManager;    
-
-    // Orebfuscator use
-    public boolean orebfuscatorEnabled = false;
-    public int orebfuscatorUpdateRadius = 2;
-    public List<String> orebfuscatorDisabledWorlds;
-
-    private final class BooleanWrapper {
-        private boolean value = true;
-    }
-
+    
     static {
         ConfigurationSerialization.registerClass(CraftOfflinePlayer.class);
         CraftItemFactory.instance();

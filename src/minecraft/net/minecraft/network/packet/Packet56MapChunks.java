@@ -51,7 +51,6 @@ public class Packet56MapChunks extends Packet
         {
             Chunk chunk = (Chunk)par1List.get(k);
             Packet51MapChunkData packet51mapchunkdata = Packet51MapChunk.getMapChunkData(chunk, true, 65535);
-
             world = chunk.worldObj; // Spigot (Orebfuscator)
             /* Spigot (Orebfuscator) - Don't use the build buffer yet. Copy to it more efficiently once the chunk is obfuscated
             // Moved to deflate()
@@ -95,7 +94,7 @@ public class Packet56MapChunks extends Packet
 
         for (int i = 0; i < field_73590_a.length; i++)
         {
-            org.bukkit.craftbukkit.OrebfuscatorManager.obfuscate(chunkPostX[i], chunkPosZ[i], field_73590_a[i], field_73584_f[i], world);
+            org.spigotmc.OrebfuscatorManager.obfuscate(chunkPostX[i], chunkPosZ[i], field_73590_a[i], field_73584_f[i], world);
             finalBufferSize += field_73584_f[i].length;
         }
 
@@ -241,26 +240,8 @@ public class Packet56MapChunks extends Packet
         return 6 + this.dataLength + 12 * this.getNumberOfChunkInPacket();
     }
 
-    @SideOnly(Side.CLIENT)
-    public int getChunkPosX(int par1)
-    {
-        return this.chunkPostX[par1];
-    }
-
-    @SideOnly(Side.CLIENT)
-    public int getChunkPosZ(int par1)
-    {
-        return this.chunkPosZ[par1];
-    }
-
     public int getNumberOfChunkInPacket()
     {
         return this.chunkPostX.length;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public byte[] getChunkCompressedData(int par1)
-    {
-        return this.field_73584_f[par1];
     }
 }

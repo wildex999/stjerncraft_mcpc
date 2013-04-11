@@ -135,6 +135,7 @@ public class EntityFallingSand extends Entity
                     }
 
                     this.worldObj.setBlockToAir(i, j, k);
+                    org.spigotmc.OrebfuscatorManager.updateNearbyBlocks(worldObj, i, j, k); // Spigot (Orebfuscator)
                 }
 
                 if (this.onGround)

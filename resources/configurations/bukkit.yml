@@ -124,6 +124,9 @@ database:
     url: jdbc:sqlite:{DIR}{NAME}.db
 orebfuscator:
     enable: false
+    engine-mode: 1
     update-radius: 2
     disabled-worlds:
        - world_the_end
+    blocks: [1, 5, 14, 15, 16, 21, 48, 49, 54, 56, 73, 74, 82, 129, 130]
+    forge-oredict-blocks: true

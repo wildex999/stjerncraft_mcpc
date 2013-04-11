@@ -293,7 +293,7 @@ public class Explosion
                 j = chunkposition.y;
                 k = chunkposition.z;
                 l = this.worldObj.getBlockId(i, j, k);
-                org.bukkit.craftbukkit.OrebfuscatorManager.updateNearbyBlocks(worldObj, i, j, k); // Spigot (Orebfuscator)
+                org.spigotmc.OrebfuscatorManager.updateNearbyBlocks(worldObj, i, j, k); // Spigot (Orebfuscator)
 
                 if (par1)
                 {

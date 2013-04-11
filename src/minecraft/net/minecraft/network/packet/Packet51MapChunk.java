@@ -69,16 +69,22 @@ public class Packet51MapChunk extends Packet
     }
     // Spigot end
 
-    public Packet51MapChunk(Chunk par1Chunk, boolean par2, int par3)
+    public Packet51MapChunk(Chunk chunk, boolean flag, int i, int obfuscate)   // Spigot (Orebfuscator) - added argument
     {
         this.isChunkDataPacket = true;
-        this.xCh = par1Chunk.xPosition;
-        this.zCh = par1Chunk.zPosition;
-        this.includeInitialize = par2;
-        Packet51MapChunkData packet51mapchunkdata = getMapChunkData(par1Chunk, par2, par3);
+        this.xCh = chunk.xPosition;
+        this.zCh = chunk.zPosition;
+        this.includeInitialize = flag;
+        Packet51MapChunkData packet51mapchunkdata = getMapChunkData(chunk, flag, i);
         this.yChMax = packet51mapchunkdata.chunkHasAddSectionFlag;
         this.yChMin = packet51mapchunkdata.chunkExistFlag;
-        org.bukkit.craftbukkit.OrebfuscatorManager.obfuscate(par1Chunk.xPosition, par1Chunk.zPosition, par3, packet51mapchunkdata.compressedData, par1Chunk.worldObj); // Spigot (Orebfuscator)
+        // Spigot start - Orebfuscator
+        if (obfuscate > 0)
+        {
+            org.spigotmc.OrebfuscatorManager.obfuscateSync(chunk.xPosition, chunk.zPosition, i, packet51mapchunkdata.compressedData, chunk.worldObj, obfuscate);
+        }
+
+        // Spigot end
         this.compressedChunkData = packet51mapchunkdata.compressedData;
         this.deflateGate = new Semaphore(1);
     }
@@ -99,6 +105,13 @@ public class Packet51MapChunk extends Packet
             deflater.end();
         }
     }
+
+    // Spigot start - add new default constructor to support new orebfuscator arg.
+    public Packet51MapChunk(Chunk par1Chunk, boolean par2, int par3)
+    {
+        this(par1Chunk, par2, par3, 1);
+    }
+    // Spigot end
 
     /**
      * Abstract. Reads the raw packet data from the data stream.
