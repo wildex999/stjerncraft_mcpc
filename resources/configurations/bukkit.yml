@@ -25,9 +25,6 @@ settings:
     query-plugins: true
     deprecated-verbose: default
     shutdown-message: Server closed
-    restart-script-location: start.bat
-    timeout-time: 300
-    restart-on-crash: false
     filter-unsafe-ips: false
     whitelist-message: You are not white-listed on this server!
     fml-missing-message: You do not have FML installed, you cannot connect to this server
@@ -40,6 +37,9 @@ settings:
     tps-command: true
     spam-exclusions:
        - /skill
+    timeout-time: 300
+    restart-on-crash: false
+    restart-script-location: /path/to/server/start.sh
 mcpc:
     connection-logging: false
     dump-materials: false

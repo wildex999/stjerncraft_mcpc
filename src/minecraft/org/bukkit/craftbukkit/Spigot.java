@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.spigotmc.Metrics;
+import org.spigotmc.RestartCommand;
+import org.spigotmc.WatchdogThread;
 
 public class Spigot {
 
@@ -26,17 +28,8 @@ public class Spigot {
         }
 
         if (configuration.getBoolean("settings.restart-command", true)) { // MCPC+ - config option to allow mods to replace command
-            //commandMap.register("bukkit", new RestartCommand("restart")); // TODO: moved into org.spigotmc
+            commandMap.register("restart", new RestartCommand("restart"));
         }
-
-        int timeout = configuration.getInt("settings.timeout-time", 300);
-        if (timeout == 180) {
-            timeout = 300;
-            server.getLogger().info("Migrating to new timeout time of 300");
-            configuration.set("settings.timeout-time", timeout);
-            server.saveConfig();
-        }
-        org.bukkit.craftbukkit.util.WatchdogThread.startThread(timeout, configuration.getBoolean("settings.restart-on-crash", false));
 
         server.whitelistMessage = configuration.getString("settings.whitelist-message", server.whitelistMessage);
         server.stopMessage = configuration.getString("settings.stop-message", server.stopMessage);
@@ -44,6 +37,17 @@ public class Spigot {
         server.ipFilter = configuration.getBoolean("settings.filter-unsafe-ips", false);
         server.commandComplete = configuration.getBoolean("settings.command-complete", true);
         server.spamGuardExclusions = configuration.getStringList("settings.spam-exclusions");
+
+        int configVersion = configuration.getInt("config-version");
+        switch (configVersion) {
+            case 0:
+                configuration.set("settings.timeout-time", 30);
+            case 1:
+                configuration.set("settings.timeout-time", 60);
+        }
+        configuration.set("config-version", 2);
+
+        WatchdogThread.doStart(configuration.getInt("settings.timeout-time", 60), configuration.getBoolean("settings.restart-on-crash", false));
 
         server.orebfuscatorEnabled = configuration.getBoolean("orebfuscator.enable", false);
         server.orebfuscatorEngineMode = configuration.getInt("orebfuscator.engine-mode", 1);
@@ -285,4 +289,64 @@ public class Spigot {
         SpigotTimings.checkIfActiveTimer.stopTiming();
         return isActive;
     }
+    
+    public static void restart() {
+        try {
+            String startupScript = net.minecraft.server.MinecraftServer.getServer().server.configuration.getString("settings.restart-script-location", "");
+            final File file = new File(startupScript);
+            if (file.isFile()) {
+                System.out.println("Attempting to restart with " + startupScript);
+
+                // Kick all players
+                for (net.minecraft.entity.player.EntityPlayerMP p : (List< net.minecraft.entity.player.EntityPlayerMP>) net.minecraft.server.MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+                    p.playerNetServerHandler.netManager.addToSendQueue(new net.minecraft.network.packet.Packet255KickDisconnect("Server is restarting"));
+                    p.playerNetServerHandler.netManager.serverShutdown();
+                }
+                // Give the socket a chance to send the packets
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                }
+                // Close the socket so we can rebind with the new process
+                net.minecraft.server.MinecraftServer.getServer().getNetworkThread().stopListening();
+
+                // Give time for it to kick in
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                }
+
+                // Actually shutdown
+                try {
+                    net.minecraft.server.MinecraftServer.getServer().stopServer();
+                } catch (Throwable t) {
+                }
+
+                // This will be done AFTER the server has completely halted
+                Thread shutdownHook = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            String os = System.getProperty("os.name").toLowerCase();
+                            if (os.contains("win")) {
+                                Runtime.getRuntime().exec("cmd /c start " + file.getPath());
+                            } else {
+                                Runtime.getRuntime().exec(new String[]{"sh", file.getPath()});
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+
+                shutdownHook.setDaemon(true);
+                Runtime.getRuntime().addShutdownHook(shutdownHook);
+            } else {
+                System.out.println("Startup script '" + startupScript + "' does not exist! Stopping server.");
+            }
+            System.exit(0);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }    
 }

@@ -718,6 +718,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                     this.tick();
                     SpigotTimings.serverTickTimer.stopTiming(); // Spigot
                     org.bukkit.CustomTimingsHandler.tick(); // Spigot
+                    org.spigotmc.WatchdogThread.tick();                    
                 }
 
                 // Spigot end
@@ -763,7 +764,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         }
         finally
         {
-            org.bukkit.craftbukkit.util.WatchdogThread.stopping(); // Spigot
+            org.spigotmc.WatchdogThread.doStop(); // Spigot
 
             try
             {
@@ -771,7 +772,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 {
                     return;    // Forge
                 }
-
                 this.stopServer();
                 this.serverStopped = true;
             }
@@ -979,7 +979,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         SpigotTimings.tickablesTimer.stopTiming(); // Spigot
         this.theProfiler.endSection();
-        org.bukkit.craftbukkit.util.WatchdogThread.tick(); // Spigot
     }
 
     public boolean getAllowNether()
