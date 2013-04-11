@@ -2136,7 +2136,7 @@ public abstract class EntityLiving extends Entity
             {
                 Entity entity = (Entity)list.get(i);
 
-                if (!(entity instanceof EntityLiving) && skip)
+                if (entity instanceof EntityLiving && skip)
                 {
                     continue;    // Spigot
                 }
