@@ -81,8 +81,8 @@ public class OrebfuscatorManager {
                                             if (ITERATOR >= ores.length) {
                                                 ITERATOR = 0;
                                             }
-                                            System.out.println("[orebfuscator engine-mode 2] buffer index="+index+" and buffer length="+buffer.length);
-                                            System.out.println("[orebfuscator engine-mode 2] ITERATOR="+ITERATOR+" and ores.length="+ores.length);
+                                            if (index >= buffer.length) System.out.println("[orebfuscator engine mode 2] "+index+" > "+buffer.length);
+                                            if (ITERATOR >= ores.length) System.out.println("[orebfuscator engine mode 2] "+ITERATOR+" >="+ores.length);
                                             buffer[index] = (byte) (int) ores[ITERATOR++];
                                         } else {
                                             if (world.getServer().orebfuscatorEngineMode == 1) {
