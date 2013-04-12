@@ -21,6 +21,7 @@ public class Spigot {
     static net.minecraft.util.AxisAlignedBB monsterBB = net.minecraft.util.AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
     public static boolean tabPing = false;
     private static Metrics metrics;
+    public static List<String> bungeeIPs;    
 
     public static void initialize(CraftServer server, SimpleCommandMap commandMap, YamlConfiguration configuration) {
         if (configuration.getBoolean("settings.tps-command", true)) { // MCPC+ - config option to allow mods to replace command
@@ -64,6 +65,7 @@ public class Spigot {
         }
         
         tabPing = configuration.getBoolean("settings.tab-ping", tabPing);
+        bungeeIPs = configuration.getStringList("settings.bungee-proxies");        
 
         if (metrics == null) {
             try {

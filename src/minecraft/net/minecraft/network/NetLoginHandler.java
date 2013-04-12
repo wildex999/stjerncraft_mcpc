@@ -351,11 +351,24 @@ public class NetLoginHandler extends NetHandler
         return par0NetLoginHandler.field_72544_i = par1;
     }
     
-
+    // Spigot start
+    @Override
     public void handleCustomPayload(Packet250CustomPayload par1Packet250CustomPayload)
     {
-        FMLNetworkHandler.handlePacket250Packet(par1Packet250CustomPayload, myTCPConnection, this);
+        if (par1Packet250CustomPayload.channel.equals("BungeeCord") && org.bukkit.craftbukkit.Spigot.bungeeIPs.contains(getSocket().getInetAddress().getHostAddress()))
+        {
+            com.google.common.io.ByteArrayDataInput in = com.google.common.io.ByteStreams.newDataInput(par1Packet250CustomPayload.data);
+            String subTag = in.readUTF();
+
+            if (subTag.equals("Login"))
+            {
+                myTCPConnection.setSocketAddress(new java.net.InetSocketAddress(in.readUTF(), in.readInt()));
+            }
+        }
+            
+        FMLNetworkHandler.handlePacket250Packet(par1Packet250CustomPayload, myTCPConnection, this);  // MCPC+
     }
+    // Spigot end    
 
     @Override
     public void handleVanilla250Packet(Packet250CustomPayload payload)
