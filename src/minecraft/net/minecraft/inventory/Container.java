@@ -480,7 +480,7 @@ public abstract class Container
             {
                 slot2 = (Slot)this.inventorySlots.get(par1);
 
-                if (slot2 != null && slot2.getHasStack() && slot2.canTakeStack(par4EntityPlayer))   // Spigot
+                if (slot2 != null && slot2.getHasStack() && slot2.canTakeStack(par4EntityPlayer))   // CraftBukkit - Validate before dropping
                 {
                     itemstack1 = slot2.decrStackSize(par2 == 0 ? 1 : slot2.getStack().stackSize);
                     slot2.onPickupFromSlot(par4EntityPlayer, itemstack1);
