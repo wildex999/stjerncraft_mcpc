@@ -1108,13 +1108,14 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
     public boolean func_96122_a(EntityPlayer par1EntityPlayer)
     {
-        // CraftBukkit start - Change to check player's scoreboard team according to API reference to this (or main) scoreboard
+        // CraftBukkit start - Change to check OTHER player's scoreboard team according to API
+        // To summarize this method's logic, it's "Can parameter hurt this"
         org.bukkit.scoreboard.Team team;
 
-        if (this instanceof EntityPlayerMP)
+        if (par1EntityPlayer instanceof EntityPlayerMP)
         {
-            EntityPlayerMP thisPlayer = (EntityPlayerMP) this;
-            team = thisPlayer.getBukkitEntity().getScoreboard().getPlayerTeam(thisPlayer.getBukkitEntity());
+            EntityPlayerMP thatPlayer = (EntityPlayerMP) par1EntityPlayer;
+            team = thatPlayer.getBukkitEntity().getScoreboard().getPlayerTeam(thatPlayer.getBukkitEntity());
 
             if (team == null || team.allowFriendlyFire())
             {
@@ -1124,8 +1125,8 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         else
         {
             // This should never be called, but is implemented anyway
-            org.bukkit.OfflinePlayer thisPlayer = this.worldObj.getServer().getOfflinePlayer(this.username);
-            team = this.worldObj.getServer().getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
+            org.bukkit.OfflinePlayer thisPlayer = par1EntityPlayer.worldObj.getServer().getOfflinePlayer(par1EntityPlayer.username);
+            team = par1EntityPlayer.worldObj.getServer().getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
 
             if (team == null || team.allowFriendlyFire())
             {
@@ -1133,12 +1134,12 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
             }
         }
 
-        if (par1EntityPlayer instanceof EntityPlayerMP)
+        if (this instanceof EntityPlayerMP)
         {
-            return team.hasPlayer(((EntityPlayerMP) par1EntityPlayer).getBukkitEntity());
+            return !team.hasPlayer(((EntityPlayerMP) this).getBukkitEntity());
         }
 
-        return team.hasPlayer(this.worldObj.getServer().getOfflinePlayer(par1EntityPlayer.username));
+        return !team.hasPlayer(this.worldObj.getServer().getOfflinePlayer(this.username));
         // CraftBukkit end
     }
 
