@@ -290,10 +290,12 @@ public class TileEntityHopper extends TileEntity implements Hopper
             if (!this.func_98047_l() && BlockHopper.func_94452_d(this.getBlockMetadata()))
             {
                 boolean flag = this.func_94116_j() | func_96116_a(this);
+                // CraftBukkit start - Move delay out of if block
+                this.func_98046_c(8);
 
                 if (flag)
                 {
-                    this.func_98046_c(8);
+                    // CraftBukkit end
                     this.onInventoryChanged();
                     return true;
                 }
