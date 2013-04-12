@@ -143,7 +143,7 @@ public class CraftEventFactory {
         CraftWorld craftWorld = (CraftWorld) player.getWorld();
         CraftServer craftServer = (CraftServer) player.getServer();
 
-        Block blockClicked = craftWorld.getBlockAt(clickedX, clickedY, clickedZ);
+        Block blockClicked = clickedY > 255 ? null : craftWorld.getBlockAt(clickedX, clickedY, clickedZ); // MCPC+ - Don't bother getting the block if it's just going to be set to null later. Avoids pointles chunkloading if ChunkProviderServer.loadChunkOnProvideRequest is enabled
         BlockFace blockFace = CraftBlock.notchToBlockFace(clickedFace);
 
         if (clickedY > 255) {
