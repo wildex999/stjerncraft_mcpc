@@ -72,7 +72,21 @@ public class NetLoginHandler extends NetHandler
     // CraftBukkit start
     public Socket getSocket()
     {
-        return this.myTCPConnection.getSocket();
+        // MCPC+ start - bypass inheritance for runtime deobf, see #729
+        //return this.myTCPConnection.getSocket();
+        if (this.myTCPConnection instanceof TcpConnection)
+        {
+            return ((TcpConnection) this.myTCPConnection).getSocket();
+        }
+        else if (this.myTCPConnection instanceof org.spigotmc.netty.NettyNetworkManager)
+        {
+            return ((org.spigotmc.netty.NettyNetworkManager) this.myTCPConnection).getSocket();
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unknown network manager implementation: " + this.myTCPConnection.getClass().getName());
+        }
+        // MCPC+ end
     }
     // CraftBukkit end
 
@@ -230,7 +244,7 @@ public class NetLoginHandler extends NetHandler
      */
     public void handleServerPing(Packet254ServerPing par1Packet254ServerPing)
     {
-        if (this.myTCPConnection.getSocket() == null)
+        if (this.getSocket() == null) // MCPC+ - remove myTCPConnection
         {
             return;    // CraftBukkit - fix NPE when a client queries a server that is unable to handle it.
         }
@@ -271,9 +285,9 @@ public class NetLoginHandler extends NetHandler
 
             InetAddress inetaddress = null;
 
-            if (this.myTCPConnection.getSocket() != null)
+            if (this.getSocket() != null) // MCPC+ - remove myTCPConnection
             {
-                inetaddress = this.myTCPConnection.getSocket().getInetAddress();
+                inetaddress = this.getSocket().getInetAddress(); // MCPC+ - remove myTCPConnection
             }
 
             this.myTCPConnection.addToSendQueue(new Packet255KickDisconnect(s));
