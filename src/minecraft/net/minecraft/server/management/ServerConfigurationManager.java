@@ -695,8 +695,9 @@ public abstract class ServerConfigurationManager
     // CraftBukkit start - Replaced the standard handling of portals with a more customised method.
     public void changeDimension(EntityPlayerMP entityplayermp, int i, TeleportCause cause)
     {
-        WorldServer exitWorld = null;
-
+        // MCPC+ start - Allow Forge hotloading on teleport
+        WorldServer exitWorld = MinecraftServer.getServer().worldServerForDimension(i);
+        /*
         if (entityplayermp.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET)   // plugins must specify exit from custom Bukkit worlds
         {
             // only target existing worlds (compensate for allow-nether/allow-end as false)
@@ -708,6 +709,7 @@ public abstract class ServerConfigurationManager
                 }
             }
         }
+        // MCPC+ end - */
 
         Location enter = entityplayermp.getBukkitEntity().getLocation();
         Location exit = null;

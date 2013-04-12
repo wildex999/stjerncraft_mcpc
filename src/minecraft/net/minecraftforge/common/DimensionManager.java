@@ -42,9 +42,12 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
 // MCPC+ start
-import java.io.FilenameFilter;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.chunk.storage.AnvilSaveHandler;
+
+import org.bukkit.Bukkit;
 import org.bukkit.World.Environment;
+import org.bukkit.generator.ChunkGenerator;
 // MCPC+ end
 
 public class DimensionManager
@@ -237,7 +240,7 @@ public class DimensionManager
     }
 
     public static void initDimension(int dim) {
-        if (dim == 0 || dim == 1 || dim == -1) return; // MCPC+ - do not initialize overworld, nether, end
+        if (dim == 0) return; // MCPC+ - overworld
         WorldServer overworld = getWorld(0);
         if (overworld == null) {
             throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
@@ -248,7 +251,7 @@ public class DimensionManager
             System.err.println("Cannot Hotload Dim: " + e.getMessage());
             return; //If a provider hasn't been registered then we can't hotload the dim
         }
-        // MCPC+ start - add MV support for Mystcraft
+        // MCPC+ start - add MV support for Mystcraft, fix Forge hotloading for bukkit multiworld
         File mystconfig = new File("./config/mystcraft_config.txt");
         boolean initMyst = false;
         if (mystconfig.exists())
@@ -258,7 +261,6 @@ public class DimensionManager
             int mystProvider = config.get(Configuration.CATEGORY_GENERAL, "options.providerId", -999).getInt();
             if (mystProvider == DimensionManager.getProviderType(dim))
             {
-                MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
                 WorldSettings worldsettings = new WorldSettings(overworld.getWorldInfo());
                 WorldServer mystWorld = initMystWorld("world_myst", worldsettings, dim);
                 initMyst = true;
@@ -267,10 +269,40 @@ public class DimensionManager
         if (initMyst) return;
         // MCPC+ end
         MinecraftServer mcServer = overworld.getMinecraftServer();
-        ISaveHandler savehandler = overworld.getSaveHandler();
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler, overworld.getWorldLogAgent()));
+        // MCPC+ start
+        String worldType;
+        String name;
+        Environment env = Environment.getEnvironment(dim);
+        if (dim >= -1 && dim <= 1)
+        {
+            if ((dim == -1 && !mcServer.getAllowNether()) || (dim == 1 && !mcServer.server.getAllowEnd()))
+                return;
+            worldType = env.toString().toLowerCase();
+            name = mcServer.getFolderName() + '_' + worldType;
+        }
+        else
+        {
+            WorldProvider provider = WorldProvider.getProviderForDimension(dim);
+            worldType = provider.getClass().getSimpleName();
+            env = DimensionManager.registerBukkitEnvironment(provider.dimensionId, provider.getClass().getSimpleName());
+            if (worldType.contains("WorldProvider"))
+                worldType = worldType.replace("WorldProvider", "");
+            name = "world_" + worldType.toLowerCase();
+        }
+        ChunkGenerator gen = mcServer.server.getGenerator(name);
+        if (mcServer instanceof DedicatedServer) {
+            worldSettings.func_82750_a(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));
+        }
+        WorldServer world = new WorldServerMulti(mcServer, new AnvilSaveHandler(Bukkit.getServer().getWorldContainer(), name, true), name, dim, worldSettings, overworld, mcServer.theProfiler, overworld.getWorldLogAgent(), env, gen);
+        if (gen != null)
+        {
+            world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
+        }
+        mcServer.worlds.add(world);
+        mcServer.getConfigurationManager().setPlayerManager(mcServer.worlds.toArray(new WorldServer[mcServer.worlds.size()]));
+        // MCPC+ end
         world.addWorldAccess(new WorldManager(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
@@ -294,7 +326,6 @@ public class DimensionManager
         else env = Environment.getEnvironment(DimensionManager.getProviderType(mystDimension));
         String dim = "age" + mystDimension;
         String name = par1Str + FILE_SEPARATOR + dim;
-        File newWorld = new File(new File(par1Str), dim);
 
         org.bukkit.generator.ChunkGenerator gen = mcServer.server.getGenerator(name);
         WorldServer mystWorld = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), name, mystDimension, worldsettings, getWorld(0), getWorld(0).theProfiler, mcServer.getLogAgent(), env, gen);

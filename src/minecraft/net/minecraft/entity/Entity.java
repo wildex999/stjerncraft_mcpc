@@ -2591,8 +2591,9 @@ public abstract class Entity
             MinecraftServer minecraftserver = MinecraftServer.getServer();
             // CraftBukkit start - Move logic into new function "teleportToLocation"
             // int j = this.dimension;
-            WorldServer exitWorld = null;
-
+            // MCPC+ start - Allow Forge hotloading on teleport
+            WorldServer exitWorld = minecraftserver.worldServerForDimension(par1);
+            /*
             if (this.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET)   // Plugins must specify exit from custom Bukkit worlds
             {
                 // Only target existing worlds (compensate for allow-nether/allow-end as false)
@@ -2604,6 +2605,7 @@ public abstract class Entity
                     }
                 }
             }
+            // MCPC+ end - */
 
             Location enter = this.getBukkitEntity().getLocation();
             Location exit = exitWorld != null ? minecraftserver.getConfigurationManager().calculateTarget(enter, minecraftserver.worldServerForDimension(par1)) : null;
