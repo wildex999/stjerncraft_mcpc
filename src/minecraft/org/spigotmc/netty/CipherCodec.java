@@ -15,8 +15,16 @@ public class CipherCodec extends ByteToByteCodec {
 
     private Cipher encrypt;
     private Cipher decrypt;
-    private byte[] heapIn = new byte[0];
-    private byte[] heapOut = new byte[0];
+    private ThreadLocal<byte[]> heapInLocal = new EmptyByteThreadLocal();
+    private ThreadLocal<byte[]> heapOutLocal = new EmptyByteThreadLocal();
+
+    private static class EmptyByteThreadLocal extends ThreadLocal<byte[]> {
+
+        @Override
+        protected byte[] initialValue() {
+            return new byte[0];
+        }
+    }
 
     public CipherCodec(Cipher encrypt, Cipher decrypt) {
         this.encrypt = encrypt;
@@ -34,12 +42,14 @@ public class CipherCodec extends ByteToByteCodec {
     }
 
     private void cipher(ByteBuf in, ByteBuf out, Cipher cipher) throws ShortBufferException {
+        byte[] heapIn = heapInLocal.get();
         int readableBytes = in.readableBytes();
         if (heapIn.length < readableBytes) {
             heapIn = new byte[readableBytes];
         }
         in.readBytes(heapIn, 0, readableBytes);
 
+        byte[] heapOut = heapOutLocal.get();
         int outputSize = cipher.getOutputSize(readableBytes);
         if (heapOut.length < outputSize) {
             heapOut = new byte[outputSize];
