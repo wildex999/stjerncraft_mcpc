@@ -14,6 +14,11 @@ public class PacketEncoder extends MessageToByteEncoder<net.minecraft.network.pa
 
     private ByteBuf outBuf;
     private DataOutputStream dataOut;
+    private final NettyNetworkManager networkManager;
+
+    public PacketEncoder(NettyNetworkManager networkManager) {
+        this.networkManager = networkManager;
+    }
 
     @Override
     public void encode(ChannelHandlerContext ctx, net.minecraft.network.packet.Packet msg, ByteBuf out) throws Exception {
@@ -26,6 +31,8 @@ public class PacketEncoder extends MessageToByteEncoder<net.minecraft.network.pa
 
         out.writeByte(msg.getPacketId());
         msg.writePacketData(dataOut);
+
+        networkManager.addWrittenBytes(outBuf.readableBytes());
         out.writeBytes(outBuf);
         out.discardSomeReadBytes();
     }

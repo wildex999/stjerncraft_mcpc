@@ -44,11 +44,12 @@ public class NettyServerConnection extends net.minecraft.network.NetworkListenTh
                     // IP_TOS is not supported (Windows XP / Windows Server 2003)
                 }
 
+                NettyNetworkManager networkManager = new NettyNetworkManager();
                 ch.pipeline()
                         .addLast("timer", new ReadTimeoutHandler(30))
                         .addLast("decoder", new PacketDecoder())
-                        .addLast("encoder", new PacketEncoder())
-                        .addLast("manager", new NettyNetworkManager());
+                        .addLast("encoder", new PacketEncoder(networkManager))
+                        .addLast("manager", networkManager);
             }
         }).group(new NioEventLoopGroup(threads, new ThreadFactoryBuilder().setNameFormat("Netty IO Thread - %1$d").build())).localAddress(host, port).bind();
         net.minecraft.server.MinecraftServer.getServer().getLogAgent().logInfo("Using Netty NIO with " + threads + " threads for network connections.");

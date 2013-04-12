@@ -54,6 +54,7 @@ public class NettyNetworkManager extends ChannelInboundMessageHandlerAdapter<net
     private String dcReason;
     private Object[] dcArgs;
     private Socket socketAdaptor;
+    private long writtenBytes;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -257,5 +258,13 @@ public class NettyNetworkManager extends ChannelInboundMessageHandlerAdapter<net
             dcArgs = arguments;
             serverShutdown();
         }
+    }
+
+    public long getWrittenBytes() {
+        return writtenBytes;
+    }
+
+    public void addWrittenBytes(int written) {
+        writtenBytes += written;
     }
 }
