@@ -12,15 +12,15 @@ import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 
 public abstract class BlockBasePressurePlate extends Block
 {
-    private String field_94356_a;
+    private String pressurePlateIconName;
 
     protected BlockBasePressurePlate(int par1, String par2Str, Material par3Material)
     {
         super(par1, par3Material);
-        this.field_94356_a = par2Str;
+        this.pressurePlateIconName = par2Str;
         this.setCreativeTab(CreativeTabs.tabRedstone);
         this.setTickRandomly(true);
-        this.func_94353_c_(this.func_94355_d(15));
+        this.func_94353_c_(this.getMetaFromWeight(15));
     }
 
     /**
@@ -33,7 +33,7 @@ public abstract class BlockBasePressurePlate extends Block
 
     protected void func_94353_c_(int par1)
     {
-        boolean flag = this.func_94350_c(par1) > 0;
+        boolean flag = this.getPowerSupply(par1) > 0;
         float f = 0.0625F;
 
         if (flag)
@@ -120,7 +120,7 @@ public abstract class BlockBasePressurePlate extends Block
     {
         if (!par1World.isRemote)
         {
-            int l = this.func_94350_c(par1World.getBlockMetadata(par2, par3, par4));
+            int l = this.getPowerSupply(par1World.getBlockMetadata(par2, par3, par4));
 
             if (l > 0)
             {
@@ -136,7 +136,7 @@ public abstract class BlockBasePressurePlate extends Block
     {
         if (!par1World.isRemote)
         {
-            int l = this.func_94350_c(par1World.getBlockMetadata(par2, par3, par4));
+            int l = this.getPowerSupply(par1World.getBlockMetadata(par2, par3, par4));
 
             if (l == 0)
             {
@@ -150,7 +150,7 @@ public abstract class BlockBasePressurePlate extends Block
      */
     protected void setStateIfMobInteractsWithPlate(World par1World, int par2, int par3, int par4, int par5)
     {
-        int i1 = this.func_94351_d(par1World, par2, par3, par4);
+        int i1 = this.getPlateState(par1World, par2, par3, par4);
         boolean flag = par5 > 0;
         boolean flag1 = i1 > 0;
         // CraftBukkit start - Interact Pressure Plate
@@ -169,7 +169,7 @@ public abstract class BlockBasePressurePlate extends Block
 
         if (par5 != i1)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, this.func_94355_d(i1), 2);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, this.getMetaFromWeight(i1), 2);
             this.func_94354_b_(par1World, par2, par3, par4);
             par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
         }
@@ -189,7 +189,7 @@ public abstract class BlockBasePressurePlate extends Block
         }
     }
 
-    protected AxisAlignedBB func_94352_a(int par1, int par2, int par3)
+    protected AxisAlignedBB getSensitiveAABB(int par1, int par2, int par3)
     {
         float f = 0.125F;
         return AxisAlignedBB.getAABBPool().getAABB((double)((float)par1 + f), (double)par2, (double)((float)par3 + f), (double)((float)(par1 + 1) - f), (double)par2 + 0.25D, (double)((float)(par3 + 1) - f));
@@ -200,7 +200,7 @@ public abstract class BlockBasePressurePlate extends Block
      */
     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
     {
-        if (this.func_94350_c(par6) > 0)
+        if (this.getPowerSupply(par6) > 0)
         {
             this.func_94354_b_(par1World, par2, par3, par4);
         }
@@ -221,7 +221,7 @@ public abstract class BlockBasePressurePlate extends Block
      */
     public int isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        return this.func_94350_c(par1IBlockAccess.getBlockMetadata(par2, par3, par4));
+        return this.getPowerSupply(par1IBlockAccess.getBlockMetadata(par2, par3, par4));
     }
 
     /**
@@ -230,7 +230,7 @@ public abstract class BlockBasePressurePlate extends Block
      */
     public int isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        return par5 == 1 ? this.func_94350_c(par1IBlockAccess.getBlockMetadata(par2, par3, par4)) : 0;
+        return par5 == 1 ? this.getPowerSupply(par1IBlockAccess.getBlockMetadata(par2, par3, par4)) : 0;
     }
 
     /**
@@ -261,9 +261,9 @@ public abstract class BlockBasePressurePlate extends Block
         return 1;
     }
 
-    protected abstract int func_94351_d(World world, int i, int j, int k);
+    protected abstract int getPlateState(World world, int i, int j, int k);
 
-    protected abstract int func_94350_c(int i);
+    protected abstract int getPowerSupply(int i);
 
-    protected abstract int func_94355_d(int i);
+    protected abstract int getMetaFromWeight(int i);
 }

@@ -90,7 +90,7 @@ public class BlockHopper extends BlockContainer
 
         if (par6ItemStack.hasDisplayName())
         {
-            TileEntityHopper tileentityhopper = func_98213_d(par1World, par2, par3, par4);
+            TileEntityHopper tileentityhopper = getHopperTile(par1World, par2, par3, par4);
             tileentityhopper.func_96115_a(par6ItemStack.getDisplayName());
         }
     }
@@ -115,7 +115,7 @@ public class BlockHopper extends BlockContainer
         }
         else
         {
-            TileEntityHopper tileentityhopper = func_98213_d(par1World, par2, par3, par4);
+            TileEntityHopper tileentityhopper = getHopperTile(par1World, par2, par3, par4);
 
             if (tileentityhopper != null)
             {
@@ -138,7 +138,7 @@ public class BlockHopper extends BlockContainer
     private void func_96471_k(World par1World, int par2, int par3, int par4)
     {
         int l = par1World.getBlockMetadata(par2, par3, par4);
-        int i1 = func_94451_c(l);
+        int i1 = getDirectionFromMetadata(l);
         boolean flag = !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
         boolean flag1 = func_94452_d(l);
 
@@ -224,7 +224,7 @@ public class BlockHopper extends BlockContainer
         return false;
     }
 
-    public static int func_94451_c(int par0)
+    public static int getDirectionFromMetadata(int par0)
     {
         return Math.min(par0 & 7, 5); // CraftBukkit - Fix AIOOBE in callers
     }
@@ -249,10 +249,10 @@ public class BlockHopper extends BlockContainer
      */
     public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
     {
-        return Container.func_94526_b((IInventory) func_98213_d(par1World, par2, par3, par4));
+        return Container.func_94526_b((IInventory) getHopperTile(par1World, par2, par3, par4));
     }
 
-    public static TileEntityHopper func_98213_d(IBlockAccess par0IBlockAccess, int par1, int par2, int par3)
+    public static TileEntityHopper getHopperTile(IBlockAccess par0IBlockAccess, int par1, int par2, int par3)
     {
         return (TileEntityHopper)par0IBlockAccess.getBlockTileEntity(par1, par2, par3);
     }

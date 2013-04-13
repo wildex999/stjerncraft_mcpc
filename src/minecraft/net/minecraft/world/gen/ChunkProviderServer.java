@@ -243,8 +243,8 @@ public class ChunkProviderServer implements IChunkProvider
 
         if (par1 != chunk.xPosition || par2 != chunk.zPosition)
         {
-            this.worldObj.getWorldLogAgent().func_98232_c("Chunk (" + chunk.xPosition + ", " + chunk.zPosition + ") stored at  (" + par1 + ", " + par2 + ") in world '" + worldObj.getWorld().getName() + "'");
-            this.worldObj.getWorldLogAgent().func_98232_c(chunk.getClass().getName());
+            this.worldObj.getWorldLogAgent().logSevere("Chunk (" + chunk.xPosition + ", " + chunk.zPosition + ") stored at  (" + par1 + ", " + par2 + ") in world '" + worldObj.getWorld().getName() + "'");
+            this.worldObj.getWorldLogAgent().logSevere(chunk.getClass().getName());
             Throwable ex = new Throwable();
             ex.fillInStackTrace();
             ex.printStackTrace();

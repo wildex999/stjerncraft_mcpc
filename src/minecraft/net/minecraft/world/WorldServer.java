@@ -378,10 +378,10 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         this.villageCollectionObj.tick();
         this.villageSiegeObj.tick();
         this.theProfiler.endStartSection("portalForcer");
-        this.field_85177_Q.func_85189_a(this.getTotalWorldTime());
+        this.field_85177_Q.removeStalePortalLocations(this.getTotalWorldTime());
         for (Teleporter tele : customTeleporters)
         {
-            tele.func_85189_a(getTotalWorldTime());
+            tele.removeStalePortalLocations(getTotalWorldTime());
         }        
         this.theProfiler.endSection();
         this.sendAndApplyBlockEvents();

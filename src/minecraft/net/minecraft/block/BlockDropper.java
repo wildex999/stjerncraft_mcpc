@@ -18,16 +18,16 @@ import net.minecraft.world.World;
 
 public class BlockDropper extends BlockDispenser
 {
-    private final IBehaviorDispenseItem field_96474_cR = new BehaviorDefaultDispenseItem();
+    private final IBehaviorDispenseItem dropperDefaultBehaviour = new BehaviorDefaultDispenseItem();
 
     protected BlockDropper(int par1)
     {
         super(par1);
     }
 
-    protected IBehaviorDispenseItem func_96472_a(ItemStack par1ItemStack)
+    protected IBehaviorDispenseItem getBehaviorForItemStack(ItemStack par1ItemStack)
     {
-        return this.field_96474_cR;
+        return this.dropperDefaultBehaviour;
     }
 
     /**
@@ -55,7 +55,7 @@ public class BlockDropper extends BlockDispenser
             {
                 ItemStack itemstack = tileentitydispenser.getStackInSlot(l);
                 int i1 = par1World.getBlockMetadata(par2, par3, par4) & 7;
-                IInventory iinventory = TileEntityHopper.func_96117_b(par1World, (double)(par2 + Facing.offsetsXForSide[i1]), (double)(par3 + Facing.offsetsYForSide[i1]), (double)(par4 + Facing.offsetsZForSide[i1]));
+                IInventory iinventory = TileEntityHopper.getInventoryAtLocation(par1World, (double)(par2 + Facing.offsetsXForSide[i1]), (double)(par3 + Facing.offsetsYForSide[i1]), (double)(par4 + Facing.offsetsZForSide[i1]));
                 ItemStack itemstack1;
 
                 if (iinventory != null)
@@ -82,7 +82,7 @@ public class BlockDropper extends BlockDispenser
                         return;
                     }
 
-                    itemstack1 = TileEntityHopper.func_94117_a(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[i1]);
+                    itemstack1 = TileEntityHopper.insertStack(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[i1]);
 
                     if (event.getItem().equals(oitemstack) && itemstack1 == null)
                     {
@@ -101,7 +101,7 @@ public class BlockDropper extends BlockDispenser
                 }
                 else
                 {
-                    itemstack1 = this.field_96474_cR.dispense(blocksourceimpl, itemstack);
+                    itemstack1 = this.dropperDefaultBehaviour.dispense(blocksourceimpl, itemstack);
 
                     if (itemstack1 != null && itemstack1.stackSize == 0)
                     {

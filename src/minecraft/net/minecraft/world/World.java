@@ -179,7 +179,7 @@ public abstract class World implements IBlockAccess
     private final Vec3Pool vecPool = new Vec3Pool(300, 2000);
     private final Calendar theCalendar = Calendar.getInstance();
     public Scoreboard worldScoreboard = new Scoreboard(); // CraftBukkit - protected -> public
-    private final ILogAgent field_98181_L;
+    private final ILogAgent worldLogAgent;
     private ArrayList collidingBoundingBoxes = new ArrayList();    
     private boolean scanningTileEntities;
     // CraftBukkit start - public, longhashset
@@ -316,7 +316,7 @@ public abstract class World implements IBlockAccess
             this.mapStorage = new MapStorage(idatamanager);
         }
         // MCPC+ end
-        this.field_98181_L = ilogagent;
+        this.worldLogAgent = ilogagent;
         // this.worldInfo = idatamanager.loadWorldInfo(); // Spigot - Moved up
 
         if (worldprovider != null)
@@ -418,7 +418,7 @@ public abstract class World implements IBlockAccess
             this.mapStorage = new MapStorage(par1ISaveHandler);
         }
         // MCPC+ end
-        this.field_98181_L = par6ILogAgent;        
+        this.worldLogAgent = par6ILogAgent;        
         this.worldInfo = par1ISaveHandler.loadWorldInfo();
 
         if (par4WorldProvider != null)
@@ -566,7 +566,7 @@ public abstract class World implements IBlockAccess
                     CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception getting block type in world");
                     CrashReportCategory crashreportcategory = crashreport.makeCategory("Requested block coordinates");
                     crashreportcategory.addCrashSection("Found chunk", Boolean.valueOf(chunk == null));
-                    crashreportcategory.addCrashSection("Location", CrashReportCategory.func_85071_a(par1, par2, par3));
+                    crashreportcategory.addCrashSection("Location", CrashReportCategory.getLocationInfo(par1, par2, par3));
                     throw new ReportedException(crashreport);
                 }
             }
@@ -3710,10 +3710,10 @@ public abstract class World implements IBlockAccess
      */
     public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
     {
-        return this.func_94576_a(par1Entity, par2AxisAlignedBB, (IEntitySelector)null);
+        return this.getEntitiesWithinAABBExcludingEntity(par1Entity, par2AxisAlignedBB, (IEntitySelector)null);
     }
 
-    public List func_94576_a(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
+    public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
     {
         ArrayList arraylist = new ArrayList();
         int i = MathHelper.floor_double((par2AxisAlignedBB.minX - MAX_ENTITY_RADIUS) / 16.0D);
@@ -4454,7 +4454,7 @@ public abstract class World implements IBlockAccess
         {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Playing level event");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("Level event being played");
-            crashreportcategory.addCrashSection("Block coordinates", CrashReportCategory.func_85071_a(par3, par4, par5));
+            crashreportcategory.addCrashSection("Block coordinates", CrashReportCategory.getLocationInfo(par3, par4, par5));
             crashreportcategory.addCrashSection("Event source", par1EntityPlayer);
             crashreportcategory.addCrashSection("Event type", Integer.valueOf(par2));
             crashreportcategory.addCrashSection("Event data", Integer.valueOf(par6));
@@ -4596,7 +4596,7 @@ public abstract class World implements IBlockAccess
 
     public ILogAgent getWorldLogAgent()
     {
-        return this.field_98181_L;
+        return this.worldLogAgent;
     }
 
     /**

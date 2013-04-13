@@ -916,7 +916,7 @@ public final class CraftServer implements Server {
     }
 
     public Logger getLogger() {
-        return console.getLogAgent().func_98076_a();
+        return console.getLogAgent().getServerLogger();
     }
 
     public ConsoleReader getReader() {

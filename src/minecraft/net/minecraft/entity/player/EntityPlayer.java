@@ -2190,7 +2190,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
             {
                 Block block = Block.blocksList[l];
 
-                if (block.blockMaterial.func_85157_q())
+                if (block.blockMaterial.isAlwaysHarvested())
                 {
                     return true;
                 }
@@ -2273,7 +2273,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
             this.experienceTotal = par1EntityPlayer.experienceTotal;
             this.experience = par1EntityPlayer.experience;
             this.setScore(par1EntityPlayer.getScore());
-            this.field_82152_aq = par1EntityPlayer.field_82152_aq;
+            this.teleportDirection = par1EntityPlayer.teleportDirection;
         }
         else if (this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
         {

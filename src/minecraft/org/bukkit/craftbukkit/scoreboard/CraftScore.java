@@ -34,7 +34,7 @@ final class CraftScore implements Score {
     public int getScore() throws IllegalStateException {
         net.minecraft.scoreboard.Scoreboard board = objective.checkState().board;
 
-        if (board.func_96526_d().contains(playerName)) { // Lazy
+        if (board.getObjectiveNames().contains(playerName)) { // Lazy
             Map<String, net.minecraft.scoreboard.Score> scores = board.func_96510_d(playerName);
             net.minecraft.scoreboard.Score score = scores.get(objective.getHandle());
             if (score != null) { // Lazy

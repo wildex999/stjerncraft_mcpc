@@ -23,8 +23,8 @@ public class Teleporter
 
     /** A private Random() function in Teleporter */
     private final Random random;
-    private final LongHashMap field_85191_c = new LongHashMap();
-    private final List field_85190_d = new ArrayList();
+    private final LongHashMap destinationCoordinateCache = new LongHashMap();
+    private final List destinationCoordinateKeys = new ArrayList();
 
     public Teleporter(WorldServer par1WorldServer)
     {
@@ -162,14 +162,14 @@ public class Teleporter
         double d4;
         int k1;
 
-        if (this.field_85191_c.containsItem(j1))
+        if (this.destinationCoordinateCache.containsItem(j1))
         {
-            PortalPosition portalposition = (PortalPosition)this.field_85191_c.getValueByKey(j1);
+            PortalPosition portalposition = (PortalPosition)this.destinationCoordinateCache.getValueByKey(j1);
             d3 = 0.0D;
             i = portalposition.posX;
             j = portalposition.posY;
             k = portalposition.posZ;
-            portalposition.field_85087_d = this.worldServerInstance.getTotalWorldTime();
+            portalposition.lastUpdateTime = this.worldServerInstance.getTotalWorldTime();
             flag = false;
         }
         else
@@ -211,8 +211,8 @@ public class Teleporter
         {
             if (flag)
             {
-                this.field_85191_c.add(j1, new PortalPosition(this, i, j, k, this.worldServerInstance.getTotalWorldTime()));
-                this.field_85190_d.add(Long.valueOf(j1));
+                this.destinationCoordinateCache.add(j1, new PortalPosition(this, i, j, k, this.worldServerInstance.getTotalWorldTime()));
+                this.destinationCoordinateKeys.add(Long.valueOf(j1));
             }
 
             // CraftBukkit start - Moved entity teleportation logic into exit
@@ -272,11 +272,11 @@ public class Teleporter
                 j2 = 1;
             }
 
-            int k2 = entity.func_82148_at();
+            int k2 = entity.getTeleportDirection();
 
             if (j2 > -1)
             {
-                int l2 = Direction.field_71578_g[j2];
+                int l2 = Direction.rotateLeft[j2];
                 int i3 = Direction.offsetX[j2];
                 int j3 = Direction.offsetZ[j2];
                 int k3 = Direction.offsetX[l2];
@@ -631,22 +631,22 @@ public class Teleporter
         return true;
     }
 
-    public void func_85189_a(long par1)
+    public void removeStalePortalLocations(long par1)
     {
         if (par1 % 100L == 0L)
         {
-            Iterator iterator = this.field_85190_d.iterator();
+            Iterator iterator = this.destinationCoordinateKeys.iterator();
             long j = par1 - 600L;
 
             while (iterator.hasNext())
             {
                 Long olong = (Long)iterator.next();
-                PortalPosition portalposition = (PortalPosition)this.field_85191_c.getValueByKey(olong.longValue());
+                PortalPosition portalposition = (PortalPosition)this.destinationCoordinateCache.getValueByKey(olong.longValue());
 
-                if (portalposition == null || portalposition.field_85087_d < j)
+                if (portalposition == null || portalposition.lastUpdateTime < j)
                 {
                     iterator.remove();
-                    this.field_85191_c.remove(olong.longValue());
+                    this.destinationCoordinateCache.remove(olong.longValue());
                 }
             }
         }

@@ -254,7 +254,7 @@ public abstract class Entity
 
     /** Which dimension the player is in (-1 = the Nether, 0 = normal world) */
     public int dimension;
-    protected int field_82152_aq;
+    protected int teleportDirection;
     private boolean invulnerable;
     public UUID entityUniqueID; // CraftBukkit - private -> public
     public EnumEntitySize myEntitySize;
@@ -308,7 +308,7 @@ public abstract class Entity
         this.isImmuneToFire = false;
         this.dataWatcher = new DataWatcher();
         this.addedToChunk = false;
-        this.field_82152_aq = 0;
+        this.teleportDirection = 0;
         this.invulnerable = false;
         this.entityUniqueID = new UUID(rand.nextLong(), rand.nextLong()); // Spigot
         this.myEntitySize = EnumEntitySize.SIZE_2;
@@ -2218,7 +2218,7 @@ public abstract class Entity
 
             if (!this.worldObj.isRemote && !this.inPortal)
             {
-                this.field_82152_aq = Direction.getMovementDirection(d0, d1);
+                this.teleportDirection = Direction.getMovementDirection(d0, d1);
             }
 
             this.inPortal = true;
@@ -2579,7 +2579,7 @@ public abstract class Entity
         par1Entity.writeToNBT(nbttagcompound);
         this.readFromNBT(nbttagcompound);
         this.timeUntilPortal = par1Entity.timeUntilPortal;
-        this.field_82152_aq = par1Entity.field_82152_aq;
+        this.teleportDirection = par1Entity.teleportDirection;
     }
 
     /**
@@ -2682,9 +2682,9 @@ public abstract class Entity
         return 3;
     }
 
-    public int func_82148_at()
+    public int getTeleportDirection()
     {
-        return this.field_82152_aq;
+        return this.teleportDirection;
     }
 
     /**
@@ -2701,7 +2701,7 @@ public abstract class Entity
         par1CrashReportCategory.addCrashSection("Entity ID", Integer.valueOf(this.entityId));
         par1CrashReportCategory.addCrashSectionCallable("Entity Name", (Callable)(new CallableEntityName(this)));
         par1CrashReportCategory.addCrashSection("Entity\'s Exact location", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.posX), Double.valueOf(this.posY), Double.valueOf(this.posZ)}));
-        par1CrashReportCategory.addCrashSection("Entity\'s Block location", CrashReportCategory.func_85071_a(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)));
+        par1CrashReportCategory.addCrashSection("Entity\'s Block location", CrashReportCategory.getLocationInfo(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)));
         par1CrashReportCategory.addCrashSection("Entity\'s Momentum", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.motionX), Double.valueOf(this.motionY), Double.valueOf(this.motionZ)}));
     }
 

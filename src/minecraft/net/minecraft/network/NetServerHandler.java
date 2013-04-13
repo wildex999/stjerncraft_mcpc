@@ -145,8 +145,8 @@ public class NetServerHandler extends NetHandler
     private long ticksOfLastKeepAlive;
     private volatile int chatSpamThresholdCount = 0;
     // MCPC - IMPORTANT: UPDATE THIS MAPPING FOR TESTING IN ECLIPSE
-    // MCP mapping = chatSpamThresholdCount, CB mapping: chatThrottle, srg mapping: field_72581_m, obf mapping = l
-    private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(NetServerHandler.class, "field_72581_m"); // CraftBukkit - multithreaded field // MCPC+ - runtime deobf srgname - TODO: use FML reflection helpers?
+    // MCP mapping = chatSpamThresholdCount, CB mapping: chatThrottle, srg mapping: chatSpamThresholdCount, obf mapping = l
+    private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(NetServerHandler.class, "fiel" + "d_72581_m"); // CraftBukkit - multithreaded field // MCPC+ - runtime deobf srgname - TODO: use FML reflection helpers?
     private int creativeItemCreationSpamThresholdTally = 0;
 
     /** The last known x position for this connection. */
@@ -2104,7 +2104,7 @@ public class NetServerHandler extends NetHandler
             catch (Exception exception)
             {
                 // CraftBukkit start
-                this.mcServer.getLogAgent().func_98235_b(this.playerEntity.username + " sent invalid MC|BEdit data", exception);
+                this.mcServer.getLogAgent().logWarningException(this.playerEntity.username + " sent invalid MC|BEdit data", exception);
                 this.kickPlayerFromServer("Invalid book data!");
                 // CraftBukkit end
             }
@@ -2134,7 +2134,7 @@ public class NetServerHandler extends NetHandler
             catch (Exception exception1)
             {
                 // CraftBukkit start
-                this.mcServer.getLogAgent().func_98235_b(this.playerEntity.username + " sent invalid MC|BSign data", exception1);
+                this.mcServer.getLogAgent().logWarningException(this.playerEntity.username + " sent invalid MC|BSign data", exception1);
                 this.kickPlayerFromServer("Invalid book data!");
                 // CraftBukkit end
             }
@@ -2159,7 +2159,7 @@ public class NetServerHandler extends NetHandler
                 catch (Exception exception2)
                 {
                     // CraftBukkit start
-                    this.mcServer.getLogAgent().func_98235_b(this.playerEntity.username + " sent invalid MC|TrSel data", exception2);
+                    this.mcServer.getLogAgent().logWarningException(this.playerEntity.username + " sent invalid MC|TrSel data", exception2);
                     this.kickPlayerFromServer("Invalid trade data!");
                     // CraftBukkit end
                 }
@@ -2195,7 +2195,7 @@ public class NetServerHandler extends NetHandler
                         catch (Exception exception3)
                         {
                             // CraftBukkit start
-                            this.mcServer.getLogAgent().func_98235_b(this.playerEntity.username + " sent invalid MC|AdvCdm data", exception3);
+                            this.mcServer.getLogAgent().logWarningException(this.playerEntity.username + " sent invalid MC|AdvCdm data", exception3);
                             this.kickPlayerFromServer("Invalid CommandBlock data!");
                             // CraftBukkit end
                         }
@@ -2229,7 +2229,7 @@ public class NetServerHandler extends NetHandler
                         catch (Exception exception4)
                         {
                             // CraftBukkit start
-                            this.mcServer.getLogAgent().func_98235_b(this.playerEntity.username + " sent invalid MC|Beacon data", exception4);
+                            this.mcServer.getLogAgent().logWarningException(this.playerEntity.username + " sent invalid MC|Beacon data", exception4);
                             this.kickPlayerFromServer("Invalid beacon data!");
                             // CraftBukkit end
                         }

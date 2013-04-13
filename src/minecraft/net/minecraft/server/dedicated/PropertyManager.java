@@ -35,7 +35,7 @@ public class PropertyManager
             }
             catch (Exception exception)
             {
-                par2ILogAgent.func_98235_b("Failed to load " + par1File, exception);
+                par2ILogAgent.logWarningException("Failed to load " + par1File, exception);
                 this.logMessageAndSave();
             }
             finally
@@ -111,7 +111,7 @@ public class PropertyManager
         }
         catch (Exception exception)
         {
-            this.logger.func_98235_b("Failed to save " + this.associatedFile, exception);
+            this.logger.logWarningException("Failed to save " + this.associatedFile, exception);
             this.logMessageAndSave();
         }
         finally

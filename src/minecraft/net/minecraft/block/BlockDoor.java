@@ -14,8 +14,8 @@ import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 
 public class BlockDoor extends Block
 {
-    private static final String[] field_94467_a = new String[] {"doorWood_lower", "doorWood_upper", "doorIron_lower", "doorIron_upper"};
-    private final int field_94465_b;
+    private static final String[] doorIconNames = new String[] {"doorWood_lower", "doorWood_upper", "doorIron_lower", "doorIron_upper"};
+    private final int doorTypeForIcon;
 
     protected BlockDoor(int par1, Material par2Material)
     {
@@ -23,11 +23,11 @@ public class BlockDoor extends Block
 
         if (par2Material == Material.iron)
         {
-            this.field_94465_b = 2;
+            this.doorTypeForIcon = 2;
         }
         else
         {
-            this.field_94465_b = 0;
+            this.doorTypeForIcon = 0;
         }
 
         float f = 0.5F;

@@ -40,7 +40,7 @@ final class CraftCriteria {
     }
 
     static CraftCriteria getFromNMS(net.minecraft.scoreboard.ScoreObjective objective) {
-        return DEFAULTS.get(objective.func_96680_c().func_96636_a());
+        return DEFAULTS.get(objective.getCriteria().func_96636_a());
     }
 
     static CraftCriteria getFromBukkit(String name) {

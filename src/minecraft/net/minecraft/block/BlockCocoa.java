@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 
 public class BlockCocoa extends BlockDirectional
 {
-    public static final String[] field_94470_a = new String[] {"cocoa_0", "cocoa_1", "cocoa_2"};
+    public static final String[] cocoaIcons = new String[] {"cocoa_0", "cocoa_1", "cocoa_2"};
 
     public BlockCocoa(int par1)
     {

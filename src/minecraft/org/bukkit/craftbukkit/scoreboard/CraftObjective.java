@@ -16,7 +16,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
         this.objective = objective;
         this.criteria = CraftCriteria.getFromNMS(objective);
 
-        scoreboard.objectives.put(objective.func_96679_b(), this);
+        scoreboard.objectives.put(objective.getName(), this);
     }
 
     net.minecraft.scoreboard.ScoreObjective getHandle() {
@@ -26,13 +26,13 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     public String getName() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        return objective.func_96679_b();
+        return objective.getName();
     }
 
     public String getDisplayName() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        return objective.func_96678_d();
+        return objective.getDisplayName();
     }
 
     public void setDisplayName(String displayName) throws IllegalStateException, IllegalArgumentException {
@@ -40,7 +40,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
         Validate.isTrue(displayName.length() <= 32, "Display name '" + displayName + "' is longer than the limit of 32 characters");
         CraftScoreboard scoreboard = checkState();
 
-        objective.func_96681_a(displayName);
+        objective.setDisplayName(displayName);
     }
 
     public String getCriteria() throws IllegalStateException {
@@ -52,7 +52,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     public boolean isModifiable() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        return !criteria.criteria.func_96637_b();
+        return !criteria.criteria.isReadOnly();
     }
 
     public void setDisplaySlot(DisplaySlot slot) throws IllegalStateException {

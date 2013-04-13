@@ -150,7 +150,7 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
                     }
                     catch (Throwable exception)
                     {
-                        minecraftserver.getLogAgent().func_98235_b(String.format("CommandBlock at (%d,%d,%d) failed to handle command", this.xCoord, this.yCoord, this.zCoord), exception);
+                        minecraftserver.getLogAgent().logWarningException(String.format("CommandBlock at (%d,%d,%d) failed to handle command", this.xCoord, this.yCoord, this.zCoord), exception);
                     }
                 }
 

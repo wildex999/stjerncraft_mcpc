@@ -138,12 +138,12 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
     {
         if (!nbttagcompound.hasKey("Level"))
         {
-            world.getWorldLogAgent().func_98232_c("Chunk file at " + i + "," + j + " is missing level data, skipping");
+            world.getWorldLogAgent().logSevere("Chunk file at " + i + "," + j + " is missing level data, skipping");
             return null;
         }
         else if (!nbttagcompound.getCompoundTag("Level").hasKey("Sections"))
         {
-            world.getWorldLogAgent().func_98232_c("Chunk file at " + i + "," + j + " is missing block data, skipping");
+            world.getWorldLogAgent().logSevere("Chunk file at " + i + "," + j + " is missing block data, skipping");
             return null;
         }
         else
@@ -152,7 +152,7 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
 
             if (!chunk.isAtLocation(i, j))
             {
-                world.getWorldLogAgent().func_98232_c("Chunk file at " + i + "," + j + " is in the wrong location; relocating. (Expected " + i + ", " + j + ", got " + chunk.xPosition + ", " + chunk.zPosition + ")");
+                world.getWorldLogAgent().logSevere("Chunk file at " + i + "," + j + " is in the wrong location; relocating. (Expected " + i + ", " + j + ", got " + chunk.xPosition + ", " + chunk.zPosition + ")");
                 nbttagcompound.getCompoundTag("Level").setInteger("xPos", i); // CraftBukkit - .getCompound("Level")
                 nbttagcompound.getCompoundTag("Level").setInteger("zPos", j); // CraftBukkit - .getCompound("Level")
                 chunk = this.readChunkFromNBT(world, nbttagcompound.getCompoundTag("Level"));

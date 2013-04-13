@@ -1337,7 +1337,7 @@ public abstract class ServerConfigurationManager
                 }
 
                 Scoreboard scoreboard = par1EntityPlayer.func_96123_co();
-                ScoreObjective scoreobjective = scoreboard.func_96518_b(s);
+                ScoreObjective scoreobjective = scoreboard.getObjective(s);
 
                 if (scoreobjective == null)
                 {

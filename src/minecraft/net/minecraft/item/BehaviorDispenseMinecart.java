@@ -81,7 +81,7 @@ final class BehaviorDispenseMinecart extends BehaviorDefaultDispenseItem
         }
 
         itemstack1 = CraftItemStack.asNMSCopy(event.getItem());
-        EntityMinecart entityminecart = EntityMinecart.func_94090_a(world, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), ((ItemMinecart) itemstack1.getItem()).minecartType);
+        EntityMinecart entityminecart = EntityMinecart.createMinecart(world, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), ((ItemMinecart) itemstack1.getItem()).minecartType);
         // CraftBukkit end
         world.spawnEntityInWorld(entityminecart);
         // itemstack.a(1); // CraftBukkit - handled during event processing

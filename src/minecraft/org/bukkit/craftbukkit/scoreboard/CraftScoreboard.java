@@ -22,7 +22,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     CraftScoreboard(net.minecraft.scoreboard.Scoreboard board) {
         this.board = board;
 
-        for (net.minecraft.scoreboard.ScoreObjective objective : (Iterable<net.minecraft.scoreboard.ScoreObjective>) board.func_96514_c()) {
+        for (net.minecraft.scoreboard.ScoreObjective objective : (Iterable<net.minecraft.scoreboard.ScoreObjective>) board.getScoreObjectives()) {
             new CraftObjective(this, objective); // It adds itself to map
         }
         for (net.minecraft.scoreboard.ScorePlayerTeam team : (Iterable<net.minecraft.scoreboard.ScorePlayerTeam>) board.func_96525_g()) {
@@ -34,7 +34,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
         Validate.notNull(name, "Objective name cannot be null");
         Validate.notNull(criteria, "Criteria cannot be null");
         Validate.isTrue(name.length() <= 16, "The name '" + name + "' is longer than the limit of 16 characters");
-        Validate.isTrue(board.func_96518_b(name) == null, "An objective of name '" + name + "' already exists");
+        Validate.isTrue(board.getObjective(name) == null, "An objective of name '" + name + "' already exists");
 
         CraftCriteria craftCriteria = CraftCriteria.getFromBukkit(criteria);
         net.minecraft.scoreboard.ScoreObjective objective = board.func_96535_a(name, craftCriteria.criteria);
@@ -68,7 +68,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
         if (objective == null) {
             return null;
         }
-        return this.objectives.get(objective.func_96679_b());
+        return this.objectives.get(objective.getName());
     }
 
     public ImmutableSet<Score> getScores(OfflinePlayer player) throws IllegalArgumentException {
@@ -114,7 +114,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
 
     public ImmutableSet<OfflinePlayer> getPlayers() {
         ImmutableSet.Builder<OfflinePlayer> players = ImmutableSet.builder();
-        for (Object playerName : board.func_96526_d()) {
+        for (Object playerName : board.getObjectiveNames()) {
             players.add(Bukkit.getOfflinePlayer(playerName.toString()));
         }
         return players.build();

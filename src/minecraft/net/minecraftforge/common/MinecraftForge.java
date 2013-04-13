@@ -186,7 +186,7 @@ public class MinecraftForge
 
        Block filler = new Block(0, Material.air)
        {
-           //@SideOnly(Side.CLIENT) public void func_94332_a(IconRegister register){} // MCPC+ - disable client
+           //@SideOnly(Side.CLIENT) public void registerIcons(IconRegister register){} // MCPC+ - disable client
        };
        Block.blocksList[0] = null;
        Block.opaqueCubeLookup[0] = false;

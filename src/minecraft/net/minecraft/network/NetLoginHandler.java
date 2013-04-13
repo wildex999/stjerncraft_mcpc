@@ -256,7 +256,7 @@ public class NetLoginHandler extends NetHandler
             // CraftBukkit
             org.bukkit.event.server.ServerListPingEvent pingEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callServerListPingEvent(this.mcServer.server, getSocket().getInetAddress(), this.mcServer.getMOTD(), serverconfigurationmanager.getCurrentPlayerCount(), serverconfigurationmanager.getMaxPlayers());
 
-            if (true || par1Packet254ServerPing.field_82559_a == 1) // Spigot
+            if (true || par1Packet254ServerPing.readSuccessfully == 1) // Spigot
             {
                 // CraftBukkit start - Fix decompile issues, don't create a list from an array
                 Object[] list = new Object[] { 1, 60, this.mcServer.getMinecraftVersion(), pingEvent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), pingEvent.getMaxPlayers() };

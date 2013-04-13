@@ -45,7 +45,7 @@ public class BehaviorDefaultDispenseItem implements IBehaviorDispenseItem
     }
     
     // MCPC+ start - vanilla compatibility
-    public static void func_82486_a(World par0World, ItemStack par1ItemStack, int par2, EnumFacing par3EnumFacing, IPosition par4IPosition)
+    public static void doDispense(World par0World, ItemStack par1ItemStack, int par2, EnumFacing par3EnumFacing, IPosition par4IPosition)
     {
         double d0 = par4IPosition.getX();
         double d1 = par4IPosition.getY();

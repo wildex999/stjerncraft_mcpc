@@ -566,7 +566,7 @@ public class EntityTrackerEntry
         else if (this.myEntity instanceof EntityMinecart)
         {
             EntityMinecart entityminecart = (EntityMinecart)this.myEntity;
-            return new Packet23VehicleSpawn(this.myEntity, 10, entityminecart.func_94087_l());
+            return new Packet23VehicleSpawn(this.myEntity, 10, entityminecart.getMinecartType());
         }
         else if (this.myEntity instanceof EntityBoat)
         {

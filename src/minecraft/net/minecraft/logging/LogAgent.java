@@ -22,32 +22,32 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class LogAgent implements ILogAgent
 {
-    private final Logger field_98242_a;
-    private final String field_98240_b;
-    private final String field_98241_c;
-    private final String field_98239_d;
+    private final Logger serverLogger;
+    private final String logFile;
+    private final String loggerName;
+    private final String loggerPrefix;
     public static Logger global = Logger.getLogger(""); // CraftBukkit
 
     public LogAgent(String par1Str, String par2Str, String par3Str)
     {
-        this.field_98242_a = Logger.getLogger(par1Str);
-        this.field_98241_c = par1Str;
-        this.field_98239_d = par2Str;
-        this.field_98240_b = par3Str;
-        this.func_98238_b();
+        this.serverLogger = Logger.getLogger(par1Str);
+        this.loggerName = par1Str;
+        this.loggerPrefix = par2Str;
+        this.logFile = par3Str;
+        this.setupLogger();
     }
 
-    private void func_98238_b()
+    private void setupLogger()
     {
-        this.field_98242_a.setUseParentHandlers(false);
-        //this.field_98242_a.setParent(FMLLog.getLogger()); // MCPC+ - do not send to FML log, only CB
-        Handler[] ahandler = this.field_98242_a.getHandlers();
+        this.serverLogger.setUseParentHandlers(false);
+        //this.serverLogger.setParent(FMLLog.getLogger()); // MCPC+ - do not send to FML log, only CB
+        Handler[] ahandler = this.serverLogger.getHandlers();
         int i = ahandler.length;
 
         for (int j = 0; j < i; ++j)
         {
             Handler handler = ahandler[j];
-            this.field_98242_a.removeHandler(handler);
+            this.serverLogger.removeHandler(handler);
         }
 
         LogFormatter logformatter = new LogFormatter(this, (LogAgentINNER1)null);
@@ -56,7 +56,7 @@ public class LogAgent implements ILogAgent
         ConsoleHandler consolehandler = new org.bukkit.craftbukkit.util.TerminalConsoleHandler(server.reader);
         // CraftBukkit end
         consolehandler.setFormatter(logformatter);
-        this.field_98242_a.addHandler(consolehandler);
+        this.serverLogger.addHandler(consolehandler);
 
         // CraftBukkit start
         for (java.util.logging.Handler handler : global.getHandlers())
@@ -164,52 +164,52 @@ public class LogAgent implements ILogAgent
             FileHandler filehandler = new FileHandler(pattern, limit, count, append);
             // CraftBukkit end
             filehandler.setFormatter(logformatter);
-            this.field_98242_a.addHandler(filehandler);
+            this.serverLogger.addHandler(filehandler);
             global.addHandler(filehandler); // CraftBukkit
         }
         catch (Exception exception)
         {
-            this.field_98242_a.log(Level.WARNING, "Failed to log " + this.field_98241_c + " to " + this.field_98240_b, exception);
+            this.serverLogger.log(Level.WARNING, "Failed to log " + this.loggerName + " to " + this.logFile, exception);
         }
     }
 
-    public Logger func_98076_a()
+    public Logger getServerLogger()
     {
-        return this.field_98242_a;
+        return this.serverLogger;
     }
 
     public void logInfo(String par1Str)
     {
-        this.field_98242_a.log(Level.INFO, par1Str);
+        this.serverLogger.log(Level.INFO, par1Str);
     }
 
     public void logWarning(String par1Str)
     {
-        this.field_98242_a.log(Level.WARNING, par1Str);
+        this.serverLogger.log(Level.WARNING, par1Str);
     }
 
-    public void func_98231_b(String par1Str, Object ... par2ArrayOfObj)
+    public void logWarningFormatted(String par1Str, Object ... par2ArrayOfObj)
     {
-        this.field_98242_a.log(Level.WARNING, par1Str, par2ArrayOfObj);
+        this.serverLogger.log(Level.WARNING, par1Str, par2ArrayOfObj);
     }
 
-    public void func_98235_b(String par1Str, Throwable par2Throwable)
+    public void logWarningException(String par1Str, Throwable par2Throwable)
     {
-        this.field_98242_a.log(Level.WARNING, par1Str, par2Throwable);
+        this.serverLogger.log(Level.WARNING, par1Str, par2Throwable);
     }
 
-    public void func_98232_c(String par1Str)
+    public void logSevere(String par1Str)
     {
-        this.field_98242_a.log(Level.SEVERE, par1Str);
+        this.serverLogger.log(Level.SEVERE, par1Str);
     }
 
-    public void func_98234_c(String par1Str, Throwable par2Throwable)
+    public void logSevereException(String par1Str, Throwable par2Throwable)
     {
-        this.field_98242_a.log(Level.SEVERE, par1Str, par2Throwable);
+        this.serverLogger.log(Level.SEVERE, par1Str, par2Throwable);
     }
 
     static String func_98237_a(LogAgent par0LogAgent)
     {
-        return par0LogAgent.field_98239_d;
+        return par0LogAgent.loggerPrefix;
     }
 }

@@ -31,11 +31,11 @@ import org.bukkit.inventory.Inventory;
 
 public class TileEntityHopper extends TileEntity implements Hopper
 {
-    private ItemStack[] field_94124_b = new ItemStack[5];
+    private ItemStack[] hopperItemStacks = new ItemStack[5];
 
     /** The name that is displayed if the hopper was renamed */
     private String inventoryName;
-    private int field_98048_c = -1;
+    private int transferCooldown = -1;
 
     // CraftBukkit start
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
@@ -43,7 +43,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
 
     public ItemStack[] getContents()
     {
-        return this.field_94124_b;
+        return this.hopperItemStacks;
     }
 
     public void onOpen(CraftHumanEntity who)
@@ -76,23 +76,23 @@ public class TileEntityHopper extends TileEntity implements Hopper
     {
         super.readFromNBT(par1NBTTagCompound);
         NBTTagList nbttaglist = par1NBTTagCompound.getTagList("Items");
-        this.field_94124_b = new ItemStack[this.getSizeInventory()];
+        this.hopperItemStacks = new ItemStack[this.getSizeInventory()];
 
         if (par1NBTTagCompound.hasKey("CustomName"))
         {
             this.inventoryName = par1NBTTagCompound.getString("CustomName");
         }
 
-        this.field_98048_c = par1NBTTagCompound.getInteger("TransferCooldown");
+        this.transferCooldown = par1NBTTagCompound.getInteger("TransferCooldown");
 
         for (int i = 0; i < nbttaglist.tagCount(); ++i)
         {
             NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
             byte b0 = nbttagcompound1.getByte("Slot");
 
-            if (b0 >= 0 && b0 < this.field_94124_b.length)
+            if (b0 >= 0 && b0 < this.hopperItemStacks.length)
             {
-                this.field_94124_b[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+                this.hopperItemStacks[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
             }
         }
     }
@@ -105,19 +105,19 @@ public class TileEntityHopper extends TileEntity implements Hopper
         super.writeToNBT(par1NBTTagCompound);
         NBTTagList nbttaglist = new NBTTagList();
 
-        for (int i = 0; i < this.field_94124_b.length; ++i)
+        for (int i = 0; i < this.hopperItemStacks.length; ++i)
         {
-            if (this.field_94124_b[i] != null)
+            if (this.hopperItemStacks[i] != null)
             {
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                 nbttagcompound1.setByte("Slot", (byte)i);
-                this.field_94124_b[i].writeToNBT(nbttagcompound1);
+                this.hopperItemStacks[i].writeToNBT(nbttagcompound1);
                 nbttaglist.appendTag(nbttagcompound1);
             }
         }
 
         par1NBTTagCompound.setTag("Items", nbttaglist);
-        par1NBTTagCompound.setInteger("TransferCooldown", this.field_98048_c);
+        par1NBTTagCompound.setInteger("TransferCooldown", this.transferCooldown);
 
         if (this.isInvNameLocalized())
         {
@@ -138,7 +138,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
      */
     public int getSizeInventory()
     {
-        return this.field_94124_b.length;
+        return this.hopperItemStacks.length;
     }
 
     /**
@@ -146,7 +146,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
      */
     public ItemStack getStackInSlot(int par1)
     {
-        return this.field_94124_b[par1];
+        return this.hopperItemStacks[par1];
     }
 
     /**
@@ -155,23 +155,23 @@ public class TileEntityHopper extends TileEntity implements Hopper
      */
     public ItemStack decrStackSize(int par1, int par2)
     {
-        if (this.field_94124_b[par1] != null)
+        if (this.hopperItemStacks[par1] != null)
         {
             ItemStack itemstack;
 
-            if (this.field_94124_b[par1].stackSize <= par2)
+            if (this.hopperItemStacks[par1].stackSize <= par2)
             {
-                itemstack = this.field_94124_b[par1];
-                this.field_94124_b[par1] = null;
+                itemstack = this.hopperItemStacks[par1];
+                this.hopperItemStacks[par1] = null;
                 return itemstack;
             }
             else
             {
-                itemstack = this.field_94124_b[par1].splitStack(par2);
+                itemstack = this.hopperItemStacks[par1].splitStack(par2);
 
-                if (this.field_94124_b[par1].stackSize == 0)
+                if (this.hopperItemStacks[par1].stackSize == 0)
                 {
-                    this.field_94124_b[par1] = null;
+                    this.hopperItemStacks[par1] = null;
                 }
 
                 return itemstack;
@@ -189,10 +189,10 @@ public class TileEntityHopper extends TileEntity implements Hopper
      */
     public ItemStack getStackInSlotOnClosing(int par1)
     {
-        if (this.field_94124_b[par1] != null)
+        if (this.hopperItemStacks[par1] != null)
         {
-            ItemStack itemstack = this.field_94124_b[par1];
-            this.field_94124_b[par1] = null;
+            ItemStack itemstack = this.hopperItemStacks[par1];
+            this.hopperItemStacks[par1] = null;
             return itemstack;
         }
         else
@@ -206,7 +206,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
      */
     public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
-        this.field_94124_b[par1] = par2ItemStack;
+        this.hopperItemStacks[par1] = par2ItemStack;
 
         if (par2ItemStack != null && par2ItemStack.stackSize > this.getInventoryStackLimit())
         {
@@ -273,7 +273,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
     {
         if (this.worldObj != null && !this.worldObj.isRemote)
         {
-            --this.field_98048_c;
+            --this.transferCooldown;
 
             if (!this.func_98047_l())
             {
@@ -289,7 +289,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
         {
             if (!this.func_98047_l() && BlockHopper.func_94452_d(this.getBlockMetadata()))
             {
-                boolean flag = this.func_94116_j() | func_96116_a(this);
+                boolean flag = this.insertItemToInventory() | suckItemsIntoHopper(this);
                 // CraftBukkit start - Move delay out of if block
                 this.func_98046_c(8);
 
@@ -309,9 +309,9 @@ public class TileEntityHopper extends TileEntity implements Hopper
         }
     }
 
-    private boolean func_94116_j()
+    private boolean insertItemToInventory()
     {
-        IInventory iinventory = this.func_94119_v();
+        IInventory iinventory = this.getOutputInventory();
 
         if (iinventory == null)
         {
@@ -348,7 +348,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
                         return false;
                     }
 
-                    ItemStack itemstack1 = func_94117_a(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[BlockHopper.func_94451_c(this.getBlockMetadata())]);
+                    ItemStack itemstack1 = insertStack(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[BlockHopper.getDirectionFromMetadata(this.getBlockMetadata())]);
 
                     if (itemstack1 == null || itemstack1.stackSize == 0)
                     {
@@ -373,7 +373,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
         }
     }
 
-    public static boolean func_96116_a(Hopper par0Hopper)
+    public static boolean suckItemsIntoHopper(Hopper par0Hopper)
     {
         IInventory iinventory = func_96118_b(par0Hopper);
 
@@ -409,7 +409,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
         }
         else
         {
-            EntityItem entityitem = func_96119_a(par0Hopper.getWorldObj(), par0Hopper.func_96107_aA(), par0Hopper.func_96109_aB() + 1.0D, par0Hopper.func_96108_aC());
+            EntityItem entityitem = func_96119_a(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() + 1.0D, par0Hopper.getZPos());
 
             if (entityitem != null)
             {
@@ -454,13 +454,13 @@ public class TileEntityHopper extends TileEntity implements Hopper
                 }
                 else if (par0Hopper instanceof EntityMinecartHopper)
                 {
-                    ((EntityMinecartHopper) par0Hopper).func_98042_n(4); // Delay hopper minecart checks
+                    ((EntityMinecartHopper) par0Hopper).setTransferTicker(4); // Delay hopper minecart checks
                 }
                 
                 return false;
             }
 
-            ItemStack itemstack2 = func_94117_a(par0Hopper, CraftItemStack.asNMSCopy(event.getItem()), -1);
+            ItemStack itemstack2 = insertStack(par0Hopper, CraftItemStack.asNMSCopy(event.getItem()), -1);
 
             if (itemstack2 == null || itemstack2.stackSize == 0)
             {
@@ -504,7 +504,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
 
             // CraftBukkit end
             ItemStack itemstack = par1EntityItem.getEntityItem().copy();
-            ItemStack itemstack1 = func_94117_a(par0IInventory, itemstack, -1);
+            ItemStack itemstack1 = insertStack(par0IInventory, itemstack, -1);
 
             if (itemstack1 != null && itemstack1.stackSize != 0)
             {
@@ -520,7 +520,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
         }
     }
 
-    public static ItemStack func_94117_a(IInventory par1IInventory, ItemStack par2ItemStack, int par3)
+    public static ItemStack insertStack(IInventory par1IInventory, ItemStack par2ItemStack, int par3)
     {
         if (par1IInventory instanceof ISidedInventory && par3 > -1)
         {
@@ -597,24 +597,24 @@ public class TileEntityHopper extends TileEntity implements Hopper
         return par1ItemStack;
     }
 
-    private IInventory func_94119_v()
+    private IInventory getOutputInventory()
     {
-        int i = BlockHopper.func_94451_c(this.getBlockMetadata());
-        return func_96117_b(this.getWorldObj(), (double)(this.xCoord + Facing.offsetsXForSide[i]), (double)(this.yCoord + Facing.offsetsYForSide[i]), (double)(this.zCoord + Facing.offsetsZForSide[i]));
+        int i = BlockHopper.getDirectionFromMetadata(this.getBlockMetadata());
+        return getInventoryAtLocation(this.getWorldObj(), (double)(this.xCoord + Facing.offsetsXForSide[i]), (double)(this.yCoord + Facing.offsetsYForSide[i]), (double)(this.zCoord + Facing.offsetsZForSide[i]));
     }
 
     public static IInventory func_96118_b(Hopper par0Hopper)
     {
-        return func_96117_b(par0Hopper.getWorldObj(), par0Hopper.func_96107_aA(), par0Hopper.func_96109_aB() + 1.0D, par0Hopper.func_96108_aC());
+        return getInventoryAtLocation(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() + 1.0D, par0Hopper.getZPos());
     }
 
     public static EntityItem func_96119_a(World par0World, double par1, double par3, double par5)
     {
-        List list = par0World.selectEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getAABBPool().getAABB(par1, par3, par5, par1 + 1.0D, par3 + 1.0D, par5 + 1.0D), IEntitySelector.field_94557_a);
+        List list = par0World.selectEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getAABBPool().getAABB(par1, par3, par5, par1 + 1.0D, par3 + 1.0D, par5 + 1.0D), IEntitySelector.selectAnything);
         return list.size() > 0 ? (EntityItem)list.get(0) : null;
     }
 
-    public static IInventory func_96117_b(World par0World, double par1, double par3, double par5)
+    public static IInventory getInventoryAtLocation(World par0World, double par1, double par3, double par5)
     {
         IInventory iinventory = null;
         int i = MathHelper.floor_double(par1);
@@ -633,14 +633,14 @@ public class TileEntityHopper extends TileEntity implements Hopper
 
                 if (block instanceof BlockChest)
                 {
-                    iinventory = ((BlockChest)block).func_94442_h_(par0World, i, j, k);
+                    iinventory = ((BlockChest)block).getInventory(par0World, i, j, k);
                 }
             }
         }
 
         if (iinventory == null)
         {
-            List list = par0World.func_94576_a((Entity)null, AxisAlignedBB.getAABBPool().getAABB(par1, par3, par5, par1 + 1.0D, par3 + 1.0D, par5 + 1.0D), IEntitySelector.field_96566_b);
+            List list = par0World.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().getAABB(par1, par3, par5, par1 + 1.0D, par3 + 1.0D, par5 + 1.0D), IEntitySelector.selectInventories);
 
             if (list != null && list.size() > 0)
             {
@@ -656,28 +656,28 @@ public class TileEntityHopper extends TileEntity implements Hopper
         return par1ItemStack.itemID != par2ItemStack.itemID ? false : (par1ItemStack.getItemDamage() != par2ItemStack.getItemDamage() ? false : (par1ItemStack.stackSize > par1ItemStack.getMaxStackSize() ? false : ItemStack.areItemStackTagsEqual(par1ItemStack, par2ItemStack)));
     }
 
-    public double func_96107_aA()
+    public double getXPos()
     {
         return (double)this.xCoord;
     }
 
-    public double func_96109_aB()
+    public double getYPos()
     {
         return (double)this.yCoord;
     }
 
-    public double func_96108_aC()
+    public double getZPos()
     {
         return (double)this.zCoord;
     }
 
     public void func_98046_c(int par1)
     {
-        this.field_98048_c = par1;
+        this.transferCooldown = par1;
     }
 
     public boolean func_98047_l()
     {
-        return this.field_98048_c > 0;
+        return this.transferCooldown > 0;
     }
 }

@@ -37,7 +37,7 @@ public abstract class EntityMinecart extends Entity
 {
     protected boolean isInReverse;
     protected final IUpdatePlayerListBox field_82344_g;
-    protected String field_94102_c;
+    protected String entityName;
 
     /** Minecart rotational logic matrix */
     protected static final int[][][] matrix = new int[][][] {{{0, 0, -1}, {0, 0, 1}}, {{ -1, 0, 0}, {1, 0, 0}}, {{ -1, -1, 0}, {1, 0, 0}}, {{ -1, 0, 0}, {1, -1, 0}}, {{0, 0, -1}, {0, -1, 1}}, {{0, -1, -1}, {0, 0, 1}}, {{0, 0, 1}, {1, 0, 0}}, {{0, 0, 1}, { -1, 0, 0}}, {{0, 0, -1}, { -1, 0, 0}}, {{0, 0, -1}, {1, 0, 0}}};
@@ -85,7 +85,7 @@ public abstract class EntityMinecart extends Entity
         this.field_82344_g = par1World != null ? par1World.func_82735_a(this) : null;
     }
 
-    public static EntityMinecart func_94090_a(World par0World, double par1, double par3, double par5, int par7)
+    public static EntityMinecart createMinecart(World par0World, double par1, double par3, double par5, int par7)
     {
         switch (par7)
         {
@@ -234,7 +234,7 @@ public abstract class EntityMinecart extends Entity
                     }
                     else
                     {
-                        this.func_94095_a(par1DamageSource);
+                        this.killMinecart(par1DamageSource);
                     }
                 }
 
@@ -247,14 +247,14 @@ public abstract class EntityMinecart extends Entity
         }
     }
 
-    public void func_94095_a(DamageSource par1DamageSource)
+    public void killMinecart(DamageSource par1DamageSource)
     {
         this.setDead();
         ItemStack itemstack = new ItemStack(Item.minecartEmpty, 1);
 
-        if (this.field_94102_c != null)
+        if (this.entityName != null)
         {
-            itemstack.setItemName(this.field_94102_c);
+            itemstack.setItemName(this.entityName);
         }
 
         this.entityDropItem(itemstack, 0.0F);
@@ -413,11 +413,11 @@ public abstract class EntityMinecart extends Entity
                 float railMaxSpeed = rail.getRailMaxSpeed(worldObj, this, j, i, k);
                 double maxSpeed = Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
                 int i1 = rail.getBasicRailMetadata(worldObj, this, j, i, k);
-                this.func_94091_a(j, i, k, maxSpeed, getSlopeAdjustment(), l, i1);
+                this.updateOnTrack(j, i, k, maxSpeed, getSlopeAdjustment(), l, i1);
 
                 if (l == Block.railActivator.blockID)
                 {
-                    this.func_96095_a(j, i, k, (worldObj.getBlockMetadata(j, i, k) & 8) != 0);
+                    this.onActivatorRailPass(j, i, k, (worldObj.getBlockMetadata(j, i, k) & 8) != 0);
                 }
             }
             else
@@ -501,7 +501,7 @@ public abstract class EntityMinecart extends Entity
         }
     }
 
-    public void func_96095_a(int par1, int par2, int par3, boolean par4) {}
+    public void onActivatorRailPass(int par1, int par2, int par3, boolean par4) {}
 
     protected void func_94088_b(double par1)
     {
@@ -557,7 +557,7 @@ public abstract class EntityMinecart extends Entity
         }
     }
 
-    protected void func_94091_a(int par1, int par2, int par3, double par4, double par6, int par8, int par9)
+    protected void updateOnTrack(int par1, int par2, int par3, double par4, double par6, int par8, int par9)
     {
         this.fallDistance = 0.0F;
         Vec3 vec3 = this.func_70489_a(this.posX, this.posY, this.posZ);
@@ -698,7 +698,7 @@ public abstract class EntityMinecart extends Entity
             this.setPosition(this.posX, this.posY + (double)aint[1][1], this.posZ);
         }
 
-        this.func_94101_h();
+        this.applyDrag();
         Vec3 vec31 = this.func_70489_a(this.posX, this.posY, this.posZ);
 
         if (vec31 != null && vec3 != null)
@@ -765,7 +765,7 @@ public abstract class EntityMinecart extends Entity
         }
     }
 
-    protected void func_94101_h()
+    protected void applyDrag()
     {
         if (this.riddenByEntity != null || !this.slowWhenEmpty)   // CraftBukkit
         {
@@ -862,14 +862,14 @@ public abstract class EntityMinecart extends Entity
     {
         if (par1NBTTagCompound.getBoolean("CustomDisplayTile"))
         {
-            this.func_94094_j(par1NBTTagCompound.getInteger("DisplayTile"));
-            this.func_94092_k(par1NBTTagCompound.getInteger("DisplayData"));
-            this.func_94086_l(par1NBTTagCompound.getInteger("DisplayOffset"));
+            this.setDisplayTile(par1NBTTagCompound.getInteger("DisplayTile"));
+            this.setDisplayTileData(par1NBTTagCompound.getInteger("DisplayData"));
+            this.setDisplayTileOffset(par1NBTTagCompound.getInteger("DisplayOffset"));
         }
 
         if (par1NBTTagCompound.hasKey("CustomName") && par1NBTTagCompound.getString("CustomName").length() > 0)
         {
-            this.field_94102_c = par1NBTTagCompound.getString("CustomName");
+            this.entityName = par1NBTTagCompound.getString("CustomName");
         }
     }
 
@@ -878,17 +878,17 @@ public abstract class EntityMinecart extends Entity
      */
     protected void writeEntityToNBT(NBTTagCompound par1NBTTagCompound)
     {
-        if (this.func_94100_s())
+        if (this.hasDisplayTile())
         {
             par1NBTTagCompound.setBoolean("CustomDisplayTile", true);
-            par1NBTTagCompound.setInteger("DisplayTile", this.func_94089_m() == null ? 0 : this.func_94089_m().blockID);
-            par1NBTTagCompound.setInteger("DisplayData", this.func_94098_o());
-            par1NBTTagCompound.setInteger("DisplayOffset", this.func_94099_q());
+            par1NBTTagCompound.setInteger("DisplayTile", this.getDisplayTile() == null ? 0 : this.getDisplayTile().blockID);
+            par1NBTTagCompound.setInteger("DisplayData", this.getDisplayTileData());
+            par1NBTTagCompound.setInteger("DisplayOffset", this.getDisplayTileOffset());
         }
 
-        if (this.field_94102_c != null && this.field_94102_c.length() > 0)
+        if (this.entityName != null && this.entityName.length() > 0)
         {
-            par1NBTTagCompound.setString("CustomName", this.field_94102_c);
+            par1NBTTagCompound.setString("CustomName", this.entityName);
         }
     }
 
@@ -920,7 +920,7 @@ public abstract class EntityMinecart extends Entity
 
                 // CraftBukkit end
 
-                if (par1Entity instanceof EntityLiving && !(par1Entity instanceof EntityPlayer) && !(par1Entity instanceof EntityIronGolem) && this.func_94087_l() == 0 && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && par1Entity.ridingEntity == null)
+                if (par1Entity instanceof EntityLiving && !(par1Entity instanceof EntityPlayer) && !(par1Entity instanceof EntityIronGolem) && this.getMinecartType() == 0 && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && par1Entity.ridingEntity == null)
                 {
                     par1Entity.mountEntity(this);
                 }
@@ -1055,13 +1055,13 @@ public abstract class EntityMinecart extends Entity
         return this.dataWatcher.getWatchableObjectInt(18);
     }
 
-    public abstract int func_94087_l();
+    public abstract int getMinecartType();
 
-    public Block func_94089_m()
+    public Block getDisplayTile()
     {
-        if (!this.func_94100_s())
+        if (!this.hasDisplayTile())
         {
-            return this.func_94093_n();
+            return this.getDefaultDisplayTile();
         }
         else
         {
@@ -1070,64 +1070,64 @@ public abstract class EntityMinecart extends Entity
         }
     }
 
-    public Block func_94093_n()
+    public Block getDefaultDisplayTile()
     {
         return null;
     }
 
-    public int func_94098_o()
+    public int getDisplayTileData()
     {
-        return !this.func_94100_s() ? this.func_94097_p() : this.getDataWatcher().getWatchableObjectInt(20) >> 16;
+        return !this.hasDisplayTile() ? this.getDefaultDisplayTileData() : this.getDataWatcher().getWatchableObjectInt(20) >> 16;
     }
 
-    public int func_94097_p()
+    public int getDefaultDisplayTileData()
     {
         return 0;
     }
 
-    public int func_94099_q()
+    public int getDisplayTileOffset()
     {
-        return !this.func_94100_s() ? this.func_94085_r() : this.getDataWatcher().getWatchableObjectInt(21);
+        return !this.hasDisplayTile() ? this.getDefaultDisplayTileOffset() : this.getDataWatcher().getWatchableObjectInt(21);
     }
 
-    public int func_94085_r()
+    public int getDefaultDisplayTileOffset()
     {
         return 6;
     }
 
-    public void func_94094_j(int par1)
+    public void setDisplayTile(int par1)
     {
-        this.getDataWatcher().updateObject(20, Integer.valueOf(par1 & 65535 | this.func_94098_o() << 16));
-        this.func_94096_e(true);
+        this.getDataWatcher().updateObject(20, Integer.valueOf(par1 & 65535 | this.getDisplayTileData() << 16));
+        this.setHasDisplayTile(true);
     }
 
-    public void func_94092_k(int par1)
+    public void setDisplayTileData(int par1)
     {
-        Block block = this.func_94089_m();
+        Block block = this.getDisplayTile();
         int j = block == null ? 0 : block.blockID;
         this.getDataWatcher().updateObject(20, Integer.valueOf(j & 65535 | par1 << 16));
-        this.func_94096_e(true);
+        this.setHasDisplayTile(true);
     }
 
-    public void func_94086_l(int par1)
+    public void setDisplayTileOffset(int par1)
     {
         this.getDataWatcher().updateObject(21, Integer.valueOf(par1));
-        this.func_94096_e(true);
+        this.setHasDisplayTile(true);
     }
 
-    public boolean func_94100_s()
+    public boolean hasDisplayTile()
     {
         return this.getDataWatcher().getWatchableObjectByte(22) == 1;
     }
 
-    public void func_94096_e(boolean par1)
+    public void setHasDisplayTile(boolean par1)
     {
         this.getDataWatcher().updateObject(22, Byte.valueOf((byte)(par1 ? 1 : 0)));
     }
 
     public void func_96094_a(String par1Str)
     {
-        this.field_94102_c = par1Str;
+        this.entityName = par1Str;
     }
 
     /**
@@ -1135,7 +1135,7 @@ public abstract class EntityMinecart extends Entity
      */
     public String getEntityName()
     {
-        return this.field_94102_c != null ? this.field_94102_c : super.getEntityName();
+        return this.entityName != null ? this.entityName : super.getEntityName();
     }
 
     /**
@@ -1144,12 +1144,12 @@ public abstract class EntityMinecart extends Entity
      */
     public boolean isInvNameLocalized()
     {
-        return this.field_94102_c != null;
+        return this.entityName != null;
     }
 
     public String func_95999_t()
     {
-        return this.field_94102_c;
+        return this.entityName;
     }
 
     // CraftBukkit start - Methods for getting and setting flying and derailed velocity modifiers
@@ -1297,7 +1297,7 @@ public abstract class EntityMinecart extends Entity
      */
     public boolean isPoweredCart()
     {
-        return func_94087_l() == 2;
+        return getMinecartType() == 2;
     }
 
     /**

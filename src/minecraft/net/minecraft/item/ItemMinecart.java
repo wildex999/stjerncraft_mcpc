@@ -42,7 +42,7 @@ public class ItemMinecart extends Item
                 }
 
                 // CraftBukkit end
-                EntityMinecart entityminecart = EntityMinecart.func_94090_a(par3World, (double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.minecartType);
+                EntityMinecart entityminecart = EntityMinecart.createMinecart(par3World, (double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.minecartType);
 
                 if (par1ItemStack.hasDisplayName())
                 {

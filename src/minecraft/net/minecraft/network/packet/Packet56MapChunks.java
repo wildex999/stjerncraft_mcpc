@@ -26,7 +26,7 @@ public class Packet56MapChunks extends Packet
 
     /** total size of the compressed data */
     private int dataLength;
-    private boolean field_92076_h;
+    private boolean skyLightSent;
     private byte[] chunkDataNotCompressed = new byte[0]; // CraftBukkit - remove static
     private int maxLen = 0;
 
@@ -44,7 +44,7 @@ public class Packet56MapChunks extends Packet
         this.field_73590_a = new int[i];
         this.field_73588_b = new int[i];
         this.field_73584_f = new byte[i][];
-        this.field_92076_h = !par1List.isEmpty() && !((Chunk)par1List.get(0)).worldObj.provider.hasNoSky;
+        this.skyLightSent = !par1List.isEmpty() && !((Chunk)par1List.get(0)).worldObj.provider.hasNoSky;
         int j = 0;
 
         for (int k = 0; k < i; ++k)
@@ -133,7 +133,7 @@ public class Packet56MapChunks extends Packet
     {
         short short1 = par1DataInputStream.readShort();
         this.dataLength = par1DataInputStream.readInt();
-        this.field_92076_h = par1DataInputStream.readBoolean();
+        this.skyLightSent = par1DataInputStream.readBoolean();
         this.chunkPostX = new int[short1];
         this.chunkPosZ = new int[short1];
         this.field_73590_a = new int[short1];
@@ -184,7 +184,7 @@ public class Packet56MapChunks extends Packet
             i1 = 2048 * 4 * k + 256;
             i1 += 2048 * l;
 
-            if (this.field_92076_h)
+            if (this.skyLightSent)
             {
                 i1 += 2048 * k;
             }
@@ -212,7 +212,7 @@ public class Packet56MapChunks extends Packet
 
         par1DataOutputStream.writeShort(this.chunkPostX.length);
         par1DataOutputStream.writeInt(this.dataLength);
-        par1DataOutputStream.writeBoolean(this.field_92076_h);
+        par1DataOutputStream.writeBoolean(this.skyLightSent);
         par1DataOutputStream.write(this.chunkDataBuffer, 0, this.dataLength);
 
         for (int i = 0; i < this.chunkPostX.length; ++i)

@@ -81,8 +81,8 @@ public class DedicatedServer extends MinecraftServer implements IServer
         dedicatedservercommandthread.setDaemon(true);
         dedicatedservercommandthread.start();
         // CraftBukkit start
-        System.setOut(new PrintStream(new LoggerOutputStream(this.getLogAgent().func_98076_a(), Level.INFO), true));
-        System.setErr(new PrintStream(new LoggerOutputStream(this.getLogAgent().func_98076_a(), Level.SEVERE), true));
+        System.setOut(new PrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.INFO), true));
+        System.setErr(new PrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.SEVERE), true));
         // CraftBukkit end
         this.getLogAgent().logInfo("Starting minecraft server version 1.5.1");
 
@@ -153,7 +153,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         catch (Throwable ioexception)     // CraftBukkit - IOException -> Throwable
         {
             this.getLogAgent().logWarning("**** FAILED TO BIND TO PORT!");
-            this.getLogAgent().func_98231_b("The exception was: {0}", new Object[] {ioexception.toString()});
+            this.getLogAgent().logWarningFormatted("The exception was: {0}", new Object[] {ioexception.toString()});
             this.getLogAgent().logWarning("Perhaps a server is already running on that port?");
             return false;
         }

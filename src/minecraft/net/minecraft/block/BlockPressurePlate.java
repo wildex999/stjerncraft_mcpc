@@ -21,33 +21,33 @@ public class BlockPressurePlate extends BlockBasePressurePlate
         this.triggerMobType = par4EnumMobType;
     }
 
-    protected int func_94355_d(int par1)
+    protected int getMetaFromWeight(int par1)
     {
         return par1 > 0 ? 1 : 0;
     }
 
-    protected int func_94350_c(int par1)
+    protected int getPowerSupply(int par1)
     {
         return par1 == 1 ? 15 : 0;
     }
 
-    protected int func_94351_d(World par1World, int par2, int par3, int par4)
+    protected int getPlateState(World par1World, int par2, int par3, int par4)
     {
         List list = null;
 
         if (this.triggerMobType == EnumMobType.everything)
         {
-            list = par1World.getEntitiesWithinAABBExcludingEntity((Entity)null, this.func_94352_a(par2, par3, par4));
+            list = par1World.getEntitiesWithinAABBExcludingEntity((Entity)null, this.getSensitiveAABB(par2, par3, par4));
         }
 
         if (this.triggerMobType == EnumMobType.mobs)
         {
-            list = par1World.getEntitiesWithinAABB(EntityLiving.class, this.func_94352_a(par2, par3, par4));
+            list = par1World.getEntitiesWithinAABB(EntityLiving.class, this.getSensitiveAABB(par2, par3, par4));
         }
 
         if (this.triggerMobType == EnumMobType.players)
         {
-            list = par1World.getEntitiesWithinAABB(EntityPlayer.class, this.func_94352_a(par2, par3, par4));
+            list = par1World.getEntitiesWithinAABB(EntityPlayer.class, this.getSensitiveAABB(par2, par3, par4));
         }
 
         if (!list.isEmpty())
@@ -58,7 +58,7 @@ public class BlockPressurePlate extends BlockBasePressurePlate
             {
                 Entity entity = (Entity)iterator.next();
                 // CraftBukkit start - Call interact event when turning on a pressure plate
-                if (this.func_94350_c(par1World.getBlockMetadata(par2, par3, par4)) == 0)
+                if (this.getPowerSupply(par1World.getBlockMetadata(par2, par3, par4)) == 0)
                 {
                     org.bukkit.World bworld = par1World.getWorld();
                     org.bukkit.plugin.PluginManager manager = par1World.getServer().getPluginManager();

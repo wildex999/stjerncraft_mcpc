@@ -129,7 +129,7 @@ public class BlockDispenser extends BlockContainer
             else
             {
                 ItemStack itemstack = tileentitydispenser.getStackInSlot(l);
-                IBehaviorDispenseItem ibehaviordispenseitem = this.func_96472_a(itemstack);
+                IBehaviorDispenseItem ibehaviordispenseitem = this.getBehaviorForItemStack(itemstack);
 
                 if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider)
                 {
@@ -141,7 +141,7 @@ public class BlockDispenser extends BlockContainer
         }
     }
 
-    protected IBehaviorDispenseItem func_96472_a(ItemStack par1ItemStack)
+    protected IBehaviorDispenseItem getBehaviorForItemStack(ItemStack par1ItemStack)
     {
         return (IBehaviorDispenseItem)dispenseBehaviorRegistry.func_82594_a(par1ItemStack.getItem());
     }

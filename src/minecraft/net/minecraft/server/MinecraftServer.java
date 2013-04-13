@@ -352,7 +352,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
                 if (newWorld.exists())
                 {
-                        log.func_98232_c("A file or folder already exists at " + newWorld + "!");
+                        log.logSevere("A file or folder already exists at " + newWorld + "!");
                         log.logInfo("---- Migration of old " + worldType + " folder failed ----");
                 }
                 else if (newWorld.getParentFile().mkdirs())
@@ -368,20 +368,20 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                         }
                         catch (IOException exception)
                         {
-                                log.func_98232_c("Unable to migrate world data.");
+                                log.logSevere("Unable to migrate world data.");
                         }
 
                             log.logInfo("---- Migration of old " + worldType + " folder complete ----");
                     }
                     else
                     {
-                            log.func_98232_c("Could not move folder " + oldWorld + " to " + newWorld + "!");
+                            log.logSevere("Could not move folder " + oldWorld + " to " + newWorld + "!");
                             log.logInfo("---- Migration of old " + worldType + " folder failed ----");
                     }
                 }
                 else
                 {
-                        log.func_98232_c("Could not create path for " + newWorld + "!");
+                        log.logSevere("Could not create path for " + newWorld + "!");
                         log.logInfo("---- Migration of old " + worldType + " folder failed ----");
                 }
             }
@@ -739,7 +739,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             }
 
             throwable.printStackTrace();
-            this.getLogAgent().func_98234_c("Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
+            this.getLogAgent().logSevereException("Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
             CrashReport crashreport = null;
 
             if (throwable instanceof ReportedException)
@@ -755,11 +755,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
             if (crashreport.saveToFile(file1, this.getLogAgent()))
             {
-                this.getLogAgent().func_98232_c("This crash report has been saved to: " + file1.getAbsolutePath());
+                this.getLogAgent().logSevere("This crash report has been saved to: " + file1.getAbsolutePath());
             }
             else
             {
-                this.getLogAgent().func_98232_c("We were unable to save this crash report to disk.");
+                this.getLogAgent().logSevere("We were unable to save this crash report to disk.");
             }
 
             this.finalTick(crashreport);
@@ -1187,7 +1187,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     public void logSevere(String par1Str)
     {
-        this.getLogAgent().func_98232_c(par1Str);
+        this.getLogAgent().logSevere(par1Str);
     }
 
     /**

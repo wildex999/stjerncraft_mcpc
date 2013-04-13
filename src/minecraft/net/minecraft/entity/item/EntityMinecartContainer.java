@@ -19,7 +19,7 @@ import org.bukkit.inventory.InventoryHolder;
 public abstract class EntityMinecartContainer extends EntityMinecart implements IInventory
 {
     private ItemStack[] minecartContainerItems = new ItemStack[27]; // CraftBukkit - 36 -> 27
-    private boolean field_94112_b = true;
+    private boolean dropContentsWhenDead = true;
 
     // CraftBukkit start
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
@@ -73,9 +73,9 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
         super(par1World, par2, par4, par6);
     }
 
-    public void func_94095_a(DamageSource par1DamageSource)
+    public void killMinecart(DamageSource par1DamageSource)
     {
-        super.func_94095_a(par1DamageSource);
+        super.killMinecart(par1DamageSource);
 
         for (int i = 0; i < this.getSizeInventory(); ++i)
         {
@@ -235,7 +235,7 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
         }
 
         // CraftBukkit end
-        this.field_94112_b = false;
+        this.dropContentsWhenDead = false;
         super.travelToDimension(par1);
     }
 
@@ -244,7 +244,7 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
      */
     public void setDead()
     {
-        if (this.field_94112_b)
+        if (this.dropContentsWhenDead)
         {
             for (int i = 0; i < this.getSizeInventory(); ++i)
             {
@@ -346,7 +346,7 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
         return true;
     }
 
-    protected void func_94101_h()
+    protected void applyDrag()
     {
         int i = 15 - Container.func_94526_b((IInventory) this);
         float f = 0.98F + (float)i * 0.001F;
