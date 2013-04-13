@@ -51,273 +51,273 @@ import com.avaje.ebeaninternal.api.ClassUtil;
  */
 public class ClassPathSearch {
 
-	private static final Logger logger = Logger.getLogger(ClassPathSearch.class.getName());
+    private static final Logger logger = Logger.getLogger(ClassPathSearch.class.getName());
 
-	ClassLoader classLoader;
+    ClassLoader classLoader;
 
-	Object[] classPaths;
+    Object[] classPaths;
 
-	ClassPathSearchFilter filter;
+    ClassPathSearchFilter filter;
 
-	ClassPathSearchMatcher matcher;
+    ClassPathSearchMatcher matcher;
 
-	ArrayList<Class<?>> matchList = new ArrayList<Class<?>>();
+    ArrayList<Class<?>> matchList = new ArrayList<Class<?>>();
 
-	HashSet<String> jarHits = new HashSet<String>();
+    HashSet<String> jarHits = new HashSet<String>();
 
-	HashSet<String> packageHits = new HashSet<String>();
+    HashSet<String> packageHits = new HashSet<String>();
 
-	ClassPathReader classPathReader = new DefaultClassPathReader();
-	
-	public ClassPathSearch(ClassLoader classLoader, ClassPathSearchFilter filter, ClassPathSearchMatcher matcher) {
-		this.classLoader = classLoader;
-		this.filter = filter;
-		this.matcher = matcher;
-		initClassPaths();
-	}
+    ClassPathReader classPathReader = new DefaultClassPathReader();
+    
+    public ClassPathSearch(ClassLoader classLoader, ClassPathSearchFilter filter, ClassPathSearchMatcher matcher) {
+        this.classLoader = classLoader;
+        this.filter = filter;
+        this.matcher = matcher;
+        initClassPaths();
+    }
 
-	private void initClassPaths() {
-		
-		try {
-			
-			String cn = GlobalProperties.get("ebean.classpathreader", null);
-			if (cn != null){
-				// use a user defined classPathReader
-				logger.info("Using ["+cn+"] to read the searchable class path");
-				classPathReader = (ClassPathReader)ClassUtil.newInstance(cn, this.getClass());
-			}
-			
-			classPaths = classPathReader.readPath(classLoader);
-				
-			if (classPaths == null || classPaths.length == 0){
-				String msg = "ClassPath is EMPTY using ClassPathReader ["+classPathReader+"]";
-				logger.warning(msg);
-			}
-			
-			boolean debug = GlobalProperties.getBoolean("ebean.debug.classpath", false);
-			if (debug || logger.isLoggable(Level.FINER)) {
-				String msg = "Classpath " + Arrays.toString(classPaths);
-				logger.info(msg);
-			}
-			
-		} catch (Exception e) {
-			String msg = "Error trying to read the classpath entries";
-			throw new RuntimeException(msg, e);
-		}
-	}
+    private void initClassPaths() {
+        
+        try {
+            
+            String cn = GlobalProperties.get("ebean.classpathreader", null);
+            if (cn != null){
+                // use a user defined classPathReader
+                logger.info("Using ["+cn+"] to read the searchable class path");
+                classPathReader = (ClassPathReader)ClassUtil.newInstance(cn, this.getClass());
+            }
+            
+            classPaths = classPathReader.readPath(classLoader);
+                
+            if (classPaths == null || classPaths.length == 0){
+                String msg = "ClassPath is EMPTY using ClassPathReader ["+classPathReader+"]";
+                logger.warning(msg);
+            }
+            
+            boolean debug = GlobalProperties.getBoolean("ebean.debug.classpath", false);
+            if (debug || logger.isLoggable(Level.FINER)) {
+                String msg = "Classpath " + Arrays.toString(classPaths);
+                logger.info(msg);
+            }
+            
+        } catch (Exception e) {
+            String msg = "Error trying to read the classpath entries";
+            throw new RuntimeException(msg, e);
+        }
+    }
 
-	/**
-	 * Return the set of jars that contained classes that matched.
-	 */
-	public Set<String> getJarHits() {
-		return jarHits;
-	}
+    /**
+     * Return the set of jars that contained classes that matched.
+     */
+    public Set<String> getJarHits() {
+        return jarHits;
+    }
 
-	/**
-	 * Return the set of packages that contained classes that matched.
-	 */
-	public Set<String> getPackageHits() {
-		return packageHits;
-	}
+    /**
+     * Return the set of packages that contained classes that matched.
+     */
+    public Set<String> getPackageHits() {
+        return packageHits;
+    }
 
-	/**
-	 * Register where matching classes where found.
-	 * <p>
-	 * Could use this info to speed up future searches.
-	 * </p>
-	 */
-	private void registerHit(String jarFileName, Class<?> cls) {
-		if (jarFileName != null) {
-			jarHits.add(jarFileName);
-		}
-		Package pkg = cls.getPackage();
-		if (pkg != null){
-			packageHits.add(pkg.getName());			
-		} else {
-			packageHits.add("");
-		}
-	}
+    /**
+     * Register where matching classes where found.
+     * <p>
+     * Could use this info to speed up future searches.
+     * </p>
+     */
+    private void registerHit(String jarFileName, Class<?> cls) {
+        if (jarFileName != null) {
+            jarHits.add(jarFileName);
+        }
+        Package pkg = cls.getPackage();
+        if (pkg != null){
+            packageHits.add(pkg.getName());            
+        } else {
+            packageHits.add("");
+        }
+    }
 
-	/**
-	 * Searches the class path for all matching classes.
-	 */
-	public List<Class<?>> findClasses() throws ClassNotFoundException {
+    /**
+     * Searches the class path for all matching classes.
+     */
+    public List<Class<?>> findClasses() throws ClassNotFoundException {
 
-		if (classPaths == null || classPaths.length == 0){
-			// returning an empty list
-			return matchList;
-		}
-		
-		String charsetName = Charset.defaultCharset().name();
+        if (classPaths == null || classPaths.length == 0){
+            // returning an empty list
+            return matchList;
+        }
+        
+        String charsetName = Charset.defaultCharset().name();
 
-		for (int h = 0; h < classPaths.length; h++) {
-			
-			String jarFileName = null;
-			Enumeration<?> files = null;
-			JarFile module = null;
+        for (int h = 0; h < classPaths.length; h++) {
+            
+            String jarFileName = null;
+            Enumeration<?> files = null;
+            JarFile module = null;
 
-			// for each class path ...
-			File classPath;
-			if (URL.class.isInstance(classPaths[h])){
-				classPath = new File(((URL)classPaths[h]).getFile());
-			} else {
-				classPath = new File(classPaths[h].toString());
-			}
-			
-			try {
-				// URL Decode the path replacing %20 to space characters.
-				String path = URLDecoder.decode(classPath.getAbsolutePath(), charsetName);
-				classPath = new File(path);
-				
-			} catch (UnsupportedEncodingException e) {
-				throw new RuntimeException(e);
-			}
+            // for each class path ...
+            File classPath;
+            if (URL.class.isInstance(classPaths[h])){
+                classPath = new File(((URL)classPaths[h]).getFile());
+            } else {
+                classPath = new File(classPaths[h].toString());
+            }
+            
+            try {
+                // URL Decode the path replacing %20 to space characters.
+                String path = URLDecoder.decode(classPath.getAbsolutePath(), charsetName);
+                classPath = new File(path);
+                
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
 
-			if (classPath.isDirectory()) {
-				files = getDirectoryEnumeration(classPath);
+            if (classPath.isDirectory()) {
+                files = getDirectoryEnumeration(classPath);
 
-			} else if (classPath.getName().endsWith(".jar")) {
-				jarFileName = classPath.getName();
-				if (!filter.isSearchJar(jarFileName)) {
-					// skip any jars not list in the filter
-					continue;
-				}
-				try {
-					// our resource is a jar
-					module = new JarFile(classPath);
-					files = module.entries();
+            } else if (classPath.getName().endsWith(".jar")) {
+                jarFileName = classPath.getName();
+                if (!filter.isSearchJar(jarFileName)) {
+                    // skip any jars not list in the filter
+                    continue;
+                }
+                try {
+                    // our resource is a jar
+                    module = new JarFile(classPath);
+                    files = module.entries();
 
-				} catch (MalformedURLException ex) {
-					throw new ClassNotFoundException("Bad classpath. Error: ", ex);
+                } catch (MalformedURLException ex) {
+                    throw new ClassNotFoundException("Bad classpath. Error: ", ex);
 
-				} catch (IOException ex) {
-					String msg = "jar file '" + classPath.getAbsolutePath()
-							+ "' could not be instantiate from file path. Error: ";
-					throw new ClassNotFoundException(msg, ex);
-				}
-			} else {
-				// this is not expected
-				String msg = "Error: expected classPath entry ["+classPath.getAbsolutePath()
-				+"] to be a directory or a .jar file but it is not either of those?";
-				//logger.log(Level.SEVERE, msg); // MCPC+ - disable log spam when Bukkit plugins use ebean and it gets confused by .zip in classpath, fixes #396
-			}
+                } catch (IOException ex) {
+                    String msg = "jar file '" + classPath.getAbsolutePath()
+                            + "' could not be instantiate from file path. Error: ";
+                    throw new ClassNotFoundException(msg, ex);
+                }
+            } else {
+                // this is not expected
+                String msg = "Error: expected classPath entry ["+classPath.getAbsolutePath()
+                +"] to be a directory or a .jar file but it is not either of those?";
+                //logger.log(Level.SEVERE, msg); // MCPC+ - disable log spam when Bukkit plugins use ebean and it gets confused by .zip in classpath, fixes #396
+            }
 
-			searchFiles(files, jarFileName);
+            searchFiles(files, jarFileName);
 
-			if (module != null) {
-				try {
-					// close the jar if it was used
-					module.close();
-				} catch (IOException e) {
-					String msg = "Error closing jar";
-					throw new ClassNotFoundException(msg, e);
-				}
-			}
-		}
-		
-		if (matchList.isEmpty()){
-			String msg = "No Entities found in ClassPath using ClassPathReader ["
-				+classPathReader+"] Classpath Searched[" + Arrays.toString(classPaths)+"]";
-			logger.warning(msg);
-		}
+            if (module != null) {
+                try {
+                    // close the jar if it was used
+                    module.close();
+                } catch (IOException e) {
+                    String msg = "Error closing jar";
+                    throw new ClassNotFoundException(msg, e);
+                }
+            }
+        }
+        
+        if (matchList.isEmpty()){
+            String msg = "No Entities found in ClassPath using ClassPathReader ["
+                +classPathReader+"] Classpath Searched[" + Arrays.toString(classPaths)+"]";
+            logger.warning(msg);
+        }
 
-		return matchList;
-	}
+        return matchList;
+    }
 
-	private Enumeration<?> getDirectoryEnumeration(File classPath) {
+    private Enumeration<?> getDirectoryEnumeration(File classPath) {
 
-		// list of file names (latter checked as Classes)
-		ArrayList<String> fileNameList = new ArrayList<String>();
+        // list of file names (latter checked as Classes)
+        ArrayList<String> fileNameList = new ArrayList<String>();
 
-		Set<String> includePkgs = filter.getIncludePackages();
-		if (includePkgs.size() > 0) {
-			// just search the relevant directories based on the
-			// list of included packages
-			Iterator<String> it = includePkgs.iterator();
-			while (it.hasNext()) {
-				String pkg = it.next();
-				String relPath = pkg.replace('.', '/');
-				File dir = new File(classPath, relPath);
-				if (dir.exists()) {
-					recursivelyListDir(fileNameList, dir, new StringBuilder(relPath));
-				}
-			}
+        Set<String> includePkgs = filter.getIncludePackages();
+        if (includePkgs.size() > 0) {
+            // just search the relevant directories based on the
+            // list of included packages
+            Iterator<String> it = includePkgs.iterator();
+            while (it.hasNext()) {
+                String pkg = it.next();
+                String relPath = pkg.replace('.', '/');
+                File dir = new File(classPath, relPath);
+                if (dir.exists()) {
+                    recursivelyListDir(fileNameList, dir, new StringBuilder(relPath));
+                }
+            }
 
-		} else {
-			// get a recursive listing of this classpath
-			recursivelyListDir(fileNameList, classPath, new StringBuilder());
-		}
+        } else {
+            // get a recursive listing of this classpath
+            recursivelyListDir(fileNameList, classPath, new StringBuilder());
+        }
 
-		return Collections.enumeration(fileNameList);
-	}
+        return Collections.enumeration(fileNameList);
+    }
 
-	private void searchFiles(Enumeration<?> files, String jarFileName) {
+    private void searchFiles(Enumeration<?> files, String jarFileName) {
 
-		while (files != null && files.hasMoreElements()) {
+        while (files != null && files.hasMoreElements()) {
 
-			String fileName = files.nextElement().toString();
+            String fileName = files.nextElement().toString();
 
-			// we only want the class files
-			if (fileName.endsWith(".class")) {
+            // we only want the class files
+            if (fileName.endsWith(".class")) {
 
-				String className = fileName.replace('/', '.').substring(0, fileName.length() - 6);
-				int lastPeriod = className.lastIndexOf(".");
-				
-				String pckgName;
-				if (lastPeriod > 0){
-					pckgName = className.substring(0, lastPeriod);
-				} else {
-					pckgName = "";
-				}
+                String className = fileName.replace('/', '.').substring(0, fileName.length() - 6);
+                int lastPeriod = className.lastIndexOf(".");
+                
+                String pckgName;
+                if (lastPeriod > 0){
+                    pckgName = className.substring(0, lastPeriod);
+                } else {
+                    pckgName = "";
+                }
 
-				if (!filter.isSearchPackage(pckgName)) {
-					continue;
-				}
+                if (!filter.isSearchPackage(pckgName)) {
+                    continue;
+                }
 
-				// get the class for our class name
-				Class<?> theClass = null;
-				try {
-					theClass = Class.forName(className, false, classLoader);
+                // get the class for our class name
+                Class<?> theClass = null;
+                try {
+                    theClass = Class.forName(className, false, classLoader);
 
-					if (matcher.isMatch(theClass)) {
-						matchList.add(theClass);
-						registerHit(jarFileName, theClass);
-					}
+                    if (matcher.isMatch(theClass)) {
+                        matchList.add(theClass);
+                        registerHit(jarFileName, theClass);
+                    }
 
-				} catch (ClassNotFoundException e) {
-					// expected to get this hence finer
-					logger.finer("Error searching classpath" + e.getMessage());
-					continue;
+                } catch (ClassNotFoundException e) {
+                    // expected to get this hence finer
+                    logger.finer("Error searching classpath" + e.getMessage());
+                    continue;
 
-				} catch (NoClassDefFoundError e) {
-					// expected to get this hence finer
-					logger.finer("Error searching classpath: " + e.getMessage());
-					continue;
-				}
-			}
-		}
-	}
+                } catch (NoClassDefFoundError e) {
+                    // expected to get this hence finer
+                    logger.finer("Error searching classpath: " + e.getMessage());
+                    continue;
+                }
+            }
+        }
+    }
 
-	private void recursivelyListDir(List<String> fileNameList, File dir, StringBuilder relativePath) {
+    private void recursivelyListDir(List<String> fileNameList, File dir, StringBuilder relativePath) {
 
-		int prevLen;
+        int prevLen;
 
-		if (dir.isDirectory()) {
-			File[] files = dir.listFiles();
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles();
 
-			for (int i = 0; i < files.length; i++) {
-				// store our original relative path string length
-				prevLen = relativePath.length();
-				relativePath.append(prevLen == 0 ? "" : "/").append(files[i].getName());
+            for (int i = 0; i < files.length; i++) {
+                // store our original relative path string length
+                prevLen = relativePath.length();
+                relativePath.append(prevLen == 0 ? "" : "/").append(files[i].getName());
 
-				recursivelyListDir(fileNameList, files[i], relativePath);
+                recursivelyListDir(fileNameList, files[i], relativePath);
 
-				// delete sub directory from our relative path
-				relativePath.delete(prevLen, relativePath.length());
-			}
-		} else {
-			// add class fileName to the list
-			fileNameList.add(relativePath.toString());
-		}
-	}
+                // delete sub directory from our relative path
+                relativePath.delete(prevLen, relativePath.length());
+            }
+        } else {
+            // add class fileName to the list
+            fileNameList.add(relativePath.toString());
+        }
+    }
 }
