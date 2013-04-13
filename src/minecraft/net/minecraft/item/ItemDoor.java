@@ -2,7 +2,6 @@ package net.minecraft.item;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet53BlockChange;
-import org.bukkit.craftbukkit.block.CraftBlockState; // CraftBukkit
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -44,7 +43,7 @@ public class ItemDoor extends Item
             }
             else
             {
-                block = Block.doorSteel;
+                block = Block.doorIron;
             }
 
             if (par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack) && par2EntityPlayer.canPlayerEdit(par4, par5 + 1, par6, par7, par1ItemStack))

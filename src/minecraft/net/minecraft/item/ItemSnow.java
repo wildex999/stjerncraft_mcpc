@@ -37,7 +37,7 @@ public class ItemSnow extends ItemBlockWithMetadata
                 int k1 = j1 & 7;
 
                 // CraftBukkit start - Redirect to common handler
-                if (k1 <= 6 && par3World.checkIfAABBIsClear(block.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && ItemBlock.processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, Block.snow.blockID, k1 + 1 | j1 & -8, clickedX, clickedY, clickedZ))
+                if (k1 <= 6 && par3World.checkNoEntityCollision(block.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && ItemBlock.processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, Block.snow.blockID, k1 + 1 | j1 & -8, clickedX, clickedY, clickedZ))
                 {
                     return true;
                 }

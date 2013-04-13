@@ -29,12 +29,12 @@ public class BlockPistonExtension extends Block
     {
         super.breakBlock(par1World, par2, par3, par4, par5, par6);
 
-        if ((par6 & 7) >= Facing.faceToSide.length)
+        if ((par6 & 7) >= Facing.oppositeSide.length)
         {
             return;    // CraftBukkit - fix a piston AIOOBE issue
         }
 
-        int j1 = Facing.faceToSide[getDirectionMeta(par6)];
+        int j1 = Facing.oppositeSide[getDirectionMeta(par6)];
         par2 += Facing.offsetsXForSide[j1];
         par3 += Facing.offsetsYForSide[j1];
         par4 += Facing.offsetsZForSide[j1];
@@ -188,7 +188,7 @@ public class BlockPistonExtension extends Block
     {
         int i1 = getDirectionMeta(par1World.getBlockMetadata(par2, par3, par4));
 
-        if ((i1 & 7) >= Facing.faceToSide.length)
+        if ((i1 & 7) >= Facing.oppositeSide.length)
         {
             return;    // CraftBukkit - fix a piston AIOOBE issue
         }

@@ -329,7 +329,7 @@ public class BlockPistonBase extends Block
      */
     public static int getOrientation(int par0)
     {
-        if ((par0 & 7) >= Facing.faceToSide.length)
+        if ((par0 & 7) >= Facing.oppositeSide.length)
         {
             return 7;    // CraftBukkit - check for AIOOB on piston data
         }

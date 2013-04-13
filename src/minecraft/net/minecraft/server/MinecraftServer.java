@@ -1,7 +1,6 @@
 package net.minecraft.server;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.ArgsWrapper;
 import cpw.mods.fml.relauncher.FMLRelauncher;
 import cpw.mods.fml.relauncher.Side;
@@ -14,9 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.command.ICommandManager;
@@ -63,13 +60,10 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 // CraftBukkit start
-import java.util.concurrent.ExecutionException;
-import java.io.IOException;
 import net.minecraft.command.ServerCommand;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.dedicated.PropertyManager;
 import net.minecraft.world.World;
-import com.google.common.io.Files;
 import jline.console.ConsoleReader;
 import joptsimple.OptionSet;
 
@@ -1455,7 +1449,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
     /**
      * WARNING : directly calls
-     * getActiveAnvilConverter().deleteWorldDirectory(theWorldServer[0].getSaveHandler().getSaveDirectoryName());
+     * getActiveAnvilConverter().deleteWorldDirectory(theWorldServer[0].getSaveHandler().getWorldDirectoryName());
      */
     public void deleteWorldAndStopServer()
     {
@@ -1475,7 +1469,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             }
         }
 
-        this.getActiveAnvilConverter().deleteWorldDirectory(this.worlds.get(0).getSaveHandler().getSaveDirectoryName()); // CraftBukkit
+        this.getActiveAnvilConverter().deleteWorldDirectory(this.worlds.get(0).getSaveHandler().getWorldDirectoryName()); // CraftBukkit
         this.initiateShutdown();
     }
 

@@ -35,7 +35,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
     @Override public void saveWorldInfo(WorldInfo var1){ parent.saveWorldInfo(var1); }
     @Override public IPlayerFileData getSaveHandler() { return parent.getSaveHandler(); }
     @Override public void flush() { parent.flush(); }
-    @Override public String getSaveDirectoryName() { return parent.getSaveDirectoryName(); }
+    @Override public String getWorldDirectoryName() { return parent.getWorldDirectoryName(); }
 
     @Override
     public File getMapFileFromName(String name)

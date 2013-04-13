@@ -165,7 +165,7 @@ public class BlockTripWire extends Block
                     {
                         int j2 = par1World.getBlockMetadata(k1, par3, l1) & 3;
 
-                        if (j2 == Direction.footInvisibleFaceRemap[i1])
+                        if (j2 == Direction.rotateOpposite[i1])
                         {
                             Block.tripWireSource.func_72143_a(par1World, k1, par3, l1, i2, par1World.getBlockMetadata(k1, par3, l1), true, j1, par5);
                         }

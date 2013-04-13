@@ -212,7 +212,7 @@ public class WorldGenTrees extends WorldGenerator implements TreeGenerator   // 
                                     if (par2Random.nextInt(4 - j1) == 0)
                                     {
                                         i2 = par2Random.nextInt(3);
-                                        this.setTypeAndData(par1World, par3 + Direction.offsetX[Direction.footInvisibleFaceRemap[k1]], par4 + l - 5 + j1, par5 + Direction.offsetZ[Direction.footInvisibleFaceRemap[k1]], Block.cocoaPlant.blockID, i2 << 2 | k1);
+                                        this.setTypeAndData(par1World, par3 + Direction.offsetX[Direction.rotateOpposite[k1]], par4 + l - 5 + j1, par5 + Direction.offsetZ[Direction.rotateOpposite[k1]], Block.cocoaPlant.blockID, i2 << 2 | k1);
                                     }
                                 }
                             }

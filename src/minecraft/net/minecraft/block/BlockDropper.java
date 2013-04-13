@@ -82,7 +82,7 @@ public class BlockDropper extends BlockDispenser
                         return;
                     }
 
-                    itemstack1 = TileEntityHopper.func_94117_a(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.faceToSide[i1]);
+                    itemstack1 = TileEntityHopper.func_94117_a(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[i1]);
 
                     if (event.getItem().equals(oitemstack) && itemstack1 == null)
                     {

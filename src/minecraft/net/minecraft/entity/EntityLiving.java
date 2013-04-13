@@ -17,7 +17,6 @@ import net.minecraft.entity.ai.EntityJumpHelper;
 import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.entity.ai.EntitySenses;
-import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -45,25 +44,15 @@ import net.minecraft.potion.PotionHelper;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.CombatTracker;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.*;
-import static net.minecraftforge.event.entity.living.LivingEvent.*;
 // CraftBukkit start
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.entity.boss.EntityDragon;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 // CraftBukkit end
@@ -2410,7 +2399,7 @@ public abstract class EntityLiving extends Entity
      */
     public boolean getCanSpawnHere()
     {
-        return this.worldObj.checkIfAABBIsClear(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox);
+        return this.worldObj.checkNoEntityCollision(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox);
     }
 
     /**
@@ -2968,7 +2957,7 @@ public abstract class EntityLiving extends Entity
                 }
                 else if (par1 == 3)
                 {
-                    return Item.helmetSteel;
+                    return Item.helmetIron;
                 }
                 else if (par1 == 4)
                 {
@@ -2989,7 +2978,7 @@ public abstract class EntityLiving extends Entity
                 }
                 else if (par1 == 3)
                 {
-                    return Item.plateSteel;
+                    return Item.plateIron;
                 }
                 else if (par1 == 4)
                 {
@@ -3010,7 +2999,7 @@ public abstract class EntityLiving extends Entity
                 }
                 else if (par1 == 3)
                 {
-                    return Item.legsSteel;
+                    return Item.legsIron;
                 }
                 else if (par1 == 4)
                 {
@@ -3031,7 +3020,7 @@ public abstract class EntityLiving extends Entity
                 }
                 else if (par1 == 3)
                 {
-                    return Item.bootsSteel;
+                    return Item.bootsIron;
                 }
                 else if (par1 == 4)
                 {

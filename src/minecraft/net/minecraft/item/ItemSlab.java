@@ -71,7 +71,7 @@ public class ItemSlab extends ItemBlock
             {
                 // CraftBukkit start - world.setTypeIdAndData -> processBlockPlace()
                 // if (world.b(this.c.b(world, i, j, k)) && world.setTypeIdAndData(i, j, k, this.c.id, k1, 3)) {
-                if (par3World.checkIfAABBIsClear(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, this.doubleSlab.blockID, k1, clickedX, clickedY, clickedZ))
+                if (par3World.checkNoEntityCollision(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, this.doubleSlab.blockID, k1, clickedX, clickedY, clickedZ))
                 {
                     // world.makeSound((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), this.c.stepSound.getPlaceSound(), (this.c.stepSound.getVolume1() + 1.0F) / 2.0F, this.c.stepSound.getVolume2() * 0.8F);
                     // CraftBukkit end
@@ -129,7 +129,7 @@ public class ItemSlab extends ItemBlock
         {
             // CraftBukkit start - world.setTypeIdAndData -> processBlockPlace()
             // if (world.b(this.c.b(world, i, j, k)) && world.setTypeIdAndData(i, j, k, this.c.id, k1, 3)) {
-            if (par3World.checkIfAABBIsClear(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, this.doubleSlab.blockID, k1, clickedX, clickedY, clickedZ))
+            if (par3World.checkNoEntityCollision(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, this.doubleSlab.blockID, k1, clickedX, clickedY, clickedZ))
             {
                 // world.makeSound((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F, this.c.stepSound.getPlaceSound(), (this.c.stepSound.getVolume1() + 1.0F) / 2.0F, this.c.stepSound.getVolume2() * 0.8F);
                 // CraftBukkit end

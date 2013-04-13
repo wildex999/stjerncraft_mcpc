@@ -139,7 +139,7 @@ public class BlockCocoa extends BlockDirectional
             par5 = 2;
         }
 
-        return Direction.footInvisibleFaceRemap[Direction.vineGrowth[par5]];
+        return Direction.rotateOpposite[Direction.facingToDirection[par5]];
     }
 
     /**

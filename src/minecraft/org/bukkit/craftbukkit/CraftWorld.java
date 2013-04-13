@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -40,32 +39,15 @@ import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.world.SpawnChangeEvent;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Boat;
-import org.bukkit.Chunk;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.util.Vector;
-import org.bukkit.BlockChangeDelegate;
-import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
-import org.bukkit.TreeType;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
-import org.bukkit.Difficulty;
-import org.bukkit.Sound;
-import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.plugin.messaging.StandardMessenger;
-import org.bukkit.craftbukkit.util.LongHash;
 
 public class CraftWorld implements World {
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
@@ -1238,7 +1220,7 @@ public class CraftWorld implements World {
     }
 
     public File getWorldFolder() {
-        return ((net.minecraft.world.storage.SaveHandler) world.getSaveHandler()).getSaveDirectory();
+        return ((net.minecraft.world.storage.SaveHandler) world.getSaveHandler()).getWorldDirectory();
     }
 
     public void explodeBlock(Block block, float yield) {

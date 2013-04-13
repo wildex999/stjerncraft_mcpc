@@ -324,7 +324,7 @@ public class BlockDoor extends Block
      */
     public int idDropped(int par1, Random par2Random, int par3)
     {
-        return (par1 & 8) != 0 ? 0 : (this.blockMaterial == Material.iron ? Item.doorSteel.itemID : Item.doorWood.itemID);
+        return (par1 & 8) != 0 ? 0 : (this.blockMaterial == Material.iron ? Item.doorIron.itemID : Item.doorWood.itemID);
     }
 
     /**

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.ListIterator;
@@ -14,12 +13,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -27,7 +22,6 @@ import cpw.mods.fml.common.FMLLog;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldManager;
@@ -38,7 +32,6 @@ import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
 // MCPC+ start
@@ -508,13 +501,13 @@ public class DimensionManager
     {
         if (DimensionManager.getWorld(0) != null)
         {
-            return ((SaveHandler)DimensionManager.getWorld(0).getSaveHandler()).getSaveDirectory();
+            return ((SaveHandler)DimensionManager.getWorld(0).getSaveHandler()).getWorldDirectory();
         }
         else if (MinecraftServer.getServer() != null)
         {
             MinecraftServer srv = MinecraftServer.getServer();
             SaveHandler saveHandler = (SaveHandler) srv.getActiveAnvilConverter().getSaveLoader(srv.getFolderName(), false);
-            return saveHandler.getSaveDirectory();
+            return saveHandler.getWorldDirectory();
         }
         else
         {

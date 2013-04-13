@@ -1,8 +1,7 @@
 package net.minecraft.entity;
 
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -2168,7 +2167,7 @@ public abstract class Entity
                     int j = (int)(this.posZ + d4);
                     AxisAlignedBB axisalignedbb = this.boundingBox.getOffsetBoundingBox(d3, 1.0D, d4);
 
-                    if (this.worldObj.getAllCollidingBoundingBoxes(axisalignedbb).isEmpty())
+                    if (this.worldObj.getCollidingBlockBounds(axisalignedbb).isEmpty())
                     {
                         if (this.worldObj.doesBlockHaveSolidTopSurface(i, (int)this.posY, j))
                         {
@@ -2410,7 +2409,7 @@ public abstract class Entity
         double d3 = par1 - (double)i;
         double d4 = par3 - (double)j;
         double d5 = par5 - (double)k;
-        List list = this.worldObj.getAllCollidingBoundingBoxes(this.boundingBox);
+        List list = this.worldObj.getCollidingBlockBounds(this.boundingBox);
 
         if (list.isEmpty() && !this.worldObj.func_85174_u(i, j, k))
         {

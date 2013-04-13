@@ -1,8 +1,7 @@
 package net.minecraft.world;
 
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -37,7 +36,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.logging.ILogAgent;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.profiler.Profiler;
@@ -72,39 +70,22 @@ import net.minecraftforge.common.*;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.item.ItemBlock; // MCPC+
 // CraftBukkit start
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityGolem;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.monster.EntitySlime;
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityWaterMob;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.gen.ChunkProviderServer;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.util.LongHashSet;
 import org.bukkit.craftbukkit.Spigot; // Spigot
 import org.bukkit.craftbukkit.SpigotTimings; // Spigot
-import org.bukkit.craftbukkit.util.UnsafeList;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.craftbukkit.util.UnsafeList;
 import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.generator.ChunkGenerator;
 // CraftBukkit end
 
 
@@ -1942,7 +1923,7 @@ public abstract class World implements IBlockAccess
     /**
      * calculates and returns a list of colliding bounding boxes within a given AABB
      */
-    public List getAllCollidingBoundingBoxes(AxisAlignedBB par1AxisAlignedBB)
+    public List getCollidingBlockBounds(AxisAlignedBB par1AxisAlignedBB)
     {
         this.collidingBoundingBoxes.clear();
         int i = MathHelper.floor_double(par1AxisAlignedBB.minX);
@@ -2498,15 +2479,15 @@ public abstract class World implements IBlockAccess
     /**
      * Returns true if there are no solid, live entities in the specified AxisAlignedBB
      */
-    public boolean checkIfAABBIsClear(AxisAlignedBB par1AxisAlignedBB)
+    public boolean checkNoEntityCollision(AxisAlignedBB par1AxisAlignedBB)
     {
-        return this.checkIfAABBIsClearExcludingEntity(par1AxisAlignedBB, (Entity)null);
+        return this.checkNoEntityCollision(par1AxisAlignedBB, (Entity) null);
     }
 
     /**
      * Returns true if there are no solid, live entities in the specified AxisAlignedBB, excluding the given entity
      */
-    public boolean checkIfAABBIsClearExcludingEntity(AxisAlignedBB par1AxisAlignedBB, Entity par2Entity)
+    public boolean checkNoEntityCollision(AxisAlignedBB par1AxisAlignedBB, Entity par2Entity)
     {
         List list = this.getEntitiesWithinAABBExcludingEntity((Entity)null, par1AxisAlignedBB);
 
@@ -2526,7 +2507,7 @@ public abstract class World implements IBlockAccess
     /**
      * Returns true if there are any blocks in the region constrained by an AxisAlignedBB
      */
-    public boolean isAABBNonEmpty(AxisAlignedBB par1AxisAlignedBB)
+    public boolean checkBlockCollision(AxisAlignedBB par1AxisAlignedBB)
     {
         int i = MathHelper.floor_double(par1AxisAlignedBB.minX);
         int j = MathHelper.floor_double(par1AxisAlignedBB.maxX + 1.0D);
@@ -3895,7 +3876,7 @@ public abstract class World implements IBlockAccess
         }
 
         boolean defaultReturn; // CraftBukkit - store the default action
-        if (axisalignedbb != null && !this.checkIfAABBIsClearExcludingEntity(axisalignedbb, par7Entity))
+        if (axisalignedbb != null && !this.checkNoEntityCollision(axisalignedbb, par7Entity))
         {
             defaultReturn = false; // CraftBukkit
         }

@@ -1,13 +1,6 @@
 package net.minecraftforge.common;
 
 import java.util.*;
-import java.util.Map.Entry;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
@@ -167,19 +160,19 @@ public class ForgeHooks
 
         MinecraftForge.setToolClass(Item.pickaxeWood,    "pickaxe", 0);
         MinecraftForge.setToolClass(Item.pickaxeStone,   "pickaxe", 1);
-        MinecraftForge.setToolClass(Item.pickaxeSteel,   "pickaxe", 2);
+        MinecraftForge.setToolClass(Item.pickaxeIron,   "pickaxe", 2);
         MinecraftForge.setToolClass(Item.pickaxeGold,    "pickaxe", 0);
         MinecraftForge.setToolClass(Item.pickaxeDiamond, "pickaxe", 3);
 
         MinecraftForge.setToolClass(Item.axeWood,    "axe", 0);
         MinecraftForge.setToolClass(Item.axeStone,   "axe", 1);
-        MinecraftForge.setToolClass(Item.axeSteel,   "axe", 2);
+        MinecraftForge.setToolClass(Item.axeIron,   "axe", 2);
         MinecraftForge.setToolClass(Item.axeGold,    "axe", 0);
         MinecraftForge.setToolClass(Item.axeDiamond, "axe", 3);
 
         MinecraftForge.setToolClass(Item.shovelWood,    "shovel", 0);
         MinecraftForge.setToolClass(Item.shovelStone,   "shovel", 1);
-        MinecraftForge.setToolClass(Item.shovelSteel,   "shovel", 2);
+        MinecraftForge.setToolClass(Item.shovelIron,   "shovel", 2);
         MinecraftForge.setToolClass(Item.shovelGold,    "shovel", 0);
         MinecraftForge.setToolClass(Item.shovelDiamond, "shovel", 3);
 
@@ -205,7 +198,7 @@ public class ForgeHooks
         MinecraftForge.setBlockHarvestLevel(Block.oreGold,      "pickaxe", 2);
         MinecraftForge.setBlockHarvestLevel(Block.blockGold,    "pickaxe", 2);
         MinecraftForge.setBlockHarvestLevel(Block.oreIron,      "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Block.blockSteel,   "pickaxe", 1);
+        MinecraftForge.setBlockHarvestLevel(Block.blockIron,   "pickaxe", 1);
         MinecraftForge.setBlockHarvestLevel(Block.oreLapis,     "pickaxe", 1);
         MinecraftForge.setBlockHarvestLevel(Block.blockLapis,   "pickaxe", 1);
         MinecraftForge.setBlockHarvestLevel(Block.oreRedstone,  "pickaxe", 2);

@@ -348,7 +348,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
                         return false;
                     }
 
-                    ItemStack itemstack1 = func_94117_a(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.faceToSide[BlockHopper.func_94451_c(this.getBlockMetadata())]);
+                    ItemStack itemstack1 = func_94117_a(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[BlockHopper.func_94451_c(this.getBlockMetadata())]);
 
                     if (itemstack1 == null || itemstack1.stackSize == 0)
                     {

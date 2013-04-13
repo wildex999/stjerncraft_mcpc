@@ -78,29 +78,13 @@ import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldServer;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.network.packet.Packet6SpawnPosition;
-import net.minecraft.network.packet.Packet70GameEvent;
-import net.minecraft.util.EnumMovingObjectType;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 // CraftBukkit start
-import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-import java.util.HashSet;
 
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -585,7 +569,7 @@ public class NetServerHandler extends NetHandler
 
                 AxisAlignedBB axisalignedbb = this.playerEntity.boundingBox.copy().expand((double)f4, (double)f4, (double)f4).addCoord(0.0D, -0.55D, 0.0D);
 
-                if (!this.mcServer.isFlightAllowed() && !this.playerEntity.capabilities.allowFlying && !worldserver.isAABBNonEmpty(axisalignedbb))   // CraftBukkit - check abilities instead of creative mode
+                if (!this.mcServer.isFlightAllowed() && !this.playerEntity.capabilities.allowFlying && !worldserver.checkBlockCollision(axisalignedbb))   // CraftBukkit - check abilities instead of creative mode
                 {
                     if (d12 >= -0.03125D)
                     {

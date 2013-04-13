@@ -197,7 +197,7 @@ public abstract class BlockRedstoneLogic extends BlockDirectional
         int i1 = getDirection(par5);
         int j1 = par2 + Direction.offsetX[i1];
         int k1 = par4 + Direction.offsetZ[i1];
-        int l1 = par1World.getIndirectPowerLevelTo(j1, par3, k1, Direction.headInvisibleFace[i1]);
+        int l1 = par1World.getIndirectPowerLevelTo(j1, par3, k1, Direction.directionToFacing[i1]);
         return l1 >= 15 ? l1 : Math.max(l1, par1World.getBlockId(j1, par3, k1) == Block.redstoneWire.blockID ? par1World.getBlockMetadata(j1, par3, k1) : 0);
     }
 
