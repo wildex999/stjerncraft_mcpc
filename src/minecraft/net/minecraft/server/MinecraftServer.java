@@ -611,6 +611,14 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         {
             this.getLogAgent().logInfo("Stopping server");
 
+            // CraftBukkit start
+            if (this.server != null)
+            {
+                this.server.disablePlugins();
+            }
+
+            // CraftBukkit end
+
             if (this.getNetworkThread() != null)
             {
                 this.getNetworkThread().stopListening();
