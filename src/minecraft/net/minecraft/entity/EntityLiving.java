@@ -1509,14 +1509,16 @@ public abstract class EntityLiving extends Entity
         {
             EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(null, this, EntityDamageEvent.DamageCause.FALL, i);
 
-            if (!event.isCancelled())
+            if (event.isCancelled())
             {
-                i = event.getDamage();
+                return;
+            }
 
-                if (i > 0)
-                {
-                    this.getBukkitEntity().setLastDamageCause(event);
-                }
+            i = event.getDamage();
+
+            if (i > 0)
+            {
+                this.getBukkitEntity().setLastDamageCause(event);
             }
         }
 
