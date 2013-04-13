@@ -2361,7 +2361,7 @@ public abstract class World implements IBlockAccess
 
     public void addTileEntity(Collection par1Collection)
     {
-        List dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
+        Collection dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList; // MCPC+ - List -> Collection for CB loadedTileEntityList type change
         for(Object entity : par1Collection)
         {
             if(((TileEntity)entity).canUpdate())
@@ -4624,7 +4624,7 @@ public abstract class World implements IBlockAccess
      */
     public void addTileEntity(TileEntity entity)
     {
-        List dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
+        Collection dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList; // MCPC+ - List -> Collection for CB loadedTileEntityList type change
         if(entity.canUpdate())
         {
             dest.add(entity);
