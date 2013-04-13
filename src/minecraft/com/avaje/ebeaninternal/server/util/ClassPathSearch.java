@@ -166,7 +166,7 @@ public class ClassPathSearch {
             
             try {
                 // URL Decode the path replacing %20 to space characters.
-                String path = URLDecoder.decode(classPath.getAbsolutePath(), charsetName);
+                String path = URLDecoder.decode(classPath.getAbsolutePath().replace("+", "%2b"), charsetName); // MCPC+ - fix decoding error leading to crash when mods have + in filename, fixes #74
                 classPath = new File(path);
                 
             } catch (UnsupportedEncodingException e) {
