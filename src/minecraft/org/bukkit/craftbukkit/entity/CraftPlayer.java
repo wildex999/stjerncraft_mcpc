@@ -1008,6 +1008,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     public void setScoreboard(Scoreboard scoreboard) {  // MCPC+ - fix mapping error, net.minecraft.scoreboard.Scoreboard -> Scoreboard (API)
         Validate.notNull(scoreboard, "Scoreboard cannot be null");
+        net.minecraft.network.NetServerHandler playerConnection = getHandle().playerNetServerHandler;
+        if (playerConnection == null) {
+            throw new IllegalStateException("Cannot set scoreboard yet");
+        }
+        if (playerConnection.connectionClosed) {
+            throw new IllegalStateException("Cannot set scoreboard for invalid CraftPlayer");
+        }
+
         this.server.getScoreboardManager().setPlayerBoard(this, scoreboard);
     }
 }
