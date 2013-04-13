@@ -80,7 +80,7 @@ world-settings:
         growth-chunks-per-tick: 650
         mob-spawn-range: 4
         random-light-updates: false
-        aggregate-chunkticks: 4
+        aggregate-chunkticks: 0
         item-merge-radius: 3.5
         exp-merge-radius: 3.5
         wheat-growth-modifier: 100
