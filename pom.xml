@@ -13,7 +13,7 @@
     <minecraft.version>1.5.1</minecraft.version>
     <minecraft_version>1_5_R2</minecraft_version>
     <minecraft_version_download>1_5_1</minecraft_version_download>
-    <forge.build>646</forge.build>
+    <forge.build>650</forge.build>
     <forge.version>7.7.1.${forge.build}</forge.version>
     <forge.remapped.revision>R1-MCPC</forge.remapped.revision>
     <fml.at>${basedir}/resources/fml_at.cfg</fml.at>
