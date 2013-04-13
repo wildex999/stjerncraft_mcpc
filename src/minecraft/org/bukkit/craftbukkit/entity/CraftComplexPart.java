@@ -12,7 +12,7 @@ public class CraftComplexPart extends CraftEntity implements ComplexEntityPart {
     }
 
     public ComplexLivingEntity getParent() {
-        return (ComplexLivingEntity) ((net.minecraft.entity.boss.EntityDragon) getHandle().entityDragonObj).getBukkitEntity();
+        return (ComplexLivingEntity) ((net.minecraft.entity.Entity) getHandle().entityDragonObj).getBukkitEntity(); // MCPC+ - EntityDragon -> Entity for modded bosses (Twilight Forest hydra)
     }
 
     @Override
