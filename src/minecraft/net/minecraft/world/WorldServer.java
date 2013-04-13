@@ -514,6 +514,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
         aggregateTicks = this.getWorld().aggregateTicks;
         // Spigot end
+        super.tickBlocksAndAmbiance();
         int i = 0;
         int j = 0;
         // CraftBukkit start
@@ -544,6 +545,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
             // CraftBukkit end
             this.moodSoundAndLightCheck(k, l, chunk);
             this.theProfiler.endStartSection("tickChunk");
+            // MCPC+ - TODO: skylight
             this.theProfiler.endStartSection("thunder");
             int i1;
             int j1;
