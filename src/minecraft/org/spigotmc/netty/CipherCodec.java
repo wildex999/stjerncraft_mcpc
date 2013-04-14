@@ -15,6 +15,7 @@ public class CipherCodec extends ByteToByteCodec {
 
     private Cipher encrypt;
     private Cipher decrypt;
+    private net.minecraft.network.packet.Packet252SharedKey responsePacket;
     private ThreadLocal<byte[]> heapInLocal = new EmptyByteThreadLocal();
     private ThreadLocal<byte[]> heapOutLocal = new EmptyByteThreadLocal();
 
@@ -26,9 +27,15 @@ public class CipherCodec extends ByteToByteCodec {
         }
     }
 
-    public CipherCodec(Cipher encrypt, Cipher decrypt) {
+    public CipherCodec(Cipher encrypt, Cipher decrypt, net.minecraft.network.packet.Packet252SharedKey responsePacket) {
         this.encrypt = encrypt;
         this.decrypt = decrypt;
+        this.responsePacket = responsePacket;
+    }
+
+    @Override
+    public void beforeAdd(ChannelHandlerContext ctx) throws Exception {
+        ctx.channel().write(responsePacket);
     }
 
     @Override

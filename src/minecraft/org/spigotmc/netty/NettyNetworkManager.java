@@ -142,14 +142,17 @@ public class NettyNetworkManager extends ChannelInboundMessageHandlerAdapter<net
             // If handler indicates packet send
             if (packet != null) {
                 highPriorityQueue.add(packet);
-                channel.write(packet);
 
                 // If needed, check and prepare encryption phase
+                // We don't send the packet here as it is sent just before the cipher handler has been added to ensure we can safeguard from any race conditions
+                // Which are caused by the slow first initialization of the cipher SPI
                 if (packet instanceof net.minecraft.network.packet.Packet252SharedKey) {
                     Cipher encrypt = NettyServerConnection.getCipher(Cipher.ENCRYPT_MODE, secret);
                     Cipher decrypt = NettyServerConnection.getCipher(Cipher.DECRYPT_MODE, secret);
-                    CipherCodec codec = new CipherCodec(encrypt, decrypt);
+                    CipherCodec codec = new CipherCodec(encrypt, decrypt, (net.minecraft.network.packet.Packet252SharedKey) packet);
                     channel.pipeline().addBefore("decoder", "cipher", codec);
+                } else {
+                    channel.write(packet);
                 }
             }
         }
