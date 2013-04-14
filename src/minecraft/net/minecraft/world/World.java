@@ -110,7 +110,7 @@ public abstract class World implements IBlockAccess
     protected List unloadedEntityList = new ArrayList();
 
     /** A list of all TileEntities in all currently-loaded chunks */
-    public Set loadedTileEntityList = new HashSet(); // CraftBukkit - ArrayList -> HashSet
+    public List loadedTileEntityList = new ArrayList(); // CraftBukkit - ArrayList -> HashSet // MCPC+ - keep vanilla for mod compatibility
     private List addedTileEntityList = new ArrayList();
 
     /** Entities marked for removal. */
