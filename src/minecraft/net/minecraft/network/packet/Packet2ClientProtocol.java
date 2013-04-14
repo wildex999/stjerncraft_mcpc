@@ -1,5 +1,7 @@
 package net.minecraft.network.packet;
 
+import org.bukkit.craftbukkit.Spigot;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
@@ -23,6 +25,11 @@ public class Packet2ClientProtocol extends Packet
         this.username = readString(par1DataInputStream, 16);
         this.serverHost = readString(par1DataInputStream, 255);
         this.serverPort = par1DataInputStream.readInt();
+
+        if (!Spigot.validName.matcher(this.username).matches())
+        {
+            throw new IOException("Invalid name!");    // Spigot
+        }
     }
 
     /**

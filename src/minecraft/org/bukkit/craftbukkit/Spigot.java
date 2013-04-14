@@ -8,6 +8,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.List;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
+
 import org.bukkit.Bukkit;
 import org.spigotmc.Metrics;
 import org.spigotmc.RestartCommand;
@@ -23,6 +25,7 @@ public class Spigot {
     private static Metrics metrics;
     public static List<String> bungeeIPs;    
     public static int textureResolution = 16;
+    public static final Pattern validName = Pattern.compile("^[a-zA-Z0-9_]{3,16}$");
 
     public static void initialize(CraftServer server, SimpleCommandMap commandMap, YamlConfiguration configuration) {
         if (configuration.getBoolean("settings.tps-command", true)) { // MCPC+ - config option to allow mods to replace command
