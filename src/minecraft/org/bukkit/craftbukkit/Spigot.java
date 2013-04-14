@@ -25,7 +25,7 @@ public class Spigot {
     private static Metrics metrics;
     public static List<String> bungeeIPs;    
     public static int textureResolution = 16;
-    public static final Pattern validName = Pattern.compile("^[a-zA-Z0-9_]{3,16}$");
+    public static final Pattern validName = Pattern.compile("^[a-zA-Z0-9_]{2,16}$");
 
     public static void initialize(CraftServer server, SimpleCommandMap commandMap, YamlConfiguration configuration) {
         if (configuration.getBoolean("settings.tps-command", true)) { // MCPC+ - config option to allow mods to replace command
