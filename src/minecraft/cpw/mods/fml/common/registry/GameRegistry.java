@@ -334,7 +334,7 @@ public class GameRegistry
     public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
     {
         TileEntity.addMapping(tileEntityClass, id);
-        Map<String,Class> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "fiel" + "d_70326_a", "nameToClassMap", "a"); // MCPC+ - add srgname - TODO: fix ObfuscationReflectionHelper - broke by our fix for https://github.com/MinecraftForge/FML/issues/210
+        Map<String,Class> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "nameToClassMap", "a");
         for (String s: alternatives)
         {
             if (!teMappings.containsKey(s))
