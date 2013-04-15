@@ -396,7 +396,7 @@ public class ExtendedBlockStorage
      */
     public void setBlockLSBArray(byte[] par1ArrayOfByte)
     {
-        this.blockLSBArray = validateByteArray(par1ArrayOfByte); // Spigot - validate
+        this.blockLSBArray = this.validateByteArray(par1ArrayOfByte); // CraftBukkit - Validate data
     }
 
     /**
@@ -421,7 +421,7 @@ public class ExtendedBlockStorage
         }
 
         // CraftBukkit end
-        this.blockMSBArray = validateNibbleArray(par1NibbleArray); // Spigot - validate
+        this.blockMSBArray = this.validateNibbleArray(par1NibbleArray); // CraftBukkit - Validate data
     }
 
     /**
@@ -429,7 +429,7 @@ public class ExtendedBlockStorage
      */
     public void setBlockMetadataArray(NibbleArray par1NibbleArray)
     {
-        this.blockMetadataArray = validateNibbleArray(par1NibbleArray); // Spigot - validate
+        this.blockMetadataArray = this.validateNibbleArray(par1NibbleArray); // CraftBukkit - Validate data
     }
 
     /**
@@ -437,7 +437,7 @@ public class ExtendedBlockStorage
      */
     public void setBlocklightArray(NibbleArray par1NibbleArray)
     {
-        this.blocklightArray = validateNibbleArray(par1NibbleArray); // Spigot - validate
+        this.blocklightArray = this.validateNibbleArray(par1NibbleArray); // CraftBukkit - Validate data
     }
 
     /**
@@ -445,7 +445,7 @@ public class ExtendedBlockStorage
      */
     public void setSkylightArray(NibbleArray par1NibbleArray)
     {
-        this.skylightArray = validateNibbleArray(par1NibbleArray); // Spigot - validate
+        this.skylightArray = this.validateNibbleArray(par1NibbleArray); // CraftBukkit - Validate data
     }
     
     // Spigot start - validate/correct nibble array
