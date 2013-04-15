@@ -78,6 +78,7 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
             Chunk chunk = (Chunk) data[0];
             NBTTagCompound nbttagcompound = (NBTTagCompound) data[1];
             this.loadEntities(chunk, nbttagcompound.getCompoundTag("Level"), par1World);
+            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, nbttagcompound)); // MCPC+ - Don't call ChunkDataEvent.Load async
             return chunk;
         }
 
@@ -162,7 +163,7 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
             Object[] data = new Object[2];
             data[0] = chunk;
             data[1] = nbttagcompound;
-            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, nbttagcompound)); // Forge            
+            // MCPC+ - Don't call ChunkDataEvent.Load async
             return data;
             // CraftBukkit end
         }
