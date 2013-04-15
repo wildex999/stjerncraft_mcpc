@@ -7,6 +7,11 @@ import org.bukkit.craftbukkit.util.LongHash;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+// MCPC+ start - Don't call ChunkDataEvent.Load async
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.ChunkDataEvent;
+// MCPC+ end
+
 class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChunk, net.minecraft.world.chunk.Chunk, Runnable, RuntimeException> {
     private final AtomicInteger threadNumber = new AtomicInteger(1);
 
@@ -42,6 +47,7 @@ class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChu
         }
 
         queuedChunk.loader.loadEntities(chunk, queuedChunk.compound.getCompoundTag("Level"), queuedChunk.world);
+        MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, queuedChunk.compound)); // MCPC+ - Don't call ChunkDataEvent.Load async
         chunk.lastSaveTime = queuedChunk.provider.worldObj.getTotalWorldTime();
         queuedChunk.provider.loadedChunkHashMap.put(queuedChunk.coords, chunk);
         queuedChunk.provider.loadedChunks.add(chunk); // MCPC+  vanilla compatibility        
