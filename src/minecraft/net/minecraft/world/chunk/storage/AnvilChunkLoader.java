@@ -156,6 +156,22 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
                 world.getWorldLogAgent().logSevere("Chunk file at " + i + "," + j + " is in the wrong location; relocating. (Expected " + i + ", " + j + ", got " + chunk.xPosition + ", " + chunk.zPosition + ")");
                 nbttagcompound.getCompoundTag("Level").setInteger("xPos", i); // CraftBukkit - .getCompound("Level")
                 nbttagcompound.getCompoundTag("Level").setInteger("zPos", j); // CraftBukkit - .getCompound("Level")
+                // CraftBukkit start - Have to move tile entities since we don't load them at this stage
+                NBTTagList tileEntities = nbttagcompound.getCompoundTag("Level").getTagList("TileEntities");
+
+                if (tileEntities != null)
+                {
+                    for (int te = 0; te < tileEntities.tagCount(); te++)
+                    {
+                        NBTTagCompound tileEntity = (NBTTagCompound) tileEntities.tagAt(te);
+                        int x = tileEntity.getInteger("x") - chunk.xPosition * 16;
+                        int z = tileEntity.getInteger("z") - chunk.zPosition * 16;
+                        tileEntity.setInteger("x", i * 16 + x);
+                        tileEntity.setInteger("z", j * 16 + z);
+                    }
+                }
+
+                // CraftBukkit end
                 chunk = this.readChunkFromNBT(world, nbttagcompound.getCompoundTag("Level"));
             }
 
