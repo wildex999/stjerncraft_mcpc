@@ -47,10 +47,8 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.BookMeta;
 // MCPC+ start
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import org.bukkit.entity.Item;
-import org.bukkit.craftbukkit.entity.CraftItem;
+import org.bukkit.block.CreatureSpawner;
 // MCPC+ end
 
 
@@ -96,6 +94,22 @@ public class CraftEventFactory {
         BlockPlaceEvent event = new BlockPlaceEvent(placedBlock, replacedBlockState, blockClicked, player.getItemInHand(), player, canBuild);
         craftServer.getPluginManager().callEvent(event);
 
+        return event;
+    }
+
+    /**
+     * Mob spawner event
+     */
+    public static SpawnerSpawnEvent callSpawnerSpawnEvent(net.minecraft.entity.Entity spawnee, int spawnerX, int spawnerY, int spawnerZ) {
+        org.bukkit.craftbukkit.entity.CraftEntity entity = spawnee.getBukkitEntity();
+        BlockState state = entity.getWorld().getBlockAt(spawnerX, spawnerY, spawnerZ).getState();
+
+        if (!(state instanceof CreatureSpawner)) {
+            state = null;
+        }
+
+        SpawnerSpawnEvent event = new SpawnerSpawnEvent(entity, (CreatureSpawner) state);
+        entity.getServer().getPluginManager().callEvent(event);
         return event;
     }
 

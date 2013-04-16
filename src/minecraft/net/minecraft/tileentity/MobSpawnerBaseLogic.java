@@ -14,7 +14,11 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 
-import org.bukkit.event.entity.CreatureSpawnEvent; // CraftBukkit
+// CraftBukkit start
+import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.SpawnerSpawnEvent;
+// CraftBukkit end
 
 public abstract class MobSpawnerBaseLogic
 {
@@ -174,7 +178,15 @@ public abstract class MobSpawnerBaseLogic
 
             if (par1Entity.worldObj != null)
             {
-                par1Entity.worldObj.addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
+                // CraftBukkit start - call SpawnerSpawnEvent, abort if cancelled
+                SpawnerSpawnEvent event = CraftEventFactory.callSpawnerSpawnEvent(par1Entity, this.getSpawnerX(), this.getSpawnerY(), this.getSpawnerZ());
+
+                if (!event.isCancelled())
+                {
+                    par1Entity.worldObj.addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.SPAWNER);
+                }
+
+                // CraftBukkit end
             }
 
             NBTTagCompound nbttagcompound1;
@@ -198,6 +210,15 @@ public abstract class MobSpawnerBaseLogic
 
                     entity2.readFromNBT(nbttagcompound2);
                     entity2.setLocationAndAngles(entity1.posX, entity1.posY, entity1.posZ, entity1.rotationYaw, entity1.rotationPitch);
+                    // CraftBukkit start - call SpawnerSpawnEvent, skip if cancelled
+                    SpawnerSpawnEvent event = CraftEventFactory.callSpawnerSpawnEvent(entity2, this.getSpawnerX(), this.getSpawnerY(), this.getSpawnerZ());
+
+                    if (event.isCancelled())
+                    {
+                        continue;
+                    }
+
+                    // CraftBukkit end
                     this.getSpawnerWorld().addEntity(entity2, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit);
                     entity1.mountEntity(entity2);
                 }
@@ -208,7 +229,15 @@ public abstract class MobSpawnerBaseLogic
         else if (par1Entity instanceof EntityLiving && par1Entity.worldObj != null)
         {
             ((EntityLiving)par1Entity).initCreature();
-            this.getSpawnerWorld().addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit);
+            // CraftBukkit start - call SpawnerSpawnEvent, abort if cancelled
+            SpawnerSpawnEvent event = CraftEventFactory.callSpawnerSpawnEvent(par1Entity, this.getSpawnerX(), this.getSpawnerY(), this.getSpawnerZ());
+
+            if (!event.isCancelled())
+            {
+                this.getSpawnerWorld().addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.SPAWNER);
+            }
+
+            // CraftBukkit end
         }
 
         return par1Entity;
