@@ -39,6 +39,7 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -144,36 +145,47 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             rawFieldMaps.put(cl, Maps.<String,String>newHashMap());
         }
-        rawFieldMaps.get(cl).put(oldName + ":" + getFieldType(cl, oldName), newName); // MCPC+ - add type info
-        rawFieldMaps.get(cl).put(oldName + ":null", newName); // MCPC+ - without type info, for reflection (name only)
+        rawFieldMaps.get(cl).put(oldName + ":" + getFieldType(cl, oldName), newName);
+        rawFieldMaps.get(cl).put(oldName + ":null", newName);
     }
 
-    // MCPC+ start - lookup field type descriptor
-    @SuppressWarnings("unchecked")
-    private String getFieldType(String owner, String name) {
-        try
+    /*
+     * Cache the field descriptions for classes so we don't repeatedly reload the same data again and again
+     */
+    private Map<String,Map<String,String>> fieldDescriptions = Maps.newHashMap();
+
+    private String getFieldType(String owner, String name)
+    {
+        if (fieldDescriptions.containsKey(owner))
         {
-            byte[] classBytes = classLoader.getClassBytes(owner);
-            if (classBytes == null)
+            return fieldDescriptions.get(owner).get(name);
+        }
+        synchronized (fieldDescriptions)
+        {
+            try
             {
-                return "";
-            }
-            ClassReader cr = new ClassReader(classBytes);
-            ClassNode classNode = new ClassNode();
-            cr.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-            for (FieldNode fieldNode : (List<FieldNode>) classNode.fields) {
-                if (fieldNode.name.equals(name)) {
-                    return fieldNode.desc;
+                byte[] classBytes = classLoader.getClassBytes(owner);
+                if (classBytes == null)
+                {
+                    return null;
                 }
+                ClassReader cr = new ClassReader(classBytes);
+                ClassNode classNode = new ClassNode();
+                cr.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+                Map<String,String> resMap = Maps.newHashMap();
+                for (FieldNode fieldNode : (List<FieldNode>) classNode.fields) { // MCPC+ - cast to List<FieldNode>(?)
+                    resMap.put(fieldNode.name, fieldNode.desc);
+                }
+                fieldDescriptions.put(owner, resMap);
+                return resMap.get(name);
             }
+            catch (IOException e)
+            {
+                FMLLog.log(Level.SEVERE,e, "A critical exception occured reading a class file %s", owner);
+            }
+            return null;
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return "";
     }
-    // MCPC+ end
 
     private void parseClass(Builder<String, String> builder, String[] parts)
     {
@@ -211,7 +223,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             return name;
         }
         Map<String, String> fieldMap = getFieldMap(owner);
-        return fieldMap!=null && fieldMap.containsKey(name+":"+desc) ? fieldMap.get(name+":"+desc) : name; // MCPC+ - add desc
+        return fieldMap!=null && fieldMap.containsKey(name+":"+desc) ? fieldMap.get(name+":"+desc) : name;
     }
 
     @Override
