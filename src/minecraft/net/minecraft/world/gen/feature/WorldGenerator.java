@@ -45,7 +45,17 @@ public abstract class WorldGenerator
         }
         else
         {
-            world.setTypeIdAndData(i, j, k, l, i1);
+            // CraftBukkit start - Layering violation :(
+            if (world instanceof World)
+            {
+                ((World) world).setBlock(i, j, k, l, i1, 2);
+            }
+            else
+            {
+                world.setRawTypeIdAndData(i, j, k, l, i1);
+            }
+
+            // CraftBukkit end
         }
     }
     
