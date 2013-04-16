@@ -448,27 +448,29 @@ public class ExtendedBlockStorage
         this.skylightArray = this.validateNibbleArray(par1NibbleArray); // CraftBukkit - Validate data
     }
     
-    // Spigot start - validate/correct nibble array
-    private static final NibbleArray validateNibbleArray(NibbleArray na)
+    // CraftBukkit start - Validate array lengths
+    private NibbleArray validateNibbleArray(NibbleArray nibbleArray)
     {
-        if ((na != null) && (na.getByteLength() < 2048))
+        // Spigot start - fix for more awesome nibble arrays
+        if (nibbleArray != null && nibbleArray.getByteLength() < 2048)
         {
-            na.resizeArray(2048);
+            nibbleArray.resizeArray(2048);
         }
 
-        return na;
+        // Spigot end
+        return nibbleArray;
     }
-    // Validate/correct byte array
-    private static final byte[] validateByteArray(byte[] ba)
+
+    private byte[] validateByteArray(byte[] byteArray)
     {
-        if ((ba != null) && (ba.length < 4096))
+        if (byteArray != null && byteArray.length < 4096)
         {
-            byte[] newba = new byte[4096];
-            System.arraycopy(ba,  0,  newba,  0,  ba.length);
-            ba = newba;
+            byte[] newArray = new byte[4096];
+            System.arraycopy(byteArray, 0, newArray, 0, byteArray.length);
+            byteArray = newArray;
         }
 
-        return ba;
+        return byteArray;
     }
-    // Spigot end    
+    // CraftBukkit end
 }
