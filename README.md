@@ -9,9 +9,8 @@ Compilation
 We use maven to handle our dependencies.
 
 * Install [Maven 3](http://maven.apache.org/download.html)
-* Install [MCPC API](https://github.com/MinecraftPortCentral/Bukkit/tree/mcpc-api)
-* Install [SpecialSource](https://github.com/md-5/SpecialSource)
-* Install [SpecialSourceMP](https://github.com/agaricusb/SpecialSourceMP)
+* Check out and install [MCPC API](https://github.com/MinecraftPortCentral/Bukkit/tree/mcpc-api) 
+ * Note: this is not needed as the repository we use has MCPC-API too, but you might have a newer one (with your own changes :D)
 * Check out this repo and: `mvn initialize -P -built` then `mvn clean package`
 
 
