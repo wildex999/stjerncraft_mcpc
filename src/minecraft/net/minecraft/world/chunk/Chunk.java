@@ -30,6 +30,7 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 
 import org.bukkit.Bukkit; // CraftBukkit
+import org.bukkit.craftbukkit.CraftServer;
 
 public class Chunk
 {
@@ -1032,6 +1033,8 @@ public class Chunk
         }
         else
         {
+            if (!((CraftServer)Bukkit.getServer()).configuration.getBoolean("mcpc.warn-place-no-tile-entity", true)) return; // MCPC+
+
             System.out.println("Attempted to place a tile entity (" + par4TileEntity + ") at " + par4TileEntity.xCoord + "," + par4TileEntity.yCoord + "," + par4TileEntity.zCoord
                     + " (" + org.bukkit.Material.getMaterial(getBlockID(par1, par2, par3)) + ") where there was no entity tile!");
             System.out.println("Chunk coordinates: " + (this.xPosition * 16) + "," + (this.zPosition * 16));
