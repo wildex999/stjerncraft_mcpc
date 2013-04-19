@@ -2180,7 +2180,10 @@ public class Block
     }
 
     /**
-     * Rotate the block around the specified axis by one rotation
+     * Rotate the block. For vanilla blocks this rotates around the axis passed in (generally, it should be the "face" that was hit).
+     * Note: for mod blocks, this is up to the block and modder to decide. It is not mandated that it be a rotation around the
+     * face, but could be a rotation to orient *to* that face, or a visiting of possible rotations.
+     * The method should return true if the rotation was successful though.
      *
      * @param worldObj The world
      * @param x X position
@@ -2196,6 +2199,7 @@ public class Block
 
     /**
      * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
+     * Note, this is up to the block to decide. It may not be accurate or representative.
      * @param worldObj The world
      * @param x X position
      * @param y Y position
@@ -2215,8 +2219,37 @@ public class Block
      * @param z Z position
      * @return The amount of enchanting power this block produces.
      */
+    public float getEnchantPowerBonus(World world, int x, int y, int z)
+    {
+        return getEnchantPower(world, x, y, z);
+    }
+
+    @Deprecated //Changed return to float, see above.
     public int getEnchantPower(World world, int x, int y, int z)
     {
         return blockID == bookShelf.blockID ? 1 : 0;
+    }
+    /**
+     * Common way to recolour a block with an external tool
+     * @param world The world
+     * @param x X
+     * @param y Y
+     * @param z Z
+     * @param side The side hit with the colouring tool
+     * @param colour The colour to change to
+     * @return If the recolouring was successful
+     */
+    public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour)
+    {
+        if (blockID == cloth.blockID)
+        {
+            int meta = world.getBlockMetadata(x, y, z);
+            if (meta != colour)
+            {
+                world.setBlockMetadataWithNotify(x, y, z, colour, 3);
+                return true;
+            }
+        }
+        return false;
     }
 }

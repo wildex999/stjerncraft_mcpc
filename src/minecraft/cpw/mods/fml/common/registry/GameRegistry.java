@@ -480,8 +480,13 @@ public class GameRegistry
 	 */
 	public static ItemStack findItemStack(String modId, String name, int stackSize)
 	{
-	    ItemStack is = GameData.findItemStack(modId, name).copy();
-	    is.stackSize = Math.min(stackSize, is.getMaxStackSize());
-	    return is;
+	    ItemStack foundStack = GameData.findItemStack(modId, name);
+	    if (foundStack != null)
+	    {
+            ItemStack is = foundStack.copy();
+    	    is.stackSize = Math.min(stackSize, is.getMaxStackSize());
+    	    return is;
+	    }
+	    return null;
 	}
 }

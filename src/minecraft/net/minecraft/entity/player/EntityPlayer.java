@@ -95,6 +95,7 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 public abstract class EntityPlayer extends EntityLiving implements ICommandSender
 {
     public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
+    public int maxHealth = 20;
 
     /** Inventory of the player */
     public InventoryPlayer inventory = new InventoryPlayer(this);
@@ -218,7 +219,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
     public int getMaxHealth()
     {
-        return 20;
+        return maxHealth <= 0 ? 20 : maxHealth;
     }
 
     protected void entityInit()
@@ -940,6 +941,9 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         this.experienceTotal = par1NBTTagCompound.getInteger("XpTotal");
         this.setScore(par1NBTTagCompound.getInteger("Score"));
 
+        int tmp = par1NBTTagCompound.getInteger("MaxHealth");
+        maxHealth = (tmp <= 0 ? 20 : tmp);
+
         if (this.sleeping)
         {
             this.playerLocation = new ChunkCoordinates(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ));
@@ -986,6 +990,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         par1NBTTagCompound.setInteger("XpLevel", this.experienceLevel);
         par1NBTTagCompound.setInteger("XpTotal", this.experienceTotal);
         par1NBTTagCompound.setInteger("Score", this.getScore());
+        par1NBTTagCompound.setInteger("MaxHealth", maxHealth);
 
         if (this.spawnChunk != null)
         {
