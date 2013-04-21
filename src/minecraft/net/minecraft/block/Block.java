@@ -866,7 +866,8 @@ public class Block
     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
     {
         int l = par1World.getBlockId(par2, par3, par4);
-        return l == 0 || blocksList[l].blockMaterial.isReplaceable();
+        Block block = Block.blocksList[l];
+        return block == null || block.isBlockReplaceable(par1World, par2, par3, par4);
     }
 
     /**
@@ -1448,7 +1449,7 @@ public class Block
      */
     public boolean isBlockReplaceable(World world, int x, int y, int z)
     {
-        return false;
+        return blockMaterial.isReplaceable();
     }
 
     /**
