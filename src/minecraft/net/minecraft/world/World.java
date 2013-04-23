@@ -210,11 +210,30 @@ public abstract class World implements IBlockAccess
 
     /** This is set to true for client worlds, and false for server worlds. */
     public boolean isRemote;
-    // MCPC+ start
+    // MCPC+ start - block place
     /** These hit coords are set by ItemBlock.onItemUse and are only used during a forge block place event in canPlaceEntityOnSide */
     public float curPlacedItemHitX = 0;
     public float curPlacedItemHitY = 0;
     public float curPlacedItemHitZ = 0;
+    // MCPC+ end
+
+    // MCPC+ start - preload world crash report classes to fix NCDFE masking StackOverflow/memory error, see #721
+    private static boolean preloadedCrashClasses = false;
+    {
+        if (!preloadedCrashClasses)
+        {
+            // generate a temporary crash report
+            Throwable throwable = new Throwable();
+            CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception while updating neighbours");
+            CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being updated");
+
+            // loads all the required classes - including net.minecraft.crash.CallableBlockType (package private)
+            crashreportcategory.addCrashSectionCallable("Source block type", (Callable)(new CallableLvl1(this, 0)));
+            CrashReportCategory.func_85068_a(crashreportcategory, 0, 0, 0, 0, -1);
+
+            preloadedCrashClasses = true;
+        }
+    }
     // MCPC+ end
     // Spigot start
 
