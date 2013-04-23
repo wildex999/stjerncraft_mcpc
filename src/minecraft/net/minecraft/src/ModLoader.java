@@ -652,7 +652,6 @@ public class ModLoader
     @Deprecated
     public static void serverChat(String text)
     {
-        //TODO
     }
 
     public static void serverSendPacket(NetServerHandler handler, Packet packet)
