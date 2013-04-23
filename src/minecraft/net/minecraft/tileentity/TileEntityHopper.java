@@ -335,7 +335,14 @@ public class TileEntityHopper extends TileEntity implements Hopper
                     }
                     else
                     {
-                        destinationInventory = iinventory.getOwner().getInventory();
+                        // MCPC+ start - support mod inventories, with no owners
+                        if (iinventory.getOwner() != null) {
+                            destinationInventory = iinventory.getOwner().getInventory();
+                        } else {
+                            // TODO: create a mod inventory for passing to the event, instead of null
+                            destinationInventory = null;
+                        }
+                        // MCPC+ end
                     }
 
                     InventoryMoveItemEvent event = new InventoryMoveItemEvent(this.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
