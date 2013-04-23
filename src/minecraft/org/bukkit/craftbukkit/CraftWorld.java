@@ -40,14 +40,13 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.world.SpawnChangeEvent;
-import org.bukkit.entity.Boat;
+import org.bukkit.generator.BlockPopulator;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.util.Vector;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.BlockPopulator;
 
 public class CraftWorld implements World {
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
@@ -83,10 +82,10 @@ public class CraftWorld implements World {
             name = "default";
         } else {
             name = world.worldInfo.getWorldName().replaceAll(" ", "_");
-    }
+        }
 
-        //load defaults first
-        boolean info = configuration.getBoolean("world-settings.default.info", true);         
+        // load defaults first
+        boolean info = configuration.getBoolean("world-settings.default.info", true); 
         growthPerTick = configuration.getInt("world-settings.default.growth-chunks-per-tick", growthPerTick);
         randomLightingUpdates = configuration.getBoolean("world-settings.default.random-light-updates", randomLightingUpdates);
         mobSpawnRange = configuration.getInt("world-settings.default.mob-spawn-range", mobSpawnRange);
@@ -105,7 +104,7 @@ public class CraftWorld implements World {
         miscEntityActivationRange = configuration.getInt("world-settings.default.entity-activation-range-misc");
         animalEntityActivationRange = configuration.getInt("world-settings.default.entity-activation-range-animals");
         monsterEntityActivationRange = configuration.getInt("world-settings.default.entity-activation-range-monsters");
-        
+
         playerTrackingRange = configuration.getInt("world-settings.default.entity-tracking-range-players");
         miscTrackingRange = configuration.getInt("world-settings.default.entity-tracking-range-misc");
         animalTrackingRange = configuration.getInt("world-settings.default.entity-tracking-range-animals");
@@ -113,7 +112,7 @@ public class CraftWorld implements World {
         maxTrackingRange = configuration.getInt("world-settings.default.entity-tracking-range-max");
         
         //override defaults with world specific, if they exist
-        info = configuration.getBoolean("world-settings." + name + ".info", info);        
+        info = configuration.getBoolean("world-settings." + name + ".info", info);
         growthPerTick = configuration.getInt("world-settings." + name + ".growth-chunks-per-tick", growthPerTick);
         itemMergeRadius = configuration.getDouble("world-settings." + name + ".item-merge-radius", itemMergeRadius);
         expMergeRadius = configuration.getDouble("world-settings." + name + ".exp-merge-radius", expMergeRadius);
@@ -134,7 +133,7 @@ public class CraftWorld implements World {
         viewDistance = Bukkit.getServer().getViewDistance();
         viewDistance = configuration.getInt("world-settings." + name + ".view-distance", viewDistance);
 
-        obfuscated = !world.getServer().orebfuscatorDisabledWorlds.contains(name);
+        obfuscated = world.getServer().orebfuscatorEnabled && !world.getServer().orebfuscatorDisabledWorlds.contains(name);
 
         miscEntityActivationRange = configuration.getInt("world-settings." + name + ".entity-activation-range-misc", miscEntityActivationRange);
         animalEntityActivationRange = configuration.getInt("world-settings." + name + ".entity-activation-range-animals", animalEntityActivationRange);
@@ -165,7 +164,7 @@ public class CraftWorld implements World {
         server.getLogger().info("Mushroom Growth Modifier: " + mushroomGrowthModifier);
         server.getLogger().info("View distance: " + viewDistance);
         server.getLogger().info("Oreobfuscator: " + obfuscated);
-        server.getLogger().info("Entity Activation Range: An " + animalEntityActivationRange + " / Mo " + monsterEntityActivationRange + " / Mi " + miscEntityActivationRange);        
+        server.getLogger().info("Entity Activation Range: An " + animalEntityActivationRange + " / Mo " + monsterEntityActivationRange + " / Mi " + miscEntityActivationRange);
         server.getLogger().info("Entity Tracking Range: Pl " + playerTrackingRange + " / An " + animalTrackingRange + " / Mo " + monsterTrackingRange + " / Mi " + miscTrackingRange + " / Max " + maxTrackingRange);
         server.getLogger().info("-------------------------------------------------");
         // Spigot end
@@ -190,7 +189,7 @@ public class CraftWorld implements World {
 
     public int miscEntityActivationRange = 16;
     public int animalEntityActivationRange = 32;
-    public int monsterEntityActivationRange = 32;    
+    public int monsterEntityActivationRange = 32;
 
     public int playerTrackingRange = 64;
     public int miscTrackingRange = 32;

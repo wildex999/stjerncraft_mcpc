@@ -84,6 +84,7 @@ import org.bukkit.WeatherType;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.util.LongHash;
 import org.bukkit.craftbukkit.util.LongObjectHashMap;
+
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
@@ -385,7 +386,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         for (Teleporter tele : customTeleporters)
         {
             tele.removeStalePortalLocations(getTotalWorldTime());
-        }        
+        }
         this.theProfiler.endSection();
         this.sendAndApplyBlockEvents();
         if (this.getWorld() != null) // MCPC+
@@ -462,7 +463,6 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
 
         // CraftBukkit end
-        
         if (!weather.isCancelled() && !thunder.isCancelled()) provider.resetRainAndThunder(); // MCPC+
     }
 
@@ -549,7 +549,6 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
             this.moodSoundAndLightCheck(k, l, chunk);
             this.theProfiler.endStartSection("tickChunk");
             chunk.updateSkylight();
-
             this.theProfiler.endStartSection("thunder");
             int i1;
             int j1;
@@ -1238,16 +1237,19 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
      */
     public boolean addWeatherEffect(Entity par1Entity)
     {
-        if (par1Entity instanceof net.minecraft.entity.effect.EntityLightningBolt) {       // MCPC+ - vanilla compatibility
-        // CraftBukkit start
-        LightningStrikeEvent lightning = new LightningStrikeEvent(this.getWorld(), (org.bukkit.entity.LightningStrike) par1Entity.getBukkitEntity());
-        this.getServer().getPluginManager().callEvent(lightning);
-
-        if (lightning.isCancelled())
+        // MCPC+ start - vanilla compatibility
+        if (par1Entity instanceof net.minecraft.entity.effect.EntityLightningBolt) 
         {
-            return false;
-        }
-        } // MCPC+ end
+            // CraftBukkit start
+            LightningStrikeEvent lightning = new LightningStrikeEvent(this.getWorld(), (org.bukkit.entity.LightningStrike) par1Entity.getBukkitEntity());
+            this.getServer().getPluginManager().callEvent(lightning);
+    
+            if (lightning.isCancelled())
+            {
+                return false;
+            }
+        } 
+        // MCPC+ end
         if (super.addWeatherEffect(par1Entity))
         {
             this.mcServer.getConfigurationManager().sendToAllNear(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 512.0D, this.dimension, new Packet71Weather(par1Entity));

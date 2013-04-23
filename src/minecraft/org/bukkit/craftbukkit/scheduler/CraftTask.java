@@ -70,7 +70,7 @@ class CraftTask implements BukkitTask, Runnable {
         }
         // Spigot end
     }
-    
+
     long getPeriod() {
         return period;
     }

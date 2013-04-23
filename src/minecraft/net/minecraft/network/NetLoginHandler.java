@@ -101,7 +101,7 @@ public class NetLoginHandler extends NetHandler
             this.initializePlayerConnection();
         }
 
-        if (this.connectionTimer++ == 6000)
+        if (this.connectionTimer++ == 600)
         {
             this.raiseErrorAndDisconnect("Took too long to log in");
         }
@@ -264,7 +264,7 @@ public class NetLoginHandler extends NetHandler
             // CraftBukkit
             org.bukkit.event.server.ServerListPingEvent pingEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callServerListPingEvent(this.mcServer.server, getSocket().getInetAddress(), this.mcServer.getMOTD(), serverconfigurationmanager.getCurrentPlayerCount(), serverconfigurationmanager.getMaxPlayers());
 
-            if (true || par1Packet254ServerPing.readSuccessfully == 1) // Spigot
+            if (true)
             {
                 // CraftBukkit start - Fix decompile issues, don't create a list from an array
                 Object[] list = new Object[] { 1,
@@ -303,11 +303,13 @@ public class NetLoginHandler extends NetHandler
             this.myTCPConnection.addToSendQueue(new Packet255KickDisconnect(s));
             this.myTCPConnection.serverShutdown();
 
-            if (inetaddress != null && this.mcServer.getNetworkThread() instanceof DedicatedServerListenThread)
+            // Spigot start
+            if (inetaddress != null)
             {
-                ((DedicatedServerListenThread)this.mcServer.getNetworkThread()).func_71761_a(inetaddress);
+                ((org.spigotmc.MultiplexingServerConnection) this.mcServer.getNetworkThread()).unThrottle(inetaddress);
             }
 
+            // Spigot end
             this.connectionComplete = true;
         }
         catch (Exception exception)

@@ -172,11 +172,10 @@ public final class CraftServer implements Server {
     public String whitelistMessage = "You are not white-listed on this server!";
     public String stopMessage = "Server restarting. Brb";
     public boolean logCommands = true;
-    public boolean ipFilter = false;
     public boolean commandComplete = true;
     public List<String> spamGuardExclusions;
     // Spigot end
-    
+
     static {
         ConfigurationSerialization.registerClass(CraftOfflinePlayer.class);
         CraftItemFactory.instance();
@@ -1403,4 +1402,20 @@ public final class CraftServer implements Server {
     public CraftScoreboardManager getScoreboardManager() {
         return scoreboardManager;
     }
+
+    // Spigot start
+    @SuppressWarnings("unchecked")
+    public java.util.Collection<java.net.InetSocketAddress> getSecondaryHosts() {
+        java.util.Collection<java.net.InetSocketAddress> ret = new java.util.HashSet<java.net.InetSocketAddress>();
+        List<?> listeners = configuration.getList("listeners");
+        if (listeners != null) {
+            for (Object o : listeners) {
+
+                Map<String, Object> sect = (Map<String, Object>) o;
+                ret.add(new java.net.InetSocketAddress((String) sect.get("address"), (Integer) sect.get("port")));
+            }
+        }
+        return ret;
+    }
+    // Spigot end
 }

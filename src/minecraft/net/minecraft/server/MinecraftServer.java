@@ -464,6 +464,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD); // CraftBukkit
     }
 
+    /**
+     * par1 indicates if a log message should be output.
+     */
     protected void saveAllWorlds(boolean par1) throws MinecraftException   // CraftBukkit - added throws
     {
         if (!this.worldIsBeingDeleted)
@@ -491,6 +494,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         }
     }
 
+    /**
+     * Saves all necessary data as preparation for stopping the server.
+     */
     public void stopServer() throws MinecraftException   // CraftBukkit - added throws
     {
         if (!this.worldIsBeingDeleted)
@@ -518,12 +524,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             }
 
             this.getLogAgent().logInfo("Saving worlds");
-            try {            
-                this.saveAllWorlds(false);
-            } catch (MinecraftException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            this.saveAllWorlds(false);
 
             /* CraftBukkit start - Handled in saveChunks
             for (int i = 0; i < this.worldServer.length; ++i) {
@@ -606,7 +607,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                     this.tick();
                     SpigotTimings.serverTickTimer.stopTiming(); // Spigot
                     org.bukkit.CustomTimingsHandler.tick(); // Spigot
-                    org.spigotmc.WatchdogThread.tick();                    
+                    org.spigotmc.WatchdogThread.tick();
                 }
 
                 // Spigot end
@@ -630,7 +631,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
             if (throwable instanceof ReportedException)
             {
-                crashreport = this.addServerInfoToCrashReport(((ReportedException) throwable).getCrashReport());
+                crashreport = this.addServerInfoToCrashReport(((ReportedException)throwable).getCrashReport());
             }
             else
             {
@@ -658,7 +659,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             {
                 if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
                 {
-                    return;    // Forge
+                    return;// Forge
                 }
                 this.stopServer();
                 this.serverStopped = true;
@@ -679,7 +680,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 }
 
                 // CraftBukkit end
-                FMLCommonHandler.instance().handleServerStopped();                
+                FMLCommonHandler.instance().handleServerStopped();
                 this.systemExitNow();
             }
         }
@@ -840,8 +841,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             worldserver.timings.tracker.stopTiming(); // Spigot
             this.theProfiler.endSection();
             this.theProfiler.endSection();
-            // } // CraftBukkit
-            // this.k[i][this.ticks % 100] = System.nanoTime() - j; // CraftBukkit
+
             // Forge start
             ((long[]) this.worldTickTimes.get(id))[this.tickCounter % 100] = System.nanoTime() - j;
         }
@@ -862,7 +862,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         for (i = 0; i < this.tickables.size(); ++i)
         {
-            ((IUpdatePlayerListBox) this.tickables.get(i)).update();
+            ((IUpdatePlayerListBox)this.tickables.get(i)).update();
         }
 
         SpigotTimings.tickablesTimer.stopTiming(); // Spigot
@@ -1551,7 +1551,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     /**
      * On dedicated does nothing. On integrated, sets commandsAllowedForAll, gameType and allows external connections.
      */
-    public abstract String shareToLAN(EnumGameType enumgametype, boolean flag);
+    public abstract String shareToLAN(EnumGameType enumgamemode, boolean flag);
 
     public int getTickCounter()
     {

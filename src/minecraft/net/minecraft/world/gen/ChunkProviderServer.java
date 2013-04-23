@@ -47,10 +47,19 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 public class ChunkProviderServer implements IChunkProvider
 {
     // CraftBukkit start
+
+    /**
+     * used by unload100OldestChunks to iterate the loadedChunkHashMap for unload (underlying assumption, first in,
+     * first out)
+     */
     public LongHashSet chunksToUnload = new LongHashSet();
     public Chunk defaultEmptyChunk;
     public IChunkProvider currentChunkProvider; // CraftBukkit
     public IChunkLoader currentChunkLoader; // Spigot
+
+    /**
+     * if this is false, the defaultEmptyChunk will be returned by the provider
+     */
     public boolean loadChunkOnProvideRequest = FMLCommonHandler.instance().getMinecraftServerInstance().server.getLoadChunkOnRequest(); // MCPC+ - if true, allows mods to force load chunks. to disable, set load-chunk-on-request in bukkit.yml to false
     public LongObjectHashMap<Chunk> loadedChunkHashMap = new LongObjectHashMap<Chunk>();
     public List loadedChunks = new ArrayList(); // MCPC+  vanilla compatibility
@@ -164,7 +173,7 @@ public class ChunkProviderServer implements IChunkProvider
         {
             org.bukkit.craftbukkit.SpigotTimings.syncChunkLoadTimer.startTiming(); // Spigot
             chunk = this.safeLoadChunk(i, j);
-            
+
             if (chunk == null)
             {
                 if (this.currentChunkProvider == null)

@@ -106,7 +106,7 @@ public class ServerListenThread extends Thread
 
                 // CraftBukkit end
                 NetLoginHandler netloginhandler = new NetLoginHandler(this.myNetworkListenThread.getServer(), socket, "Connection #" + this.connectionCounter++);
-                this.addPendingConnection(netloginhandler);
+                ((org.spigotmc.MultiplexingServerConnection) this.myNetworkListenThread.getServer().getNetworkThread()).register(netloginhandler); // Spigot
             }
             catch (IOException ioexception)
             {
@@ -121,7 +121,7 @@ public class ServerListenThread extends Thread
     {
         if (par1NetLoginHandler == null)
         {
-            throw new IllegalArgumentException("Got null pendingconnection!");
+            throw new IllegalArgumentException("Got null netloginhandler!");
         }
         else
         {

@@ -1,11 +1,8 @@
 package net.minecraft.network.packet;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.concurrent.Semaphore;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -49,8 +46,6 @@ public class Packet51MapChunk extends Packet
     private static byte[] temp = new byte[196864];
     private static final byte[] unloadSequence = new byte[] {0x78, (byte) 0x9C, 0x63, 0x64, 0x1C, (byte) 0xD9, 0x00, 0x00, (byte) 0x81, (byte) 0x80, 0x01, 0x01}; // Spigot
 
-    private Semaphore deflateGate;
-
     public Packet51MapChunk()
     {
         this.isChunkDataPacket = true;
@@ -69,36 +64,25 @@ public class Packet51MapChunk extends Packet
     }
     // Spigot end
 
-    public Packet51MapChunk(Chunk chunk, boolean flag, int i, int obfuscate)   // Spigot (Orebfuscator) - added argument
+    public Packet51MapChunk(Chunk par1Chunk, boolean par2, int par3)
     {
         this.isChunkDataPacket = true;
-        this.xCh = chunk.xPosition;
-        this.zCh = chunk.zPosition;
-        this.includeInitialize = flag;
-        Packet51MapChunkData packet51mapchunkdata = getMapChunkData(chunk, flag, i);
+        this.xCh = par1Chunk.xPosition;
+        this.zCh = par1Chunk.zPosition;
+        this.includeInitialize = par2;
+        Packet51MapChunkData packet51mapchunkdata = getMapChunkData(par1Chunk, par2, par3);
+        Deflater deflater = new Deflater(4);
         this.yChMax = packet51mapchunkdata.chunkHasAddSectionFlag;
         this.yChMin = packet51mapchunkdata.chunkExistFlag;
-        // Spigot start - Orebfuscator
-        if (obfuscate > 0)
-        {
-            org.spigotmc.OrebfuscatorManager.obfuscateSync(chunk.xPosition, chunk.zPosition, i, packet51mapchunkdata.compressedData, chunk.worldObj, obfuscate);
-        }
+        org.spigotmc.OrebfuscatorManager.obfuscateSync(par1Chunk.xPosition, par1Chunk.zPosition, par3, packet51mapchunkdata.compressedData, par1Chunk.worldObj); // Spigot
 
-        // Spigot end
-        this.compressedChunkData = packet51mapchunkdata.compressedData;
-        this.deflateGate = new Semaphore(1);
-    }
-
-    private void deflate()
-    {
-        Deflater deflater = new Deflater(-1);
         try
         {
-            deflater.setInput(compressedChunkData, 0, compressedChunkData.length);
+            this.compressedChunkData = packet51mapchunkdata.compressedData;
+            deflater.setInput(packet51mapchunkdata.compressedData, 0, packet51mapchunkdata.compressedData.length);
             deflater.finish();
-            byte[] deflated = new byte[compressedChunkData.length];
-            this.tempLength = deflater.deflate(deflated);
-            this.chunkData = deflated;
+            this.chunkData = new byte[packet51mapchunkdata.compressedData.length];
+            this.tempLength = deflater.deflate(this.chunkData);
         }
         finally
         {
@@ -106,17 +90,10 @@ public class Packet51MapChunk extends Packet
         }
     }
 
-    // Spigot start - add new default constructor to support new orebfuscator arg.
-    public Packet51MapChunk(Chunk par1Chunk, boolean par2, int par3)
-    {
-        this(par1Chunk, par2, par3, 1);
-    }
-    // Spigot end
-
     /**
      * Abstract. Reads the raw packet data from the data stream.
      */
-    public void readPacketData(DataInputStream par1DataInputStream) throws IOException
+    public void readPacketData(DataInputStream par1DataInputStream) throws IOException   // CraftBukkit - throws IOException
     {
         this.xCh = par1DataInputStream.readInt();
         this.zCh = par1DataInputStream.readInt();
@@ -133,16 +110,13 @@ public class Packet51MapChunk extends Packet
         par1DataInputStream.readFully(temp, 0, this.tempLength);
         int i = 0;
         int j;
-        int msb = 0; //BugFix: MC does not read the MSB array from the packet properly, causing issues for servers that use blocks > 256
 
         for (j = 0; j < 16; ++j)
         {
             i += this.yChMin >> j & 1;
-            msb  += this.yChMax >> j & 1;
         }
 
         j = 12288 * i;
-        j += 2048 * msb;
 
         if (this.includeInitialize)
         {
@@ -170,18 +144,8 @@ public class Packet51MapChunk extends Packet
     /**
      * Abstract. Writes the raw packet data to the data stream.
      */
-    public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
+    public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException   // CraftBukkit - throws IOException
     {
-        if (chunkData == null)
-        {
-            deflateGate.acquireUninterruptibly();
-            if (chunkData == null)
-            {
-                deflate();
-            }
-            deflateGate.release();
-        }
-
         par1DataOutputStream.writeInt(this.xCh);
         par1DataOutputStream.writeInt(this.zCh);
         par1DataOutputStream.writeBoolean(this.includeInitialize);
@@ -254,8 +218,8 @@ public class Packet51MapChunk extends Packet
             {
                 nibblearray = aextendedblockstorage[l].getMetadataArray();
                 // Spigot start
-                //System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
-                //j += nibblearray.data.length;
+                // System.arraycopy(nibblearray.a, 0, abyte, j, nibblearray.a.length);
+                // j += nibblearray.a.length;
                 j = nibblearray.copyToByteArray(abyte, j);
                 // Spigot end
             }
@@ -267,8 +231,8 @@ public class Packet51MapChunk extends Packet
             {
                 nibblearray = aextendedblockstorage[l].getBlocklightArray();
                 // Spigot start
-                //System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
-                //j += nibblearray.data.length;
+                // System.arraycopy(nibblearray.a, 0, abyte, j, nibblearray.a.length);
+                // j += nibblearray.a.length;
                 j = nibblearray.copyToByteArray(abyte, j);
                 // Spigot end
             }
@@ -282,8 +246,8 @@ public class Packet51MapChunk extends Packet
                 {
                     nibblearray = aextendedblockstorage[l].getSkylightArray();
                     // Spigot start
-                    //System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
-                    //j += nibblearray.data.length;
+                    // System.arraycopy(nibblearray.a, 0, abyte, j, nibblearray.a.length);
+                    // j += nibblearray.a.length;
                     j = nibblearray.copyToByteArray(abyte, j);
                     // Spigot end
                 }
@@ -298,8 +262,8 @@ public class Packet51MapChunk extends Packet
                 {
                     nibblearray = aextendedblockstorage[l].getBlockMSBArray();
                     // Spigot start
-                    //System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
-                    //j += nibblearray.data.length;
+                    //System.arraycopy(nibblearray.a, 0, abyte, j, nibblearray.a.length);
+                    //j += nibblearray.a.length;
                     j = nibblearray.copyToByteArray(abyte, j);
                     // Spigot end
                 }
@@ -316,11 +280,5 @@ public class Packet51MapChunk extends Packet
         packet51mapchunkdata.compressedData = new byte[j];
         System.arraycopy(abyte, 0, packet51mapchunkdata.compressedData, 0, j);
         return packet51mapchunkdata;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public byte[] getCompressedChunkData()
-    {
-        return this.compressedChunkData;
     }
 }

@@ -2,15 +2,14 @@ package org.bukkit.craftbukkit;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
-import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-
 import org.bukkit.Bukkit;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.spigotmc.Metrics;
 import org.spigotmc.RestartCommand;
 import org.spigotmc.WatchdogThread;
@@ -21,11 +20,12 @@ public class Spigot {
     static net.minecraft.util.AxisAlignedBB miscBB = net.minecraft.util.AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
     static net.minecraft.util.AxisAlignedBB animalBB = net.minecraft.util.AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
     static net.minecraft.util.AxisAlignedBB monsterBB = net.minecraft.util.AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
+    private static boolean filterIps;
     public static boolean tabPing = false;
     private static Metrics metrics;
-    public static List<String> bungeeIPs;    
+    public static List<String> bungeeIPs;
     public static int textureResolution = 16;
-    public static final Pattern validName = Pattern.compile("^[a-zA-Z0-9_]{2,16}$");
+    public static final Pattern validName = Pattern.compile("^[a-zA-Z0-9_-]{2,16}$");
 
     public static void initialize(CraftServer server, SimpleCommandMap commandMap, YamlConfiguration configuration) {
         if (configuration.getBoolean("settings.tps-command", true)) { // MCPC+ - config option to allow mods to replace command
@@ -39,9 +39,9 @@ public class Spigot {
         server.whitelistMessage = configuration.getString("settings.whitelist-message", server.whitelistMessage);
         server.stopMessage = configuration.getString("settings.stop-message", server.stopMessage);
         server.logCommands = configuration.getBoolean("settings.log-commands", true);
-        server.ipFilter = configuration.getBoolean("settings.filter-unsafe-ips", false);
         server.commandComplete = configuration.getBoolean("settings.command-complete", true);
         server.spamGuardExclusions = configuration.getStringList("settings.spam-exclusions");
+        filterIps = configuration.getBoolean("settings.filter-unsafe-ips", false);
 
         int configVersion = configuration.getInt("config-version");
         switch (configVersion) {
@@ -56,7 +56,6 @@ public class Spigot {
 
         server.orebfuscatorEnabled = configuration.getBoolean("orebfuscator.enable", false);
         server.orebfuscatorEngineMode = configuration.getInt("orebfuscator.engine-mode", 1);
-        server.orebfuscatorUpdateRadius = configuration.getInt("orebfuscator.update-radius", 2);
         server.orebfuscatorDisabledWorlds = configuration.getStringList("orebfuscator.disabled-worlds");
         server.orebfuscatorBlocks = configuration.getShortList("orebfuscator.blocks");
         if (server.orebfuscatorEngineMode != 1 && server.orebfuscatorEngineMode != 2) {
@@ -66,9 +65,9 @@ public class Spigot {
         if (server.chunkGCPeriod == 0) {
             server.getLogger().severe("[Spigot] You should not disable chunk-gc, unexpected behaviour may occur!");
         }
-        
+
         tabPing = configuration.getBoolean("settings.tab-ping", tabPing);
-        bungeeIPs = configuration.getStringList("settings.bungee-proxies");        
+        bungeeIPs = configuration.getStringList("settings.bungee-proxies");
         textureResolution = configuration.getInt("settings.texture-resolution", textureResolution);
 
         if (metrics == null) {
@@ -78,7 +77,7 @@ public class Spigot {
             } catch (IOException ex) {
                 Bukkit.getServer().getLogger().log(Level.SEVERE, "Could not start metrics service", ex);
             }
-        }        
+        }
     }
 
     /**
@@ -110,7 +109,6 @@ public class Spigot {
                 || (entity.activationType == 2 && world.animalEntityActivationRange == 0)
                 || (entity.activationType == 1 && world.monsterEntityActivationRange == 0)
                 || entity instanceof net.minecraft.entity.player.EntityPlayer
-                || entity instanceof net.minecraft.entity.item.EntityItemFrame
                 || entity instanceof net.minecraft.entity.projectile.EntityThrowable
                 || entity instanceof net.minecraft.entity.boss.EntityDragon
                 || entity instanceof net.minecraft.entity.boss.EntityDragonPart
@@ -295,7 +293,7 @@ public class Spigot {
         SpigotTimings.checkIfActiveTimer.stopTiming();
         return isActive;
     }
-    
+
     public static void restart() {
         try {
             String startupScript = net.minecraft.server.MinecraftServer.getServer().server.configuration.getString("settings.restart-script-location", "");
@@ -354,10 +352,12 @@ public class Spigot {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }    
+    }
 
     /**
-     * Gets the range an entity should be 'tracked' by players and visible in the client.
+     * Gets the range an entity should be 'tracked' by players and visible in
+     * the client.
+     *
      * @param entity
      * @param defaultRange Default range defined by Mojang
      * @return
@@ -380,5 +380,30 @@ public class Spigot {
             return defaultRange;
         }
         return Math.min(world.maxTrackingRange, range);
+    }
+
+    public static boolean filterIp(net.minecraft.network.NetLoginHandler con) {
+        if (filterIps) {
+            try {
+                InetAddress address = con.getSocket().getInetAddress();
+                String ip = address.getHostAddress();
+
+                if (!address.isLoopbackAddress()) {
+                    String[] split = ip.split("\\.");
+                    StringBuilder lookup = new StringBuilder();
+                    for (int i = split.length - 1; i >= 0; i--) {
+                        lookup.append(split[i]);
+                        lookup.append(".");
+                    }
+                    lookup.append("xbl.spamhaus.org.");
+                    if (InetAddress.getByName(lookup.toString()) != null) {
+                        con.raiseErrorAndDisconnect("Your IP address (" + ip + ") is flagged as unsafe by spamhaus.org/xbl");
+                        return true;
+                    }
+                }
+            } catch (Exception ex) {
+            }
+        }
+        return false;
     }
 }

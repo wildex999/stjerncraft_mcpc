@@ -118,7 +118,7 @@ public abstract class ServerConfigurationManager
      * index into playerEntities of player to ping, updated every tick; currently hardcoded to max at 200 players
      */
     private int playerPingIndex = 0;
-    public boolean bukkitPluginTeleport = false; // MCPC+
+
     // CraftBukkit start
     private CraftServer cserver;
 
@@ -371,7 +371,7 @@ public abstract class ServerConfigurationManager
     {
         par1EntityPlayerMP.getServerForPlayer().getPlayerManager().updateMountedMovingPlayer(par1EntityPlayerMP);
     }
-    
+
     public String disconnect(EntityPlayerMP entityplayermp)   // CraftBukkit - return string
     {
         if (entityplayermp.playerNetServerHandler.connectionClosed)
@@ -646,7 +646,6 @@ public abstract class ServerConfigurationManager
         entityplayermp1.setWorld(worldserver);
         entityplayermp1.isDead = false;
         entityplayermp1.playerNetServerHandler.teleport(new Location(worldserver.getWorld(), entityplayermp1.posX, entityplayermp1.posY, entityplayermp1.posZ, entityplayermp1.rotationYaw, entityplayermp1.rotationPitch));
-     
         entityplayermp1.setSneaking(false);
         chunkcoordinates1 = worldserver.getSpawnPoint();
         // CraftBukkit end
@@ -753,7 +752,7 @@ public abstract class ServerConfigurationManager
                         exit = new Location(spawnWorld, chunkcoordinates1.posX + 0.5, chunkcoordinates1.posY, chunkcoordinates1.posZ + 0.5);
                     }
                 }
-                
+
                 if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().provider.dimensionId != 0)
                 {
                     exit = exitWorld.getWorld().getSpawnLocation();

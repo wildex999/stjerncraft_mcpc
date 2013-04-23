@@ -179,6 +179,8 @@ public abstract class World implements IBlockAccess
     private final Vec3Pool vecPool = new Vec3Pool(300, 2000);
     private final Calendar theCalendar = Calendar.getInstance();
     public Scoreboard worldScoreboard = new Scoreboard(); // CraftBukkit - protected -> public
+
+    /** The log agent for this world. */
     private final ILogAgent worldLogAgent;
     private ArrayList collidingBoundingBoxes = new ArrayList();    
     private boolean scanningTileEntities;
@@ -191,7 +193,6 @@ public abstract class World implements IBlockAccess
     public boolean spawnPeacefulMobs = true;
 
     /** Positions to update */
-    //public Set activeChunkSet = new HashSet();
     protected gnu.trove.map.hash.TLongShortHashMap activeChunkSet; // Spigot
     public long ticksPerAnimalSpawns;
     public long ticksPerMonsterSpawns;
@@ -291,7 +292,7 @@ public abstract class World implements IBlockAccess
     int lastZAccessed = Integer.MIN_VALUE;
     final Object chunkLock = new Object();
     private byte chunkTickRadius; // Spigot
-    
+
     public final SpigotTimings.WorldTimingsHandler timings; // Spigot
 
     public CraftWorld getWorld()
@@ -2313,7 +2314,7 @@ public abstract class World implements IBlockAccess
 
         timings.tileEntityTick.stopTiming(); // Spigot
         timings.tileEntityPending.startTiming(); // Spigot
-        
+
         if (!this.entityRemoval.isEmpty())
         {
             for (Object tile : entityRemoval)
@@ -2348,14 +2349,14 @@ public abstract class World implements IBlockAccess
                         if (chunk1 != null)
                         {
                             chunk1.cleanChunkBlockTileEntity(tileentity1.xCoord & 15, tileentity1.yCoord, tileentity1.zCoord & 15);
-                            
+
                             // CraftBukkit start - Moved down from above
                             if (!this.loadedTileEntityList.contains(tileentity1))
                             {
                                 this.loadedTileEntityList.add(tileentity1);
                             }
 
-                            // CraftBukkit end                            
+                            // CraftBukkit end
                         }
                     }
                 }
@@ -2397,7 +2398,7 @@ public abstract class World implements IBlockAccess
     {
         int i = MathHelper.floor_double(par1Entity.posX);
         int j = MathHelper.floor_double(par1Entity.posZ);
-        
+
         // Spigot start
         if (!Spigot.checkIfActive(par1Entity))
         {
@@ -3273,7 +3274,7 @@ public abstract class World implements IBlockAccess
     {
         provider.toggleRain();
     }
-    
+
     // Spigot start
     public int aggregateTicks = 1;
     protected float modifiedOdds = 100F;
@@ -3392,7 +3393,6 @@ public abstract class World implements IBlockAccess
     }
 
     // Spigot start
-
     /**
      * plays random cave ambient sounds and runs updateTick on random blocks within each chunk in the vacinity of a
      * player
@@ -3409,7 +3409,7 @@ public abstract class World implements IBlockAccess
         }
     }
     // Spigot end
-    
+
     /**
      * checks to see if a given block is both water and is cold enough to freeze
      */
@@ -3951,12 +3951,11 @@ public abstract class World implements IBlockAccess
                 ItemStack itemstack = (player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem() : null);
                 org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(this, par2, par3, par4);
                 this.callingPlaceEvent = true;
-                int metadata = 0;
                 if (itemstack != null && itemstack.getItem() instanceof ItemBlock)
                 {
                     ItemBlock itemblock = (ItemBlock)itemstack.getItem();
                     int itemData = itemblock.getMetadata(itemstack.getItemDamage());
-                    metadata = Block.blocksList[par1].onBlockPlaced(this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, itemData);
+                    int metadata = Block.blocksList[par1].onBlockPlaced(this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, itemData);
                     if (itemblock.placeBlockAt(itemstack, player, this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, metadata))
                     {
                         // since this is only a simulation, there is no need to play sound or decrement stacksize

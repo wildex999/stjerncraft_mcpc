@@ -1014,4 +1014,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
         this.server.getScoreboardManager().setPlayerBoard(this, scoreboard);
     }
+
+    // Spigot start
+    /*public InetSocketAddress getRawAddress() {
+        return (getHandle().playerNetServerHandler == null) ? null : (InetSocketAddress) getHandle().playerNetServerHandler.netManager.getSocket().getRemoteSocketAddress();
+    }*/ // MCPC+ disabled temporarily
+    // Spigot end
 }
