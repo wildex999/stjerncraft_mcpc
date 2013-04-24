@@ -142,6 +142,8 @@ public class CommandHandler implements ICommandManager
         CraftSimpleCommandMap commandMap = FMLCommonHandler.instance().getMinecraftServerInstance().server.getCraftCommandMap();
         ModCustomCommand customCommand = new ModCustomCommand(par1ICommand.getCommandName());
         customCommand.setPermission(par1ICommand.getClass().getName());
+        if (list != null)
+            customCommand.setAliases(list);
         commandMap.register(par1ICommand.getCommandName(), customCommand);
         FMLCommonHandler.instance().getMinecraftServerInstance().server.getLogger().info("Registered command " + par1ICommand.getCommandName() + " with permission node " + permissionNode);
         // MCPC+ end
