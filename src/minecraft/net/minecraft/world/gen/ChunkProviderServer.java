@@ -50,7 +50,7 @@ public class ChunkProviderServer implements IChunkProvider
     public Chunk defaultEmptyChunk;
     public IChunkProvider currentChunkProvider; // CraftBukkit
     public IChunkLoader currentChunkLoader; // Spigot
-    public boolean loadChunkOnProvideRequest = false; // MCPC+ - when using this flag, it must be turned off after use or will cause issues with chunk unloading
+    public boolean loadChunkOnProvideRequest = true; // MCPC+ - many mods rely on this value being set to true
     public LongObjectHashMap<Chunk> loadedChunkHashMap = new LongObjectHashMap<Chunk>();
     public List loadedChunks = new ArrayList(); // MCPC+  vanilla compatibility
     public WorldServer worldObj;

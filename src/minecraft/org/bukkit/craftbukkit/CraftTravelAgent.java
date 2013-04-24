@@ -21,7 +21,7 @@ public class CraftTravelAgent extends net.minecraft.world.Teleporter implements 
 
     public Location findOrCreate(Location target) {
         net.minecraft.world.WorldServer worldServer = ((CraftWorld) target.getWorld()).getHandle();
-        boolean before = worldServer.theChunkProviderServer.loadChunkOnProvideRequest;
+        //boolean before = worldServer.theChunkProviderServer.loadChunkOnProvideRequest; // MCPC+ - we force this value to true
         worldServer.theChunkProviderServer.loadChunkOnProvideRequest = true;
 
         Location found = this.findPortal(target);
@@ -33,7 +33,7 @@ public class CraftTravelAgent extends net.minecraft.world.Teleporter implements 
             }
         }
 
-        worldServer.theChunkProviderServer.loadChunkOnProvideRequest = before;
+        //worldServer.theChunkProviderServer.loadChunkOnProvideRequest = before; // MCPC+ - we force this value to true
         return found;
     }
 

@@ -408,7 +408,6 @@ public class ForgeChunkManager
 
         if (chunkLoaderData.exists() && chunkLoaderData.isFile())
         {
-            worldServer.theChunkProviderServer.loadChunkOnProvideRequest = true; // MCPC+ - turn on flag so mods are able to force load chunks
             ArrayListMultimap<String, Ticket> loadedTickets = ArrayListMultimap.<String, Ticket>create();
             Map<String,ListMultimap<String,Ticket>> playerLoadedTickets = Maps.newHashMap();
             NBTTagCompound forcedChunkData;
@@ -535,7 +534,6 @@ public class ForgeChunkManager
                 ForgeChunkManager.tickets.get(world).putAll("Forge", tickets.values());
                 loadingCallback.ticketsLoaded(ImmutableList.copyOf(tickets.values()), world);
             }
-            worldServer.theChunkProviderServer.loadChunkOnProvideRequest = false; // MCPC+ - disable flag so chunks not forced by mods are unloaded properly
         }
     }
 

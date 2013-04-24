@@ -766,9 +766,9 @@ public abstract class ServerConfigurationManager
         exitWorld = ((CraftWorld) exit.getWorld()).getHandle();
         Vector velocity = entityplayermp.getBukkitEntity().getVelocity();
         boolean before = exitWorld.theChunkProviderServer.loadChunkOnProvideRequest;
-        exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = true;
+        //exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = true; // MCPC+ - we force this value to true
         exitWorld.getDefaultTeleporter().adjustExit(entityplayermp, exit, velocity);
-        exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = before;
+        //exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = before; // MCPC+ - we force this value to true
         this.moveToWorld(entityplayermp, exitWorld.dimension, true, exit, false); // Vanilla doesn't check for suffocation when handling portals, so neither should we
 
         if (entityplayermp.motionX != velocity.getX() || entityplayermp.motionY != velocity.getY() || entityplayermp.motionZ != velocity.getZ())
