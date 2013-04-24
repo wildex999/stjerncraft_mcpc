@@ -78,6 +78,7 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
 
     /** The current endercrystal that is healing this dragon */
     public EntityEnderCrystal healingEnderCrystal = null;
+    private Explosion explosionSource = new Explosion(null, this, Double.NaN, Double.NaN, Double.NaN, Float.NaN); // CraftBukkit - reusable source for CraftTNTPrimed.getSource()
 
     public EntityDragon(World par1World)
     {
@@ -587,11 +588,36 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
                 // We should consider adding an event extension for it, or perhaps returning true if the event is cancelled.
                 return flag;
             }
+            else if (event.getYield() == 0F)
+            {
+                // Yield zero ==> no drops
+                for (org.bukkit.block.Block block : event.blockList())
+                {
+                    this.worldObj.setBlockToAir(block.getX(), block.getY(), block.getZ());
+                }
+            }
             else
             {
                 for (org.bukkit.block.Block block : event.blockList())
                 {
-                    craftWorld.explodeBlock(block, event.getYield());
+                    int blockId = block.getTypeId();
+
+                    if (blockId == 0)
+                    {
+                        continue;
+                    }
+
+                    int blockX = block.getX();
+                    int blockY = block.getY();
+                    int blockZ = block.getZ();
+
+                    if (Block.blocksList[blockId].canDropFromExplosion(explosionSource))
+                    {
+                        Block.blocksList[blockId].dropBlockAsItemWithChance(this.worldObj, blockX, blockY, blockZ, block.getData(), event.getYield(), 0);
+                    }
+
+                    Block.blocksList[blockId].onBlockDestroyedByExplosion(worldObj, blockX, blockY, blockZ, explosionSource);
+                    this.worldObj.setBlockToAir(blockX, blockY, blockZ);
                 }
             }
 

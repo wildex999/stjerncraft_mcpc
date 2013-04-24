@@ -316,14 +316,13 @@ public class Explosion
                     this.worldObj.spawnParticle("smoke", d0, d1, d2, d3, d4, d5);
                 }
 
-                // CraftBukkit - stop explosions from putting out fire
-                if (l > 0 && l != Block.fire.blockID)
+                if (l > 0)
                 {
                     Block block = Block.blocksList[l];
 
                     if (block.canDropFromExplosion(this))
                     {
-                        // CraftBukkit
+                        // CraftBukkit - add yield
                         block.dropBlockAsItemWithChance(this.worldObj, i, j, k, this.worldObj.getBlockMetadata(i, j, k), event.getYield(), 0);
                     }
 
