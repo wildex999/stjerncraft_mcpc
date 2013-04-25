@@ -248,27 +248,11 @@ public class DimensionManager
             System.err.println("Cannot Hotload Dim: " + e.getMessage());
             return; //If a provider hasn't been registered then we can't hotload the dim
         }
-        // MCPC+ start - add MV support for Mystcraft, fix Forge hotloading for bukkit multiworld
-        File mystconfig = new File("./config/mystcraft_config.txt");
-        boolean initMyst = false;
-        if (mystconfig.exists())
-        {
-            Configuration config = new Configuration(mystconfig);
-            config.load();
-            int mystProvider = config.get(Configuration.CATEGORY_GENERAL, "options.providerId", -999).getInt();
-            if (mystProvider == DimensionManager.getProviderType(dim))
-            {
-                WorldSettings worldsettings = new WorldSettings(overworld.getWorldInfo());
-                WorldServer mystWorld = initMystWorld("world_myst", worldsettings, dim);
-                initMyst = true;
-            }
-        }
-        if (initMyst) return;
-        // MCPC+ end
+
         MinecraftServer mcServer = overworld.getMinecraftServer();
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        // MCPC+ start
+        // MCPC+ start - handles hotloading dimensions such as Mystcraft
         String worldType;
         String name;
         Environment env = Environment.getEnvironment(dim);
@@ -310,42 +294,6 @@ public class DimensionManager
         mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
     }
 
-    // MCPC+ start - used to create an isolated myst dimension
-    public static WorldServer initMystWorld(String par1Str, WorldSettings worldsettings, int mystDimension)
-    {
-        String worldType = par1Str;
-        MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
-        if (worldType.contains("world_"))
-            worldType = worldType.replace("world_", "");
-        Environment env;
-        if (Environment.getEnvironment(DimensionManager.getProviderType(mystDimension)) == null)
-            env = DimensionManager.registerBukkitEnvironment(DimensionManager.getProviderType(mystDimension), (worldType).toUpperCase());
-        else env = Environment.getEnvironment(DimensionManager.getProviderType(mystDimension));
-        String dim = "age" + mystDimension;
-        String name = par1Str + FILE_SEPARATOR + dim;
-
-        org.bukkit.generator.ChunkGenerator gen = mcServer.server.getGenerator(name);
-        WorldServer mystWorld = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), name, mystDimension, worldsettings, getWorld(0), getWorld(0).theProfiler, mcServer.getLogAgent(), env, gen);
-        if (gen != null)
-        {
-            mystWorld.getWorld().getPopulators().addAll(gen.getDefaultPopulators(mystWorld.getWorld()));
-        }
-
-        mcServer.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(mystWorld.getWorld()));
-        mystWorld.addWorldAccess(new WorldManager(mcServer, mystWorld));
-
-        if (!mcServer.isSinglePlayer())
-        {
-            mystWorld.getWorldInfo().setGameType(mcServer.getGameType());
-        }
-        
-        mcServer.worlds.add(mystWorld);
-        mcServer.getConfigurationManager().setPlayerManager(mcServer.worlds.toArray(new WorldServer[mcServer.worlds.size()]));
-        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((World)mystWorld));
-        return mystWorld;
-    }
-    // MCPC+ end
-    
     public static WorldServer getWorld(int id)
     {
         return worlds.get(id);

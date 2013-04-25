@@ -410,9 +410,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             // CraftBukkit end
             MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((World)world)); // Forge
         }
-        boolean mystLoaded = this.initMystWorld();
-        if (mystLoaded)
-            System.out.println("Successfully initialized Mystcraft support.");
         this.setDifficultyForAllWorlds(this.getDifficulty());
         this.initialWorldChunkLoad();
     }
@@ -440,53 +437,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         // CraftBukkit end
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((World)overWorld)); // Forge
         return overWorld;
-    }
-    // MCPC+ end
-
-    // MCPC+ start - used to create an isolated myst dimension
-    protected boolean initMystWorld()
-    {
-        //  search for myst dimensions and load them
-        File mystconfig = new File("./config/mystcraft_config.txt");
-        boolean initMyst = false;
-        boolean mystLoaded = false;
-        int mystProviderType = -999;
-
-        if (mystconfig.exists())
-        {
-            Configuration config = new Configuration(mystconfig);
-            config.load();
-            mystProviderType = config.get(Configuration.CATEGORY_GENERAL, "options.providerId", -999).getInt();
-            System.out.println("MinecraftServer mystProvider = " + mystProviderType);
-            initMyst = true;
-        }
-        if (initMyst)
-        {
-            File file = new File("world_myst");
-            String[] directories = file.list(new FilenameFilter() {
-              @Override
-              public boolean accept(File current, String name) {
-                return new File(current, name).isDirectory();
-              }
-            });
-            if (directories != null)
-            {
-                for (int i = 0; i < directories.length; i++)
-                {
-                    String dim = "0";
-                    if (directories[i].contains("age"))
-                        dim = directories[i].replace("age", "");
-                    if (Integer.parseInt(dim) != 0)
-                    {
-                        WorldSettings worldsettings = new WorldSettings(DimensionManager.getWorld(0).getWorldInfo());
-                        DimensionManager.registerDimension(Integer.parseInt(dim), mystProviderType);
-                        WorldServer mystWorld = DimensionManager.initMystWorld("world_myst", worldsettings, Integer.parseInt(dim));
-                        mystLoaded = true;
-                    }
-                }
-            }
-        }
-        return mystLoaded;
     }
     // MCPC+ end
 
