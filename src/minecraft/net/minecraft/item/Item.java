@@ -993,5 +993,51 @@ public class Item
     public boolean onEntitySwing(EntityLiving entityLiving, ItemStack stack)
     {
         return false;
+    }
+
+    /**
+     * Return the itemDamage represented by this ItemStack. Defaults to the itemDamage field on ItemStack, but can be overridden here for other sources such as NBT.
+     *
+     * @param stack The itemstack that is damaged
+     * @return the damage value
+     */
+    public int getItemDamageFromStack(ItemStack stack)
+    {
+        return stack.itemDamage;
+    }
+
+    /**
+     * Return the itemDamage display value represented by this itemstack.
+     * @param stack the stack
+     * @return the damage value
+     */
+    public int getItemDamageFromStackForDisplay(ItemStack stack)
+    {
+        return stack.itemDamage;
+    }
+
+    /**
+     * Return if this itemstack is damaged. Note only called if {@link #isDamageable()} is true.
+     * @param stack the stack
+     * @return if the stack is damaged
+     */
+    public boolean isItemStackDamaged(ItemStack stack)
+    {
+        return stack.itemDamage > 0;
+    }
+
+    /**
+     * Set the damage for this itemstack. Note, this method is responsible for zero checking.
+     * @param stack the stack
+     * @param damage the new damage value
+     */
+    public void setItemDamageForStack(ItemStack stack, int damage)
+    {
+        stack.itemDamage = damage;
+
+        if (stack.itemDamage < 0)
+        {
+            stack.itemDamage = 0;
+        }
     }    
 }

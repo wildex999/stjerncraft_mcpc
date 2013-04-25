@@ -35,7 +35,7 @@ public final class ItemStack
     public NBTTagCompound stackTagCompound;
 
     /** Damage dealt to the item or number of use. Raise when using items. */
-    private int itemDamage;
+    int itemDamage;
 
     /** Item frame this stack is on, or null if not on an item frame. */
     private EntityItemFrame itemFrame;
@@ -227,7 +227,7 @@ public final class ItemStack
      */
     public boolean isItemDamaged()
     {
-        return this.isItemStackDamageable() && this.itemDamage > 0;
+        return this.isItemStackDamageable() && this.getItem().isItemStackDamaged(this);
     }
 
     /**
@@ -235,7 +235,7 @@ public final class ItemStack
      */
     public int getItemDamageForDisplay()
     {
-        return this.itemDamage;
+        return this.getItem().getItemDamageFromStackForDisplay(this);
     }
 
     /**
@@ -243,7 +243,7 @@ public final class ItemStack
      */
     public int getItemDamage()
     {
-        return this.itemDamage;
+        return this.getItem().getItemDamageFromStack(this);
     }
 
     /**
@@ -251,8 +251,17 @@ public final class ItemStack
      */
     public void setItemDamage(int par1)
     {
+        // MCPC+ start - fallback to itemDamage if no item(?)
+        if (this.getItem() == null)
+        {
+            this.itemDamage = par1;
+        }
+        else
+        {
+            this.getItem().setItemDamageForStack(this, par1); // Forge
+        }
+        // MCPC+ end
         // MCPC+ - remove filter (for mods adding new data values on vanilla items, e.g. Railcraft)
-        this.itemDamage = par1;
         /*
         // CraftBukkit start - Filter out data for items that shouldn't have it
         // The crafting system uses this value for a special purpose so we have to allow it
