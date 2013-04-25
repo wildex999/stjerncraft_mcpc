@@ -408,6 +408,12 @@ public class ForgeChunkManager
 
         if (chunkLoaderData.exists() && chunkLoaderData.isFile())
         {
+            // MCPC+ start
+            if (!worldServer.getServer().getLoadChunkOnRequest())
+            {
+                worldServer.theChunkProviderServer.loadChunkOnProvideRequest = true;
+            }
+            // MCPC+ end
             ArrayListMultimap<String, Ticket> loadedTickets = ArrayListMultimap.<String, Ticket>create();
             Map<String,ListMultimap<String,Ticket>> playerLoadedTickets = Maps.newHashMap();
             NBTTagCompound forcedChunkData;
@@ -534,6 +540,12 @@ public class ForgeChunkManager
                 ForgeChunkManager.tickets.get(world).putAll("Forge", tickets.values());
                 loadingCallback.ticketsLoaded(ImmutableList.copyOf(tickets.values()), world);
             }
+            // MCPC+ start
+            if (!worldServer.getServer().getLoadChunkOnRequest())
+            {
+                worldServer.theChunkProviderServer.loadChunkOnProvideRequest = false;
+            }
+            // MCPC+ end
         }
     }
 

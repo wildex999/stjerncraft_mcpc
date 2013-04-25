@@ -11,6 +11,7 @@ import net.minecraft.block.BlockSand;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 
+import cpw.mods.fml.common.FMLCommonHandler; // MCPC+
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -50,7 +51,7 @@ public class ChunkProviderServer implements IChunkProvider
     public Chunk defaultEmptyChunk;
     public IChunkProvider currentChunkProvider; // CraftBukkit
     public IChunkLoader currentChunkLoader; // Spigot
-    public boolean loadChunkOnProvideRequest = true; // MCPC+ - many mods rely on this value being set to true
+    public boolean loadChunkOnProvideRequest = FMLCommonHandler.instance().getMinecraftServerInstance().server.getLoadChunkOnRequest(); // MCPC+ - if true, allows mods to force load chunks. to disable, set load-chunk-on-request in bukkit.yml to false
     public LongObjectHashMap<Chunk> loadedChunkHashMap = new LongObjectHashMap<Chunk>();
     public List loadedChunks = new ArrayList(); // MCPC+  vanilla compatibility
     public WorldServer worldObj;

@@ -146,7 +146,10 @@ public final class CraftServer implements Server {
     private final BooleanWrapper online = new BooleanWrapper();
     public CraftScoreboardManager scoreboardManager;    
 
-    private boolean dumpMaterials = false; // MCPC+
+    // MCPC+ start
+    private boolean dumpMaterials = false;
+    private boolean loadChunkOnRequest = true;
+    // MCPC+ end
 
     // Orebfuscator use
     public boolean orebfuscatorEnabled = false;
@@ -208,6 +211,7 @@ public final class CraftServer implements Server {
         chunkGCPeriod = configuration.getInt("chunk-gc.period-in-ticks");
         chunkGCLoadThresh = configuration.getInt("chunk-gc.load-threshold");
         dumpMaterials = configuration.getBoolean("mcpc.dump-materials"); // MCPC+ - dumps all materials with their corresponding id's
+        loadChunkOnRequest = configuration.getBoolean("mcpc.load-chunk-on-request"); // MCPC - sets ChunkProvideServer.loadChunkProvideOnRequest
 
         updater = new AutoUpdater(new BukkitDLUpdaterService(configuration.getString("auto-updater.host")), getLogger(), configuration.getString("auto-updater.preferred-channel"));
         updater.setEnabled(false); // Spigot
@@ -595,6 +599,10 @@ public final class CraftServer implements Server {
 
     public boolean getDumpMaterials() {
         return this.configuration.getBoolean("mcpc.dump-materials", false);
+    }
+
+    public boolean getLoadChunkOnRequest() {
+        return this.configuration.getBoolean("mcpc.load-chunk-on-request", true);
     }
     // MCPC+ end    
 
