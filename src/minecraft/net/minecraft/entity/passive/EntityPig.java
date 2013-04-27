@@ -220,13 +220,16 @@ public class EntityPig extends EntityAnimal
         {
             EntityPigZombie entitypigzombie = new EntityPigZombie(this.worldObj);
 
+            // MCPC+ start
+            if (par1EntityLightningBolt.getBukkitEntity() != null)
+            {
             // CraftBukkit start
             if (CraftEventFactory.callPigZapEvent(this, par1EntityLightningBolt, entitypigzombie).isCancelled())
             {
                 return;
             }
-
             // CraftBukkit end
+            } // MCPC+ end
             entitypigzombie.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
             // CraftBukkit - added a reason for spawning this creature
             this.worldObj.addEntity(entitypigzombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
