@@ -304,13 +304,16 @@ public class OreDictionary
         ores.add(ore);
         MinecraftForge.EVENT_BUS.post(new OreRegisterEvent(name, ore));
         // MCPC+ start - add custom ores for orebfuscator
-        if (name.startsWith("ore")) {
+        if (name != null && name.startsWith("ore")) {
+            if (forgeOreBlocks == null) {
+                forgeOreBlocks = new ArrayList<Integer>();
+            }
             forgeOreBlocks.add(id);
         }
         // MCPC+ end
     }
 
-    public static List<Integer> forgeOreBlocks = new ArrayList<Integer>(); // MCPC+
+    public static List<Integer> forgeOreBlocks = null; // MCPC+
 
     public static class OreRegisterEvent extends Event
     {
