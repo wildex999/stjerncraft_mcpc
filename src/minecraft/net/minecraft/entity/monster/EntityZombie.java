@@ -200,7 +200,7 @@ public class EntityZombie extends EntityMob
         {
             int i = this.getConversionTimeBoost();
             // CraftBukkit start - Use wall time instead of ticks for villager conversion
-            int elapsedTicks = Math.max(1, MinecraftServer.currentTick - this.lastTick);
+            int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
             this.lastTick = MinecraftServer.currentTick;
             i *= elapsedTicks;
             // CraftBukkit end

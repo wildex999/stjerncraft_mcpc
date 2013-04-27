@@ -105,7 +105,7 @@ public class TileEntityBrewingStand extends TileEntity implements ISidedInventor
     public void updateEntity()
     {
         // CraftBukkit start - Use wall time instead of ticks for brewing
-        int elapsedTicks = Math.max(1, MinecraftServer.currentTick - this.lastTick);
+        int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
         this.lastTick = MinecraftServer.currentTick;
 
         if (this.brewTime > 0)

@@ -280,7 +280,7 @@ public class TileEntityFurnace extends TileEntity implements ISidedInventory, ne
         boolean flag = this.furnaceBurnTime > 0;
         boolean flag1 = false;
         // CraftBukkit start - Use wall time instead of ticks for cooking
-        int elapsedTicks = Math.max(1, MinecraftServer.currentTick - this.lastTick);
+        int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
         this.lastTick = MinecraftServer.currentTick;
 
         // CraftBukkit - moved from below
