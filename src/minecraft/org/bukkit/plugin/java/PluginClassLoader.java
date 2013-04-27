@@ -1,5 +1,7 @@
 package org.bukkit.plugin.java;
 
+import net.md_5.specialsource.provider.ClassLoaderProvider;
+import net.md_5.specialsource.transformer.MavenShade;
 import org.bouncycastle.util.io.Streams;
 import net.md_5.specialsource.*;
 import org.bukkit.Bukkit;
@@ -133,9 +135,10 @@ public class PluginClassLoader extends URLClassLoader {
         if ((flags & F_GLOBAL_INHERIT) != 0) {
             if (debug) {
                 System.out.println("Enabling global inheritance remapping");
+                //ClassLoaderProvider.verbose = debug; // TODO: changed in https://github.com/md-5/SpecialSource/commit/132584eda4f0860c9d14f4c142e684a027a128b8#L3L48
             }
             jarMapping.setInheritanceMap(loader.getGlobalInheritanceMap());
-            jarMapping.setFallbackInheritanceProvider(new URLClassLoaderInheritanceProvider(this, debug));
+            jarMapping.setFallbackInheritanceProvider(new ClassLoaderProvider(this));
         }
 
         remapper = new JarRemapper(jarMapping);
@@ -166,7 +169,7 @@ public class PluginClassLoader extends URLClassLoader {
 
         jarMapping.loadMappings(
                 new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/"+obfVersion+"/cb2numpkg.srg"))),
-                new ShadeRelocationSimulator(relocations),
+                new MavenShade(relocations),
                 null, false);
 
         // resolve naming conflict in FML/CB

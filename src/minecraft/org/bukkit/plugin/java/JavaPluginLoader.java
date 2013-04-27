@@ -21,7 +21,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import net.md_5.specialsource.InheritanceMap;
 import net.md_5.specialsource.JarMapping;
-import net.md_5.specialsource.ShadeRelocationSimulator;
+import net.md_5.specialsource.transformer.MavenShade;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -452,7 +452,7 @@ public class JavaPluginLoader implements PluginLoader {
             try {
                 currentMappings.loadMappings(
                         new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("mappings/"+PluginClassLoader.current+"/cb2numpkg.srg"))),
-                        new ShadeRelocationSimulator(relocationsCurrent),
+                        new MavenShade(relocationsCurrent),
                         null, false);
             } catch (IOException ex) {
                 ex.printStackTrace();
