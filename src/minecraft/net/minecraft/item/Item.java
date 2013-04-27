@@ -1017,6 +1017,17 @@ public class Item
     }
 
     /**
+     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item, but can be overridden here for other sources such as NBT.
+     *
+     * @param stack The itemstack that is damaged
+     * @return the damage value
+     */
+    public int getItemMaxDamageFromStack(ItemStack stack)
+    {
+        return maxDamage;
+    }
+
+    /**
      * Return if this itemstack is damaged. Note only called if {@link #isDamageable()} is true.
      * @param stack the stack
      * @return if the stack is damaged

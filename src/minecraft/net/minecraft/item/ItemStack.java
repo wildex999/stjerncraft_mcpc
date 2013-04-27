@@ -297,7 +297,7 @@ public final class ItemStack
      */
     public int getMaxDamage()
     {
-        return Item.itemsList[this.itemID].getMaxDamage();
+        return this.getItem().getItemMaxDamageFromStack(this);
     }
 
     // Spigot start
