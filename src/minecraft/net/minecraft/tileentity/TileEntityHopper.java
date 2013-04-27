@@ -290,12 +290,10 @@ public class TileEntityHopper extends TileEntity implements Hopper
             if (!this.isCoolingDown() && BlockHopper.getIsBlockNotPoweredFromMetadata(this.getBlockMetadata()))
             {
                 boolean flag = this.insertItemToInventory() | suckItemsIntoHopper(this);
-                // CraftBukkit start - Move delay out of if block
-                this.setTransferCooldown(8);
 
                 if (flag)
                 {
-                    // CraftBukkit end
+                    this.setTransferCooldown(8);
                     this.onInventoryChanged();
                     return true;
                 }
