@@ -16,6 +16,7 @@ import java.net.URLClassLoader;
 import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.*;
+import java.util.concurrent.*; // MCPC+ - Threadsafe classloading
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
@@ -23,13 +24,13 @@ import java.util.*;
 public class PluginClassLoader extends URLClassLoader {
     private String nbtTest = "cd";
     private final JavaPluginLoader loader;
-    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+    private final ConcurrentMap<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>(); // MCPC+ - Threadsafe classloading
     // MCPC+ start
     private JarRemapper remapper;     // class remapper for this plugin, or null
     private RemapperPreprocessor remapperPreprocessor; // secondary; for inheritance & remapping reflection
     private boolean debug;            // classloader debugging
 
-    private static HashMap<Integer,JarMapping> jarMappings = new HashMap<Integer, JarMapping>();
+    private static ConcurrentMap<Integer,JarMapping> jarMappings = new ConcurrentHashMap<Integer, JarMapping>();
     private static final int F_USE_GUAVA10      = 1 << 1;
     private static final int F_GLOBAL_INHERIT   = 1 << 2;
     private static final int F_REMAP_OBCPRE     = 1 << 3;
@@ -45,7 +46,7 @@ public class PluginClassLoader extends URLClassLoader {
     public final static String current = "v1_5_R2";
 
     // This trick bypasses Maven Shade's package rewriting when using String literals [same trick in jline]
-    private final static String org_bukkit_craftbukkit = new String(new char[] {'o','r','g','/','b','u','k','k','i','t','/','c','r','a','f','t','b','u','k','k','i','t'});
+    private static final String org_bukkit_craftbukkit = new String(new char[] {'o','r','g','/','b','u','k','k','i','t','/','c','r','a','f','t','b','u','k','k','i','t'});
     // MCPC+ end
 
     public PluginClassLoader(final JavaPluginLoader loader, final URL[] urls, final ClassLoader parent, PluginDescriptionFile pluginDescriptionFile) { // MCPC+ - add PluginDescriptionFile
@@ -180,13 +181,13 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     private JarMapping getJarMapping(int flags) {
-        JarMapping jarMapping;
+        JarMapping jarMapping = jarMappings.get(flags);
 
-        if (jarMappings.containsKey(flags)) {
+        if (jarMapping != null) {
             if (debug) {
                 System.out.println("Mapping reused for "+Integer.toHexString(flags));
             }
-            return jarMappings.get(flags);
+            return jarMapping;
         }
 
         jarMapping = new JarMapping();
@@ -265,8 +266,8 @@ public class PluginClassLoader extends URLClassLoader {
 
             System.out.println("Mapping loaded "+jarMapping.packages.size()+" packages, "+jarMapping.classes.size()+" classes, "+jarMapping.fields.size()+" fields, "+jarMapping.methods.size()+" methods, flags "+Integer.toHexString(flags));
 
-            jarMappings.put(flags, jarMapping);
-            return jarMapping;
+            JarMapping currentJarMapping = jarMappings.putIfAbsent(flags, jarMapping);
+            return currentJarMapping == null ? jarMapping : currentJarMapping;
         } catch (IOException ex) {
             ex.printStackTrace();
             throw new RuntimeException(ex);
@@ -291,29 +292,36 @@ public class PluginClassLoader extends URLClassLoader {
             }
             throw new ClassNotFoundException(name);
         }
-        Class<?> result = classes.get(name);
-
-        if (result == null) {
-            if (checkGlobal) {
-                result = loader.getClassByName(name);
-            }
+        // MCPC+ start - custom loader, if enabled, threadsafety
+        Class<?> result;
+        synchronized (name.intern()) {
+            result = classes.get(name);
 
             if (result == null) {
-                // MCPC+ start - custom loader, if enabled
-                if (remapper == null) {
-                    result = super.findClass(name);
-                } else {
-                    result = remappedFindClass(name);
+                if (checkGlobal) {
+                    result = loader.getClassByName(name);
                 }
-                // MCPC+ end
+
+                if (result == null) {
+                    if (remapper == null) {
+                        result = super.findClass(name);
+                    } else {
+                        result = remappedFindClass(name);
+                    }
+
+                    if (result != null) {
+                        loader.setClass(name, result);
+                    }
+                }
 
                 if (result != null) {
-                    loader.setClass(name, result);
+                    if (classes.putIfAbsent(name, result) != null) {
+                        System.err.println("Defined class " + name + " twice as different classes");
+                    }
                 }
             }
-
-            classes.put(name, result);
         }
+        // MCPC+ end
 
         return result;
     }
