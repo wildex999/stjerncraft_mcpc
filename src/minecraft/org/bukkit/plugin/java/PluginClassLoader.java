@@ -315,8 +315,10 @@ public class PluginClassLoader extends URLClassLoader {
                 }
 
                 if (result != null) {
-                    if (classes.putIfAbsent(name, result) != null) {
-                        System.err.println("Defined class " + name + " twice as different classes");
+                    Class<?> old = classes.putIfAbsent(name, result);
+                    if (old != null && old != result) {
+                        System.err.println("Defined class " + name + " twice as different classes, " + result + " and " + old);
+                        result = old;
                     }
                 }
             }
