@@ -62,7 +62,6 @@ public class Spigot {
         if (server.orebfuscatorEngineMode != 1 && server.orebfuscatorEngineMode != 2) {
             server.orebfuscatorEngineMode = 1;
         }
-        server.orebfuscatorForgeOredictBlocks = configuration.getBoolean("orebfuscator.forge-oredict-blocks", true); // MCPC+
 
         if (server.chunkGCPeriod == 0) {
             server.getLogger().severe("[Spigot] You should not disable chunk-gc, unexpected behaviour may occur!");

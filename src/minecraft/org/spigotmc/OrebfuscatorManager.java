@@ -28,13 +28,6 @@ public class OrebfuscatorManager {
             }
         }
         ores = blocks.toArray(new Byte[blocks.size()]);
-        // MCPC+ start - add ores registered by mods in Forge ore dictionary if enabled
-        if (net.minecraft.server.MinecraftServer.getServer().getServer().server.orebfuscatorForgeOredictBlocks) {
-            for (int id : net.minecraftforge.oredict.OreDictionary.forgeOreBlocks) {
-                obfuscateBlocks[id] = true;
-            }
-        }
-        // MCPC+ end
     }
 
     public static void updateNearbyBlocks(net.minecraft.world.World world, int x, int y, int z) {
