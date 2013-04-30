@@ -710,7 +710,7 @@ public abstract class Entity
     public void moveEntity(double par1, double par3, double par5)
     {
         // CraftBukkit start - Don't do anything if we aren't moving
-        if (par1 == 0 && par3 == 0 && par5 == 0)
+        if (par1 == 0 && par3 == 0 && par5 == 0 && this.ridingEntity == null && this.riddenByEntity == null)
         {
             return;
         }
