@@ -549,9 +549,13 @@ public final class CraftServer implements Server {
             return true;
         }
 
-        sender.sendMessage("Unknown command. Type \"help\" for help.");
-
-        return false;
+        // MCPC+ start - handle vanilla commands called from plugins
+        if(sender instanceof ConsoleCommandSender) {
+            craftCommandMap.setVanillaConsoleSender(this.console);
+        }
+            
+        return this.dispatchVanillaCommand(sender, commandLine);
+        // MCPC+ end
     }
     
     // MCPC+ start
