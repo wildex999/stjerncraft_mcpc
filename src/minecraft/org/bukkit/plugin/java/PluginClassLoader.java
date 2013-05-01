@@ -41,9 +41,6 @@ public class PluginClassLoader extends URLClassLoader {
     private static final int F_REMAP_NMS151     = 1 << 8;
     private static final int F_REMAP_OBC147     = 1 << 9;
     private static final int F_REMAP_OBC150     = 1 << 10;
-    private static final int F_REMAP_NMS152     = 1 << 11;
-    private static final int F_REMAP_OBC151     = 1 << 12;
-    private static final int F_REMAP_OBC152     = 1 << 13;
     private static final int F_REMAP_NMSPRE_MASK= 0x0fff0000;  // "unversioned" NMS plugin version
 
     public final static String current = "v1_5_R2";
@@ -66,14 +63,11 @@ public class PluginClassLoader extends URLClassLoader {
         boolean useCustomClassLoader = config.getBoolean("mcpc.plugin-settings.default.custom-class-loader", true);
         debug = config.getBoolean("mcpc.plugin-settings.default.debug", false);
         boolean useGuava10 = config.getBoolean("mcpc.plugin-settings.default.use-guava10", true);
-        boolean remapNMS152 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_5_R3", true);
         boolean remapNMS151 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_5_R2", true);
         boolean remapNMS150 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_5_R1", true);
         boolean remapNMS147 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_R1", true);
         boolean remapNMS146 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_6", true);
         String remapNMSPre = config.getString("mcpc.plugin-settings.default.remap-nms-pre", "false");
-        boolean remapOBC152 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_5_R3", true);
-        boolean remapOBC151 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_5_R2", true);
         boolean remapOBC150 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_5_R1", true);
         boolean remapOBC147 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_4_R1", false);
         boolean remapOBC146 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_4_6", false);
@@ -86,14 +80,11 @@ public class PluginClassLoader extends URLClassLoader {
         useCustomClassLoader = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader);
         debug = config.getBoolean("mcpc.plugin-settings."+pluginName+".debug", debug);
         useGuava10 = config.getBoolean("mcpc.plugin-settings."+pluginName+".use-guava10", useGuava10);
-        remapNMS152 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_5_R3", remapNMS152);
         remapNMS151 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_5_R2", remapNMS151);
         remapNMS150 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_5_R1", remapNMS150);
         remapNMS147 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_R1", remapNMS147);
         remapNMS146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_6", remapNMS146);
         remapNMSPre = config.getString("mcpc.plugin-settings."+pluginName+".remap-nms-pre", remapNMSPre);
-        remapOBC152 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_5_R3", remapOBC152);
-        remapOBC151 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_5_R2", remapOBC151);
         remapOBC150 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_5_R1", remapOBC150);
         remapOBC147 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_4_R1", remapOBC147);
         remapOBC146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_4_6", remapOBC146);
@@ -113,14 +104,12 @@ public class PluginClassLoader extends URLClassLoader {
 
         int flags = 0;
         if (useGuava10) flags |= F_USE_GUAVA10;
-        if (remapNMS152) flags |= F_REMAP_NMS152;
         if (remapNMS151) flags |= F_REMAP_NMS151;
         if (remapNMS150) flags |= F_REMAP_NMS150;
         if (remapNMS147) flags |= F_REMAP_NMS147;
         if (remapNMS146) flags |= F_REMAP_NMS146;
         if (!remapNMSPre.equals("false")) {
-            if      (remapNMSPre.equals("1.5.2")) flags |= 0x01520000;
-            else if (remapNMSPre.equals("1.5.1")) flags |= 0x01510000;
+            if      (remapNMSPre.equals("1.5.1")) flags |= 0x01510000;
             else if (remapNMSPre.equals("1.5.0")) flags |= 0x01500000;
             else if (remapNMSPre.equals("1.5"))   flags |= 0x01500000;
             else if (remapNMSPre.equals("1.4.7")) flags |= 0x01470000;
@@ -135,8 +124,6 @@ public class PluginClassLoader extends URLClassLoader {
                 System.out.println("Unsupported nms-remap-pre version '"+remapNMSPre+"', disabling");
             }
         }
-        if (remapOBC152) flags |= F_REMAP_OBC152;
-        if (remapOBC151) flags |= F_REMAP_OBC151;
         if (remapOBC150) flags |= F_REMAP_OBC150;
         if (remapOBC147) flags |= F_REMAP_OBC147;
         if (remapOBC146) flags |= F_REMAP_OBC146;
@@ -213,10 +200,6 @@ public class PluginClassLoader extends URLClassLoader {
                 jarMapping.packages.put("com/google/common", "guava10/com/google/common");
             }
 
-            if ((flags & F_REMAP_NMS152) != 0) {
-                loadNmsMappings(jarMapping, "v1_5_R3");
-            }
-
             if ((flags & F_REMAP_NMS151) != 0) {
                 loadNmsMappings(jarMapping, "v1_5_R2");
             }
@@ -232,14 +215,6 @@ public class PluginClassLoader extends URLClassLoader {
 
             if ((flags & F_REMAP_NMS146) != 0) {
                 loadNmsMappings(jarMapping, "v1_4_6");
-            }
-
-            if ((flags & F_REMAP_OBC152) != 0) {
-                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_5_R3", org_bukkit_craftbukkit+"/"+current);
-            }
-
-            if ((flags & F_REMAP_OBC151) != 0) {
-                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_5_R2", org_bukkit_craftbukkit+"/"+current);
             }
 
             if ((flags & F_REMAP_OBC150) != 0) {
