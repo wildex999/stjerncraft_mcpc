@@ -973,28 +973,36 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     protected IChunkProvider createChunkProvider()
     {
         IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
-        // CraftBukkit start
-        org.bukkit.craftbukkit.generator.InternalChunkGenerator gen;
-
-        if (this.generator != null)
+        // MCPC+ start - if provider is vanilla, proceed to create a bukkit compatible chunk generator
+        if (WorldProviderHell.class.isAssignableFrom(this.provider.getClass()) || WorldProviderSurface.class.isAssignableFrom(this.provider.getClass()) || WorldProviderEnd.class.isAssignableFrom(this.provider.getClass()))
         {
-            gen = new org.bukkit.craftbukkit.generator.CustomChunkGenerator(this, this.getSeed(), this.generator);
+            // CraftBukkit start
+            org.bukkit.craftbukkit.generator.InternalChunkGenerator gen;
+    
+            if (this.generator != null)
+            {
+                gen = new org.bukkit.craftbukkit.generator.CustomChunkGenerator(this, this.getSeed(), this.generator);
+            }
+            else if (this.provider instanceof WorldProviderHell)
+            {
+                gen = new org.bukkit.craftbukkit.generator.NetherChunkGenerator(this, this.getSeed());
+            }
+            else if (this.provider instanceof WorldProviderEnd)
+            {
+                gen = new org.bukkit.craftbukkit.generator.SkyLandsChunkGenerator(this, this.getSeed());
+            }
+            else
+            {
+                gen = new org.bukkit.craftbukkit.generator.NormalChunkGenerator(this, this.getSeed());
+            }
+            this.theChunkProviderServer = new ChunkProviderServer(this, ichunkloader, gen);
+            // CraftBukkit end
         }
-        else if (this.provider instanceof WorldProviderHell)
+        else // custom provider, load normally for forge compatibility
         {
-            gen = new org.bukkit.craftbukkit.generator.NetherChunkGenerator(this, this.getSeed());
+            this.theChunkProviderServer = new ChunkProviderServer(this, ichunkloader, this.provider.createChunkGenerator());
         }
-        else if (this.provider instanceof WorldProviderEnd)
-        {
-            gen = new org.bukkit.craftbukkit.generator.SkyLandsChunkGenerator(this, this.getSeed());
-        }
-        else
-        {
-            gen = new org.bukkit.craftbukkit.generator.NormalChunkGenerator(this, this.getSeed());
-        }
-
-        this.theChunkProviderServer = new ChunkProviderServer(this, ichunkloader, gen);
-        // CraftBukkit end
+        // MCPC+ end
         return this.theChunkProviderServer;
     }
 
