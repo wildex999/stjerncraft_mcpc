@@ -39,6 +39,7 @@ import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
@@ -655,5 +656,11 @@ public class CraftEventFactory {
         BlockIgniteEvent event = new BlockIgniteEvent(world.getWorld().getBlockAt(x, y, z), cause, igniter.getBukkitEntity());
         world.getServer().getPluginManager().callEvent(event);
         return event;
+    }
+
+    public static void handleInventoryCloseEvent(net.minecraft.entity.player.EntityPlayer human) {
+        InventoryCloseEvent event = new InventoryCloseEvent(human.openContainer.getBukkitView());
+        human.worldObj.getServer().getPluginManager().callEvent(event);
+        human.openContainer.transferTo(human.inventoryContainer, human.getBukkitEntity());
     }
 }

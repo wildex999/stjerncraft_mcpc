@@ -15,10 +15,12 @@ import net.minecraftforge.event.entity.minecart.MinecartInteractEvent;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
+// CraftBukkit end
 
 public abstract class EntityMinecartContainer extends EntityMinecart implements IInventory
 {
     private ItemStack[] minecartContainerItems = new ItemStack[27]; // CraftBukkit - 36 -> 27
+
     /**
      * When set to true, the minecart will drop all items when setDead() is called. When false (such as when travelling
      * dimensions) it preserves its contents.
@@ -232,13 +234,6 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
      */
     public void travelToDimension(int par1)
     {
-        // CraftBukkit start
-        for (HumanEntity human : transaction)
-        {
-            ((org.bukkit.craftbukkit.entity.CraftHumanEntity) human).getHandle().closeScreen();
-        }
-
-        // CraftBukkit end
         this.dropContentsWhenDead = false;
         super.travelToDimension(par1);
     }

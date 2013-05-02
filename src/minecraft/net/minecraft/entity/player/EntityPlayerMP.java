@@ -319,6 +319,15 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         --this.initialInvulnerability;
         this.openContainer.detectAndSendChanges();
 
+        // CraftBukkit start - Check inventory status every tick
+        if (!this.openContainer.canInteractWith(this))   // Should be stillValid
+        {
+            this.closeScreen();
+            this.openContainer = this.inventoryContainer;
+        }
+
+        // CraftBukkit end
+
         while (!this.destroyedItemsNetCache.isEmpty())
         {
             int i = Math.min(this.destroyedItemsNetCache.size(), 127);
@@ -1039,6 +1048,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public void closeScreen()
     {
+        CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
         this.playerNetServerHandler.sendPacketToPlayer(new Packet101CloseWindow(this.openContainer.windowId));
         this.closeInventory();
     }

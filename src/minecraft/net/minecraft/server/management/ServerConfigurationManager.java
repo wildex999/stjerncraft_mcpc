@@ -370,6 +370,7 @@ public abstract class ServerConfigurationManager
         }
 
         // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
+        org.bukkit.craftbukkit.event.CraftEventFactory.handleInventoryCloseEvent(entityplayermp);
         PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(this.cserver.getPlayer(entityplayermp), "\u00A7e" + entityplayermp.username + " left the game.");
         this.cserver.getPluginManager().callEvent(playerQuitEvent);
         entityplayermp.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());

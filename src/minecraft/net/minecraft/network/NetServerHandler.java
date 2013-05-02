@@ -1646,11 +1646,7 @@ public class NetServerHandler extends NetHandler
         {
             if (this.playerEntity.openContainer.getBukkitView() != null)
             {
-                // CraftBukkit start
-                InventoryCloseEvent event = new InventoryCloseEvent(this.playerEntity.openContainer.getBukkitView());
-                server.getPluginManager().callEvent(event);
-                this.playerEntity.openContainer.transferTo(this.playerEntity.inventoryContainer, getPlayerB());
-                // CraftBukkit end
+                CraftEventFactory.handleInventoryCloseEvent(this.playerEntity); // CraftBukkit
             }
         }
         catch (AbstractMethodError e)
