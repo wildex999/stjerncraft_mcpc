@@ -3178,6 +3178,9 @@ public abstract class EntityLiving extends Entity
     {
     	return this.persistenceRequired;
     }
+    public boolean func_70692_ba_CodeFix_Public(){
+        return canDespawn();
+    }
 
     /***
      * Removes all potion effects that have curativeItem as a curative item for its effect

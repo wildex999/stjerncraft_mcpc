@@ -3840,10 +3840,23 @@ public abstract class World implements IBlockAccess
         {
             Entity entity = (Entity)this.loadedEntityList.get(j);
 
-            if ((!(entity instanceof EntityLiving) || !((EntityLiving)entity).func_104002_bU()) && par1Class.isAssignableFrom(entity.getClass()))
+            // CraftBukkit start - Split out persistent check, don't apply it to special persistent mobs
+            if (entity instanceof EntityLiving)
+            {
+                EntityLiving entityliving = (EntityLiving) entity;
+
+                if (!entityliving.func_70692_ba_CodeFix_Public() && entityliving.func_104002_bU())   // Should be isPersistent
+                {
+                    continue;
+                }
+            }
+
+            if (par1Class.isAssignableFrom(entity.getClass()))
             {
                 ++i;
             }
+
+            // CraftBukkit end
         }
 
         return i;
