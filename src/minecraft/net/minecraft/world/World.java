@@ -3845,7 +3845,7 @@ public abstract class World implements IBlockAccess
             {
                 EntityLiving entityliving = (EntityLiving) entity;
 
-                if (!entityliving.func_70692_ba_CodeFix_Public() && entityliving.func_104002_bU())   // Should be isPersistent
+                if (entityliving.func_70692_ba_CodeFix_Public() && entityliving.func_104002_bU())   // Should be isPersistent
                 {
                     continue;
                 }
