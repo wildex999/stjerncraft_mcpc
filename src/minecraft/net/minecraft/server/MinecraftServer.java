@@ -328,12 +328,17 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             }
             else
             {
-                WorldProvider provider = WorldProvider.getProviderForDimension(dimension);
-                worldType = provider.getClass().getSimpleName();
-                env = DimensionManager.registerBukkitEnvironment(provider.dimensionId, provider.getClass().getSimpleName());
-                if (worldType.contains("WorldProvider"))
-                    worldType = worldType.replace("WorldProvider", "");
-                name = "world_" + worldType.toLowerCase();
+                // MCPC+ - only load dimensions that need spawn loaded. Fixes issues with mods such as MystCraft and Dimensional Doors
+                if (DimensionManager.shouldLoadSpawn(dimension))
+                {
+                    WorldProvider provider = WorldProvider.getProviderForDimension(dimension);
+                    worldType = provider.getClass().getSimpleName();
+                    env = DimensionManager.registerBukkitEnvironment(provider.dimensionId, provider.getClass().getSimpleName());
+                    if (worldType.contains("WorldProvider"))
+                        worldType = worldType.replace("WorldProvider", "");
+                    name = "world_" + worldType.toLowerCase();
+                }
+                else continue;
             }
             org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
             worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
@@ -907,11 +912,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             // } // CraftBukkit
             // this.k[i][this.ticks % 100] = System.nanoTime() - j; // CraftBukkit
             // Forge start
-            //((long[]) this.worldTickTimes.get(id))[this.tickCounter % 100] = System.nanoTime() - j;
+            ((long[]) this.worldTickTimes.get(id))[this.tickCounter % 100] = System.nanoTime() - j;
         }
 
         this.theProfiler.endStartSection("dim_unloading");
-        //DimensionManager.unloadWorlds(this.worldTickTimes);
+        DimensionManager.unloadWorlds(this.worldTickTimes);
         // Forge end
         this.theProfiler.endStartSection("connection");
         SpigotTimings.connectionTimer.startTiming(); // Spigot

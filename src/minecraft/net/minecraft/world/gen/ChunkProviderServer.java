@@ -463,11 +463,8 @@ public class ChunkProviderServer implements IChunkProvider
 
                     if (this.loadedChunkHashMap.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId))
                     {
-                        if (this.currentChunkProvider.makeString().equals(MinecraftServer.getServer().worlds.get(0).chunkProvider.makeString()))
-                        {
-                            DimensionManager.unloadWorld(this.worldObj.dimension);
+                            DimensionManager.unloadWorld(this.worldObj.dimension); // MCPC+ - unload the dimension
                             return this.currentChunkProvider.unloadQueuedChunks();
-                        }
                     }
                 }
             }

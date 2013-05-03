@@ -146,7 +146,7 @@ public class SaveHandler implements ISaveHandler, IPlayerFileData
         {
             try
             {
-                nbttagcompound = CompressedStreamTools.readCompressed((InputStream)(new FileInputStream(file1)));
+                nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
                 nbttagcompound1 = nbttagcompound.getCompoundTag("Data");
                 worldInfo = new WorldInfo(nbttagcompound1);
                 FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
@@ -168,11 +168,11 @@ public class SaveHandler implements ISaveHandler, IPlayerFileData
         {
             try
             {
-                nbttagcompound = CompressedStreamTools.readCompressed((InputStream)(new FileInputStream(file1)));
+                nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
                 nbttagcompound1 = nbttagcompound.getCompoundTag("Data");
                 worldInfo = new WorldInfo(nbttagcompound1);
                 FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
-                return worldInfo;                
+                return worldInfo;
             }
             catch (Exception exception1)
             {
@@ -199,7 +199,7 @@ public class SaveHandler implements ISaveHandler, IPlayerFileData
             File file1 = new File(this.worldDirectory, "level.dat_new");
             File file2 = new File(this.worldDirectory, "level.dat_old");
             File file3 = new File(this.worldDirectory, "level.dat");
-            CompressedStreamTools.writeCompressed(nbttagcompound2, (OutputStream)(new FileOutputStream(file1)));
+            CompressedStreamTools.writeCompressed(nbttagcompound2, new FileOutputStream(file1));
 
             if (file2.exists())
             {
@@ -242,7 +242,7 @@ public class SaveHandler implements ISaveHandler, IPlayerFileData
             File file1 = new File(this.worldDirectory, "level.dat_new");
             File file2 = new File(this.worldDirectory, "level.dat_old");
             File file3 = new File(this.worldDirectory, "level.dat");
-            CompressedStreamTools.writeCompressed(nbttagcompound1, (OutputStream)(new FileOutputStream(file1)));
+            CompressedStreamTools.writeCompressed(nbttagcompound1, new FileOutputStream(file1));
 
             if (file2.exists())
             {
@@ -280,7 +280,7 @@ public class SaveHandler implements ISaveHandler, IPlayerFileData
             par1EntityPlayer.writeToNBT(nbttagcompound);
             File file1 = new File(this.playersDirectory, par1EntityPlayer.username + ".dat.tmp");
             File file2 = new File(this.playersDirectory, par1EntityPlayer.username + ".dat");
-            CompressedStreamTools.writeCompressed(nbttagcompound, (OutputStream)(new FileOutputStream(file1)));
+            CompressedStreamTools.writeCompressed(nbttagcompound, new FileOutputStream(file1));
 
             if (file2.exists())
             {

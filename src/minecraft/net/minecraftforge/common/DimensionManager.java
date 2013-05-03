@@ -207,11 +207,11 @@ public class DimensionManager
         if (world != null) {
             worlds.put(id, world);
             weakWorldMap.put(world, world);
-            //MinecraftServer.getServer().worldTickTimes.put(id, new long[100]); // MCPC+ - disabled
+            MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
             FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         } else {
             worlds.remove(id);
-            //MinecraftServer.getServer().worldTickTimes.remove(id);  // MCPC+ - disabled
+            MinecraftServer.getServer().worldTickTimes.remove(id);
             FMLLog.info("Unloading dimension %d", id);
         }
 
