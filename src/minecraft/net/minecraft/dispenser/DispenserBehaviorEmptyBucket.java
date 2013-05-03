@@ -47,9 +47,9 @@ final class DispenserBehaviorEmptyBucket extends BehaviorDefaultDispenseItem
         }
 
         // CraftBukkit start
-        org.bukkit.block.Block block = world.getWorld().getBlockAt(par1IBlockSource.getXInt(), j, par1IBlockSource.getZInt());
+        org.bukkit.block.Block block = world.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());
         CraftItemStack craftItem = CraftItemStack.asCraftMirror(par2ItemStack);
-        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
+        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(i, j, k));
 
         if (!BlockDispenser.eventFired)
         {
