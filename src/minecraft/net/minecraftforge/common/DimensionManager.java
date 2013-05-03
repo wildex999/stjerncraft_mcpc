@@ -46,6 +46,7 @@ import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World.Environment;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 // MCPC+ end
 
@@ -356,27 +357,29 @@ public class DimensionManager
     public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
         for (int id : unloadQueue) {
             WorldServer w = worlds.get(id);
-            try {
-                if (w != null)
-                {
+            // MCPC+ start - fire bukkit unload event, remove from MinecraftServer worlds list.
+            if (w != null) {
+                WorldUnloadEvent event = new WorldUnloadEvent(w.getWorld());
+                w.getServer().getPluginManager().callEvent(event);
+
+                if (event.isCancelled()) {
+                    continue;
+                }
+
+                try {
                     w.saveAllChunks(true, null);
+                } catch (MinecraftException e) {
+                    FMLLog.log(Level.SEVERE, e, "Failed to save world " + w.getWorld().getName() + " while unloading it.");
                 }
-                else
-                {
-                    FMLLog.warning("Unexpected world unload - world %d is already unloaded", id);
-                }
-            } catch (MinecraftException e) {
-                e.printStackTrace();
+
+                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
+                w.flush();
+                setWorld(id, null);
+                MinecraftServer.getServer().worlds.remove(w);
+            } else {
+                FMLLog.warning("Unexpected world unload - world %d is already unloaded", id);
             }
-            finally
-            {
-                if (w != null)
-                {
-                    MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
-                    w.flush();
-                    setWorld(id, null);
-                }
-            }
+            // MCPC+ end
         }
         unloadQueue.clear();
     }
