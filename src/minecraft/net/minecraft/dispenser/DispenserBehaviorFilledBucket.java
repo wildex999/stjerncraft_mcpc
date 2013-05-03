@@ -34,7 +34,7 @@ final class DispenserBehaviorFilledBucket extends BehaviorDefaultDispenseItem
         int y = j + enumfacing.getFrontOffsetY();
         int z = k + enumfacing.getFrontOffsetZ();
 
-        if (world.isAirBlock(x, y, z) || world.getBlockMaterial(x, y, z).isSolid())
+        if (world.isAirBlock(x, y, z) || !world.getBlockMaterial(x, y, z).isSolid())
         {
             org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
             CraftItemStack craftItem = CraftItemStack.asCraftMirror(par2ItemStack);
