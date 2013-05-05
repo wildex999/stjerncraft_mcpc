@@ -402,8 +402,7 @@ public abstract class ServerConfigurationManager
         }
 
         // This removes the scoreboard (and player reference) for the specific player in the manager
-        if (this.cserver != null && this.cserver.getScoreboardManager() != null && entityplayermp.getBukkitEntity() != null) // MCPC+
-            this.cserver.getScoreboardManager().removePlayer(entityplayermp.getBukkitEntity());
+        this.cserver.getScoreboardManager().removePlayer(entityplayermp.getBukkitEntity());
         return playerQuitEvent.getQuitMessage();
         // CraftBukkit end
     }
