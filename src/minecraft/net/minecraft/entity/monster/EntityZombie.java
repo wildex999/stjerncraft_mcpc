@@ -27,6 +27,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 //CraftBukkit start
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 //CraftBukkit end
@@ -242,7 +243,8 @@ public class EntityZombie extends EntityMob
     public int getAttackStrength(Entity par1Entity)
     {
         ItemStack itemstack = this.getHeldItem();
-        float f = (float)(this.getMaxHealth() - this.getHealth()) / (float)this.getMaxHealth();
+        // CraftBukkit - getMaxHealth() -> ((CraftLivingEntity) this.bukkitEntity).getMaxHealth()
+        float f = (float)(((CraftLivingEntity) this.bukkitEntity).getMaxHealth() - this.getHealth()) / (float)((CraftLivingEntity) this.bukkitEntity).getMaxHealth();
         int i = 3 + MathHelper.floor_float(f * 4.0F);
 
         if (itemstack != null)
