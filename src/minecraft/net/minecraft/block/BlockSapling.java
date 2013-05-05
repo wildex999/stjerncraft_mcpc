@@ -141,6 +141,12 @@ public class BlockSapling extends BlockFlower
      */
     public void growTree(World par1World, int par2, int par3, int par4, Random par5Random, boolean bonemeal, Player player, ItemStack itemstack)
     {
+        // MCPC+ start - delegate growth to subclass if overridden, mods @Override growTree() e.g. MFR rubber trees
+        if (this.getClass() != BlockSapling.class) {
+            this.growTree(par1World, par2, par3, par4, par5Random);
+            return;
+        }
+        // MCPC+ end
         if (!TerrainGen.saplingGrowTree(par1World, par5Random, par2, par3, par4)) return;
     
         int l = par1World.getBlockMetadata(par2, par3, par4);
