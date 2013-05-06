@@ -141,9 +141,9 @@ public class NetLoginHandler extends NetHandler
         {
             PublicKey publickey = this.mcServer.getKeyPair().getPublic();
 
-            if (par1Packet2ClientProtocol.getProtocolVersion() != 60)
+            if (par1Packet2ClientProtocol.getProtocolVersion() != 61)
             {
-                if (par1Packet2ClientProtocol.getProtocolVersion() > 60)
+                if (par1Packet2ClientProtocol.getProtocolVersion() > 61)
                 {
                     this.raiseErrorAndDisconnect("Outdated server!");
                 }
