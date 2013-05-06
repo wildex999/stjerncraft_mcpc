@@ -391,7 +391,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
             if (iinventory instanceof ISidedInventory && b0 > -1)
             {
                 ISidedInventory isidedinventory = (ISidedInventory)iinventory;
-                int[] aint = isidedinventory.getSizeInventorySide(b0);
+                int[] aint = isidedinventory.getAccessibleSlotsFromSide(b0);
 
                 for (int i = 0; i < aint.length; ++i)
                 {
@@ -539,7 +539,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
         if (par1IInventory instanceof ISidedInventory && par3 > -1)
         {
             ISidedInventory isidedinventory = (ISidedInventory)par1IInventory;
-            int[] aint = isidedinventory.getSizeInventorySide(par3);
+            int[] aint = isidedinventory.getAccessibleSlotsFromSide(par3);
 
             for (int j = 0; j < aint.length && par2ItemStack != null && par2ItemStack.stackSize > 0; ++j)
             {

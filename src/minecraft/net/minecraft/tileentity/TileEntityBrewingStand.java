@@ -428,7 +428,7 @@ public class TileEntityBrewingStand extends TileEntity implements ISidedInventor
     /**
      * Get the size of the side inventory.
      */
-    public int[] getSizeInventorySide(int par1)
+    public int[] getAccessibleSlotsFromSide(int par1)
     {
         return par1 == 1 ? field_102017_a : field_102016_b;
     }

@@ -107,7 +107,9 @@ public class NormalChunkGenerator extends InternalChunkGenerator {
     public String makeString() {
         return "NormalWorldGenerator";
     }
-
+    
+    public void func_104112_b() {}
+    
     // MCPC+ start - return vanilla compatible IChunkProvider for forge
     public IChunkProvider getForgeChunkProvider()
     {

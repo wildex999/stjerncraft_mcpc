@@ -244,4 +244,6 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
     public String makeString() {
         return "CustomChunkGenerator";
     }
+
+    public void func_104112_b() {}
 }

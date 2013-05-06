@@ -587,7 +587,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
     /**
      * Returns the health points of the dragon.
      */
-    public int getDragonHealth()
+    public int getBossHealth()
     {
         return this.dataWatcher.getWatchableObjectInt(16);
     }
@@ -644,7 +644,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
      */
     public boolean isArmored()
     {
-        return this.getDragonHealth() <= this.maxHealth / 2; // CraftBukkit - this.getMaxHealth() -> this.maxHealth
+        return this.getBossHealth() <= this.maxHealth / 2; // CraftBukkit - this.getMaxHealth() -> this.maxHealth
     }
 
     /**
