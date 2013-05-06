@@ -3051,7 +3051,7 @@ public abstract class World implements IBlockAccess
     }
 
     @Deprecated //DO NOT USE THIS!!! USE doesBlockHaveSolidTopSurface
-    public boolean func_102026_a(Block par1Block, int par2)
+    public boolean isBlockTopFacingSurfaceSolid(Block par1Block, int par2)
     {
         // -.-  Mojang PLEASE make this location sensitive, you have no reason not to.
         return par1Block == null ? false : (par1Block.blockMaterial.isOpaque() && par1Block.renderAsNormalBlock() ? true : (par1Block instanceof BlockStairs ? (par2 & 4) == 4 : (par1Block instanceof BlockHalfSlab ? (par2 & 8) == 8 : (par1Block instanceof BlockHopper ? true : (par1Block instanceof BlockSnow ? (par2 & 7) == 7 : false)))));
@@ -3520,7 +3520,7 @@ public abstract class World implements IBlockAccess
         this.updateLightByType(EnumSkyBlock.Block, par1, par2, par3);
     }
 
-    private int func_98179_a(int par1, int par2, int par3, EnumSkyBlock par4EnumSkyBlock)
+    private int computeLightValue(int par1, int par2, int par3, EnumSkyBlock par4EnumSkyBlock)
     {
         if (par4EnumSkyBlock == EnumSkyBlock.Sky && this.canBlockSeeTheSky(par1, par2, par3))
         {
@@ -3585,7 +3585,7 @@ public abstract class World implements IBlockAccess
             int i1 = 0;
             this.theProfiler.startSection("getBrightness");
             int j1 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3, par4);
-            int k1 = this.func_98179_a(par2, par3, par4, par1EnumSkyBlock);
+            int k1 = this.computeLightValue(par2, par3, par4, par1EnumSkyBlock);
             int l1;
             int i2;
             int j2;
@@ -3658,7 +3658,7 @@ public abstract class World implements IBlockAccess
                 j2 = (l1 >> 6 & 63) - 32 + par3;
                 k2 = (l1 >> 12 & 63) - 32 + par4;
                 l2 = this.getSavedLightValue(par1EnumSkyBlock, i2, j2, k2);
-                i3 = this.func_98179_a(i2, j2, k2, par1EnumSkyBlock);
+                i3 = this.computeLightValue(i2, j2, k2, par1EnumSkyBlock);
 
                 if (i3 != l2)
                 {

@@ -1286,7 +1286,7 @@ public abstract class ServerConfigurationManager
                         par10Str = par10Str.substring(1);
                     }
 
-                    ScorePlayerTeam scoreplayerteam = entityplayermp.func_96124_cp();
+                    ScorePlayerTeam scoreplayerteam = entityplayermp.getTeam();
                     String s2 = scoreplayerteam == null ? "" : scoreplayerteam.func_96661_b();
 
                     if (flag1 == par10Str.equalsIgnoreCase(s2))
@@ -1356,7 +1356,7 @@ public abstract class ServerConfigurationManager
                     s = s.substring(0, s.length() - 4);
                 }
 
-                Scoreboard scoreboard = par1EntityPlayer.func_96123_co();
+                Scoreboard scoreboard = par1EntityPlayer.getWorldScoreboard();
                 ScoreObjective scoreobjective = scoreboard.getObjective(s);
 
                 if (scoreobjective == null)
@@ -1364,7 +1364,7 @@ public abstract class ServerConfigurationManager
                     return false;
                 }
 
-                Score score = par1EntityPlayer.func_96123_co().func_96529_a(par1EntityPlayer.getEntityName(), scoreobjective);
+                Score score = par1EntityPlayer.getWorldScoreboard().func_96529_a(par1EntityPlayer.getEntityName(), scoreobjective);
                 i = score.func_96652_c();
 
                 if (i < ((Integer)entry.getValue()).intValue() && flag)

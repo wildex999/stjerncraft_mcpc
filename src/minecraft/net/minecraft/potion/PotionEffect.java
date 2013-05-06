@@ -159,7 +159,7 @@ public class PotionEffect
         }
     }
 
-    public boolean func_102028_d()
+    public boolean isSplashPotionEffect()
     {
         return this.isSplashPotion;
     }

@@ -207,7 +207,7 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
             nbttagcompound.setTag("Level", nbttagcompound1);
             this.writeChunkToNBT(par2Chunk, par1World, nbttagcompound1);
             MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Save(par2Chunk, nbttagcompound));
-            this.func_75824_a(par2Chunk.getChunkCoordIntPair(), nbttagcompound);
+            this.addChunkToPending(par2Chunk.getChunkCoordIntPair(), nbttagcompound);
         }
         catch (Exception exception)
         {
@@ -215,7 +215,7 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
         }
     }
 
-    protected void func_75824_a(ChunkCoordIntPair par1ChunkCoordIntPair, NBTTagCompound par2NBTTagCompound)
+    protected void addChunkToPending(ChunkCoordIntPair par1ChunkCoordIntPair, NBTTagCompound par2NBTTagCompound)
     {
         Object object = this.syncLockObject;
 

@@ -209,7 +209,7 @@ public abstract class EntityLiving extends Entity
 
     /** Chances for each equipment piece from dropping when this entity dies. */
     public float[] equipmentDropChances = new float[5]; // CraftBukkit - protected -> public
-    private ItemStack[] field_82180_bT = new ItemStack[5];
+    private ItemStack[] previousEquipment = new ItemStack[5];
 
     /** Whether an arm swing is currently in progress. */
     public boolean isSwingInProgress = false;
@@ -834,10 +834,10 @@ public abstract class EntityLiving extends Entity
             {
                 ItemStack itemstack = this.getCurrentItemOrArmor(i);
 
-                if (!ItemStack.areItemStacksEqual(itemstack, this.field_82180_bT[i]))
+                if (!ItemStack.areItemStacksEqual(itemstack, this.previousEquipment[i]))
                 {
                     ((WorldServer) this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity((Entity) this, (Packet)(new Packet5PlayerInventory(this.entityId, i, itemstack)));
-                    this.field_82180_bT[i] = itemstack == null ? null : itemstack.copy();
+                    this.previousEquipment[i] = itemstack == null ? null : itemstack.copy();
                 }
             }
 

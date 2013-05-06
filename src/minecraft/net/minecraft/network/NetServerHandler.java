@@ -1245,7 +1245,7 @@ public class NetServerHandler extends NetHandler
                 this.server.getPluginManager().callEvent(event);
                 // MCPC+ start - call Forge event
                 String old = s;
-                s = "<" + this.playerEntity.func_96090_ax() + "> " + s;                
+                s = "<" + this.playerEntity.getTranslatedEntityName() + "> " + s;                
                 ServerChatEvent forgeEvent = new ServerChatEvent(this.playerEntity, old, s);
                 if (MinecraftForge.EVENT_BUS.post(forgeEvent))
                 {

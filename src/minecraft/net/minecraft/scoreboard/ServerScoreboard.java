@@ -83,9 +83,9 @@ public class ServerScoreboard extends Scoreboard
         this.func_96551_b();
     }
 
-    public void func_96512_b(String par1Str, ScorePlayerTeam par2ScorePlayerTeam)
+    public void removePlayerFromTeam(String par1Str, ScorePlayerTeam par2ScorePlayerTeam)
     {
-        super.func_96512_b(par1Str, par2ScorePlayerTeam);
+        super.removePlayerFromTeam(par1Str, par2ScorePlayerTeam);
         this.sendAll(new Packet209SetPlayerTeam(par2ScorePlayerTeam, Arrays.asList(new String[] { par1Str}), 4)); // CraftBukkit - Internal packet method
         this.func_96551_b();
     }

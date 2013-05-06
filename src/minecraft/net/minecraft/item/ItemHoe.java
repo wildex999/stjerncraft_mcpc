@@ -80,7 +80,7 @@ public class ItemHoe extends Item
         }
     }
 
-    public String func_77842_f()
+    public String getMaterialName()
     {
         return this.theToolMaterial.toString();
     }

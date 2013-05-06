@@ -95,7 +95,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
         CraftScoreboard scoreboard = checkState();
 
         ImmutableSet.Builder<OfflinePlayer> players = ImmutableSet.builder();
-        for (Object o : team.func_96670_d()) {
+        for (Object o : team.getMembershipCollection()) {
             players.add(Bukkit.getOfflinePlayer(o.toString()));
         }
         return players.build();
@@ -104,7 +104,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
     public int getSize() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        return team.func_96670_d().size();
+        return team.getMembershipCollection().size();
     }
 
     public void addPlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException {
@@ -118,11 +118,11 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
         Validate.notNull(player, "OfflinePlayer cannot be null");
         CraftScoreboard scoreboard = checkState();
 
-        if (!team.func_96670_d().contains(player.getName())) {
+        if (!team.getMembershipCollection().contains(player.getName())) {
             return false;
         }
 
-        scoreboard.board.func_96512_b(player.getName(), team);
+        scoreboard.board.removePlayerFromTeam(player.getName(), team);
         return true;
     }
 
@@ -130,7 +130,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
         Validate.notNull(player, "OfflinePlayer cannot be null");
         CraftScoreboard scoreboard = checkState();
 
-        return team.func_96670_d().contains(player.getName());
+        return team.getMembershipCollection().contains(player.getName());
     }
 
     @Override

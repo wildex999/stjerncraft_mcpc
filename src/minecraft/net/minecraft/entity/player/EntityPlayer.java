@@ -1011,9 +1011,9 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
      */
     public void displayGUIChest(IInventory par1IInventory) {}
 
-    public void func_94064_a(TileEntityHopper par1TileEntityHopper) {}
+    public void displayGUIHopper(TileEntityHopper par1TileEntityHopper) {}
 
-    public void func_96125_a(EntityMinecartHopper par1EntityMinecartHopper) {}
+    public void displayGUIHopperMinecart(EntityMinecartHopper par1EntityMinecartHopper) {}
 
     public void displayGUIEnchantment(int par1, int par2, int par3, String par4Str) {}
 
@@ -2389,20 +2389,20 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         return !this.capabilities.isFlying;
     }
 
-    public Scoreboard func_96123_co()
+    public Scoreboard getWorldScoreboard()
     {
         return this.worldObj.getScoreboard();
     }
 
-    public ScorePlayerTeam func_96124_cp()
+    public ScorePlayerTeam getTeam()
     {
-        return this.func_96123_co().func_96509_i(this.username);
+        return this.getWorldScoreboard().getPlayersTeam(this.username);
     }
 
-    public String func_96090_ax()
+    public String getTranslatedEntityName()
     {
         // TODO: fun
-        return ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.username);
+        return ScorePlayerTeam.func_96667_a(this.getTeam(), this.username);
     }
 
     public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)

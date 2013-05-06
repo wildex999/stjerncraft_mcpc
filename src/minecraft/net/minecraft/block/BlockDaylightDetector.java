@@ -56,7 +56,7 @@ public class BlockDaylightDetector extends BlockContainer
      */
     public void onBlockAdded(World par1World, int par2, int par3, int par4) {}
 
-    public void func_94444_j_(World par1World, int par2, int par3, int par4)
+    public void updateLightLevel(World par1World, int par2, int par3, int par4)
     {
         if (!par1World.provider.hasNoSky)
         {

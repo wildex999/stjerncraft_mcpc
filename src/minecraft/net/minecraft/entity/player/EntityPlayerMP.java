@@ -825,7 +825,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         this.openContainer.addCraftingToCrafters(this);
     }
 
-    public void func_94064_a(TileEntityHopper par1TileEntityHopper)
+    public void displayGUIHopper(TileEntityHopper par1TileEntityHopper)
     {
         // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerHopper(this.inventory, par1TileEntityHopper));
@@ -843,7 +843,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         this.openContainer.addCraftingToCrafters(this);
     }
 
-    public void func_96125_a(EntityMinecartHopper par1EntityMinecartHopper)
+    public void displayGUIHopperMinecart(EntityMinecartHopper par1EntityMinecartHopper)
     {
         // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerHopper(this.inventory, par1EntityMinecartHopper));

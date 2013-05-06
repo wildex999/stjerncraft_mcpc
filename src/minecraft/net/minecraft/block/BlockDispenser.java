@@ -196,7 +196,7 @@ public class BlockDispenser extends BlockContainer
 
         if (par6ItemStack.hasDisplayName())
         {
-            ((TileEntityDispenser)par1World.getBlockTileEntity(par2, par3, par4)).func_94049_a(par6ItemStack.getDisplayName());
+            ((TileEntityDispenser)par1World.getBlockTileEntity(par2, par3, par4)).setCustomName(par6ItemStack.getDisplayName());
         }
     }
 
@@ -280,6 +280,6 @@ public class BlockDispenser extends BlockContainer
      */
     public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
     {
-        return Container.func_94526_b((IInventory)par1World.getBlockTileEntity(par2, par3, par4));
+        return Container.calcRedstoneFromInventory((IInventory)par1World.getBlockTileEntity(par2, par3, par4));
     }
 }

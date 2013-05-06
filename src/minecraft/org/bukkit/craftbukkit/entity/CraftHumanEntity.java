@@ -211,9 +211,9 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
             break;
         case HOPPER:
             if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityHopper) {
-                getHandle().func_94064_a((net.minecraft.tileentity.TileEntityHopper) craftinv.getInventory());
+                getHandle().displayGUIHopper((net.minecraft.tileentity.TileEntityHopper) craftinv.getInventory());
             } else if (craftinv.getInventory() instanceof net.minecraft.entity.item.EntityMinecartHopper) {
-                getHandle().func_96125_a((net.minecraft.entity.item.EntityMinecartHopper) craftinv.getInventory());
+                getHandle().displayGUIHopperMinecart((net.minecraft.entity.item.EntityMinecartHopper) craftinv.getInventory());
             }
             break;
         case CREATIVE:

@@ -302,7 +302,7 @@ public final class ItemStack
     }
 
     // Spigot start
-    public boolean func_96631_a(int par1, Random par2Random)
+    public boolean attemptDamageItem(int par1, Random par2Random)
     {
         return isDamaged(par1, par2Random, null);
     }
@@ -323,7 +323,7 @@ public final class ItemStack
 
                 for (int l = 0; j > 0 && l < par1; ++l)
                 {
-                    if (EnchantmentDurability.func_92097_a(this, j, par2Random))
+                    if (EnchantmentDurability.negateDamage(this, j, par2Random))
                     {
                         ++k;
                     }

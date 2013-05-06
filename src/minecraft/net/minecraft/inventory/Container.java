@@ -738,7 +738,7 @@ public abstract class Container
         return true;
     }
 
-    public static int func_94526_b(IInventory par0IInventory)
+    public static int calcRedstoneFromInventory(IInventory par0IInventory)
     {
         if (par0IInventory == null)
         {

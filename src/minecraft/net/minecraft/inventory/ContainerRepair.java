@@ -191,7 +191,7 @@ public class ContainerRepair extends Container
 
                         l1 = j2;
                         int k2 = l1 - k1;
-                        boolean flag1 = enchantment.func_92089_a(itemstack);
+                        boolean flag1 = enchantment.canApply(itemstack);
 
                         if (this.thePlayer.capabilities.isCreativeMode || itemstack.itemID == ItemEnchantedBook.enchantedBook.itemID)
                         {

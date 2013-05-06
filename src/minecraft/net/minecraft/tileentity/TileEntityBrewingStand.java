@@ -433,12 +433,12 @@ public class TileEntityBrewingStand extends TileEntity implements ISidedInventor
         return par1 == 1 ? field_102017_a : field_102016_b;
     }
 
-    public boolean func_102007_a(int par1, ItemStack par2ItemStack, int par3)
+    public boolean canInsertItem(int par1, ItemStack par2ItemStack, int par3)
     {
         return this.isStackValidForSlot(par1, par2ItemStack);
     }
 
-    public boolean func_102008_b(int par1, ItemStack par2ItemStack, int par3)
+    public boolean canExtractItem(int par1, ItemStack par2ItemStack, int par3)
     {
         return true;
     }

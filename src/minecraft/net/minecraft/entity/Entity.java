@@ -169,7 +169,7 @@ public abstract class Entity
 
     /** The distance walked multiplied by 0.6 */
     public float distanceWalkedModified;
-    public float field_82151_R;
+    public float distanceWalkedOnStepModified;
     public float fallDistance;
 
     /**
@@ -291,7 +291,7 @@ public abstract class Entity
         this.height = 1.8F;
         this.prevDistanceWalkedModified = 0.0F;
         this.distanceWalkedModified = 0.0F;
-        this.field_82151_R = 0.0F;
+        this.distanceWalkedOnStepModified = 0.0F;
         this.fallDistance = 0.0F;
         this.nextStepDistance = 1;
         this.ySize = 0.0F;
@@ -1035,11 +1035,11 @@ public abstract class Entity
                 }
 
                 this.distanceWalkedModified = (float)((double) this.distanceWalkedModified + (double) MathHelper.sqrt_double(d10 * d10 + d12 * d12) * 0.6D);
-                this.field_82151_R = (float)((double) this.field_82151_R + (double) MathHelper.sqrt_double(d10 * d10 + d11 * d11 + d12 * d12) * 0.6D);
+                this.distanceWalkedOnStepModified = (float)((double) this.distanceWalkedOnStepModified + (double) MathHelper.sqrt_double(d10 * d10 + d11 * d11 + d12 * d12) * 0.6D);
 
-                if (this.field_82151_R > (float)this.nextStepDistance && j1 > 0)
+                if (this.distanceWalkedOnStepModified > (float)this.nextStepDistance && j1 > 0)
                 {
-                    this.nextStepDistance = (int)this.field_82151_R + 1;
+                    this.nextStepDistance = (int)this.distanceWalkedOnStepModified + 1;
 
                     if (this.isInWater())
                     {
@@ -1570,7 +1570,7 @@ public abstract class Entity
      */
     public void addToPlayerScore(Entity par1Entity, int par2) {}
 
-    public boolean func_98035_c(NBTTagCompound par1NBTTagCompound)
+    public boolean addNotRiddenEntityID(NBTTagCompound par1NBTTagCompound)
     {
         String s = this.getEntityString();
 
@@ -1664,7 +1664,7 @@ public abstract class Entity
             {
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound("Riding");
 
-                if (this.ridingEntity.func_98035_c(nbttagcompound1))
+                if (this.ridingEntity.addNotRiddenEntityID(nbttagcompound1))
                 {
                     par1NBTTagCompound.setTag("Riding", nbttagcompound1);
                 }
@@ -2719,7 +2719,7 @@ public abstract class Entity
         return true;
     }
 
-    public String func_96090_ax()
+    public String getTranslatedEntityName()
     {
         return this.getEntityName();
     }

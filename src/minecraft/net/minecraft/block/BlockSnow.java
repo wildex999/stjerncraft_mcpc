@@ -20,7 +20,7 @@ public class BlockSnow extends Block
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.125F, 1.0F);
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabDecorations);
-        this.func_96478_d(0);
+        this.setBlockBoundsForSnowDepth(0);
     }
 
     /**
@@ -56,7 +56,7 @@ public class BlockSnow extends Block
      */
     public void setBlockBoundsForItemRender()
     {
-        this.func_96478_d(0);
+        this.setBlockBoundsForSnowDepth(0);
     }
 
     /**
@@ -64,10 +64,10 @@ public class BlockSnow extends Block
      */
     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-        this.func_96478_d(par1IBlockAccess.getBlockMetadata(par2, par3, par4));
+        this.setBlockBoundsForSnowDepth(par1IBlockAccess.getBlockMetadata(par2, par3, par4));
     }
 
-    protected void func_96478_d(int par1)
+    protected void setBlockBoundsForSnowDepth(int par1)
     {
         int j = par1 & 7;
         float f = (float)(2 * (1 + j)) / 16.0F;
