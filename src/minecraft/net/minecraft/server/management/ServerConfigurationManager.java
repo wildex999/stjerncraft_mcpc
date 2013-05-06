@@ -606,24 +606,18 @@ public abstract class ServerConfigurationManager
         }
 
         // CraftBukkit start
-        byte actualDimension = (byte)worldserver.getWorld().getEnvironment().getId(); // MCPC+ - represents the actual dimension for target world
-        // MCPC+ start - add support for Mystcraft dimensions
-        if (worldserver.getWorld().getEnvironment().name().equals("MYST"))
+        byte actualDimension = (byte)worldserver.getWorld().getEnvironment().getId();
+        // MCPC+ - support forge mods that use one provider for multiple dimensions
+        if (!DimensionManager.shouldLoadSpawn(i))
             actualDimension = (byte)i;
-        // MCPC+ end        
+        // MCPC+ end
         // Force the client to refresh their chunk cache.
         entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn((byte)(actualDimension >= 0 ? -1 : 0), (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayermp.theItemInWorldManager.getGameType()));
         entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(actualDimension, (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayermp.theItemInWorldManager.getGameType()));
         entityplayermp1.setWorld(worldserver);
         entityplayermp1.isDead = false;
         entityplayermp1.playerNetServerHandler.teleport(new Location(worldserver.getWorld(), entityplayermp1.posX, entityplayermp1.posY, entityplayermp1.posZ, entityplayermp1.rotationYaw, entityplayermp1.rotationPitch));
-        // MCPC+ start - This flag is set when a bukkit plugin initiates a teleport. This forces a dimension update to guarantee that the client is in sync with server. Fixes the IC2 texture orientation bug.
-        if (bukkitPluginTeleport && !DimensionManager.checkMVDim(i))
-        {
-            entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(i, (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayermp.theItemInWorldManager.getGameType()));
-            bukkitPluginTeleport = false;
-        }
-        // MCPC+ end        
+     
         entityplayermp1.setSneaking(false);
         chunkcoordinates1 = worldserver.getSpawnPoint();
         // CraftBukkit end

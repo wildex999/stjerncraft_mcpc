@@ -99,17 +99,20 @@ import com.avaje.ebean.config.DataSourceConfig;
 import com.avaje.ebean.config.ServerConfig;
 import com.avaje.ebean.config.dbplatform.SQLitePlatform;
 import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
-// MCPC+ start - change to guava10, add imports
+// MCPC+ start
 import guava10.com.google.common.collect.ImmutableList;
 import guava10.com.google.common.collect.MapMaker;
 import org.bukkit.craftbukkit.command.CraftSimpleCommandMap;
-// Forge start
+
+import cpw.mods.fml.common.FMLLog;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.event.world.WorldEvent.Unload;
-// Forge end
 // MCPC+ end
 
 import jline.console.ConsoleReader;
@@ -149,6 +152,7 @@ public final class CraftServer implements Server {
     // MCPC+ start
     private boolean dumpMaterials = false;
     private boolean loadChunkOnRequest = true;
+    private boolean worldLeakDebug = false;
     // MCPC+ end
 
     // Orebfuscator use
@@ -210,8 +214,11 @@ public final class CraftServer implements Server {
         warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
         chunkGCPeriod = configuration.getInt("chunk-gc.period-in-ticks");
         chunkGCLoadThresh = configuration.getInt("chunk-gc.load-threshold");
-        dumpMaterials = configuration.getBoolean("mcpc.dump-materials"); // MCPC+ - dumps all materials with their corresponding id's
-        loadChunkOnRequest = configuration.getBoolean("mcpc.load-chunk-on-request"); // MCPC - sets ChunkProvideServer.loadChunkProvideOnRequest
+        // MCPC+ start
+        dumpMaterials = configuration.getBoolean("mcpc.dump-materials"); // dumps all materials with their corresponding id's
+        loadChunkOnRequest = configuration.getBoolean("mcpc.load-chunk-on-request"); // sets ChunkProvideServer.loadChunkProvideOnRequest
+        worldLeakDebug = configuration.getBoolean("mcpc.world-leak-debug");
+        // MCPC+ end
 
         updater = new AutoUpdater(new BukkitDLUpdaterService(configuration.getString("auto-updater.host")), getLogger(), configuration.getString("auto-updater.preferred-channel"));
         updater.setEnabled(false); // Spigot
@@ -608,6 +615,11 @@ public final class CraftServer implements Server {
     public boolean getLoadChunkOnRequest() {
         return this.configuration.getBoolean("mcpc.load-chunk-on-request", true);
     }
+
+    public boolean getWorldLeakDebug()
+    {
+        return this.configuration.getBoolean("mcpc.world-leak-debug", false);
+    }
     // MCPC+ end    
 
     public void reload() {
@@ -897,6 +909,46 @@ public final class CraftServer implements Server {
         // Forge end
         return true;
     }
+
+    // MCPC+ start - used by DimensionManager.unloadWorlds
+    public boolean unloadCraftWorld(World world, boolean save)
+    {
+        if (world == null)
+            return false;
+        net.minecraft.world.WorldServer handle = ((CraftWorld) world).getHandle();
+
+        if (!(console.worlds.contains(handle))) {
+            return false;
+        }
+
+        if (handle.playerEntities.size() > 0) {
+            return false;
+        }
+
+        WorldUnloadEvent e = new WorldUnloadEvent(handle.getWorld());
+        pluginManager.callEvent(e);
+
+        if (e.isCancelled()) {
+            return false;
+        }
+
+        if (save) {
+            try {
+                handle.saveAllChunks(true, null);
+                handle.flush();
+                WorldSaveEvent event = new WorldSaveEvent(handle.getWorld());
+                getPluginManager().callEvent(event);
+            } catch (net.minecraft.world.MinecraftException ex) {
+                getLogger().log(Level.SEVERE, null, ex);
+                FMLLog.log(Level.SEVERE, ex, "Failed to save world " + handle.getWorld().getName() + " while unloading it.");
+            }
+        }
+        worlds.remove(world.getName());
+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle));
+        DimensionManager.setWorld(handle.dimension, null);
+        return true;
+    }
+    // MCPC+ end
 
     public net.minecraft.server.MinecraftServer getServer() {
         return console;
