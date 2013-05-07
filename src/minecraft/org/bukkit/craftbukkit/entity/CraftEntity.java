@@ -21,12 +21,10 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     protected final CraftServer server;
     protected net.minecraft.entity.Entity entity;
     private EntityDamageEvent lastDamageEvent;
-    private static CraftEntity instance; // MCPC
 
     public CraftEntity(final CraftServer server, final net.minecraft.entity.Entity entity) {
         this.server = server;
         this.entity = entity;
-        instance = this; // MCPC
     }
 
     public static CraftEntity getEntity(CraftServer server, net.minecraft.entity.Entity entity) {
@@ -163,8 +161,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         }
         else if (entity instanceof net.minecraft.entity.item.EntityTNTPrimed) { return new CraftTNTPrimed(server, (net.minecraft.entity.item.EntityTNTPrimed) entity); }
         else if (entity instanceof net.minecraft.entity.item.EntityFireworkRocket) { return new CraftFirework(server, (net.minecraft.entity.item.EntityFireworkRocket) entity); }
-        // MCPC - used for custom entities that extend Entity
-        else if (entity instanceof net.minecraft.entity.Entity) { return instance; }
+        // MCPC+ - used for custom entities that extend Entity directly
+        else if (entity instanceof net.minecraft.entity.Entity) { return new CraftCustomEntity(server, (net.minecraft.entity.Entity) entity); }
 
         throw new AssertionError("Unknown entity " + entity == null ? null : entity.getClass() + ": " + entity); // MCPC - show the entity that caused exception
     }

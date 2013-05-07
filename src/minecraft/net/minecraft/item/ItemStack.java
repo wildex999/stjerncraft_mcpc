@@ -243,6 +243,7 @@ public final class ItemStack
      */
     public int getItemDamage()
     {
+        if (this.getItem() == null) return this.itemDamage; // MCPC+ - fallback if null item
         return this.getItem().getItemDamageFromStack(this);
     }
 

@@ -38,6 +38,8 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 // MCPC+ start
+import org.bukkit.Location;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 // MCPC+ end
@@ -410,6 +412,11 @@ public class GameRegistry
 	{
 		for(IPlayerTracker tracker : playerTrackers)
 			tracker.onPlayerChangedDimension(player);
+        // MCPC+ start - update compassTarget to new world when changing dimensions or it will leave a reference to the last world object causing a memory leak
+        // This is required for mods that implement their own dimension transfer methods which bypass ServerConfigurationManager
+        EntityPlayerMP playermp = (EntityPlayerMP)player;
+        playermp.compassTarget = new Location(playermp.worldObj.getWorld(), playermp.posX, playermp.posY, playermp.posZ);
+        // MCPC+ end
 	}
 
 	public static void onPlayerRespawn(EntityPlayer player)
