@@ -394,7 +394,7 @@ public class EntityBoat extends Entity
 
             if (this.isCollidedHorizontally && d3 > 0.2D)
             {
-                if (!this.worldObj.isRemote && !this.isDead)   // CraftBukkit - That which is dead cannot die
+                if (!this.worldObj.isRemote && !this.isDead)
                 {
                     // CraftBukkit start
                     Vehicle vehicle = (Vehicle) this.getBukkitEntity();

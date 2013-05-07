@@ -144,7 +144,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
                     }
                     // If section built, finish prepping its state
                     if (cs != null) {
-                        cs.getYLocation();
+                        cs.removeInvalidBlocks();
                     }
                 }
             }

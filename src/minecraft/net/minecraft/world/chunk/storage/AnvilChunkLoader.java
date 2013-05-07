@@ -312,7 +312,13 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
      * Save extra data not associated with any Chunk.  Not saved during autosave, only during world unload.  Currently
      * unused.
      */
-    public void saveExtraData() {}
+    public void saveExtraData()
+    {
+        while (this.writeNextIO())
+        {
+            ;
+        }
+    }
 
     /**
      * Writes the Chunk passed as an argument to the NBTTagCompound also passed, using the World argument to retrieve

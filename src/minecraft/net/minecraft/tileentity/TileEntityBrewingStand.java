@@ -426,18 +426,27 @@ public class TileEntityBrewingStand extends TileEntity implements ISidedInventor
     }
 
     /**
-     * Get the size of the side inventory.
+     * Returns an array containing the indices of the slots that can be accessed by automation on the given side of this
+     * block.
      */
     public int[] getAccessibleSlotsFromSide(int par1)
     {
         return par1 == 1 ? field_102017_a : field_102016_b;
     }
 
+    /**
+     * Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item,
+     * side
+     */
     public boolean canInsertItem(int par1, ItemStack par2ItemStack, int par3)
     {
         return this.isStackValidForSlot(par1, par2ItemStack);
     }
 
+    /**
+     * Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item,
+     * side
+     */
     public boolean canExtractItem(int par1, ItemStack par2ItemStack, int par3)
     {
         return true;

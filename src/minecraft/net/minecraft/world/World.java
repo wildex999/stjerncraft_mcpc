@@ -3050,6 +3050,10 @@ public abstract class World implements IBlockAccess
         return isBlockSolidOnSide(par1, par2, par3, ForgeDirection.UP);
     }
 
+    /**
+     * Performs check to see if the block is a normal, solid block, or if the metadata of the block indicates that its
+     * facing puts its solid side upwards. (inverted stairs, for example)
+     */
     @Deprecated //DO NOT USE THIS!!! USE doesBlockHaveSolidTopSurface
     public boolean isBlockTopFacingSurfaceSolid(Block par1Block, int par2)
     {
@@ -3836,7 +3840,7 @@ public abstract class World implements IBlockAccess
         {
             Entity entity = (Entity)this.loadedEntityList.get(j);
 
-            if (par1Class.isAssignableFrom(entity.getClass()))
+            if ((!(entity instanceof EntityLiving) || !((EntityLiving)entity).func_104002_bU()) && par1Class.isAssignableFrom(entity.getClass()))
             {
                 ++i;
             }

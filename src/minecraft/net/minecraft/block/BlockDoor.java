@@ -15,6 +15,8 @@ import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 public class BlockDoor extends Block
 {
     private static final String[] doorIconNames = new String[] {"doorWood_lower", "doorWood_upper", "doorIron_lower", "doorIron_upper"};
+
+    /** Used for pointing at icon names. */
     private final int doorTypeForIcon;
 
     protected BlockDoor(int par1, Material par2Material)

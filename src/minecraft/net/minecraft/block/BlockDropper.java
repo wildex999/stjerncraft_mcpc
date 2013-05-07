@@ -25,6 +25,9 @@ public class BlockDropper extends BlockDispenser
         super(par1);
     }
 
+    /**
+     * Returns the behavior for the given ItemStack.
+     */
     protected IBehaviorDispenseItem getBehaviorForItemStack(ItemStack par1ItemStack)
     {
         return this.dropperDefaultBehaviour;

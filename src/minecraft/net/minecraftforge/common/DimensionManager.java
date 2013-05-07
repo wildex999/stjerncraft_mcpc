@@ -174,28 +174,33 @@ public class DimensionManager
 
     public static Integer[] getIDs(boolean check)
     {
-        if (check)
+        // MCPC+ start - check config option and only log world leak messages if enabled
+        if (MinecraftServer.getServer().server.getWorldLeakDebug())
         {
-            List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
-            allWorlds.removeAll(worlds.values());
-            for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
+            if (check)
             {
-                World w = li.next();
-                leakedWorlds.add(System.identityHashCode(w));
-            }
-            for (World w : allWorlds)
-            {
-                int leakCount = leakedWorlds.count(System.identityHashCode(w));
-                if (leakCount == 5)
+                List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
+                allWorlds.removeAll(worlds.values());
+                for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
                 {
-                    FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurences).\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
+                    World w = li.next();
+                    leakedWorlds.add(System.identityHashCode(w));
                 }
-                else if (leakCount % 5 == 0)
+                for (World w : allWorlds)
                 {
-                    FMLLog.fine("The world %x (%s) may have leaked: seen %d times.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName(), leakCount);
+                    int leakCount = leakedWorlds.count(System.identityHashCode(w));
+                    if (leakCount == 5)
+                    {
+                        FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurences). Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to MCPC.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
+                    }
+                    else if (leakCount % 5 == 0)
+                    {
+                        FMLLog.fine("The world %x (%s) may have leaked: seen %d times. Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to MCPC.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName(), leakCount);
+                    }
                 }
             }
         }
+        // MCPC+ end
         return getIDs();
     }
     public static Integer[] getIDs()
@@ -207,7 +212,12 @@ public class DimensionManager
     {
         if (world != null) {
             worlds.put(id, world);
-            weakWorldMap.put(world, world);
+            // MCPC+ start - check config option and only log world leak messages if enabled
+            if (MinecraftServer.getServer().server.getWorldLeakDebug())
+            {
+                weakWorldMap.put(world, world);
+            }
+            // MCPC+ end
             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
             FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         } else {
@@ -235,6 +245,7 @@ public class DimensionManager
         }
 
         MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
+        MinecraftServer.getServer().worlds = tmp; // MCPC+
     }
 
     public static void initDimension(int dim) {
@@ -357,29 +368,7 @@ public class DimensionManager
     public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
         for (int id : unloadQueue) {
             WorldServer w = worlds.get(id);
-            // MCPC+ start - fire bukkit unload event, remove from MinecraftServer worlds list.
-            if (w != null) {
-                WorldUnloadEvent event = new WorldUnloadEvent(w.getWorld());
-                w.getServer().getPluginManager().callEvent(event);
-
-                if (event.isCancelled()) {
-                    continue;
-                }
-
-                try {
-                    w.saveAllChunks(true, null);
-                } catch (MinecraftException e) {
-                    FMLLog.log(Level.SEVERE, e, "Failed to save world " + w.getWorld().getName() + " while unloading it.");
-                }
-
-                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
-                w.flush();
-                setWorld(id, null);
-                MinecraftServer.getServer().worlds.remove(w);
-            } else {
-                FMLLog.warning("Unexpected world unload - world %d is already unloaded", id);
-            }
-            // MCPC+ end
+            MinecraftServer.getServer().server.unloadCraftWorld(w.getWorld(), true); // MCPC+ - unload through our new method for simplicity
         }
         unloadQueue.clear();
     }

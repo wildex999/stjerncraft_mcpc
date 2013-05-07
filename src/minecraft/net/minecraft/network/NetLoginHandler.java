@@ -259,7 +259,7 @@ public class NetLoginHandler extends NetHandler
             if (true || par1Packet254ServerPing.readSuccessfully == 1) // Spigot
             {
                 // CraftBukkit start - Fix decompile issues, don't create a list from an array
-                Object[] list = new Object[] { 1, 60, this.mcServer.getMinecraftVersion(), pingEvent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), pingEvent.getMaxPlayers() };
+                Object[] list = new Object[] { 1, 61, this.mcServer.getMinecraftVersion(), pingEvent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), pingEvent.getMaxPlayers() };
 
                 for (Object object : list)
                 {

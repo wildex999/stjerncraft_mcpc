@@ -53,6 +53,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeHooks;
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 // CraftBukkit end
@@ -69,7 +70,7 @@ public abstract class EntityLiving extends Entity
     private static final float[] armorEnchantmentProbability = new float[] {0.0F, 0.0F, 0.25F, 0.5F};
 
     /** Probability to get armor */
-    private static final float[] armorProbability = new float[] {0.0F, 0.0F, 0.05F, 0.02F};
+    private static final float[] armorProbability = new float[] {0.0F, 0.0F, 0.05F, 0.07F};
 
     /** Probability to pick up loot */
     public static final float[] pickUpLootProability = new float[] {0.0F, 0.1F, 0.15F, 0.45F};
@@ -161,7 +162,7 @@ public abstract class EntityLiving extends Entity
     public float limbYaw;
 
     /**
-     * Only relevant when legYaw is not 0(the entity is moving). Influences where in its swing legs and arms currently
+     * Only relevant when limbYaw is not 0(the entity is moving). Influences where in its swing legs and arms currently
      * are.
      */
     public float limbSwing;
@@ -209,6 +210,8 @@ public abstract class EntityLiving extends Entity
 
     /** Chances for each equipment piece from dropping when this entity dies. */
     public float[] equipmentDropChances = new float[5]; // CraftBukkit - protected -> public
+
+    /** The equipment this mob was previously wearing, used for syncing. */
     private ItemStack[] previousEquipment = new ItemStack[5];
 
     /** Whether an arm swing is currently in progress. */
@@ -220,7 +223,7 @@ public abstract class EntityLiving extends Entity
 
     /** Whether this entity should NOT despawn. */
     public boolean persistenceRequired = !this.canDespawn(); // CraftBukkit - private -> public, change value
-    protected final CombatTracker field_94063_bt = new CombatTracker(this);
+    protected CombatTracker field_94063_bt = new CombatTracker(this); // CraftBukkit - remove final
 
     /**
      * The number of updates over which the new position and rotation are to be applied to the entity.
@@ -2581,12 +2584,14 @@ public abstract class EntityLiving extends Entity
 
     public boolean isPotionActive(int par1)
     {
-        return this.activePotionsMap.containsKey(Integer.valueOf(par1));
+        // CraftBukkit - Add size check for efficiency
+        return this.activePotionsMap.size() != 0 && this.activePotionsMap.containsKey(Integer.valueOf(par1));
     }
 
     public boolean isPotionActive(Potion par1Potion)
     {
-        return this.activePotionsMap.containsKey(Integer.valueOf(par1Potion.id));
+        // CraftBukkit - Add size check for efficiency
+        return this.activePotionsMap.size() != 0 && this.activePotionsMap.containsKey(Integer.valueOf(par1Potion.id));
     }
 
     /**
@@ -3167,6 +3172,11 @@ public abstract class EntityLiving extends Entity
     public void setCanPickUpLoot(boolean par1)
     {
         this.canPickUpLoot = par1;
+    }
+
+    public boolean func_104002_bU()
+    {
+    	return this.persistenceRequired;
     }
 
     /***

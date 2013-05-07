@@ -261,9 +261,19 @@ public abstract class BlockBasePressurePlate extends Block
         return 1;
     }
 
+    /**
+     * Returns the current state of the pressure plate. Returns a value between 0 and 15 based on the number of items on
+     * it.
+     */
     protected abstract int getPlateState(World world, int i, int j, int k);
 
+    /**
+     * Argument is metadata. Returns power level (0-15)
+     */
     protected abstract int getPowerSupply(int i);
 
+    /**
+     * Argument is weight (0-15). Return the metadata to be set because of it.
+     */
     protected abstract int getMetaFromWeight(int i);
 }

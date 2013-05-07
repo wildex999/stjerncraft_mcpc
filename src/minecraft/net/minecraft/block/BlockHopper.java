@@ -135,6 +135,9 @@ public class BlockHopper extends BlockContainer
         this.updateMetadata(par1World, par2, par3, par4);
     }
 
+    /**
+     * Updates the Metadata to include if the Hopper gets powered by Redstone or not
+     */
     private void updateMetadata(World par1World, int par2, int par3, int par4)
     {
         int l = par1World.getBlockMetadata(par2, par3, par4);
@@ -249,7 +252,7 @@ public class BlockHopper extends BlockContainer
      */
     public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
     {
-        return Container.calcRedstoneFromInventory((IInventory) getHopperTile(par1World, par2, par3, par4));
+        return Container.calcRedstoneFromInventory(getHopperTile(par1World, par2, par3, par4));
     }
 
     public static TileEntityHopper getHopperTile(IBlockAccess par0IBlockAccess, int par1, int par2, int par3)

@@ -254,7 +254,7 @@ public class ContainerRepair extends Container
                 }
             }
 
-            if (this.repairedItemName != null && !this.repairedItemName.equalsIgnoreCase(itemstack.getDisplayName()) && this.repairedItemName.length() > 0)
+            if (this.repairedItemName != null && this.repairedItemName.length() > 0 && !this.repairedItemName.equalsIgnoreCase(this.thePlayer.getTranslator().translateNamedKey(itemstack.getItemName())) && !this.repairedItemName.equals(itemstack.getDisplayName()))
             {
                 j = itemstack.isItemStackDamageable() ? 7 : itemstack.stackSize * 5;
                 i += j;

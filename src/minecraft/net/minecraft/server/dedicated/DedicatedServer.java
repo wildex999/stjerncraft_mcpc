@@ -84,7 +84,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         System.setOut(new PrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.INFO), true));
         System.setErr(new PrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.SEVERE), true));
         // CraftBukkit end
-        this.getLogAgent().logInfo("Starting minecraft server version 1.5.1");
+        this.getLogAgent().logInfo("Starting minecraft server version 1.5.2");
 
         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
         {
@@ -112,6 +112,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         this.setAllowFlight(this.settings.getBooleanProperty("allow-flight", false));
         this.setTexturePack(this.settings.getProperty("texture-pack", ""));
         this.setMOTD(this.settings.getProperty("motd", "A Minecraft Server"));
+        this.func_104055_i(this.settings.getBooleanProperty("force-gamemode", false));
 
         if (this.settings.getIntProperty("difficulty", 1) < 0)
         {

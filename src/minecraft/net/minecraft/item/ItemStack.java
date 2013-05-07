@@ -272,7 +272,7 @@ public final class ItemStack
             return;
         }
 
-        if (!(this.getHasSubtypes() || Item.itemsList[this.itemID].isDamageable() || this.itemID > 255))   // Should be usesDurability
+        if (!(this.getHasSubtypes() || Item.itemsList[this.itemID].isDamageable() || this.itemID > 255))
         {
             par1 = 0;
         }

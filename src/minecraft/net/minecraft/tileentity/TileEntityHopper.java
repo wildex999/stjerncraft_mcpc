@@ -309,6 +309,9 @@ public class TileEntityHopper extends TileEntity implements Hopper
         }
     }
 
+    /**
+     * Inserts one item from the hopper into the inventory the hopper is pointing at.
+     */
     private boolean insertItemToInventory()
     {
         IInventory iinventory = this.getOutputInventory();
@@ -380,6 +383,9 @@ public class TileEntityHopper extends TileEntity implements Hopper
         }
     }
 
+    /**
+     * Sucks one item into the given hopper from an inventory or EntityItem above it.
+     */
     public static boolean suckItemsIntoHopper(Hopper par0Hopper)
     {
         IInventory iinventory = getInventoryAboveHopper(par0Hopper);
@@ -534,6 +540,9 @@ public class TileEntityHopper extends TileEntity implements Hopper
         }
     }
 
+    /**
+     * Inserts a stack into an inventory. Args: Inventory, stack, side. Returns leftover items.
+     */
     public static ItemStack insertStack(IInventory par1IInventory, ItemStack par2ItemStack, int par3)
     {
         if (par1IInventory instanceof ISidedInventory && par3 > -1)
@@ -611,12 +620,18 @@ public class TileEntityHopper extends TileEntity implements Hopper
         return par1ItemStack;
     }
 
+    /**
+     * Gets the inventory the hopper is pointing at.
+     */
     private IInventory getOutputInventory()
     {
         int i = BlockHopper.getDirectionFromMetadata(this.getBlockMetadata());
         return getInventoryAtLocation(this.getWorldObj(), (double)(this.xCoord + Facing.offsetsXForSide[i]), (double)(this.yCoord + Facing.offsetsYForSide[i]), (double)(this.zCoord + Facing.offsetsZForSide[i]));
     }
 
+    /**
+     * Looks for anything, that can hold items (like chests, furnaces, etc.) one block above the given hopper.
+     */
     public static IInventory getInventoryAboveHopper(Hopper par0Hopper)
     {
         return getInventoryAtLocation(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() + 1.0D, par0Hopper.getZPos());
@@ -628,6 +643,10 @@ public class TileEntityHopper extends TileEntity implements Hopper
         return list.size() > 0 ? (EntityItem)list.get(0) : null;
     }
 
+    /**
+     * Gets an inventory at the given location to extract items into or take items from. Can find either a tile entity
+     * or regular entity implementing IInventory.
+     */
     public static IInventory getInventoryAtLocation(World par0World, double par1, double par3, double par5)
     {
         IInventory iinventory = null;
@@ -670,16 +689,25 @@ public class TileEntityHopper extends TileEntity implements Hopper
         return par1ItemStack.itemID != par2ItemStack.itemID ? false : (par1ItemStack.getItemDamage() != par2ItemStack.getItemDamage() ? false : (par1ItemStack.stackSize > par1ItemStack.getMaxStackSize() ? false : ItemStack.areItemStackTagsEqual(par1ItemStack, par2ItemStack)));
     }
 
+    /**
+     * Gets the world X position for this hopper entity.
+     */
     public double getXPos()
     {
         return (double)this.xCoord;
     }
 
+    /**
+     * Gets the world Y position for this hopper entity.
+     */
     public double getYPos()
     {
         return (double)this.yCoord;
     }
 
+    /**
+     * Gets the world Z position for this hopper entity.
+     */
     public double getZPos()
     {
         return (double)this.zCoord;

@@ -141,6 +141,9 @@ public class BlockDispenser extends BlockContainer
         }
     }
 
+    /**
+     * Returns the behavior for the given ItemStack.
+     */
     protected IBehaviorDispenseItem getBehaviorForItemStack(ItemStack par1ItemStack)
     {
         return (IBehaviorDispenseItem)dispenseBehaviorRegistry.func_82594_a(par1ItemStack.getItem());

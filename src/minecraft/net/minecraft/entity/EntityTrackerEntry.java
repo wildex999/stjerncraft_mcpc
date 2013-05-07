@@ -218,7 +218,7 @@ public class EntityTrackerEntry
 
                 // CraftBukkit end
 
-                if (this.ticks > 0)
+                if (this.ticks > 0 || this.myEntity instanceof EntityArrow)
                 {
                     if (j1 >= -128 && j1 < 128 && k1 >= -128 && k1 < 128 && l1 >= -128 && l1 < 128 && this.ticksSinceLastForcedTeleport <= 400 && !this.ridingEntity)
                     {

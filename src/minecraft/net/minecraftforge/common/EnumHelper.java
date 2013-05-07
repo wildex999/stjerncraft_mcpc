@@ -270,7 +270,7 @@ public class EnumHelper
             for (Field field : fields)
             {
                 if ((field.getModifiers() & flags) == flags &&
-                        field.getType().getName().replace('.', '/').equals(valueType)) //Apparently some JVMs return .'s and some don't..
+                     field.getType().getName().replace('.', '/').equals(valueType)) //Apparently some JVMs return .'s and some don't..
                 {
                     valuesField = field;
                     break;

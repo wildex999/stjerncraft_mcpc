@@ -23,7 +23,7 @@ public class ContainerHopper extends Container
             return bukkitEntity;
         }
 
-        CraftInventory inventory = new CraftInventory(this.field_94538_a); // Should be this.hopper
+        CraftInventory inventory = new CraftInventory(this.field_94538_a);
         bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
         return bukkitEntity;
     }

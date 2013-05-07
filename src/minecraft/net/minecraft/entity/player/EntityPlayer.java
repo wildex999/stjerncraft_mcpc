@@ -2399,9 +2399,11 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         return this.getWorldScoreboard().getPlayersTeam(this.username);
     }
 
+    /**
+     * Returns the translated name of the entity.
+     */
     public String getTranslatedEntityName()
     {
-        // TODO: fun
         return ScorePlayerTeam.func_96667_a(this.getTeam(), this.username);
     }
 

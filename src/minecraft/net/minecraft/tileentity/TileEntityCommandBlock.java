@@ -20,6 +20,8 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
 
     /** The command this block will execute when powered. */
     public String command = ""; // CraftBukkit - private -> public
+
+    /** The name of command sender (usually username, but possibly "Rcon") */
     private String commandSenderName = "@";
     // CraftBukkit start
     private final org.bukkit.command.BlockCommandSender sender;
@@ -103,7 +105,7 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
                     }
                     else
                     {
-                        EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(args[1]); // Should be getPlayer
+                        EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(args[1]);
 
                         if (player == null)
                         {
@@ -197,6 +199,9 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
         return this.commandSenderName;
     }
 
+    /**
+     * Sets the name of the command sender
+     */
     public void setCommandSenderName(String par1Str)
     {
         this.commandSenderName = par1Str;

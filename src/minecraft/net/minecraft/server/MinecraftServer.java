@@ -181,6 +181,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     private long timeOfLastWarning;
     private String userMessage;
     private boolean startProfiling;
+    private boolean field_104057_T = false;
 
     // CraftBukkit start
     public List<WorldServer> worlds = new ArrayList<WorldServer>();
@@ -1033,7 +1034,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     public String getMinecraftVersion()
     {
-        return "1.5.1";
+        return "1.5.2";
     }
 
     /**
@@ -1663,6 +1664,16 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     }
 
     public abstract ILogAgent getLogAgent();
+
+    public void func_104055_i(boolean par1)
+    {
+        this.field_104057_T = par1;
+    }
+
+    public boolean func_104056_am()
+    {
+        return this.field_104057_T;
+    }
 
     /**
      * Gets the current player count, maximum player count, and player entity list.

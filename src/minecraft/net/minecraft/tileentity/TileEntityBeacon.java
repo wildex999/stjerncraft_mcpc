@@ -43,7 +43,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory
 
     public ItemStack[] getContents()
     {
-        return new ItemStack[] { this.payment }; // Should be inventorySlot
+        return new ItemStack[] { this.payment };
     }
 
     public void onOpen(CraftHumanEntity who)

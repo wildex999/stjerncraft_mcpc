@@ -500,7 +500,7 @@ public class TileEntityFurnace extends TileEntity implements ISidedInventory, ne
     {
         return par1 == 2 ? false : (par1 == 1 ? isItemFuel(par2ItemStack) : true);
     }
-    
+
     /**
      * Returns an array containing the indices of the slots that can be accessed by automation on the given side of this
      * block.
@@ -526,7 +526,7 @@ public class TileEntityFurnace extends TileEntity implements ISidedInventory, ne
     public boolean canExtractItem(int par1, ItemStack par2ItemStack, int par3)
     {
         return par3 != 0 || par1 != 1 || par2ItemStack.itemID == Item.bucketEmpty.itemID;
-    }    
+    }
 
     /***********************************************************************************
      * This function is here for compatibilities sake, Modders should Check for
