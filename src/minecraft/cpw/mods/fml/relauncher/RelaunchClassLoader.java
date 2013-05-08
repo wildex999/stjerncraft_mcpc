@@ -384,7 +384,14 @@ public class RelaunchClassLoader extends URLClassLoader
         {
             for (IClassTransformer transformer : transformers)
             {
-                basicClass = transformer.transform(name, transformedName, basicClass);
+                // MCPC+ start - log which transformer is broken
+                try {
+                    basicClass = transformer.transform(name, transformedName, basicClass);
+                } catch (Throwable t) {
+                    FMLRelaunchLog.log(Level.SEVERE, "Failed to transform class %s using transformer %s. basicClass = %snull.", name, transformer.getClass().getName(), basicClass == null ? "" : "non-");
+                    throw new Error(t);
+                }
+                // MCPC+ end
             }
         }
         return basicClass;
