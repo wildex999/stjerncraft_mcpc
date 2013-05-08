@@ -9,7 +9,7 @@
 <url>http://www.mcportcentral.co.za/</url>
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- <bukkit.version>${project.version}</bukkit.version> --> <bukkit.version>1.5.1-R0.3-SNAPSHOT</bukkit.version> <!-- XXX: old Bukkit version until MCPC-API TODO -->
+    <bukkit.version>${project.version}</bukkit.version>
     <api.version>unknown</api.version>
     <minecraft.version>1.5.2</minecraft.version>
     <minecraft_version>1_5_R3</minecraft_version>
@@ -388,8 +388,7 @@
                         <goal>remap</goal>
                     </goals>
                     <configuration>
-                        <!-- <srgIn>${basedir}/resources/mappings/v${minecraft_version}/pkgmcp2numpkg.srg</srgIn> -->
-                        <srgIn>${basedir}/resources/mappings/v${minecraft_version}/pkgmcp2obf.srg</srgIn> <!-- TODO: enable obfuscation, after fixing https://gist.github.com/agaricusb/5234401 java.lang.NoSuchFieldError: field_98131_l -->
+                        <srgIn>${basedir}/resources/mappings/v${minecraft_version}/pkgmcp2obf.srg</srgIn>
                         <remappedDependencies>
                             <param>net.minecraftforge:minecraft-forge:${forge.version}-${forge.remapped.revision}:jar</param>
                         </remappedDependencies>
