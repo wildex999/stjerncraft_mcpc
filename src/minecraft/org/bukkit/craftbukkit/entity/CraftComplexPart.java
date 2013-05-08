@@ -12,17 +12,24 @@ public class CraftComplexPart extends CraftEntity implements ComplexEntityPart {
     }
 
     public ComplexLivingEntity getParent() {
-        return (ComplexLivingEntity) ((net.minecraft.entity.Entity) getHandle().entityDragonObj).getBukkitEntity(); // MCPC+ - EntityDragon -> Entity for modded bosses (Twilight Forest hydra)
+    	// MCPC+ start - Fix twilight Hydra crashes
+        org.bukkit.entity.Entity result = getParentEntity();
+        return (result instanceof ComplexLivingEntity) ? (ComplexLivingEntity)result : null;
+    }
+
+    private org.bukkit.entity.Entity getParentEntity() {
+        return ((net.minecraft.entity.Entity)getHandle().entityDragonObj).getBukkitEntity();
     }
 
     @Override
     public void setLastDamageCause(EntityDamageEvent cause) {
-        getParent().setLastDamageCause(cause);
+        getParentEntity().setLastDamageCause(cause);
     }
 
     @Override
     public EntityDamageEvent getLastDamageCause() {
-        return getParent().getLastDamageCause();
+        return getParentEntity().getLastDamageCause();
+        // MCPC+ end
     }
 
     @Override
