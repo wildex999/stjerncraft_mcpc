@@ -17,6 +17,7 @@ public class CallableMinecraftVersion implements Callable
      */
     public String minecraftVersion()
     {
+        if (cpw.mods.fml.relauncher.FMLInjectionData.obf151()) return "1.5.1"; // MCPC+
         return "1.5.2";
     }
 

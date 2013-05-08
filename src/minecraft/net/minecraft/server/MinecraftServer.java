@@ -1034,6 +1034,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     public String getMinecraftVersion()
     {
+        if (cpw.mods.fml.relauncher.FMLInjectionData.obf151()) return "1.5.1"; // MCPC+
         return "1.5.2";
     }
 

@@ -141,10 +141,13 @@ public class NetLoginHandler extends NetHandler
         {
             PublicKey publickey = this.mcServer.getKeyPair().getPublic();
 
-            if (par1Packet2ClientProtocol.getProtocolVersion() != 61)
+            // MCPC+ start - 1.5.1 compatibility
+            int supportedVersion = cpw.mods.fml.relauncher.FMLInjectionData.obf151() ? 60 : 61;
+            if (par1Packet2ClientProtocol.getProtocolVersion() != supportedVersion)
             {
-                if (par1Packet2ClientProtocol.getProtocolVersion() > 61)
+                if (par1Packet2ClientProtocol.getProtocolVersion() > supportedVersion)
                 {
+                    // MCPC+ end
                     this.raiseErrorAndDisconnect("Outdated server!");
                 }
                 else
@@ -259,7 +262,9 @@ public class NetLoginHandler extends NetHandler
             if (true || par1Packet254ServerPing.readSuccessfully == 1) // Spigot
             {
                 // CraftBukkit start - Fix decompile issues, don't create a list from an array
-                Object[] list = new Object[] { 1, 61, this.mcServer.getMinecraftVersion(), pingEvent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), pingEvent.getMaxPlayers() };
+                Object[] list = new Object[] { 1,
+                    cpw.mods.fml.relauncher.FMLInjectionData.obf151() ? 60 : 61,  // MCPC+ - 1.5.1 compatibility
+                    this.mcServer.getMinecraftVersion(), pingEvent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), pingEvent.getMaxPlayers() };
 
                 for (Object object : list)
                 {

@@ -395,7 +395,22 @@
                         <finalName>mcpc-plus-${project.version}-f${forge.build}-${buildNumber}</finalName>
                     </configuration>
                 </execution>
-            </executions>
+                <!-- 1.5.1 compatibility reobfuscation -->
+                <execution>
+                    <id>reobfuscate-151compat</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>remap</goal>
+                    </goals>
+                    <configuration>
+                        <srgIn>${basedir}/resources/mappings/v1_5_R2/pkgmcp2obf.srg</srgIn>
+                        <remappedDependencies>
+                            <param>net.minecraftforge:minecraft-forge:${forge.version}-${forge.remapped.revision}:jar</param>
+                        </remappedDependencies>
+                        <finalName>mcpc-plus-151compat-${project.version}-f${forge.build}-C${buildNumber}</finalName>
+                    </configuration>
+                </execution>
+             </executions>
         </plugin>
     </plugins>
     <pluginManagement>
