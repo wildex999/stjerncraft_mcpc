@@ -635,7 +635,7 @@ public class Block
                 {
                     this.dropBlockAsItem_do(par1World, par2, par3, par4, item);
                 }
-            }                
+            }
         }
     }
 

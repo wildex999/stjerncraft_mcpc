@@ -32,7 +32,6 @@ public class FMLRelaunchLog
 {
 
     public static boolean useOnlyThisLogger = false; // MCPC+ - FML logger vs. CB logger
-
     private static class ConsoleLogWrapper extends Handler
     {
         @Override

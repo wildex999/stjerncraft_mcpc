@@ -1,5 +1,11 @@
 Changelog:
 
+Build 1.5.2-7.8.0.687
+	mitchpetrie29: Separate EQUIPPED and EQUIPPED_FIRST_PERSON Item Render Types
+
+Build 1.5.2-7.8.0.686
+	LexManos: Capture and fire the PlaySoundAtEntity event for The client entity. Minecraft does some odd bypasses for no good reason. Thanks iPixile for reporting this.
+
 Build 1.5.2-7.8.0.685
 	LexManos
 		Updated FML:

@@ -12,7 +12,6 @@
 
 package cpw.mods.fml.common.registry;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,8 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 // MCPC+ start
+import java.io.File;
+
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 // MCPC+ end
@@ -120,7 +121,7 @@ public class GameRegistry
             generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
         }
     }
-    
+
     /**
      * Internal method for creating an @Block instance
      * @param container

@@ -5,6 +5,7 @@ import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.storage.DerivedWorldInfo;
 import net.minecraft.world.storage.ISaveHandler;
+
 public class WorldServerMulti extends WorldServer
 {
     // CraftBukkit start - Changed signature
@@ -26,4 +27,9 @@ public class WorldServerMulti extends WorldServer
         this.worldInfo = new DerivedWorldInfo(worldserver.getWorldInfo());
     }
     // MCPC+ end
+
+    /**
+     * Saves the chunks to disk.
+     */
+    protected void saveLevel() throws MinecraftException {}
 }

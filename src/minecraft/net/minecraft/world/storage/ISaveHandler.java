@@ -31,7 +31,7 @@ public interface ISaveHandler
     /**
      * Saves the passed in world info.
      */
-    void saveWorldInfo(WorldInfo worlddata);
+    void saveWorldInfo(WorldInfo worldinfo);
 
     /**
      * returns null if no saveHandler is relevent (eg. SMP)

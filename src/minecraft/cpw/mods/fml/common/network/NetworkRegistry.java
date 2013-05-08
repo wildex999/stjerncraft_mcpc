@@ -12,7 +12,6 @@
 
 package cpw.mods.fml.common.network;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +44,7 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.FMLPacket.Type;
 import cpw.mods.fml.relauncher.Side;
 // MCPC+ start
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;

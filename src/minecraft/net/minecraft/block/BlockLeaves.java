@@ -317,5 +317,5 @@ public class BlockLeaves extends BlockLeavesBase implements IShearable
     public boolean isLeaves(World world, int x, int y, int z)
     {
         return true;
-    }    
+    }
 }

@@ -89,7 +89,7 @@ public class BlockCommandBlock extends BlockContainer
 
         if (tileentitycommandblock != null)
         {
-            par5EntityPlayer.displayGUIEditSign((TileEntity) tileentitycommandblock);
+            par5EntityPlayer.displayGUIEditSign(tileentitycommandblock);
         }
 
         return true;
