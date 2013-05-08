@@ -273,11 +273,11 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
 
                     if (this.worldObj.difficultySetting >= 2)
                     {
-                        int i1001 = i - 1;
-                        int i1003 = this.field_82224_i[i - 1];
-                        this.field_82224_i[i1001] = this.field_82224_i[i - 1] + 1;
+                        int k = i - 1;
+                        int l = this.field_82224_i[i - 1];
+                        this.field_82224_i[k] = this.field_82224_i[i - 1] + 1;
 
-                        if (i1003 > 15)
+                        if (l > 15)
                         {
                             float f = 10.0F;
                             float f1 = 5.0F;

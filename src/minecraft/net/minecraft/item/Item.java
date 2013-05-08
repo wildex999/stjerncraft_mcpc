@@ -201,8 +201,8 @@ public class Item
     public static Item comparator = (new ItemReed(148, Block.redstoneComparatorIdle)).setUnlocalizedName("comparator").setCreativeTab(CreativeTabs.tabRedstone);
     public static Item netherrackBrick = (new Item(149)).setUnlocalizedName("netherbrick").setCreativeTab(CreativeTabs.tabMaterials);
     public static Item netherQuartz = (new Item(150)).setUnlocalizedName("netherquartz").setCreativeTab(CreativeTabs.tabMaterials);
-    public static Item tntMinecart = (new ItemMinecart(151, 3)).setUnlocalizedName("minecartTnt");
-    public static Item hopperMinecart = (new ItemMinecart(152, 5)).setUnlocalizedName("minecartHopper");
+    public static Item minecartTnt = (new ItemMinecart(151, 3)).setUnlocalizedName("minecartTnt");
+    public static Item minecartHopper = (new ItemMinecart(152, 5)).setUnlocalizedName("minecartHopper");
     public static Item record13 = (new ItemRecord(2000, "13")).setUnlocalizedName("record");
     public static Item recordCat = (new ItemRecord(2001, "cat")).setUnlocalizedName("record");
     public static Item recordBlocks = (new ItemRecord(2002, "blocks")).setUnlocalizedName("record");
@@ -239,7 +239,7 @@ public class Item
     private String unlocalizedName;
     
     /** FORGE: To disable repair recipes. */
-    protected boolean canRepair = true;    
+    protected boolean canRepair = true;
 
     public Item(int par1)
     {
@@ -607,7 +607,7 @@ public class Item
     {
         StatList.initStats();
     }
-    
+
     /* =========================================================== FORGE START ===============================================================*/
     /**
      * Called when a player drops the item into the world,
@@ -796,7 +796,7 @@ public class Item
     {
         return null;
     }
-    
+
     /**
      * Called by the default implemetation of EntityItem's onUpdate method, allowing for cleaner 
      * control over the update of the item without having to write a subclass.
@@ -807,7 +807,7 @@ public class Item
     public boolean onEntityItemUpdate(EntityItem entityItem)
     {
         return false;
-    }    
+    }
 
     /**
      * Gets a list of tabs that items belonging to this class can display on,
@@ -897,7 +897,7 @@ public class Item
 
     /**
      * Determines if the specific ItemStack can be placed in the specified armor slot.
-     * 
+     *
      * @param stack The ItemStack
      * @param armorType Armor slot ID: 0: Helmet, 1: Chest, 2: Legs, 3: Boots
      * @return True if the given ItemStack can be inserted in the slot
@@ -916,10 +916,10 @@ public class Item
 
         return false;
     }
-    
+
     /**
      * ItemStack sensitive version of isPotionIngredient
-     * 
+     *
      * @param stack The item stack
      * @return True if this stack can be used as a potion ingredient
      */
@@ -930,7 +930,7 @@ public class Item
 
     /**
      * ItemStack sensitive version of getPotionEffect
-     * 
+     *
      * @param stack The item stack
      * @return A string containing the bit manipulation to apply the the potion.
      */
@@ -938,7 +938,7 @@ public class Item
     {
         return getPotionEffect();
     }
-    
+
     /**
      * Allow or forbid the specific book/item combination as an anvil enchant
      *
@@ -1050,5 +1050,5 @@ public class Item
         {
             stack.itemDamage = 0;
         }
-    }    
+    }
 }

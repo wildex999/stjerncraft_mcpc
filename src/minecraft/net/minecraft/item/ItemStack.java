@@ -301,6 +301,12 @@ public final class ItemStack
         return this.getItem().getItemMaxDamageFromStack(this);
     }
 
+    /**
+     * Attempts to damage the ItemStack with par1 amount of damage, If the ItemStack has the Unbreaking enchantment
+     * there is a chance for each point of damage to be negated. Returns true if it takes more damage than
+     * getMaxDamage(). Returns false otherwise or if the ItemStack can't be damaged or if all points of damage are
+     * negated.
+     */
     // Spigot start
     public boolean attemptDamageItem(int par1, Random par2Random)
     {

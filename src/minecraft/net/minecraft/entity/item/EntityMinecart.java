@@ -73,7 +73,7 @@ public abstract class EntityMinecart extends Entity
     private float currentSpeedRail = getMaxCartSpeedOnRail();
     protected float maxSpeedAirLateral = defaultMaxSpeedAirLateral;
     protected float maxSpeedAirVertical = defaultMaxSpeedAirVertical;
-    protected double dragAir = defaultDragAir;    
+    protected double dragAir = defaultDragAir;
 
     public EntityMinecart(World par1World)
     {
@@ -85,6 +85,12 @@ public abstract class EntityMinecart extends Entity
         this.field_82344_g = par1World != null ? par1World.func_82735_a(this) : null;
     }
 
+    /**
+     * Creates a new minecart of the specified type in the specified location in the given world. par0World - world to
+     * create the minecart in, double par1,par3,par5 represent x,y,z respectively. int par7 specifies the type: 1 for
+     * MinecartChest, 2 for MinecartFurnace, 3 for MinecartTNT, 4 for MinecartMobSpawner, 5 for MinecartHopper and 0 for
+     * a standard empty minecart
+     */
     public static EntityMinecart createMinecart(World par0World, double par1, double par3, double par5, int par7)
     {
         switch (par7)
@@ -414,7 +420,6 @@ public abstract class EntityMinecart extends Entity
                 double maxSpeed = Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
                 int i1 = rail.getBasicRailMetadata(worldObj, this, j, i, k);
                 this.updateOnTrack(j, i, k, maxSpeed, getSlopeAdjustment(), l, i1);
-
                 if (l == Block.railActivator.blockID)
                 {
                     this.onActivatorRailPass(j, i, k, (worldObj.getBlockMetadata(j, i, k) & 8) != 0);
@@ -473,7 +478,7 @@ public abstract class EntityMinecart extends Entity
             }
 
             List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, box);
-            
+
             if (list != null && !list.isEmpty())
             {
                 for (int j1 = 0; j1 < list.size(); ++j1)
@@ -501,6 +506,9 @@ public abstract class EntityMinecart extends Entity
         }
     }
 
+    /**
+     * Called every tick the minecart is on an activator rail.
+     */
     public void onActivatorRailPass(int par1, int par2, int par3, boolean par4) {}
 
     protected void func_94088_b(double par1)
@@ -524,7 +532,7 @@ public abstract class EntityMinecart extends Entity
         {
             this.motionZ = par1;
         }
-        
+
         double moveY = motionY;
         if(getMaxSpeedAirVertical() > 0 && motionY > getMaxSpeedAirVertical())
         {
@@ -535,7 +543,7 @@ public abstract class EntityMinecart extends Entity
                 motionY = moveY;
             }
         }
-        
+
         if (this.onGround)
         {
             // CraftBukkit start
@@ -1249,7 +1257,7 @@ public abstract class EntityMinecart extends Entity
         }
         else if (this instanceof EntityMinecartTNT)
         {
-            return new ItemStack(Item.tntMinecart);
+            return new ItemStack(Item.minecartTnt);
         }
         else if (this instanceof EntityMinecartFurnace)
         {
@@ -1257,7 +1265,7 @@ public abstract class EntityMinecart extends Entity
         }
         else if (this instanceof EntityMinecartHopper)
         {
-            return new ItemStack(Item.hopperMinecart);
+            return new ItemStack(Item.minecartHopper);
         }
         return new ItemStack(Item.minecartEmpty);
     }
@@ -1297,7 +1305,7 @@ public abstract class EntityMinecart extends Entity
      */
     public boolean isPoweredCart()
     {
-        return getMinecartType() == 2;
+        return getMinecartType()== 2;
     }
 
     /**
@@ -1383,5 +1391,5 @@ public abstract class EntityMinecart extends Entity
     public double getSlopeAdjustment()
     {
         return 0.0078125D;
-    }    
+    }
 }

@@ -18,22 +18,32 @@ import org.bukkit.event.entity.CreatureSpawnEvent; // CraftBukkit
 
 public abstract class MobSpawnerBaseLogic
 {
+    /** The delay to spawn. */
     public int spawnDelay = 20;
     private String mobID = "Pig";
+
+    /** List of minecart to spawn. */
     private List minecartToSpawn = null;
     private WeightedRandomMinecart randomMinecart = null;
     public double field_98287_c;
     public double field_98284_d = 0.0D;
     private int minSpawnDelay = 200;
     private int maxSpawnDelay = 800;
+
+    /** A counter for spawn tries. */
     private int spawnCount = 4;
     private Entity field_98291_j;
     private int maxNearbyEntities = 6;
+
+    /** The distance from which a player activates the spawner. */
     private int activatingRangeFromPlayer = 16;
+
+    /** The range coefficient for spawning entities around. */
     private int spawnRange = 4;
 
-    public MobSpawnerBaseLogic() {}
-
+    /**
+     * Gets the entity name that should be spawned.
+     */
     public String getEntityNameToSpawn()
     {
         if (this.getRandomMinecart() == null)
@@ -218,7 +228,7 @@ public abstract class MobSpawnerBaseLogic
 
         if (this.minecartToSpawn != null && this.minecartToSpawn.size() > 0)
         {
-            this.setRandomMinecart((WeightedRandomMinecart) WeightedRandom.getRandomItem(this.getSpawnerWorld().rand, (Collection) this.minecartToSpawn));
+            this.setRandomMinecart((WeightedRandomMinecart)WeightedRandom.getRandomItem(this.getSpawnerWorld().rand, this.minecartToSpawn));
         }
 
         this.func_98267_a(1);
@@ -316,6 +326,9 @@ public abstract class MobSpawnerBaseLogic
         }
     }
 
+    /**
+     * Sets the delay to minDelay if parameter given is 1, else return false.
+     */
     public boolean setDelayToMin(int par1)
     {
         if (par1 == 1 && this.getSpawnerWorld().isRemote)

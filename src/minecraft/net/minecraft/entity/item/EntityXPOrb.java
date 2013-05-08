@@ -168,7 +168,7 @@ public class EntityXPOrb extends Entity
      */
     public boolean handleWaterMovement()
     {
-        return this.worldObj.handleMaterialAcceleration(this.boundingBox, Material.water, (Entity) this);
+        return this.worldObj.handleMaterialAcceleration(this.boundingBox, Material.water, this);
     }
 
     /**

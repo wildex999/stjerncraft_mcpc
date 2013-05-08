@@ -67,6 +67,9 @@ public class BlockSnow extends Block
         this.setBlockBoundsForSnowDepth(par1IBlockAccess.getBlockMetadata(par2, par3, par4));
     }
 
+    /**
+     * calls setBlockBounds based on the depth of the snow. Int is any values 0x0-0x7, usually this blocks metadata.
+     */
     protected void setBlockBoundsForSnowDepth(int par1)
     {
         int j = par1 & 7;
@@ -161,5 +164,5 @@ public class BlockSnow extends Block
     public int quantityDropped(int meta, int fortune, Random random)
     {
         return (meta & 7) + 1;
-    }    
+    }
 }

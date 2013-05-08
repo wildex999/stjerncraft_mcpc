@@ -3,6 +3,7 @@ package net.minecraft.item;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+
 public class ItemSnow extends ItemBlockWithMetadata
 {
     public ItemSnow(int par1, Block par2Block)

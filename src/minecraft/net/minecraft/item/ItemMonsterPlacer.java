@@ -22,10 +22,10 @@ public class ItemMonsterPlacer extends Item
     /**
      * Gets the localized name of the given item stack.
      */
-    public String getLocalizedName(ItemStack itemstack)
+    public String getItemDisplayName(ItemStack par1ItemStack)
     {
         String s = ("" + StatCollector.translateToLocal(this.getUnlocalizedName() + ".name")).trim();
-        String s1 = EntityList.getStringFromID(itemstack.getItemDamage());
+        String s1 = EntityList.getStringFromID(par1ItemStack.getItemDamage());
 
         if (s1 != null)
         {

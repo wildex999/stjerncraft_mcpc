@@ -106,7 +106,7 @@ public class PlayerManager
         // CraftBukkit end
     }
 
-    private PlayerInstance getOrCreateChunkWatcher(int par1, int par2, boolean par3)
+    public PlayerInstance getOrCreateChunkWatcher(int par1, int par2, boolean par3)
     {
         long k = (long)par1 + 2147483647L | (long)par2 + 2147483647L << 32;
         PlayerInstance playerinstance = (PlayerInstance)this.playerInstances.getValueByKey(k);

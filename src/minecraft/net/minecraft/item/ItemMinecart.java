@@ -1,12 +1,13 @@
 package net.minecraft.item;
 
 import net.minecraft.block.BlockDispenser;
-import net.minecraft.block.BlockRail;
+import net.minecraft.block.BlockRailBase;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.dispenser.IBehaviorDispenseItem;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+
 public class ItemMinecart extends Item
 {
     private static final IBehaviorDispenseItem dispenserMinecartBehavior = new BehaviorDispenseMinecart();
@@ -29,7 +30,7 @@ public class ItemMinecart extends Item
     {
         int i1 = par3World.getBlockId(par4, par5, par6);
 
-        if (BlockRail.isRailBlock(i1))
+        if (BlockRailBase.isRailBlock(i1))
         {
             if (!par3World.isRemote)
             {

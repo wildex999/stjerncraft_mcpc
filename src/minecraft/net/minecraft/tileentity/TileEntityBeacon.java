@@ -138,7 +138,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory
             {
                 int j = this.yCoord - i;
 
-                if (j < 1)
+                if (j < 0)
                 {
                     break;
                 }
@@ -150,6 +150,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory
                     for (int l = this.zCoord - i; l <= this.zCoord + i; ++l)
                     {
                         int i1 = this.worldObj.getBlockId(k, j, l);
+
                         Block block = Block.blocksList[i1];
 
                         if (block == null || !block.isBeaconBase(worldObj, k, j, l, xCoord, yCoord, zCoord))

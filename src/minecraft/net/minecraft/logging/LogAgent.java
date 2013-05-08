@@ -37,6 +37,9 @@ public class LogAgent implements ILogAgent
         this.setupLogger();
     }
 
+    /**
+     * Sets up the logger for usage.
+     */
     private void setupLogger()
     {
         this.serverLogger.setUseParentHandlers(false);
@@ -173,14 +176,15 @@ public class LogAgent implements ILogAgent
         }
     }
 
-    public Logger getServerLogger()
-    {
-        return this.serverLogger;
-    }
-
     public void logInfo(String par1Str)
     {
         this.serverLogger.log(Level.INFO, par1Str);
+    }
+
+    @SideOnly(Side.SERVER)
+    public Logger getServerLogger()
+    {
+        return this.serverLogger;
     }
 
     public void logWarning(String par1Str)

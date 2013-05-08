@@ -52,8 +52,6 @@ public class TileEntity
     /** the Block type that this TileEntity is contained within */
     public Block blockType;
 
-    public TileEntity() {}
-
     /**
      * Adds a new two-way mapping between the class and its string name in both hashmaps.
      */
@@ -71,19 +69,19 @@ public class TileEntity
     }
 
     /**
-     * Sets the worldObj for this tileEntity.
-     */
-    public void setWorldObj(World par1World)
-    {
-        this.worldObj = par1World;
-    }
-
-    /**
      * Returns the worldObj for this tileEntity.
      */
     public World getWorldObj()
     {
         return this.worldObj;
+    }
+
+    /**
+     * Sets the worldObj for this tileEntity.
+     */
+    public void setWorldObj(World par1World)
+    {
+        this.worldObj = par1World;
     }
 
     public boolean func_70309_m()
@@ -267,10 +265,10 @@ public class TileEntity
 
     public void func_85027_a(CrashReportCategory par1CrashReportCategory)
     {
-        par1CrashReportCategory.addCrashSectionCallable("Name", (Callable)(new CallableTileEntityName(this)));
+        par1CrashReportCategory.addCrashSectionCallable("Name", new CallableTileEntityName(this));
         CrashReportCategory.func_85068_a(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID, this.getBlockMetadata());
-        par1CrashReportCategory.addCrashSectionCallable("Actual block type", (Callable)(new CallableTileEntityID(this)));
-        par1CrashReportCategory.addCrashSectionCallable("Actual block data value", (Callable)(new CallableTileEntityData(this)));
+        par1CrashReportCategory.addCrashSectionCallable("Actual block type", new CallableTileEntityID(this));
+        par1CrashReportCategory.addCrashSectionCallable("Actual block data value", new CallableTileEntityData(this));
     }
 
     static Map getClassToNameMap()
@@ -402,5 +400,5 @@ public class TileEntity
             }
         }
         return bb;
-    }    
+    }
 }

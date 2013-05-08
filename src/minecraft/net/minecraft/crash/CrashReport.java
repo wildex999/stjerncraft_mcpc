@@ -47,17 +47,17 @@ public class CrashReport
      */
     private void populateEnvironment()
     {
-        this.field_85061_c.addCrashSectionCallable("Minecraft Version", (Callable)(new CallableMinecraftVersion(this)));
-        this.field_85061_c.addCrashSectionCallable("Operating System", (Callable)(new CallableOSInfo(this)));
-        this.field_85061_c.addCrashSectionCallable("Java Version", (Callable)(new CallableJavaInfo(this)));
-        this.field_85061_c.addCrashSectionCallable("Java VM Version", (Callable)(new CallableJavaInfo2(this)));
-        this.field_85061_c.addCrashSectionCallable("Memory", (Callable)(new CallableMemoryInfo(this)));
-        this.field_85061_c.addCrashSectionCallable("JVM Flags", (Callable)(new CallableJVMFlags(this)));
-        this.field_85061_c.addCrashSectionCallable("AABB Pool Size", (Callable)(new CallableCrashMemoryReport(this)));
-        this.field_85061_c.addCrashSectionCallable("Suspicious classes", (Callable)(new CallableSuspiciousClasses(this)));
-        this.field_85061_c.addCrashSectionCallable("IntCache", (Callable)(new CallableIntCache(this)));
-        this.field_85061_c.addCrashSectionCallable("CraftBukkit Information", (Callable)(new org.bukkit.craftbukkit.CraftCrashReport()));  // CraftBukkit
-        FMLCommonHandler.instance().enhanceCrashReport(this, this.field_85061_c);        
+        this.field_85061_c.addCrashSectionCallable("Minecraft Version", new CallableMinecraftVersion(this));
+        this.field_85061_c.addCrashSectionCallable("Operating System", new CallableOSInfo(this));
+        this.field_85061_c.addCrashSectionCallable("Java Version", new CallableJavaInfo(this));
+        this.field_85061_c.addCrashSectionCallable("Java VM Version", new CallableJavaInfo2(this));
+        this.field_85061_c.addCrashSectionCallable("Memory", new CallableMemoryInfo(this));
+        this.field_85061_c.addCrashSectionCallable("JVM Flags", new CallableJVMFlags(this));
+        this.field_85061_c.addCrashSectionCallable("AABB Pool Size", new CallableCrashMemoryReport(this));
+        this.field_85061_c.addCrashSectionCallable("Suspicious classes", new CallableSuspiciousClasses(this));
+        this.field_85061_c.addCrashSectionCallable("IntCache", new CallableIntCache(this));
+        this.field_85061_c.addCrashSectionCallable("CraftBukkit Information", (new org.bukkit.craftbukkit.CraftCrashReport()));  // CraftBukkit
+        FMLCommonHandler.instance().enhanceCrashReport(this, this.field_85061_c);
     }
 
     /**

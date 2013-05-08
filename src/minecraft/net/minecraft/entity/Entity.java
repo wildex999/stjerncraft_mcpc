@@ -869,14 +869,14 @@ public abstract class Entity
 
             double d10;
             double d11;
-            double d12;
             int k;
+            double d12;
 
             if (this.stepHeight > 0.0F && flag1 && (flag || this.ySize < 0.05F) && (d6 != par1 || d8 != par5))
             {
-                d10 = par1;
-                d11 = par3;
-                d12 = par5;
+                d12 = par1;
+                d10 = par3;
+                d11 = par5;
                 par1 = d6;
                 par3 = (double)this.stepHeight;
                 par5 = d8;
@@ -944,11 +944,11 @@ public abstract class Entity
                     this.boundingBox.offset(0.0D, par3, 0.0D);
                 }
 
-                if (d10 * d10 + d12 * d12 >= par1 * par1 + par5 * par5)
+                if (d12 * d12 + d11 * d11 >= par1 * par1 + par5 * par5)
                 {
-                    par1 = d10;
-                    par3 = d11;
-                    par5 = d12;
+                    par1 = d12;
+                    par3 = d10;
+                    par5 = d11;
                     this.boundingBox.setBB(axisalignedbb1);
                 }
             }
@@ -979,9 +979,9 @@ public abstract class Entity
                 this.motionZ = 0.0D;
             }
 
-            d10 = this.posX - d3;
-            d11 = this.posY - d4;
-            d12 = this.posZ - d5;
+            d12 = this.posX - d3;
+            d10 = this.posY - d4;
+            d11 = this.posZ - d5;
 
             // CraftBukkit start
             if ((this.isCollidedHorizontally) && (this.getBukkitEntity() instanceof Vehicle))
@@ -1031,11 +1031,11 @@ public abstract class Entity
 
                 if (j1 != Block.ladder.blockID)
                 {
-                    d11 = 0.0D;
+                    d10 = 0.0D;
                 }
 
-                this.distanceWalkedModified = (float)((double) this.distanceWalkedModified + (double) MathHelper.sqrt_double(d10 * d10 + d12 * d12) * 0.6D);
-                this.distanceWalkedOnStepModified = (float)((double) this.distanceWalkedOnStepModified + (double) MathHelper.sqrt_double(d10 * d10 + d11 * d11 + d12 * d12) * 0.6D);
+                this.distanceWalkedModified = (float)((double)this.distanceWalkedModified + (double)MathHelper.sqrt_double(d12 * d12 + d11 * d11) * 0.6D);
+                this.distanceWalkedOnStepModified = (float)((double)this.distanceWalkedOnStepModified + (double)MathHelper.sqrt_double(d12 * d12 + d10 * d10 + d11 * d11) * 0.6D);
 
                 if (this.distanceWalkedOnStepModified > (float)this.nextStepDistance && j1 > 0)
                 {
@@ -1646,7 +1646,7 @@ public abstract class Entity
             if (customEntityData != null)
             {
                 par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
-            }            
+            }
 
             for (String identifier : this.extendedProperties.keySet()){
                 try{
@@ -1729,7 +1729,7 @@ public abstract class Entity
             {
                 customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
             }
-            
+
             for (String identifier : this.extendedProperties.keySet()){
                 try{
                     IExtendedEntityProperties props = this.extendedProperties.get(identifier);
@@ -1850,13 +1850,13 @@ public abstract class Entity
     protected NBTTagList newDoubleNBTList(double ... par1ArrayOfDouble)
     {
         NBTTagList nbttaglist = new NBTTagList();
-        double[] adouble1 = par1ArrayOfDouble;
+        double[] adouble = par1ArrayOfDouble;
         int i = par1ArrayOfDouble.length;
 
         for (int j = 0; j < i; ++j)
         {
-            double d0 = adouble1[j];
-            nbttaglist.appendTag(new NBTTagDouble((String) null, d0));
+            double d1 = adouble[j];
+            nbttaglist.appendTag(new NBTTagDouble((String)null, d1));
         }
 
         return nbttaglist;
@@ -1868,13 +1868,13 @@ public abstract class Entity
     protected NBTTagList newFloatNBTList(float ... par1ArrayOfFloat)
     {
         NBTTagList nbttaglist = new NBTTagList();
-        float[] afloat1 = par1ArrayOfFloat;
+        float[] afloat = par1ArrayOfFloat;
         int i = par1ArrayOfFloat.length;
 
         for (int j = 0; j < i; ++j)
         {
-            float f = afloat1[j];
-            nbttaglist.appendTag(new NBTTagFloat((String) null, f));
+            float f1 = afloat[j];
+            nbttaglist.appendTag(new NBTTagFloat((String)null, f1));
         }
 
         return nbttaglist;
@@ -2292,12 +2292,12 @@ public abstract class Entity
         this.setFlag(3, par1);
     }
 
-    public boolean getHasActivePotion()
+    public boolean isInvisible()
     {
         return this.getFlag(5);
     }
 
-    public void setHasActivePotion(boolean par1)
+    public void setInvisible(boolean par1)
     {
         this.setFlag(5, par1);
     }
@@ -2706,9 +2706,9 @@ public abstract class Entity
 
     public void func_85029_a(CrashReportCategory par1CrashReportCategory)
     {
-        par1CrashReportCategory.addCrashSectionCallable("Entity Type", (Callable)(new CallableEntityType(this)));
+        par1CrashReportCategory.addCrashSectionCallable("Entity Type", new CallableEntityType(this));
         par1CrashReportCategory.addCrashSection("Entity ID", Integer.valueOf(this.entityId));
-        par1CrashReportCategory.addCrashSectionCallable("Entity Name", (Callable)(new CallableEntityName(this)));
+        par1CrashReportCategory.addCrashSectionCallable("Entity Name", new CallableEntityName(this));
         par1CrashReportCategory.addCrashSection("Entity\'s Exact location", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.posX), Double.valueOf(this.posY), Double.valueOf(this.posZ)}));
         par1CrashReportCategory.addCrashSection("Entity\'s Block location", CrashReportCategory.getLocationInfo(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)));
         par1CrashReportCategory.addCrashSection("Entity\'s Momentum", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.motionX), Double.valueOf(this.motionY), Double.valueOf(this.motionZ)}));
@@ -2719,11 +2719,14 @@ public abstract class Entity
         return true;
     }
 
+    /**
+     * Returns the translated name of the entity.
+     */
     public String getTranslatedEntityName()
     {
         return this.getEntityName();
     }
-    
+
     /* ================================== Forge Start =====================================*/
     /**
      * Returns a NBTTagCompound that can be used to store custom data for this entity.
@@ -2818,7 +2821,7 @@ public abstract class Entity
     public boolean isCreatureType(EnumCreatureType type, boolean forSpawnCount)
     {
         return type.getCreatureClass().isAssignableFrom(this.getClass());
-    }    
+    }
 
     /**
      * Register the instance of IExtendedProperties into the entity's collection.

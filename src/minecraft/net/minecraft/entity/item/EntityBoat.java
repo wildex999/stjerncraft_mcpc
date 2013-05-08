@@ -286,20 +286,20 @@ public class EntityBoat extends Entity
             {
                 d4 = this.posX + (this.boatX - this.posX) / (double)this.boatPosRotationIncrements;
                 d5 = this.posY + (this.boatY - this.posY) / (double)this.boatPosRotationIncrements;
-                d10 = this.posZ + (this.boatZ - this.posZ) / (double) this.boatPosRotationIncrements;
-                d11 = MathHelper.wrapAngleTo180_double(this.boatYaw - (double) this.rotationYaw);
-                this.rotationYaw = (float)((double) this.rotationYaw + d11 / (double) this.boatPosRotationIncrements);
+                d11 = this.posZ + (this.boatZ - this.posZ) / (double)this.boatPosRotationIncrements;
+                d10 = MathHelper.wrapAngleTo180_double(this.boatYaw - (double)this.rotationYaw);
+                this.rotationYaw = (float)((double)this.rotationYaw + d10 / (double)this.boatPosRotationIncrements);
                 this.rotationPitch = (float)((double)this.rotationPitch + (this.boatPitch - (double)this.rotationPitch) / (double)this.boatPosRotationIncrements);
                 --this.boatPosRotationIncrements;
-                this.setPosition(d4, d5, d10);
+                this.setPosition(d4, d5, d11);
                 this.setRotation(this.rotationYaw, this.rotationPitch);
             }
             else
             {
                 d4 = this.posX + this.motionX;
                 d5 = this.posY + this.motionY;
-                d10 = this.posZ + this.motionZ;
-                this.setPosition(d4, d5, d10);
+                d11 = this.posZ + this.motionZ;
+                this.setPosition(d4, d5, d11);
 
                 if (this.onGround)
                 {
@@ -429,12 +429,12 @@ public class EntityBoat extends Entity
 
             this.rotationPitch = 0.0F;
             d5 = (double)this.rotationYaw;
-            d10 = this.prevPosX - this.posX;
-            d11 = this.prevPosZ - this.posZ;
+            d11 = this.prevPosX - this.posX;
+            d10 = this.prevPosZ - this.posZ;
 
-            if (d10 * d10 + d11 * d11 > 0.001D)
+            if (d11 * d11 + d10 * d10 > 0.001D)
             {
-                d5 = (double)((float)(Math.atan2(d11, d10) * 180.0D / Math.PI));
+                d5 = (double)((float)(Math.atan2(d10, d11) * 180.0D / Math.PI));
             }
 
             double d12 = MathHelper.wrapAngleTo180_double(d5 - (double)this.rotationYaw);

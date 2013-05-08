@@ -3,6 +3,7 @@ package net.minecraft.util;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.ItemStack;
+
 public class EntityDamageSourceIndirect extends EntityDamageSource
 {
     private Entity indirectEntity;

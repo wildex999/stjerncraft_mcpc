@@ -187,7 +187,7 @@ public class ItemBlock extends Item
     {
         return Block.blocksList[this.blockID].getUnlocalizedName();
     }
-    
+
     /**
      * Called to actually place the block, after the location is determined
      * and all permission checks have been made.
@@ -210,5 +210,5 @@ public class ItemBlock extends Item
        }
 
        return true;
-    }    
+    }
 }

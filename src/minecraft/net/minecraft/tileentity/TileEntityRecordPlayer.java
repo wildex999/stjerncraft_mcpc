@@ -2,6 +2,7 @@ package net.minecraft.tileentity;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 public class TileEntityRecordPlayer extends TileEntity
 {
     /** ID of record which is in Jukebox */

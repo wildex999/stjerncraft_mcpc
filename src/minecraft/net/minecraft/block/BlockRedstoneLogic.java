@@ -157,7 +157,7 @@ public abstract class BlockRedstoneLogic extends BlockDirectional
     {
         int i1 = par1World.getBlockMetadata(par2, par3, par4);
 
-        if (!this.func_94476_e((IBlockAccess) par1World, par2, par3, par4, i1))
+        if (!this.func_94476_e(par1World, par2, par3, par4, i1))
         {
             boolean flag = this.func_94478_d(par1World, par2, par3, par4, i1);
 

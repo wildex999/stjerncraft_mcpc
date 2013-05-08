@@ -1,6 +1,7 @@
 package net.minecraft.entity.ai;
 
 import net.minecraft.entity.EntityLiving;
+
 public class EntityAIBreakDoor extends EntityAIDoorInteract
 {
     private int breakingTime;

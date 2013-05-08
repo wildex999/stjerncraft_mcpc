@@ -3,6 +3,7 @@ package net.minecraft.tileentity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet130UpdateSign;
+
 public class TileEntitySign extends TileEntity
 {
     /** An array of four strings storing the lines of text on the sign. */

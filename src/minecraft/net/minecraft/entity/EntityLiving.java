@@ -2515,14 +2515,14 @@ public abstract class EntityLiving extends Entity
                 {
                     this.dataWatcher.updateObject(9, Byte.valueOf((byte)0));
                     this.dataWatcher.updateObject(8, Integer.valueOf(0));
-                    this.setHasActivePotion(false);
+                    this.setInvisible(false);
                 }
                 else
                 {
                     i = PotionHelper.calcPotionLiquidColor(this.activePotionsMap.values());
                     this.dataWatcher.updateObject(9, Byte.valueOf((byte)(PotionHelper.func_82817_b(this.activePotionsMap.values()) ? 1 : 0)));
                     this.dataWatcher.updateObject(8, Integer.valueOf(i));
-                    this.setHasActivePotion(this.isPotionActive(Potion.invisibility.id));
+                    this.setInvisible(this.isPotionActive(Potion.invisibility.id));
                 }
             }
 
@@ -2536,7 +2536,7 @@ public abstract class EntityLiving extends Entity
         {
             boolean flag1 = false;
 
-            if (!this.getHasActivePotion())
+            if (!this.isInvisible())
             {
                 flag1 = this.rand.nextBoolean();
             }
