@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+
 public class EntityExpBottle extends EntityThrowable
 {
     public EntityExpBottle(World par1World)

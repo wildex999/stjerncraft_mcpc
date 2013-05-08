@@ -212,7 +212,7 @@ public class BlockSkull extends BlockContainer
             drops.add(itemstack);
         }
         return drops;
-    }    
+    }
 
     /**
      * Returns the ID of the items to drop on destruction.

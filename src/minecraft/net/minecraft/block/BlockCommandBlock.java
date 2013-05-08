@@ -89,7 +89,7 @@ public class BlockCommandBlock extends BlockContainer
 
         if (tileentitycommandblock != null)
         {
-            par5EntityPlayer.displayGUIEditSign((TileEntity) tileentitycommandblock);
+            par5EntityPlayer.displayGUIEditSign(tileentitycommandblock);
         }
 
         return true;
@@ -123,7 +123,7 @@ public class BlockCommandBlock extends BlockContainer
 
         if (par6ItemStack.hasDisplayName())
         {
-            tileentitycommandblock.func_96104_c(par6ItemStack.getDisplayName());
+            tileentitycommandblock.setCommandSenderName(par6ItemStack.getDisplayName());
         }
     }
 }

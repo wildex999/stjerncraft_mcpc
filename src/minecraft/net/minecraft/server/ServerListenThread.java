@@ -59,8 +59,8 @@ public class ServerListenThread extends Thread
                 catch (Exception exception)
                 {
                     netloginhandler.raiseErrorAndDisconnect("Internal server error");
-                    FMLLog.log(Level.SEVERE, exception, "Error handling login related packet - connection from %s refused", netloginhandler.getUsernameAndAddress());                    
-                    this.myNetworkListenThread.getServer().getLogAgent().logWarningException("Failed to handle packet for " + netloginhandler.getUsernameAndAddress() + ": " + exception, (Throwable) exception);
+                    FMLLog.log(Level.SEVERE, exception, "Error handling login related packet - connection from %s refused", netloginhandler.getUsernameAndAddress());
+                    this.myNetworkListenThread.getServer().getLogAgent().logWarningException("Failed to handle packet for " + netloginhandler.getUsernameAndAddress() + ": " + exception, exception);
                 }
 
                 if (netloginhandler.connectionComplete)
@@ -121,7 +121,7 @@ public class ServerListenThread extends Thread
     {
         if (par1NetLoginHandler == null)
         {
-            throw new IllegalArgumentException("Got null netloginhandler!");
+            throw new IllegalArgumentException("Got null pendingconnection!");
         }
         else
         {

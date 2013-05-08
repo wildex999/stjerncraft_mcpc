@@ -19,6 +19,10 @@ import org.bukkit.inventory.InventoryHolder;
 public abstract class EntityMinecartContainer extends EntityMinecart implements IInventory
 {
     private ItemStack[] minecartContainerItems = new ItemStack[27]; // CraftBukkit - 36 -> 27
+    /**
+     * When set to true, the minecart will drop all items when setDead() is called. When false (such as when travelling
+     * dimensions) it preserves its contents.
+     */
     private boolean dropContentsWhenDead = true;
 
     // CraftBukkit start
@@ -348,7 +352,7 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
 
     protected void applyDrag()
     {
-        int i = 15 - Container.func_94526_b((IInventory) this);
+        int i = 15 - Container.calcRedstoneFromInventory(this);
         float f = 0.98F + (float)i * 0.001F;
         this.motionX *= (double)f;
         this.motionY *= 0.0D;

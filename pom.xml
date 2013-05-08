@@ -4,18 +4,19 @@
 <groupId>mcpc</groupId>
 <artifactId>mcpc-plus</artifactId>
 <packaging>jar</packaging>
-<version>1.5.1-R0.3-SNAPSHOT</version>
+<version>1.5.2-R0.2-SNAPSHOT</version>
 <name>mcpc-plus</name>
 <url>http://www.mcportcentral.co.za/</url>
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <bukkit.version>${project.version}</bukkit.version>
     <api.version>unknown</api.version>
-    <minecraft.version>1.5.1</minecraft.version>
-    <minecraft_version>1_5_R2</minecraft_version>
-    <minecraft_version_download>1_5_1</minecraft_version_download>
-    <forge.build>682</forge.build>
-    <forge.version>7.7.2.${forge.build}</forge.version>
-    <forge.remapped.revision>R1-MCPC</forge.remapped.revision>
+    <minecraft.version>1.5.2</minecraft.version>
+    <minecraft_version>1_5_R3</minecraft_version>
+    <minecraft_server_url_download>http://s3.amazonaws.com/Minecraft.Download/versions/1.5.2/minecraft_server.1.5.2.jar</minecraft_server_url_download>
+    <forge.build>686</forge.build>
+    <forge.version>7.8.0.${forge.build}</forge.version>
+    <forge.remapped.revision>R3-MCPC</forge.remapped.revision>
     <fml.at>${basedir}/resources/fml_at.cfg</fml.at>
     <forge.at>${basedir}/resources/forge_at.cfg</forge.at>
     <mcp.mappings>${basedir}/resources/mappings/v${minecraft_version}/mcp/</mcp.mappings>
@@ -124,7 +125,7 @@
         <groupId>za.co.mcportcentral</groupId>
         <artifactId>mcpc-api</artifactId>
         <!-- Bukkit API -->
-        <version>${project.version}</version>
+        <version>${bukkit.version}</version>
         <type>jar</type>
         <scope>compile</scope>
     </dependency>
@@ -367,7 +368,7 @@
                         <artifactId>minecraft-forge</artifactId>
                         <version>${forge.version}-${forge.remapped.revision}</version>
                         <inJars>
-                            <param>http://assets.minecraft.net/${minecraft_version_download}/minecraft_server.jar</param>
+                            <param>${minecraft_server_url_download}</param>
                             <!-- <param>http://assets.minecraft.net/${minecraft_version}/minecraft.jar</param> -->
                             <param>http://files.minecraftforge.net/minecraftforge/minecraftforge-universal-${minecraft.version}-${forge.version}.zip</param>
                         </inJars>
@@ -387,15 +388,29 @@
                         <goal>remap</goal>
                     </goals>
                     <configuration>
-                        <!-- <srgIn>${basedir}/resources/mappings/v${minecraft_version}/pkgmcp2numpkg.srg</srgIn> -->
-                        <srgIn>${basedir}/resources/mappings/v${minecraft_version}/pkgmcp2obf.srg</srgIn> <!-- TODO: enable obfuscation, after fixing https://gist.github.com/agaricusb/5234401 java.lang.NoSuchFieldError: field_98131_l -->
+                        <srgIn>${basedir}/resources/mappings/v${minecraft_version}/pkgmcp2obf.srg</srgIn>
                         <remappedDependencies>
                             <param>net.minecraftforge:minecraft-forge:${forge.version}-${forge.remapped.revision}:jar</param>
                         </remappedDependencies>
                         <finalName>mcpc-plus-${project.version}-f${forge.build}-${buildNumber}</finalName>
                     </configuration>
                 </execution>
-            </executions>
+                <!-- 1.5.1 compatibility reobfuscation -->
+                <execution>
+                    <id>reobfuscate-151compat</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>remap</goal>
+                    </goals>
+                    <configuration>
+                        <srgIn>${basedir}/resources/mappings/v1_5_R2/pkgmcp2obf.srg</srgIn>
+                        <remappedDependencies>
+                            <param>net.minecraftforge:minecraft-forge:${forge.version}-${forge.remapped.revision}:jar</param>
+                        </remappedDependencies>
+                        <finalName>mcpc-plus-151compat-${project.version}-f${forge.build}-C${buildNumber}</finalName>
+                    </configuration>
+                </execution>
+             </executions>
         </plugin>
     </plugins>
     <pluginManagement>

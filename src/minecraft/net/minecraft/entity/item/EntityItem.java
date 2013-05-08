@@ -206,7 +206,7 @@ public class EntityItem extends Entity
         if (item != null && item.stackSize <= 0)
         {
             this.setDead();
-        }        
+        }
     }
 
     /**
@@ -297,7 +297,7 @@ public class EntityItem extends Entity
      */
     public boolean handleWaterMovement()
     {
-        return this.worldObj.handleMaterialAcceleration(this.boundingBox, Material.water, (Entity) this);
+        return this.worldObj.handleMaterialAcceleration(this.boundingBox, Material.water, this);
     }
 
     /**
@@ -445,22 +445,22 @@ public class EntityItem extends Entity
             {
                 if (itemstack.itemID == Block.wood.blockID)
                 {
-                    par1EntityPlayer.triggerAchievement((StatBase) AchievementList.mineWood);
+                    par1EntityPlayer.triggerAchievement(AchievementList.mineWood);
                 }
 
                 if (itemstack.itemID == Item.leather.itemID)
                 {
-                    par1EntityPlayer.triggerAchievement((StatBase) AchievementList.killCow);
+                    par1EntityPlayer.triggerAchievement(AchievementList.killCow);
                 }
 
                 if (itemstack.itemID == Item.diamond.itemID)
                 {
-                    par1EntityPlayer.triggerAchievement((StatBase) AchievementList.diamonds);
+                    par1EntityPlayer.triggerAchievement(AchievementList.diamonds);
                 }
 
                 if (itemstack.itemID == Item.blazeRod.itemID)
                 {
-                    par1EntityPlayer.triggerAchievement((StatBase) AchievementList.blazeRod);
+                    par1EntityPlayer.triggerAchievement(AchievementList.blazeRod);
                 }
 
                 GameRegistry.onPickupNotification(par1EntityPlayer, this);

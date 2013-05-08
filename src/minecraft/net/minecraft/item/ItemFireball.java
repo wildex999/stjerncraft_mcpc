@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+
 public class ItemFireball extends Item
 {
     public ItemFireball(int par1)

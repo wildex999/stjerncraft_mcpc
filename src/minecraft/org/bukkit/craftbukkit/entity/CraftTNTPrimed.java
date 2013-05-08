@@ -51,7 +51,7 @@ public class CraftTNTPrimed extends CraftEntity implements TNTPrimed {
     }
 
     public Entity getSource() {
-        net.minecraft.entity.EntityLiving source = getHandle().func_94083_c();
+        net.minecraft.entity.EntityLiving source = getHandle().getTntPlacedBy();
 
         if (source != null) {
             Entity bukkitEntity = source.getBukkitEntity();

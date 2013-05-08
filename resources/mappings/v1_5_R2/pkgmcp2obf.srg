@@ -1701,7 +1701,7 @@ FD: net/minecraft/block/BlockCarrot/iconArray all/a
 FD: net/minecraft/block/BlockCauldron/cauldronBottomIcon alm/c
 FD: net/minecraft/block/BlockCauldron/cauldronTopIcon alm/b
 FD: net/minecraft/block/BlockCauldron/field_94378_a alm/a
-FD: net/minecraft/block/BlockChest/field_94443_a aln/a
+FD: net/minecraft/block/BlockChest/isTrapped aln/a
 FD: net/minecraft/block/BlockChest/random aln/b
 FD: net/minecraft/block/BlockCloth/iconArray alp/a
 FD: net/minecraft/block/BlockCocoa/cocoaIcons alq/a
@@ -1739,8 +1739,8 @@ FD: net/minecraft/block/BlockFlowing/flowCost anf/c
 FD: net/minecraft/block/BlockFlowing/isOptimalFlowDirection anf/b
 FD: net/minecraft/block/BlockFlowing/numAdjacentSources anf/a
 FD: net/minecraft/block/BlockFluid/theIcon ane/a
-FD: net/minecraft/block/BlockFurnace/field_94458_cO amn/d
-FD: net/minecraft/block/BlockFurnace/field_94459_cP amn/e
+FD: net/minecraft/block/BlockFurnace/furnaceIconTop amn/d
+FD: net/minecraft/block/BlockFurnace/furnaceIconFront amn/e
 FD: net/minecraft/block/BlockFurnace/furnaceRand amn/a
 FD: net/minecraft/block/BlockFurnace/isActive amn/b
 FD: net/minecraft/block/BlockFurnace/keepFurnaceInventory amn/c
@@ -1778,9 +1778,9 @@ FD: net/minecraft/block/BlockPane/canDropItself aoz/b
 FD: net/minecraft/block/BlockPane/field_94402_c aoz/c
 FD: net/minecraft/block/BlockPane/sideTextureIndex aoz/a
 FD: net/minecraft/block/BlockPane/theIcon aoz/d
-FD: net/minecraft/block/BlockPistonBase/field_94497_cO aqt/d
-FD: net/minecraft/block/BlockPistonBase/field_94498_b aqt/b
-FD: net/minecraft/block/BlockPistonBase/field_94499_c aqt/c
+FD: net/minecraft/block/BlockPistonBase/topIcon aqt/d
+FD: net/minecraft/block/BlockPistonBase/innerTopIcon aqt/b
+FD: net/minecraft/block/BlockPistonBase/bottomIcon aqt/c
 FD: net/minecraft/block/BlockPistonBase/isSticky aqt/a
 FD: net/minecraft/block/BlockPistonExtension/headTexture aqu/a
 FD: net/minecraft/block/BlockPotato/iconArray anu/a
@@ -1849,8 +1849,8 @@ FD: net/minecraft/block/BlockWood/iconArray apu/c
 FD: net/minecraft/block/BlockWood/woodTextureTypes apu/b
 FD: net/minecraft/block/BlockWood/woodType apu/a
 FD: net/minecraft/block/BlockWoodSlab/woodType apt/b
-FD: net/minecraft/block/BlockWorkbench/field_94384_b apv/b
-FD: net/minecraft/block/BlockWorkbench/field_94385_a apv/a
+FD: net/minecraft/block/BlockWorkbench/workbenchIconFront apv/b
+FD: net/minecraft/block/BlockWorkbench/workbenchIconTop apv/a
 FD: net/minecraft/block/EnumMobType/$VALUES any/d
 FD: net/minecraft/block/EnumMobType/everything any/a
 FD: net/minecraft/block/EnumMobType/mobs any/b
@@ -2205,8 +2205,8 @@ FD: net/minecraft/client/gui/GuiFlatPresetsListSlot/flatPresetsGui axo/b
 FD: net/minecraft/client/gui/GuiGameOver/cooldownTimer awp/a
 FD: net/minecraft/client/gui/GuiHopper/field_94080_s azf/s
 FD: net/minecraft/client/gui/GuiHopper/field_94081_r azf/r
-FD: net/minecraft/client/gui/GuiIngame/field_92016_l aww/l
-FD: net/minecraft/client/gui/GuiIngame/field_92017_k aww/k
+FD: net/minecraft/client/gui/GuiIngame/highlightingItemStack aww/l
+FD: net/minecraft/client/gui/GuiIngame/remainingHighlightTicks aww/k
 FD: net/minecraft/client/gui/GuiIngame/itemRenderer aww/b
 FD: net/minecraft/client/gui/GuiIngame/mc aww/d
 FD: net/minecraft/client/gui/GuiIngame/persistantChatGUI aww/e
@@ -3046,7 +3046,7 @@ FD: net/minecraft/client/particle/EntityFX/particleGreen beu/au
 FD: net/minecraft/client/particle/EntityFX/particleMaxAge beu/g
 FD: net/minecraft/client/particle/EntityFX/particleRed beu/j
 FD: net/minecraft/client/particle/EntityFX/particleScale beu/h
-FD: net/minecraft/client/particle/EntityFX/particleTextureIndex beu/ax
+FD: net/minecraft/client/particle/EntityFX/particleIcon beu/ax
 FD: net/minecraft/client/particle/EntityFX/particleTextureIndexX beu/b
 FD: net/minecraft/client/particle/EntityFX/particleTextureIndexY beu/c
 FD: net/minecraft/client/particle/EntityFX/particleTextureJitterX beu/d
@@ -3920,7 +3920,7 @@ FD: net/minecraft/entity/Entity/entityRiderYawDelta mp/g
 FD: net/minecraft/entity/Entity/entityUniqueID mp/i
 FD: net/minecraft/entity/Entity/fallDistance mp/T
 FD: net/minecraft/entity/Entity/field_70135_K mp/L
-FD: net/minecraft/entity/Entity/field_82151_R mp/S
+FD: net/minecraft/entity/Entity/distanceWalkedOnStepModified mp/S
 FD: net/minecraft/entity/Entity/field_98038_p mp/p
 FD: net/minecraft/entity/Entity/fire mp/d
 FD: net/minecraft/entity/Entity/fireResistance mp/ad
@@ -4041,7 +4041,7 @@ FD: net/minecraft/entity/EntityLiving/field_70766_av ng/aD
 FD: net/minecraft/entity/EntityLiving/field_70768_au ng/aC
 FD: net/minecraft/entity/EntityLiving/field_70769_ao ng/aw
 FD: net/minecraft/entity/EntityLiving/field_70770_ap ng/ax
-FD: net/minecraft/entity/EntityLiving/field_82180_bT ng/bU
+FD: net/minecraft/entity/EntityLiving/previousEquipment ng/bU
 FD: net/minecraft/entity/EntityLiving/field_94063_bt ng/bt
 FD: net/minecraft/entity/EntityLiving/health ng/aS
 FD: net/minecraft/entity/EntityLiving/homePosition ng/bR
@@ -4547,15 +4547,15 @@ FD: net/minecraft/entity/passive/EntitySheep/aiEatGrass qo/g
 FD: net/minecraft/entity/passive/EntitySheep/field_90016_e qo/e
 FD: net/minecraft/entity/passive/EntitySheep/fleeceColorTable qo/d
 FD: net/minecraft/entity/passive/EntitySheep/sheepTimer qo/f
-FD: net/minecraft/entity/passive/EntitySquid/field_70859_f qr/f
-FD: net/minecraft/entity/passive/EntitySquid/field_70860_g qr/g
-FD: net/minecraft/entity/passive/EntitySquid/field_70861_d qr/d
-FD: net/minecraft/entity/passive/EntitySquid/field_70862_e qr/e
+FD: net/minecraft/entity/passive/EntitySquid/squidYaw qr/f
+FD: net/minecraft/entity/passive/EntitySquid/prevSquidYaw qr/g
+FD: net/minecraft/entity/passive/EntitySquid/squidPitch qr/d
+FD: net/minecraft/entity/passive/EntitySquid/prevSquidPitch qr/e
 FD: net/minecraft/entity/passive/EntitySquid/field_70864_bA qr/bM
 FD: net/minecraft/entity/passive/EntitySquid/field_70867_h qr/h
 FD: net/minecraft/entity/passive/EntitySquid/field_70868_i qr/i
 FD: net/minecraft/entity/passive/EntitySquid/field_70871_bB qr/bN
-FD: net/minecraft/entity/passive/EntitySquid/lastTentacleAngle qr/bK
+FD: net/minecraft/entity/passive/EntitySquid/prevTentacleAngle qr/bK
 FD: net/minecraft/entity/passive/EntitySquid/randomMotionSpeed qr/bL
 FD: net/minecraft/entity/passive/EntitySquid/randomMotionVecX qr/bO
 FD: net/minecraft/entity/passive/EntitySquid/randomMotionVecY qr/bP
@@ -4935,7 +4935,7 @@ FD: net/minecraft/item/Item/hoeGold wk/S
 FD: net/minecraft/item/Item/hoeIron wk/Q
 FD: net/minecraft/item/Item/hoeStone wk/P
 FD: net/minecraft/item/Item/hoeWood wk/O
-FD: net/minecraft/item/Item/hopperMinecart wk/cc
+FD: net/minecraft/item/Item/minecartHopper wk/cc
 FD: net/minecraft/item/Item/ingotGold wk/q
 FD: net/minecraft/item/Item/ingotIron wk/p
 FD: net/minecraft/item/Item/itemFrame wk/bJ
@@ -5024,7 +5024,7 @@ FD: net/minecraft/item/Item/swordIron wk/r
 FD: net/minecraft/item/Item/swordStone wk/w
 FD: net/minecraft/item/Item/swordWood wk/s
 FD: net/minecraft/item/Item/tabToDisplayOn wk/a
-FD: net/minecraft/item/Item/tntMinecart wk/cb
+FD: net/minecraft/item/Item/minecartTnt wk/cb
 FD: net/minecraft/item/Item/unlocalizedName wk/cu
 FD: net/minecraft/item/Item/wheat wk/U
 FD: net/minecraft/item/Item/writableBook wk/bG
@@ -5751,10 +5751,10 @@ FD: net/minecraft/scoreboard/ScorePlayerTeam/field_96672_g arf/g
 FD: net/minecraft/scoreboard/ScorePlayerTeam/field_96673_d arf/d
 FD: net/minecraft/scoreboard/ScorePlayerTeam/field_96674_e arf/e
 FD: net/minecraft/scoreboard/ScorePlayerTeam/field_96675_b arf/b
-FD: net/minecraft/scoreboard/ScorePlayerTeam/field_96676_c arf/c
-FD: net/minecraft/scoreboard/ScorePlayerTeam/field_96677_a arf/a
+FD: net/minecraft/scoreboard/ScorePlayerTeam/membershipSet arf/c
+FD: net/minecraft/scoreboard/ScorePlayerTeam/theScoreboard arf/a
 FD: net/minecraft/scoreboard/ScorePlayerTeam/field_98301_h arf/h
-FD: net/minecraft/scoreboard/Scoreboard/field_96540_f arj/f
+FD: net/minecraft/scoreboard/Scoreboard/teamMemberships arj/f
 FD: net/minecraft/scoreboard/Scoreboard/field_96541_d arj/d
 FD: net/minecraft/scoreboard/Scoreboard/field_96542_e arj/e
 FD: net/minecraft/scoreboard/Scoreboard/field_96543_b arj/b
@@ -6074,12 +6074,12 @@ FD: net/minecraft/tileentity/TileEntityChest/numUsingPlayers apy/h
 FD: net/minecraft/tileentity/TileEntityChest/prevLidAngle apy/g
 FD: net/minecraft/tileentity/TileEntityChest/ticksSinceSync apy/j
 FD: net/minecraft/tileentity/TileEntityCommandBlock/command apz/b
-FD: net/minecraft/tileentity/TileEntityCommandBlock/field_96105_c apz/c
-FD: net/minecraft/tileentity/TileEntityCommandBlock/field_96106_a apz/a
+FD: net/minecraft/tileentity/TileEntityCommandBlock/commandSenderName apz/c
+FD: net/minecraft/tileentity/TileEntityCommandBlock/succesCount apz/a
 FD: net/minecraft/tileentity/TileEntityComparator/field_96101_a aqa/a
 FD: net/minecraft/tileentity/TileEntityDispenser/dispenserContents aqc/b
 FD: net/minecraft/tileentity/TileEntityDispenser/dispenserRandom aqc/c
-FD: net/minecraft/tileentity/TileEntityDispenser/field_94050_c aqc/a
+FD: net/minecraft/tileentity/TileEntityDispenser/customName aqc/a
 FD: net/minecraft/tileentity/TileEntityEnchantmentTable/bookRotation aqe/j
 FD: net/minecraft/tileentity/TileEntityEnchantmentTable/bookRotation2 aqe/h
 FD: net/minecraft/tileentity/TileEntityEnchantmentTable/bookRotationPrev aqe/i
@@ -6294,7 +6294,7 @@ FD: net/minecraft/util/FoodStats/prevFoodLevel ti/e
 FD: net/minecraft/util/HttpUtilRunnable/destinationFile ko/d
 FD: net/minecraft/util/HttpUtilRunnable/downloadSuccess ko/e
 FD: net/minecraft/util/HttpUtilRunnable/feedbackHook ko/a
-FD: net/minecraft/util/HttpUtilRunnable/field_76173_f ko/f
+FD: net/minecraft/util/HttpUtilRunnable/maxFileSize ko/f
 FD: net/minecraft/util/HttpUtilRunnable/field_76177_c ko/c
 FD: net/minecraft/util/HttpUtilRunnable/sourceURL ko/b
 FD: net/minecraft/util/IntHashMap/count kr/b
@@ -7150,7 +7150,7 @@ MD: net/minecraft/block/Block/dropBlockAsItemWithChance (Lnet/minecraft/world/Wo
 MD: net/minecraft/block/Block/dropBlockAsItem_do (Lnet/minecraft/world/World;IIILnet/minecraft/item/ItemStack;)V apa/b (Laab;IIILwm;)V
 MD: net/minecraft/block/Block/dropXpOnBlockBreak (Lnet/minecraft/world/World;IIII)V apa/j (Laab;IIII)V
 MD: net/minecraft/block/Block/fillWithRain (Lnet/minecraft/world/World;III)V apa/g (Laab;III)V
-MD: net/minecraft/block/Block/func_82505_u_ ()Z apa/t_ ()Z
+MD: net/minecraft/block/Block/isFlowerPot ()Z apa/t_ ()Z
 MD: net/minecraft/block/Block/func_82506_l ()Z apa/l ()Z
 MD: net/minecraft/block/Block/getAmbientOcclusionLightValue (Lnet/minecraft/world/IBlockAccess;III)F apa/i (Laak;III)F
 MD: net/minecraft/block/Block/getBlockBoundsMaxX ()D apa/v ()D
@@ -7287,7 +7287,7 @@ MD: net/minecraft/block/BlockBaseRailLogic/isRailChunkPositionCorrect (Lnet/mine
 MD: net/minecraft/block/BlockBaseRailLogic/refreshConnectedTracks ()V alc/b ()V
 MD: net/minecraft/block/BlockBaseRailLogic/setBasicRail (I)V alc/a (I)V
 MD: net/minecraft/block/BlockBeacon/createNewTileEntity (Lnet/minecraft/world/World;)Lnet/minecraft/tileentity/TileEntity; ald/b (Laab;)Laqp;
-MD: net/minecraft/block/BlockBeacon/func_94446_i ()Lnet/minecraft/util/Icon; ald/i ()Llx;
+MD: net/minecraft/block/BlockBeacon/getBeaconIcon ()Lnet/minecraft/util/Icon; ald/i ()Llx;
 MD: net/minecraft/block/BlockBeacon/getRenderType ()I ald/d ()I
 MD: net/minecraft/block/BlockBeacon/isOpaqueCube ()Z ald/c ()Z
 MD: net/minecraft/block/BlockBeacon/onBlockActivated (Lnet/minecraft/world/World;IIILnet/minecraft/entity/player/EntityPlayer;IFFF)Z ald/a (Laab;IIILsq;IFFF)Z
@@ -7321,7 +7321,7 @@ MD: net/minecraft/block/BlockBreakable/shouldSideBeRendered (Lnet/minecraft/worl
 MD: net/minecraft/block/BlockBrewingStand/addCollisionBoxesToList (Lnet/minecraft/world/World;IIILnet/minecraft/util/AxisAlignedBB;Ljava/util/List;Lnet/minecraft/entity/Entity;)V alg/a (Laab;IIILaqx;Ljava/util/List;Lmp;)V
 MD: net/minecraft/block/BlockBrewingStand/breakBlock (Lnet/minecraft/world/World;IIIII)V alg/a (Laab;IIIII)V
 MD: net/minecraft/block/BlockBrewingStand/createNewTileEntity (Lnet/minecraft/world/World;)Lnet/minecraft/tileentity/TileEntity; alg/b (Laab;)Laqp;
-MD: net/minecraft/block/BlockBrewingStand/func_94448_e ()Lnet/minecraft/util/Icon; alg/i ()Llx;
+MD: net/minecraft/block/BlockBrewingStand/getBrewingStandIcon ()Lnet/minecraft/util/Icon; alg/i ()Llx;
 MD: net/minecraft/block/BlockBrewingStand/getComparatorInputOverride (Lnet/minecraft/world/World;IIII)I alg/b_ (Laab;IIII)I
 MD: net/minecraft/block/BlockBrewingStand/getRenderType ()I alg/d ()I
 MD: net/minecraft/block/BlockBrewingStand/hasComparatorInputOverride ()Z alg/q_ ()Z
@@ -7501,7 +7501,7 @@ MD: net/minecraft/block/BlockCrops/registerIcons (Lnet/minecraft/client/renderer
 MD: net/minecraft/block/BlockCrops/updateTick (Lnet/minecraft/world/World;IIILjava/util/Random;)V alu/a (Laab;IIILjava/util/Random;)V
 MD: net/minecraft/block/BlockDaylightDetector/canProvidePower ()Z alv/f ()Z
 MD: net/minecraft/block/BlockDaylightDetector/createNewTileEntity (Lnet/minecraft/world/World;)Lnet/minecraft/tileentity/TileEntity; alv/b (Laab;)Laqp;
-MD: net/minecraft/block/BlockDaylightDetector/func_94444_j_ (Lnet/minecraft/world/World;III)V alv/i_ (Laab;III)V
+MD: net/minecraft/block/BlockDaylightDetector/updateLightLevel (Lnet/minecraft/world/World;III)V alv/i_ (Laab;III)V
 MD: net/minecraft/block/BlockDaylightDetector/getIcon (II)Lnet/minecraft/util/Icon; alv/a (II)Llx;
 MD: net/minecraft/block/BlockDaylightDetector/isOpaqueCube ()Z alv/c ()Z
 MD: net/minecraft/block/BlockDaylightDetector/isProvidingWeakPower (Lnet/minecraft/world/IBlockAccess;IIII)I alv/b (Laak;IIII)I
@@ -7706,7 +7706,7 @@ MD: net/minecraft/block/BlockFlower/renderAsNormalBlock ()Z alh/b ()Z
 MD: net/minecraft/block/BlockFlower/updateTick (Lnet/minecraft/world/World;IIILjava/util/Random;)V alh/a (Laab;IIILjava/util/Random;)V
 MD: net/minecraft/block/BlockFlowerPot/canPlaceBlockAt (Lnet/minecraft/world/World;III)Z amm/c (Laab;III)Z
 MD: net/minecraft/block/BlockFlowerPot/dropBlockAsItemWithChance (Lnet/minecraft/world/World;IIIIFI)V amm/a (Laab;IIIIFI)V
-MD: net/minecraft/block/BlockFlowerPot/func_82505_u_ ()Z amm/t_ ()Z
+MD: net/minecraft/block/BlockFlowerPot/isFlowerPot ()Z amm/t_ ()Z
 MD: net/minecraft/block/BlockFlowerPot/getDamageValue (Lnet/minecraft/world/World;III)I amm/h (Laab;III)I
 MD: net/minecraft/block/BlockFlowerPot/getMetaForPlant (Lnet/minecraft/item/ItemStack;)I amm/a (Lwm;)I
 MD: net/minecraft/block/BlockFlowerPot/getPlantForMeta (I)Lnet/minecraft/item/ItemStack; amm/n_ (I)Lwm;
@@ -7806,8 +7806,8 @@ MD: net/minecraft/block/BlockHalfSlab/shouldSideBeRendered (Lnet/minecraft/world
 MD: net/minecraft/block/BlockHopper/addCollisionBoxesToList (Lnet/minecraft/world/World;IIILnet/minecraft/util/AxisAlignedBB;Ljava/util/List;Lnet/minecraft/entity/Entity;)V amw/a (Laab;IIILaqx;Ljava/util/List;Lmp;)V
 MD: net/minecraft/block/BlockHopper/breakBlock (Lnet/minecraft/world/World;IIIII)V amw/a (Laab;IIIII)V
 MD: net/minecraft/block/BlockHopper/createNewTileEntity (Lnet/minecraft/world/World;)Lnet/minecraft/tileentity/TileEntity; amw/b (Laab;)Laqp;
-MD: net/minecraft/block/BlockHopper/func_94452_d (I)Z amw/d (I)Z
-MD: net/minecraft/block/BlockHopper/func_96471_k (Lnet/minecraft/world/World;III)V amw/k (Laab;III)V
+MD: net/minecraft/block/BlockHopper/getIsBlockNotPoweredFromMetadata (I)Z amw/d (I)Z
+MD: net/minecraft/block/BlockHopper/updateMetadata (Lnet/minecraft/world/World;III)V amw/k (Laab;III)V
 MD: net/minecraft/block/BlockHopper/getComparatorInputOverride (Lnet/minecraft/world/World;IIII)I amw/b_ (Laab;IIII)I
 MD: net/minecraft/block/BlockHopper/getDirectionFromMetadata (I)I amw/c (I)I
 MD: net/minecraft/block/BlockHopper/getHopperIcon (Ljava/lang/String;)Lnet/minecraft/util/Icon; amw/b (Ljava/lang/String;)Llx;
@@ -8225,7 +8225,7 @@ MD: net/minecraft/block/BlockSandStone/getIcon (II)Lnet/minecraft/util/Icon; aoj
 MD: net/minecraft/block/BlockSandStone/getSubBlocks (ILnet/minecraft/creativetab/CreativeTabs;Ljava/util/List;)V aoj/a (ILve;Ljava/util/List;)V
 MD: net/minecraft/block/BlockSandStone/registerIcons (Lnet/minecraft/client/renderer/texture/IconRegister;)V aoj/a (Lly;)V
 MD: net/minecraft/block/BlockSapling/damageDropped (I)I aok/a (I)I
-MD: net/minecraft/block/BlockSapling/func_96477_c (Lnet/minecraft/world/World;IIILjava/util/Random;)V aok/c (Laab;IIILjava/util/Random;)V
+MD: net/minecraft/block/BlockSapling/markOrGrowMarked (Lnet/minecraft/world/World;IIILjava/util/Random;)V aok/c (Laab;IIILjava/util/Random;)V
 MD: net/minecraft/block/BlockSapling/getIcon (II)Lnet/minecraft/util/Icon; aok/a (II)Llx;
 MD: net/minecraft/block/BlockSapling/getSubBlocks (ILnet/minecraft/creativetab/CreativeTabs;Ljava/util/List;)V aok/a (ILve;Ljava/util/List;)V
 MD: net/minecraft/block/BlockSapling/growTree (Lnet/minecraft/world/World;IIILjava/util/Random;)V aok/d (Laab;IIILjava/util/Random;)V
@@ -8275,7 +8275,7 @@ MD: net/minecraft/block/BlockSkull/renderAsNormalBlock ()Z aom/b ()Z
 MD: net/minecraft/block/BlockSkull/setBlockBoundsBasedOnState (Lnet/minecraft/world/IBlockAccess;III)V aom/a (Laak;III)V
 MD: net/minecraft/block/BlockSnow/canPlaceBlockAt (Lnet/minecraft/world/World;III)Z apg/c (Laab;III)Z
 MD: net/minecraft/block/BlockSnow/canSnowStay (Lnet/minecraft/world/World;III)Z apg/m (Laab;III)Z
-MD: net/minecraft/block/BlockSnow/func_96478_d (I)V apg/d (I)V
+MD: net/minecraft/block/BlockSnow/setBlockBoundsForSnowDepth (I)V apg/d (I)V
 MD: net/minecraft/block/BlockSnow/getCollisionBoundingBoxFromPool (Lnet/minecraft/world/World;III)Lnet/minecraft/util/AxisAlignedBB; apg/b (Laab;III)Laqx;
 MD: net/minecraft/block/BlockSnow/harvestBlock (Lnet/minecraft/world/World;Lnet/minecraft/entity/player/EntityPlayer;IIII)V apg/a (Laab;Lsq;IIII)V
 MD: net/minecraft/block/BlockSnow/idDropped (ILjava/util/Random;I)I apg/a (ILjava/util/Random;I)I
@@ -8731,8 +8731,8 @@ MD: net/minecraft/client/entity/EntityPlayerSP/displayGUIEnchantment (IIILjava/l
 MD: net/minecraft/client/entity/EntityPlayerSP/displayGUIFurnace (Lnet/minecraft/tileentity/TileEntityFurnace;)V bfk/a (Laqg;)V
 MD: net/minecraft/client/entity/EntityPlayerSP/displayGUIMerchant (Lnet/minecraft/entity/IMerchant;Ljava/lang/String;)V bfk/a (Lzp;Ljava/lang/String;)V
 MD: net/minecraft/client/entity/EntityPlayerSP/displayGUIWorkbench (III)V bfk/b (III)V
-MD: net/minecraft/client/entity/EntityPlayerSP/func_94064_a (Lnet/minecraft/tileentity/TileEntityHopper;)V bfk/a (Laqi;)V
-MD: net/minecraft/client/entity/EntityPlayerSP/func_96125_a (Lnet/minecraft/entity/item/EntityMinecartHopper;)V bfk/a (Lrm;)V
+MD: net/minecraft/client/entity/EntityPlayerSP/displayGUIHopper (Lnet/minecraft/tileentity/TileEntityHopper;)V bfk/a (Laqi;)V
+MD: net/minecraft/client/entity/EntityPlayerSP/displayGUIHopperMinecart (Lnet/minecraft/entity/item/EntityMinecartHopper;)V bfk/a (Lrm;)V
 MD: net/minecraft/client/entity/EntityPlayerSP/getFOVMultiplier ()F bfk/g ()F
 MD: net/minecraft/client/entity/EntityPlayerSP/getHeldItem ()Lnet/minecraft/item/ItemStack; bfk/bG ()Lwm;
 MD: net/minecraft/client/entity/EntityPlayerSP/getPlayerCoordinates ()Lnet/minecraft/util/ChunkCoordinates; bfk/b ()Lt;
@@ -8752,7 +8752,7 @@ MD: net/minecraft/client/entity/EntityPlayerSP/setSprinting (Z)V bfk/c (Z)V
 MD: net/minecraft/client/entity/EntityPlayerSP/setXPStats (FII)V bfk/a (FII)V
 MD: net/minecraft/client/entity/EntityPlayerSP/updateCloak ()V bfk/ac ()V
 MD: net/minecraft/client/entity/EntityPlayerSP/updateEntityActionState ()V bfk/bq ()V
-MD: net/minecraft/client/entity/render/RenderMinecartMobSpawner/func_94144_a (Lnet/minecraft/entity/item/EntityMinecart;FLnet/minecraft/block/Block;I)V bho/a (Lri;FLapa;I)V
+MD: net/minecraft/client/entity/render/RenderMinecartMobSpawner/renderBlockInMinecart (Lnet/minecraft/entity/item/EntityMinecart;FLnet/minecraft/block/Block;I)V bho/a (Lri;FLapa;I)V
 MD: net/minecraft/client/entity/render/RenderMinecartMobSpawner/func_98192_a (Lnet/minecraft/entity/ai/EntityMinecartMobSpawner;FLnet/minecraft/block/Block;I)V bho/a (Lro;FLapa;I)V
 MD: net/minecraft/client/gui/ChatClickData/findClickedUrl ()Ljava/lang/String; awy/h ()Ljava/lang/String;
 MD: net/minecraft/client/gui/ChatClickData/getClickedUrl ()Ljava/lang/String; awy/f ()Ljava/lang/String;
@@ -8840,7 +8840,7 @@ MD: net/minecraft/client/gui/GuiConfirmOpenLink/func_92026_h ()V bdn/h ()V
 MD: net/minecraft/client/gui/GuiConfirmOpenLink/initGui ()V bdn/A_ ()V
 MD: net/minecraft/client/gui/GuiControls/actionPerformed (Lnet/minecraft/client/gui/GuiButton;)V awl/a (Lawg;)V
 MD: net/minecraft/client/gui/GuiControls/drawScreen (IIF)V awl/a (IIF)V
-MD: net/minecraft/client/gui/GuiControls/func_73907_g ()I awl/g ()I
+MD: net/minecraft/client/gui/GuiControls/getLeftBorder ()I awl/g ()I
 MD: net/minecraft/client/gui/GuiControls/initGui ()V awl/A_ ()V
 MD: net/minecraft/client/gui/GuiControls/keyTyped (CI)V awl/a (CI)V
 MD: net/minecraft/client/gui/GuiControls/mouseClicked (III)V awl/a (III)V
@@ -9341,8 +9341,8 @@ MD: net/minecraft/client/gui/GuiTextField/deleteWords (I)V aws/a (I)V
 MD: net/minecraft/client/gui/GuiTextField/drawCursorVertical (IIII)V aws/c (IIII)V
 MD: net/minecraft/client/gui/GuiTextField/drawTextBox ()V aws/f ()V
 MD: net/minecraft/client/gui/GuiTextField/func_73798_a (IIZ)I aws/a (IIZ)I
-MD: net/minecraft/client/gui/GuiTextField/func_82265_c (Z)V aws/c (Z)V
-MD: net/minecraft/client/gui/GuiTextField/func_82266_h (I)V aws/h (I)V
+MD: net/minecraft/client/gui/GuiTextField/setEnabled (Z)V aws/c (Z)V
+MD: net/minecraft/client/gui/GuiTextField/setDisabledTextColour (I)V aws/h (I)V
 MD: net/minecraft/client/gui/GuiTextField/getCursorPosition ()I aws/h ()I
 MD: net/minecraft/client/gui/GuiTextField/getEnableBackgroundDrawing ()Z aws/i ()Z
 MD: net/minecraft/client/gui/GuiTextField/getMaxStringLength ()I aws/g ()I
@@ -9903,7 +9903,7 @@ MD: net/minecraft/client/multiplayer/PlayerControllerMP/func_78752_a (Lnet/minec
 MD: net/minecraft/client/multiplayer/PlayerControllerMP/func_78754_a (Lnet/minecraft/world/World;)Lnet/minecraft/client/entity/EntityClientPlayerMP; bds/a (Laab;)Lbdw;
 MD: net/minecraft/client/multiplayer/PlayerControllerMP/func_78763_f ()Z bds/f ()Z
 MD: net/minecraft/client/multiplayer/PlayerControllerMP/func_78768_b (Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/entity/Entity;)Z bds/b (Lsq;Lmp;)Z
-MD: net/minecraft/client/multiplayer/PlayerControllerMP/func_85182_a (III)Z bds/a (III)Z
+MD: net/minecraft/client/multiplayer/PlayerControllerMP/sameToolAndBlock (III)Z bds/a (III)Z
 MD: net/minecraft/client/multiplayer/PlayerControllerMP/getBlockReachDistance ()F bds/d ()F
 MD: net/minecraft/client/multiplayer/PlayerControllerMP/isInCreativeMode ()Z bds/h ()Z
 MD: net/minecraft/client/multiplayer/PlayerControllerMP/isNotCreative ()Z bds/g ()Z
@@ -9953,7 +9953,7 @@ MD: net/minecraft/client/multiplayer/WorldClient/addEntityToWorld (ILnet/minecra
 MD: net/minecraft/client/multiplayer/WorldClient/addWorldInfoToCrashReport (Lnet/minecraft/crash/CrashReport;)Lnet/minecraft/crash/CrashReportCategory; bdt/a (Lb;)Lm;
 MD: net/minecraft/client/multiplayer/WorldClient/createChunkProvider ()Lnet/minecraft/world/chunk/IChunkProvider; bdt/j ()Labt;
 MD: net/minecraft/client/multiplayer/WorldClient/doPreChunk (IIZ)V bdt/a (IIZ)V
-MD: net/minecraft/client/multiplayer/WorldClient/func_73029_E (III)V bdt/I (III)V
+MD: net/minecraft/client/multiplayer/WorldClient/doVoidFogParticles (III)V bdt/I (III)V
 MD: net/minecraft/client/multiplayer/WorldClient/func_82735_a (Lnet/minecraft/entity/item/EntityMinecart;)Lnet/minecraft/server/gui/IUpdatePlayerListBox; bdt/a (Lri;)Lgy;
 MD: net/minecraft/client/multiplayer/WorldClient/func_92088_a (DDDDDDLnet/minecraft/nbt/NBTTagCompound;)V bdt/a (DDDDDDLbs;)V
 MD: net/minecraft/client/multiplayer/WorldClient/func_96443_a (Lnet/minecraft/scoreboard/Scoreboard;)V bdt/a (Larj;)V
@@ -10233,11 +10233,11 @@ MD: net/minecraft/client/renderer/RenderBlocks/renderBlockTripWireSource (Lnet/m
 MD: net/minecraft/client/renderer/RenderBlocks/renderBlockUsingTexture (Lnet/minecraft/block/Block;IIILnet/minecraft/util/Icon;)V bgg/a (Lapa;IIILlx;)V
 MD: net/minecraft/client/renderer/RenderBlocks/renderBlockVine (Lnet/minecraft/block/Block;III)Z bgg/j (Lapa;III)Z
 MD: net/minecraft/client/renderer/RenderBlocks/renderBlockWall (Lnet/minecraft/block/BlockWall;III)Z bgg/a (Lapo;III)Z
-MD: net/minecraft/client/renderer/RenderBlocks/renderBottomFace (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/a (Lapa;DDDLlx;)V
+MD: net/minecraft/client/renderer/RenderBlocks/renderFaceYNeg (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/a (Lapa;DDDLlx;)V
 MD: net/minecraft/client/renderer/RenderBlocks/renderCrossedSquares (Lnet/minecraft/block/Block;III)Z bgg/k (Lapa;III)Z
-MD: net/minecraft/client/renderer/RenderBlocks/renderEastFace (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/c (Lapa;DDDLlx;)V
+MD: net/minecraft/client/renderer/RenderBlocks/renderFaceZNeg (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/c (Lapa;DDDLlx;)V
 MD: net/minecraft/client/renderer/RenderBlocks/renderItemIn3d (I)Z bgg/a (I)Z
-MD: net/minecraft/client/renderer/RenderBlocks/renderNorthFace (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/e (Lapa;DDDLlx;)V
+MD: net/minecraft/client/renderer/RenderBlocks/renderFaceXNeg (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/e (Lapa;DDDLlx;)V
 MD: net/minecraft/client/renderer/RenderBlocks/renderPistonBase (Lnet/minecraft/block/Block;IIIZ)Z bgg/b (Lapa;IIIZ)Z
 MD: net/minecraft/client/renderer/RenderBlocks/renderPistonBaseAllFaces (Lnet/minecraft/block/Block;III)V bgg/d (Lapa;III)V
 MD: net/minecraft/client/renderer/RenderBlocks/renderPistonExtension (Lnet/minecraft/block/Block;IIIZ)Z bgg/c (Lapa;IIIZ)Z
@@ -10245,13 +10245,13 @@ MD: net/minecraft/client/renderer/RenderBlocks/renderPistonExtensionAllFaces (Ln
 MD: net/minecraft/client/renderer/RenderBlocks/renderPistonRodEW (DDDDDDFD)V bgg/c (DDDDDDFD)V
 MD: net/minecraft/client/renderer/RenderBlocks/renderPistonRodSN (DDDDDDFD)V bgg/b (DDDDDDFD)V
 MD: net/minecraft/client/renderer/RenderBlocks/renderPistonRodUD (DDDDDDFD)V bgg/a (DDDDDDFD)V
-MD: net/minecraft/client/renderer/RenderBlocks/renderSouthFace (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/f (Lapa;DDDLlx;)V
+MD: net/minecraft/client/renderer/RenderBlocks/renderFaceXPos (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/f (Lapa;DDDLlx;)V
 MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlock (Lnet/minecraft/block/Block;III)Z bgg/p (Lapa;III)Z
 MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithAmbientOcclusion (Lnet/minecraft/block/Block;IIIFFF)Z bgg/a (Lapa;IIIFFF)Z
 MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithColorMultiplier (Lnet/minecraft/block/Block;IIIFFF)Z bgg/d (Lapa;IIIFFF)Z
-MD: net/minecraft/client/renderer/RenderBlocks/renderTopFace (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/b (Lapa;DDDLlx;)V
+MD: net/minecraft/client/renderer/RenderBlocks/renderFaceYPos (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/b (Lapa;DDDLlx;)V
 MD: net/minecraft/client/renderer/RenderBlocks/renderTorchAtAngle (Lnet/minecraft/block/Block;DDDDDI)V bgg/a (Lapa;DDDDDI)V
-MD: net/minecraft/client/renderer/RenderBlocks/renderWestFace (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/d (Lapa;DDDLlx;)V
+MD: net/minecraft/client/renderer/RenderBlocks/renderFaceZPos (Lnet/minecraft/block/Block;DDDLnet/minecraft/util/Icon;)V bgg/d (Lapa;DDDLlx;)V
 MD: net/minecraft/client/renderer/RenderBlocks/setOverrideBlockTexture (Lnet/minecraft/util/Icon;)V bgg/a (Llx;)V
 MD: net/minecraft/client/renderer/RenderBlocks/setRenderBounds (DDDDDD)V bgg/a (DDDDDD)V
 MD: net/minecraft/client/renderer/RenderBlocks/setRenderBoundsFromBlock (Lnet/minecraft/block/Block;)V bgg/a (Lapa;)V
@@ -10507,7 +10507,7 @@ MD: net/minecraft/client/renderer/entity/RenderManager/renderEntityWithPosYaw (L
 MD: net/minecraft/client/renderer/entity/RenderManager/set (Lnet/minecraft/world/World;)V bgz/a (Laab;)V
 MD: net/minecraft/client/renderer/entity/RenderManager/updateIcons (Lnet/minecraft/client/renderer/texture/IconRegister;)V bgz/a (Lly;)V
 MD: net/minecraft/client/renderer/entity/RenderMinecart/doRender (Lnet/minecraft/entity/Entity;DDDFF)V bhn/a (Lmp;DDDFF)V
-MD: net/minecraft/client/renderer/entity/RenderMinecart/func_94144_a (Lnet/minecraft/entity/item/EntityMinecart;FLnet/minecraft/block/Block;I)V bhn/a (Lri;FLapa;I)V
+MD: net/minecraft/client/renderer/entity/RenderMinecart/renderBlockInMinecart (Lnet/minecraft/entity/item/EntityMinecart;FLnet/minecraft/block/Block;I)V bhn/a (Lri;FLapa;I)V
 MD: net/minecraft/client/renderer/entity/RenderMinecart/renderTheMinecart (Lnet/minecraft/entity/item/EntityMinecart;DDDFF)V bhn/a (Lri;DDDFF)V
 MD: net/minecraft/client/renderer/entity/RenderMooshroom/doRender (Lnet/minecraft/entity/Entity;DDDFF)V bhq/a (Lmp;DDDFF)V
 MD: net/minecraft/client/renderer/entity/RenderMooshroom/doRenderLiving (Lnet/minecraft/entity/EntityLiving;DDDFF)V bhq/a (Lng;DDDFF)V
@@ -10583,7 +10583,7 @@ MD: net/minecraft/client/renderer/entity/RenderSquid/rotateCorpse (Lnet/minecraf
 MD: net/minecraft/client/renderer/entity/RenderSquid/rotateSquidsCorpse (Lnet/minecraft/entity/passive/EntitySquid;FFF)V bib/a (Lqr;FFF)V
 MD: net/minecraft/client/renderer/entity/RenderTNTPrimed/doRender (Lnet/minecraft/entity/Entity;DDDFF)V bid/a (Lmp;DDDFF)V
 MD: net/minecraft/client/renderer/entity/RenderTNTPrimed/renderPrimedTNT (Lnet/minecraft/entity/item/EntityTNTPrimed;DDDFF)V bid/a (Lrr;DDDFF)V
-MD: net/minecraft/client/renderer/entity/RenderTntMinecart/func_94144_a (Lnet/minecraft/entity/item/EntityMinecart;FLnet/minecraft/block/Block;I)V bic/a (Lri;FLapa;I)V
+MD: net/minecraft/client/renderer/entity/RenderTntMinecart/renderBlockInMinecart (Lnet/minecraft/entity/item/EntityMinecart;FLnet/minecraft/block/Block;I)V bic/a (Lri;FLapa;I)V
 MD: net/minecraft/client/renderer/entity/RenderTntMinecart/func_94146_a (Lnet/minecraft/entity/item/EntityMinecartTNT;FLnet/minecraft/block/Block;I)V bic/a (Lrq;FLapa;I)V
 MD: net/minecraft/client/renderer/entity/RenderVillager/doRender (Lnet/minecraft/entity/Entity;DDDFF)V bif/a (Lmp;DDDFF)V
 MD: net/minecraft/client/renderer/entity/RenderVillager/doRenderLiving (Lnet/minecraft/entity/EntityLiving;DDDFF)V bif/a (Lng;DDDFF)V
@@ -10870,7 +10870,7 @@ MD: net/minecraft/command/CommandBase/doesStringStartWith (Ljava/lang/String;Lja
 MD: net/minecraft/command/CommandBase/func_82359_c (Lnet/minecraft/command/ICommandSender;Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayerMP; x/c (Lab;Ljava/lang/String;)Ljc;
 MD: net/minecraft/command/CommandBase/func_82360_a (Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;I)Ljava/lang/String; x/a (Lab;[Ljava/lang/String;I)Ljava/lang/String;
 MD: net/minecraft/command/CommandBase/func_82361_a (Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;IZ)Ljava/lang/String; x/a (Lab;[Ljava/lang/String;IZ)Ljava/lang/String;
-MD: net/minecraft/command/CommandBase/func_82363_b (Lnet/minecraft/command/ICommandSender;Ljava/lang/String;)D x/b (Lab;Ljava/lang/String;)D
+MD: net/minecraft/command/CommandBase/parseDouble (Lnet/minecraft/command/ICommandSender;Ljava/lang/String;)D x/b (Lab;Ljava/lang/String;)D
 MD: net/minecraft/command/CommandBase/func_96332_d (Lnet/minecraft/command/ICommandSender;Ljava/lang/String;)Ljava/lang/String; x/d (Lab;Ljava/lang/String;)Ljava/lang/String;
 MD: net/minecraft/command/CommandBase/func_96333_a (Ljava/util/Collection;)Ljava/lang/String; x/a (Ljava/util/Collection;)Ljava/lang/String;
 MD: net/minecraft/command/CommandBase/getCommandAliases ()Ljava/util/List; x/b ()Ljava/util/List;
@@ -10913,7 +10913,7 @@ MD: net/minecraft/command/CommandDifficulty/getDifficultyForName (Lnet/minecraft
 MD: net/minecraft/command/CommandDifficulty/getRequiredPermissionLevel ()I ah/a ()I
 MD: net/minecraft/command/CommandDifficulty/processCommand (Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V ah/b (Lab;[Ljava/lang/String;)V
 MD: net/minecraft/command/CommandEffect/addTabCompletionOptions (Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)Ljava/util/List; ae/a (Lab;[Ljava/lang/String;)Ljava/util/List;
-MD: net/minecraft/command/CommandEffect/func_98152_d ()[Ljava/lang/String; ae/d ()[Ljava/lang/String;
+MD: net/minecraft/command/CommandEffect/getAllUsernames ()[Ljava/lang/String; ae/d ()[Ljava/lang/String;
 MD: net/minecraft/command/CommandEffect/getCommandName ()Ljava/lang/String; ae/c ()Ljava/lang/String;
 MD: net/minecraft/command/CommandEffect/getCommandUsage (Lnet/minecraft/command/ICommandSender;)Ljava/lang/String; ae/a (Lab;)Ljava/lang/String;
 MD: net/minecraft/command/CommandEffect/getRequiredPermissionLevel ()I ae/a ()I
@@ -11267,7 +11267,7 @@ MD: net/minecraft/dispenser/RegistrySimple/putObject (Ljava/lang/Object;Ljava/la
 MD: net/minecraft/enchantment/Enchantment/calcModifierDamage (ILnet/minecraft/util/DamageSource;)I yz/a (ILmg;)I
 MD: net/minecraft/enchantment/Enchantment/calcModifierLiving (ILnet/minecraft/entity/EntityLiving;)I yz/a (ILng;)I
 MD: net/minecraft/enchantment/Enchantment/canApplyTogether (Lnet/minecraft/enchantment/Enchantment;)Z yz/a (Lyz;)Z
-MD: net/minecraft/enchantment/Enchantment/func_92089_a (Lnet/minecraft/item/ItemStack;)Z yz/a (Lwm;)Z
+MD: net/minecraft/enchantment/Enchantment/canApply (Lnet/minecraft/item/ItemStack;)Z yz/a (Lwm;)Z
 MD: net/minecraft/enchantment/Enchantment/getMaxEnchantability (I)I yz/b (I)I
 MD: net/minecraft/enchantment/Enchantment/getMaxLevel ()I yz/b ()I
 MD: net/minecraft/enchantment/Enchantment/getMinEnchantability (I)I yz/a (I)I
@@ -11290,17 +11290,17 @@ MD: net/minecraft/enchantment/EnchantmentArrowKnockback/getMaxLevel ()I yv/b ()I
 MD: net/minecraft/enchantment/EnchantmentArrowKnockback/getMinEnchantability (I)I yv/a (I)I
 MD: net/minecraft/enchantment/EnchantmentDamage/calcModifierLiving (ILnet/minecraft/entity/EntityLiving;)I yw/a (ILng;)I
 MD: net/minecraft/enchantment/EnchantmentDamage/canApplyTogether (Lnet/minecraft/enchantment/Enchantment;)Z yw/a (Lyz;)Z
-MD: net/minecraft/enchantment/EnchantmentDamage/func_92089_a (Lnet/minecraft/item/ItemStack;)Z yw/a (Lwm;)Z
+MD: net/minecraft/enchantment/EnchantmentDamage/canApply (Lnet/minecraft/item/ItemStack;)Z yw/a (Lwm;)Z
 MD: net/minecraft/enchantment/EnchantmentDamage/getMaxEnchantability (I)I yw/b (I)I
 MD: net/minecraft/enchantment/EnchantmentDamage/getMaxLevel ()I yw/b ()I
 MD: net/minecraft/enchantment/EnchantmentDamage/getMinEnchantability (I)I yw/a (I)I
 MD: net/minecraft/enchantment/EnchantmentDamage/getName ()Ljava/lang/String; yw/a ()Ljava/lang/String;
-MD: net/minecraft/enchantment/EnchantmentDigging/func_92089_a (Lnet/minecraft/item/ItemStack;)Z yy/a (Lwm;)Z
+MD: net/minecraft/enchantment/EnchantmentDigging/canApply (Lnet/minecraft/item/ItemStack;)Z yy/a (Lwm;)Z
 MD: net/minecraft/enchantment/EnchantmentDigging/getMaxEnchantability (I)I yy/b (I)I
 MD: net/minecraft/enchantment/EnchantmentDigging/getMaxLevel ()I yy/b ()I
 MD: net/minecraft/enchantment/EnchantmentDigging/getMinEnchantability (I)I yy/a (I)I
-MD: net/minecraft/enchantment/EnchantmentDurability/func_92089_a (Lnet/minecraft/item/ItemStack;)Z yx/a (Lwm;)Z
-MD: net/minecraft/enchantment/EnchantmentDurability/func_92097_a (Lnet/minecraft/item/ItemStack;ILjava/util/Random;)Z yx/a (Lwm;ILjava/util/Random;)Z
+MD: net/minecraft/enchantment/EnchantmentDurability/canApply (Lnet/minecraft/item/ItemStack;)Z yx/a (Lwm;)Z
+MD: net/minecraft/enchantment/EnchantmentDurability/negateDamage (Lnet/minecraft/item/ItemStack;ILjava/util/Random;)Z yx/a (Lwm;ILjava/util/Random;)Z
 MD: net/minecraft/enchantment/EnchantmentDurability/getMaxEnchantability (I)I yx/b (I)I
 MD: net/minecraft/enchantment/EnchantmentDurability/getMaxLevel ()I yx/b ()I
 MD: net/minecraft/enchantment/EnchantmentDurability/getMinEnchantability (I)I yx/a (I)I
@@ -11349,7 +11349,7 @@ MD: net/minecraft/enchantment/EnchantmentProtection/getMaxEnchantability (I)I zl
 MD: net/minecraft/enchantment/EnchantmentProtection/getMaxLevel ()I zl/b ()I
 MD: net/minecraft/enchantment/EnchantmentProtection/getMinEnchantability (I)I zl/a (I)I
 MD: net/minecraft/enchantment/EnchantmentProtection/getName ()Ljava/lang/String; zl/a ()Ljava/lang/String;
-MD: net/minecraft/enchantment/EnchantmentThorns/func_92089_a (Lnet/minecraft/item/ItemStack;)Z zm/a (Lwm;)Z
+MD: net/minecraft/enchantment/EnchantmentThorns/canApply (Lnet/minecraft/item/ItemStack;)Z zm/a (Lwm;)Z
 MD: net/minecraft/enchantment/EnchantmentThorns/func_92094_a (ILjava/util/Random;)Z zm/a (ILjava/util/Random;)Z
 MD: net/minecraft/enchantment/EnchantmentThorns/func_92095_b (ILjava/util/Random;)I zm/b (ILjava/util/Random;)I
 MD: net/minecraft/enchantment/EnchantmentThorns/func_92096_a (Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/EntityLiving;Ljava/util/Random;)V zm/a (Lmp;Lng;Ljava/util/Random;)V
@@ -11357,7 +11357,7 @@ MD: net/minecraft/enchantment/EnchantmentThorns/getMaxEnchantability (I)I zm/b (
 MD: net/minecraft/enchantment/EnchantmentThorns/getMaxLevel ()I zm/b ()I
 MD: net/minecraft/enchantment/EnchantmentThorns/getMinEnchantability (I)I zm/a (I)I
 MD: net/minecraft/enchantment/EnchantmentUntouching/canApplyTogether (Lnet/minecraft/enchantment/Enchantment;)Z zn/a (Lyz;)Z
-MD: net/minecraft/enchantment/EnchantmentUntouching/func_92089_a (Lnet/minecraft/item/ItemStack;)Z zn/a (Lwm;)Z
+MD: net/minecraft/enchantment/EnchantmentUntouching/canApply (Lnet/minecraft/item/ItemStack;)Z zn/a (Lwm;)Z
 MD: net/minecraft/enchantment/EnchantmentUntouching/getMaxEnchantability (I)I zn/b (I)I
 MD: net/minecraft/enchantment/EnchantmentUntouching/getMaxLevel ()I zn/b ()I
 MD: net/minecraft/enchantment/EnchantmentUntouching/getMinEnchantability (I)I zn/a (I)I
@@ -11431,11 +11431,11 @@ MD: net/minecraft/entity/Entity/func_82146_a (Lnet/minecraft/world/Explosion;Lne
 MD: net/minecraft/entity/Entity/func_82149_j (Lnet/minecraft/entity/Entity;)V mp/k (Lmp;)V
 MD: net/minecraft/entity/Entity/func_85029_a (Lnet/minecraft/crash/CrashReportCategory;)V mp/a (Lm;)V
 MD: net/minecraft/entity/Entity/func_85031_j (Lnet/minecraft/entity/Entity;)Z mp/j (Lmp;)Z
-MD: net/minecraft/entity/Entity/func_96090_ax ()Ljava/lang/String; mp/ax ()Ljava/lang/String;
+MD: net/minecraft/entity/Entity/getTranslatedEntityName ()Ljava/lang/String; mp/ax ()Ljava/lang/String;
 MD: net/minecraft/entity/Entity/func_96091_a (Lnet/minecraft/world/Explosion;Lnet/minecraft/world/World;IIIIF)Z mp/a (Lzw;Laab;IIIIF)Z
 MD: net/minecraft/entity/Entity/func_96092_aw ()Z mp/aw ()Z
 MD: net/minecraft/entity/Entity/func_98034_c (Lnet/minecraft/entity/player/EntityPlayer;)Z mp/c (Lsq;)Z
-MD: net/minecraft/entity/Entity/func_98035_c (Lnet/minecraft/nbt/NBTTagCompound;)Z mp/c (Lbs;)Z
+MD: net/minecraft/entity/Entity/addNotRiddenEntityID (Lnet/minecraft/nbt/NBTTagCompound;)Z mp/c (Lbs;)Z
 MD: net/minecraft/entity/Entity/getAir ()I mp/ak ()I
 MD: net/minecraft/entity/Entity/getBoundingBox ()Lnet/minecraft/util/AxisAlignedBB; mp/D ()Laqx;
 MD: net/minecraft/entity/Entity/getBrightness (F)F mp/c (F)F
@@ -11451,7 +11451,7 @@ MD: net/minecraft/entity/Entity/getEntityName ()Ljava/lang/String; mp/am ()Ljava
 MD: net/minecraft/entity/Entity/getEntityString ()Ljava/lang/String; mp/P ()Ljava/lang/String;
 MD: net/minecraft/entity/Entity/getEyeHeight ()F mp/e ()F
 MD: net/minecraft/entity/Entity/getFlag (I)Z mp/f (I)Z
-MD: net/minecraft/entity/Entity/getHasActivePotion ()Z mp/ai ()Z
+MD: net/minecraft/entity/Entity/isInvisible ()Z mp/ai ()Z
 MD: net/minecraft/entity/Entity/getLastActiveItems ()[Lnet/minecraft/item/ItemStack; mp/ad ()[Lwm;
 MD: net/minecraft/entity/Entity/getLookVec ()Lnet/minecraft/util/Vec3; mp/Y ()Larc;
 MD: net/minecraft/entity/Entity/getMaxInPortalTime ()I mp/y ()I
@@ -11510,7 +11510,7 @@ MD: net/minecraft/entity/Entity/setDead ()V mp/w ()V
 MD: net/minecraft/entity/Entity/setEating (Z)V mp/e (Z)V
 MD: net/minecraft/entity/Entity/setFire (I)V mp/d (I)V
 MD: net/minecraft/entity/Entity/setFlag (IZ)V mp/a (IZ)V
-MD: net/minecraft/entity/Entity/setHasActivePotion (Z)V mp/d (Z)V
+MD: net/minecraft/entity/Entity/setInvisible (Z)V mp/d (Z)V
 MD: net/minecraft/entity/Entity/setInPortal ()V mp/Z ()V
 MD: net/minecraft/entity/Entity/setInWeb ()V mp/al ()V
 MD: net/minecraft/entity/Entity/setLocationAndAngles (DDDFF)V mp/b (DDDFF)V
@@ -12037,7 +12037,7 @@ MD: net/minecraft/entity/boss/EntityDragon/destroyBlocksInAABB (Lnet/minecraft/u
 MD: net/minecraft/entity/boss/EntityDragon/entityInit ()V qz/a ()V
 MD: net/minecraft/entity/boss/EntityDragon/func_82194_d ()Lnet/minecraft/world/World; qz/d ()Laab;
 MD: net/minecraft/entity/boss/EntityDragon/func_82195_e (Lnet/minecraft/util/DamageSource;I)Z qz/e (Lmg;I)Z
-MD: net/minecraft/entity/boss/EntityDragon/getDragonHealth ()I qz/b ()I
+MD: net/minecraft/entity/boss/EntityDragon/getBossHealth ()I qz/b ()I
 MD: net/minecraft/entity/boss/EntityDragon/getHurtSound ()Ljava/lang/String; qz/bc ()Ljava/lang/String;
 MD: net/minecraft/entity/boss/EntityDragon/getLivingSound ()Ljava/lang/String; qz/bb ()Ljava/lang/String;
 MD: net/minecraft/entity/boss/EntityDragon/getMaxHealth ()I qz/aW ()I
@@ -12078,7 +12078,7 @@ MD: net/minecraft/entity/boss/EntityWither/func_82216_a (ILnet/minecraft/entity/
 MD: net/minecraft/entity/boss/EntityWither/getBrightnessForRender (F)I rb/b (F)I
 MD: net/minecraft/entity/boss/EntityWither/getCreatureAttribute ()Lnet/minecraft/entity/EnumCreatureAttribute; rb/bF ()Lno;
 MD: net/minecraft/entity/boss/EntityWither/getDeathSound ()Ljava/lang/String; rb/bd ()Ljava/lang/String;
-MD: net/minecraft/entity/boss/EntityWither/getDragonHealth ()I rb/b ()I
+MD: net/minecraft/entity/boss/EntityWither/getBossHealth ()I rb/b ()I
 MD: net/minecraft/entity/boss/EntityWither/getHurtSound ()Ljava/lang/String; rb/bc ()Ljava/lang/String;
 MD: net/minecraft/entity/boss/EntityWither/getLivingSound ()Ljava/lang/String; rb/bb ()Ljava/lang/String;
 MD: net/minecraft/entity/boss/EntityWither/getMaxHealth ()I rb/aW ()I
@@ -12095,7 +12095,7 @@ MD: net/minecraft/entity/boss/EntityWither/setInWeb ()V rb/al ()V
 MD: net/minecraft/entity/boss/EntityWither/updateAITasks ()V rb/bo ()V
 MD: net/minecraft/entity/boss/EntityWither/writeEntityToNBT (Lnet/minecraft/nbt/NBTTagCompound;)V rb/b (Lbs;)V
 MD: net/minecraft/entity/boss/EntityWitherAttackFilter/isEntityApplicable (Lnet/minecraft/entity/Entity;)Z rc/a (Lmp;)Z
-MD: net/minecraft/entity/boss/IBossDisplayData/getDragonHealth ()I qv/b ()I
+MD: net/minecraft/entity/boss/IBossDisplayData/getBossHealth ()I qv/b ()I
 MD: net/minecraft/entity/boss/IBossDisplayData/getEntityName ()Ljava/lang/String; qv/am ()Ljava/lang/String;
 MD: net/minecraft/entity/boss/IBossDisplayData/getMaxHealth ()I qv/aW ()I
 MD: net/minecraft/entity/effect/EntityLightningBolt/entityInit ()V re/a ()V
@@ -12312,7 +12312,7 @@ MD: net/minecraft/entity/item/EntityMinecartTNT/fall (F)V rq/a (F)V
 MD: net/minecraft/entity/item/EntityMinecartTNT/func_82146_a (Lnet/minecraft/world/Explosion;Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;)F rq/a (Lzw;Laab;IIILapa;)F
 MD: net/minecraft/entity/item/EntityMinecartTNT/func_94104_d ()I rq/g ()I
 MD: net/minecraft/entity/item/EntityMinecartTNT/func_96091_a (Lnet/minecraft/world/Explosion;Lnet/minecraft/world/World;IIIIF)Z rq/a (Lzw;Laab;IIIIF)Z
-MD: net/minecraft/entity/item/EntityMinecartTNT/func_96096_ay ()Z rq/ay ()Z
+MD: net/minecraft/entity/item/EntityMinecartTNT/isIgnited ()Z rq/ay ()Z
 MD: net/minecraft/entity/item/EntityMinecartTNT/getDefaultDisplayTile ()Lnet/minecraft/block/Block; rq/n ()Lapa;
 MD: net/minecraft/entity/item/EntityMinecartTNT/getMinecartType ()I rq/l ()I
 MD: net/minecraft/entity/item/EntityMinecartTNT/handleHealthUpdate (B)V rq/a (B)V
@@ -12331,7 +12331,7 @@ MD: net/minecraft/entity/item/EntityTNTPrimed/canBeCollidedWith ()Z rr/K ()Z
 MD: net/minecraft/entity/item/EntityTNTPrimed/canTriggerWalking ()Z rr/f_ ()Z
 MD: net/minecraft/entity/item/EntityTNTPrimed/entityInit ()V rr/a ()V
 MD: net/minecraft/entity/item/EntityTNTPrimed/explode ()V rr/d ()V
-MD: net/minecraft/entity/item/EntityTNTPrimed/func_94083_c ()Lnet/minecraft/entity/EntityLiving; rr/c ()Lng;
+MD: net/minecraft/entity/item/EntityTNTPrimed/getTntPlacedBy ()Lnet/minecraft/entity/EntityLiving; rr/c ()Lng;
 MD: net/minecraft/entity/item/EntityTNTPrimed/getShadowSize ()F rr/Q ()F
 MD: net/minecraft/entity/item/EntityTNTPrimed/onUpdate ()V rr/l_ ()V
 MD: net/minecraft/entity/item/EntityTNTPrimed/readEntityFromNBT (Lnet/minecraft/nbt/NBTTagCompound;)V rr/a (Lbs;)V
@@ -12960,13 +12960,13 @@ MD: net/minecraft/entity/player/EntityPlayer/func_82162_bC ()V sq/bI ()V
 MD: net/minecraft/entity/player/EntityPlayer/func_82243_bO ()F sq/ca ()F
 MD: net/minecraft/entity/player/EntityPlayer/func_94059_bO ()Z sq/bR ()Z
 MD: net/minecraft/entity/player/EntityPlayer/func_94062_bN ()Z sq/bQ ()Z
-MD: net/minecraft/entity/player/EntityPlayer/func_94064_a (Lnet/minecraft/tileentity/TileEntityHopper;)V sq/a (Laqi;)V
-MD: net/minecraft/entity/player/EntityPlayer/func_96090_ax ()Ljava/lang/String; sq/ax ()Ljava/lang/String;
+MD: net/minecraft/entity/player/EntityPlayer/displayGUIHopper (Lnet/minecraft/tileentity/TileEntityHopper;)V sq/a (Laqi;)V
+MD: net/minecraft/entity/player/EntityPlayer/getTranslatedEntityName ()Ljava/lang/String; sq/ax ()Ljava/lang/String;
 MD: net/minecraft/entity/player/EntityPlayer/func_96092_aw ()Z sq/aw ()Z
 MD: net/minecraft/entity/player/EntityPlayer/func_96122_a (Lnet/minecraft/entity/player/EntityPlayer;)Z sq/a (Lsq;)Z
-MD: net/minecraft/entity/player/EntityPlayer/func_96123_co ()Lnet/minecraft/scoreboard/Scoreboard; sq/cp ()Larj;
-MD: net/minecraft/entity/player/EntityPlayer/func_96124_cp ()Lnet/minecraft/scoreboard/ScorePlayerTeam; sq/cq ()Larf;
-MD: net/minecraft/entity/player/EntityPlayer/func_96125_a (Lnet/minecraft/entity/item/EntityMinecartHopper;)V sq/a (Lrm;)V
+MD: net/minecraft/entity/player/EntityPlayer/getWorldScoreboard ()Lnet/minecraft/scoreboard/Scoreboard; sq/cp ()Larj;
+MD: net/minecraft/entity/player/EntityPlayer/getTeam ()Lnet/minecraft/scoreboard/ScorePlayerTeam; sq/cq ()Larf;
+MD: net/minecraft/entity/player/EntityPlayer/displayGUIHopperMinecart (Lnet/minecraft/entity/item/EntityMinecartHopper;)V sq/a (Lrm;)V
 MD: net/minecraft/entity/player/EntityPlayer/func_98034_c (Lnet/minecraft/entity/player/EntityPlayer;)Z sq/c (Lsq;)Z
 MD: net/minecraft/entity/player/EntityPlayer/getBedLocation ()Lnet/minecraft/util/ChunkCoordinates; sq/ci ()Lt;
 MD: net/minecraft/entity/player/EntityPlayer/getBedOrientationInDegrees ()F sq/cf ()F
@@ -13062,9 +13062,9 @@ MD: net/minecraft/entity/player/EntityPlayerMP/displayGUIEnchantment (IIILjava/l
 MD: net/minecraft/entity/player/EntityPlayerMP/displayGUIFurnace (Lnet/minecraft/tileentity/TileEntityFurnace;)V jc/a (Laqg;)V
 MD: net/minecraft/entity/player/EntityPlayerMP/displayGUIMerchant (Lnet/minecraft/entity/IMerchant;Ljava/lang/String;)V jc/a (Lzp;Ljava/lang/String;)V
 MD: net/minecraft/entity/player/EntityPlayerMP/displayGUIWorkbench (III)V jc/b (III)V
-MD: net/minecraft/entity/player/EntityPlayerMP/func_94064_a (Lnet/minecraft/tileentity/TileEntityHopper;)V jc/a (Laqi;)V
+MD: net/minecraft/entity/player/EntityPlayerMP/displayGUIHopper (Lnet/minecraft/tileentity/TileEntityHopper;)V jc/a (Laqi;)V
 MD: net/minecraft/entity/player/EntityPlayerMP/func_96122_a (Lnet/minecraft/entity/player/EntityPlayer;)Z jc/a (Lsq;)Z
-MD: net/minecraft/entity/player/EntityPlayerMP/func_96125_a (Lnet/minecraft/entity/item/EntityMinecartHopper;)V jc/a (Lrm;)V
+MD: net/minecraft/entity/player/EntityPlayerMP/displayGUIHopperMinecart (Lnet/minecraft/entity/item/EntityMinecartHopper;)V jc/a (Lrm;)V
 MD: net/minecraft/entity/player/EntityPlayerMP/getChatVisibility ()I jc/t ()I
 MD: net/minecraft/entity/player/EntityPlayerMP/getEyeHeight ()F jc/e ()F
 MD: net/minecraft/entity/player/EntityPlayerMP/getPlayerCoordinates ()Lnet/minecraft/util/ChunkCoordinates; jc/b ()Lt;
@@ -13240,7 +13240,7 @@ MD: net/minecraft/inventory/Container/canInteractWith (Lnet/minecraft/entity/pla
 MD: net/minecraft/inventory/Container/detectAndSendChanges ()V tj/b ()V
 MD: net/minecraft/inventory/Container/enchantItem (Lnet/minecraft/entity/player/EntityPlayer;I)Z tj/a (Lsq;I)Z
 MD: net/minecraft/inventory/Container/func_94525_a (Ljava/util/Set;ILnet/minecraft/item/ItemStack;I)V tj/a (Ljava/util/Set;ILwm;I)V
-MD: net/minecraft/inventory/Container/func_94526_b (Lnet/minecraft/inventory/IInventory;)I tj/b (Llt;)I
+MD: net/minecraft/inventory/Container/calcRedstoneFromInventory (Lnet/minecraft/inventory/IInventory;)I tj/b (Llt;)I
 MD: net/minecraft/inventory/Container/func_94527_a (Lnet/minecraft/inventory/Slot;Lnet/minecraft/item/ItemStack;Z)Z tj/a (Lul;Lwm;Z)Z
 MD: net/minecraft/inventory/Container/func_94528_d (I)Z tj/d (I)Z
 MD: net/minecraft/inventory/Container/func_94529_b (I)I tj/b (I)I
@@ -13344,9 +13344,9 @@ MD: net/minecraft/inventory/IInventory/isUseableByPlayer (Lnet/minecraft/entity/
 MD: net/minecraft/inventory/IInventory/onInventoryChanged ()V lt/k_ ()V
 MD: net/minecraft/inventory/IInventory/openChest ()V lt/f ()V
 MD: net/minecraft/inventory/IInventory/setInventorySlotContents (ILnet/minecraft/item/ItemStack;)V lt/a (ILwm;)V
-MD: net/minecraft/inventory/ISidedInventory/func_102007_a (ILnet/minecraft/item/ItemStack;I)Z md/a (ILwm;I)Z
-MD: net/minecraft/inventory/ISidedInventory/func_102008_b (ILnet/minecraft/item/ItemStack;I)Z md/b (ILwm;I)Z
-MD: net/minecraft/inventory/ISidedInventory/getSizeInventorySide (I)[I md/c (I)[I
+MD: net/minecraft/inventory/ISidedInventory/canInsertItem (ILnet/minecraft/item/ItemStack;I)Z md/a (ILwm;I)Z
+MD: net/minecraft/inventory/ISidedInventory/canExtractItem (ILnet/minecraft/item/ItemStack;I)Z md/b (ILwm;I)Z
+MD: net/minecraft/inventory/ISidedInventory/getAccessibleSlotsFromSide (I)[I md/c (I)[I
 MD: net/minecraft/inventory/InventoryBasic/closeChest ()V lz/g ()V
 MD: net/minecraft/inventory/InventoryBasic/decrStackSize (II)Lnet/minecraft/item/ItemStack; lz/a (II)Lwm;
 MD: net/minecraft/inventory/InventoryBasic/getInvName ()Ljava/lang/String; lz/b ()Ljava/lang/String;
@@ -13591,7 +13591,7 @@ MD: net/minecraft/item/ItemBlockWithMetadata/getMetadata (I)I ur/a (I)I
 MD: net/minecraft/item/ItemBoat/onItemRightClick (Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/item/ItemStack; ut/a (Lwm;Laab;Lsq;)Lwm;
 MD: net/minecraft/item/ItemBook/getItemEnchantability ()I uu/c ()I
 MD: net/minecraft/item/ItemBook/isItemTool (Lnet/minecraft/item/ItemStack;)Z uu/d_ (Lwm;)Z
-MD: net/minecraft/item/ItemBow/func_94599_c (I)Lnet/minecraft/util/Icon; uw/c (I)Llx;
+MD: net/minecraft/item/ItemBow/getItemIconForUseDuration (I)Lnet/minecraft/util/Icon; uw/c (I)Llx;
 MD: net/minecraft/item/ItemBow/getItemEnchantability ()I uw/c ()I
 MD: net/minecraft/item/ItemBow/getItemUseAction (Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/EnumAction; uw/b_ (Lwm;)Lxp;
 MD: net/minecraft/item/ItemBow/getMaxItemUseDuration (Lnet/minecraft/item/ItemStack;)I uw/c_ (Lwm;)I
@@ -13683,7 +13683,7 @@ MD: net/minecraft/item/ItemGlassBottle/onItemRightClick (Lnet/minecraft/item/Ite
 MD: net/minecraft/item/ItemGlassBottle/registerIcons (Lnet/minecraft/client/renderer/texture/IconRegister;)V uv/a (Lly;)V
 MD: net/minecraft/item/ItemHangingEntity/createHangingEntity (Lnet/minecraft/world/World;IIII)Lnet/minecraft/entity/EntityHanging; wh/a (Laab;IIII)Lne;
 MD: net/minecraft/item/ItemHangingEntity/onItemUse (Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;IIIIFFF)Z wh/a (Lwm;Lsq;Laab;IIIIFFF)Z
-MD: net/minecraft/item/ItemHoe/func_77842_f ()Ljava/lang/String; wj/g ()Ljava/lang/String;
+MD: net/minecraft/item/ItemHoe/getMaterialName ()Ljava/lang/String; wj/g ()Ljava/lang/String;
 MD: net/minecraft/item/ItemHoe/isFull3D ()Z wj/n_ ()Z
 MD: net/minecraft/item/ItemHoe/onItemUse (Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;IIIIFFF)Z wj/a (Lwm;Lsq;Laab;IIIIFFF)Z
 MD: net/minecraft/item/ItemInWorldManager/activateBlockOrUseItem (Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;IIIIFFF)Z jd/a (Lsq;Laab;Lwm;IIIIFFF)Z
@@ -13792,7 +13792,7 @@ MD: net/minecraft/item/ItemStack/copy ()Lnet/minecraft/item/ItemStack; wm/m ()Lw
 MD: net/minecraft/item/ItemStack/copyItemStack (Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack; wm/b (Lwm;)Lwm;
 MD: net/minecraft/item/ItemStack/damageItem (ILnet/minecraft/entity/EntityLiving;)V wm/a (ILng;)V
 MD: net/minecraft/item/ItemStack/func_82835_x ()Z wm/y ()Z
-MD: net/minecraft/item/ItemStack/func_96631_a (ILjava/util/Random;)Z wm/a (ILjava/util/Random;)Z
+MD: net/minecraft/item/ItemStack/attemptDamageItem (ILjava/util/Random;)Z wm/a (ILjava/util/Random;)Z
 MD: net/minecraft/item/ItemStack/getDamageVsEntity (Lnet/minecraft/entity/Entity;)I wm/a (Lmp;)I
 MD: net/minecraft/item/ItemStack/getDisplayName ()Ljava/lang/String; wm/s ()Ljava/lang/String;
 MD: net/minecraft/item/ItemStack/getEnchantmentTagList ()Lnet/minecraft/nbt/NBTTagList; wm/r ()Lca;
@@ -14869,7 +14869,7 @@ MD: net/minecraft/potion/Potion/setPotionName (Ljava/lang/String;)Lnet/minecraft
 MD: net/minecraft/potion/PotionEffect/combine (Lnet/minecraft/potion/PotionEffect;)V ml/a (Lml;)V
 MD: net/minecraft/potion/PotionEffect/deincrementDuration ()I ml/h ()I
 MD: net/minecraft/potion/PotionEffect/equals (Ljava/lang/Object;)Z ml/equals (Ljava/lang/Object;)Z
-MD: net/minecraft/potion/PotionEffect/func_102028_d ()Z ml/d ()Z
+MD: net/minecraft/potion/PotionEffect/isSplashPotionEffect ()Z ml/d ()Z
 MD: net/minecraft/potion/PotionEffect/getAmplifier ()I ml/c ()I
 MD: net/minecraft/potion/PotionEffect/getDuration ()I ml/b ()I
 MD: net/minecraft/potion/PotionEffect/getEffectName ()Ljava/lang/String; ml/f ()Ljava/lang/String;
@@ -14963,16 +14963,16 @@ MD: net/minecraft/scoreboard/ScorePlayerTeam/func_96666_b (Ljava/lang/String;)V 
 MD: net/minecraft/scoreboard/ScorePlayerTeam/func_96667_a (Lnet/minecraft/scoreboard/ScorePlayerTeam;Ljava/lang/String;)Ljava/lang/String; arf/a (Larf;Ljava/lang/String;)Ljava/lang/String;
 MD: net/minecraft/scoreboard/ScorePlayerTeam/func_96668_e ()Ljava/lang/String; arf/e ()Ljava/lang/String;
 MD: net/minecraft/scoreboard/ScorePlayerTeam/func_96669_c ()Ljava/lang/String; arf/c ()Ljava/lang/String;
-MD: net/minecraft/scoreboard/ScorePlayerTeam/func_96670_d ()Ljava/util/Collection; arf/d ()Ljava/util/Collection;
+MD: net/minecraft/scoreboard/ScorePlayerTeam/getMembershipCollection ()Ljava/util/Collection; arf/d ()Ljava/util/Collection;
 MD: net/minecraft/scoreboard/ScorePlayerTeam/func_98297_h ()Z arf/h ()Z
 MD: net/minecraft/scoreboard/ScorePlayerTeam/func_98298_a (I)V arf/a (I)V
 MD: net/minecraft/scoreboard/ScorePlayerTeam/func_98299_i ()I arf/i ()I
 MD: net/minecraft/scoreboard/ScorePlayerTeam/func_98300_b (Z)V arf/b (Z)V
 MD: net/minecraft/scoreboard/Scoreboard/func_96508_e (Ljava/lang/String;)Lnet/minecraft/scoreboard/ScorePlayerTeam; arj/e (Ljava/lang/String;)Larf;
-MD: net/minecraft/scoreboard/Scoreboard/func_96509_i (Ljava/lang/String;)Lnet/minecraft/scoreboard/ScorePlayerTeam; arj/i (Ljava/lang/String;)Larf;
+MD: net/minecraft/scoreboard/Scoreboard/getPlayersTeam (Ljava/lang/String;)Lnet/minecraft/scoreboard/ScorePlayerTeam; arj/i (Ljava/lang/String;)Larf;
 MD: net/minecraft/scoreboard/Scoreboard/func_96510_d (Ljava/lang/String;)Ljava/util/Map; arj/d (Ljava/lang/String;)Ljava/util/Map;
 MD: net/minecraft/scoreboard/Scoreboard/func_96511_d (Lnet/minecraft/scoreboard/ScorePlayerTeam;)V arj/d (Larf;)V
-MD: net/minecraft/scoreboard/Scoreboard/func_96512_b (Ljava/lang/String;Lnet/minecraft/scoreboard/ScorePlayerTeam;)V arj/b (Ljava/lang/String;Larf;)V
+MD: net/minecraft/scoreboard/Scoreboard/removePlayerFromTeam (Ljava/lang/String;Lnet/minecraft/scoreboard/ScorePlayerTeam;)V arj/b (Ljava/lang/String;Larf;)V
 MD: net/minecraft/scoreboard/Scoreboard/func_96513_c (Lnet/minecraft/scoreboard/ScorePlayerTeam;)V arj/c (Larf;)V
 MD: net/minecraft/scoreboard/Scoreboard/func_96515_c (Ljava/lang/String;)V arj/c (Ljava/lang/String;)V
 MD: net/minecraft/scoreboard/Scoreboard/func_96516_a (Ljava/lang/String;)V arj/a (Ljava/lang/String;)V
@@ -15039,7 +15039,7 @@ MD: net/minecraft/scoreboard/ServerCommandTestFor/getCommandName ()Ljava/lang/St
 MD: net/minecraft/scoreboard/ServerCommandTestFor/getRequiredPermissionLevel ()I hw/a ()I
 MD: net/minecraft/scoreboard/ServerCommandTestFor/isUsernameIndex ([Ljava/lang/String;I)Z hw/a ([Ljava/lang/String;I)Z
 MD: net/minecraft/scoreboard/ServerCommandTestFor/processCommand (Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V hw/b (Lab;[Ljava/lang/String;)V
-MD: net/minecraft/scoreboard/ServerScoreboard/func_96512_b (Ljava/lang/String;Lnet/minecraft/scoreboard/ScorePlayerTeam;)V gw/b (Ljava/lang/String;Larf;)V
+MD: net/minecraft/scoreboard/ServerScoreboard/removePlayerFromTeam (Ljava/lang/String;Lnet/minecraft/scoreboard/ScorePlayerTeam;)V gw/b (Ljava/lang/String;Larf;)V
 MD: net/minecraft/scoreboard/ServerScoreboard/func_96513_c (Lnet/minecraft/scoreboard/ScorePlayerTeam;)V gw/c (Larf;)V
 MD: net/minecraft/scoreboard/ServerScoreboard/func_96516_a (Ljava/lang/String;)V gw/a (Ljava/lang/String;)V
 MD: net/minecraft/scoreboard/ServerScoreboard/func_96521_a (Ljava/lang/String;Lnet/minecraft/scoreboard/ScorePlayerTeam;)V gw/a (Ljava/lang/String;Larf;)V
@@ -15568,8 +15568,8 @@ MD: net/minecraft/tileentity/TileEntityBrewingStand/brewPotions ()V apx/u ()V
 MD: net/minecraft/tileentity/TileEntityBrewingStand/canBrew ()Z apx/l ()Z
 MD: net/minecraft/tileentity/TileEntityBrewingStand/closeChest ()V apx/g ()V
 MD: net/minecraft/tileentity/TileEntityBrewingStand/decrStackSize (II)Lnet/minecraft/item/ItemStack; apx/a (II)Lwm;
-MD: net/minecraft/tileentity/TileEntityBrewingStand/func_102007_a (ILnet/minecraft/item/ItemStack;I)Z apx/a (ILwm;I)Z
-MD: net/minecraft/tileentity/TileEntityBrewingStand/func_102008_b (ILnet/minecraft/item/ItemStack;I)Z apx/b (ILwm;I)Z
+MD: net/minecraft/tileentity/TileEntityBrewingStand/canInsertItem (ILnet/minecraft/item/ItemStack;I)Z apx/a (ILwm;I)Z
+MD: net/minecraft/tileentity/TileEntityBrewingStand/canExtractItem (ILnet/minecraft/item/ItemStack;I)Z apx/b (ILwm;I)Z
 MD: net/minecraft/tileentity/TileEntityBrewingStand/func_94131_a (Ljava/lang/String;)V apx/a (Ljava/lang/String;)V
 MD: net/minecraft/tileentity/TileEntityBrewingStand/getBrewTime ()I apx/x_ ()I
 MD: net/minecraft/tileentity/TileEntityBrewingStand/getFilledSlots ()I apx/j ()I
@@ -15577,7 +15577,7 @@ MD: net/minecraft/tileentity/TileEntityBrewingStand/getInvName ()Ljava/lang/Stri
 MD: net/minecraft/tileentity/TileEntityBrewingStand/getInventoryStackLimit ()I apx/d ()I
 MD: net/minecraft/tileentity/TileEntityBrewingStand/getPotionResult (ILnet/minecraft/item/ItemStack;)I apx/c (ILwm;)I
 MD: net/minecraft/tileentity/TileEntityBrewingStand/getSizeInventory ()I apx/j_ ()I
-MD: net/minecraft/tileentity/TileEntityBrewingStand/getSizeInventorySide (I)[I apx/c (I)[I
+MD: net/minecraft/tileentity/TileEntityBrewingStand/getAccessibleSlotsFromSide (I)[I apx/c (I)[I
 MD: net/minecraft/tileentity/TileEntityBrewingStand/getStackInSlot (I)Lnet/minecraft/item/ItemStack; apx/a (I)Lwm;
 MD: net/minecraft/tileentity/TileEntityBrewingStand/getStackInSlotOnClosing (I)Lnet/minecraft/item/ItemStack; apx/b (I)Lwm;
 MD: net/minecraft/tileentity/TileEntityBrewingStand/isInvNameLocalized ()Z apx/c ()Z
@@ -15616,7 +15616,7 @@ MD: net/minecraft/tileentity/TileEntityCommandBlock/canCommandSenderUseCommand (
 MD: net/minecraft/tileentity/TileEntityCommandBlock/executeCommandOnPowered (Lnet/minecraft/world/World;)I apz/a (Laab;)I
 MD: net/minecraft/tileentity/TileEntityCommandBlock/func_96102_a (I)V apz/a (I)V
 MD: net/minecraft/tileentity/TileEntityCommandBlock/func_96103_d ()I apz/d ()I
-MD: net/minecraft/tileentity/TileEntityCommandBlock/func_96104_c (Ljava/lang/String;)V apz/c (Ljava/lang/String;)V
+MD: net/minecraft/tileentity/TileEntityCommandBlock/setCommandSenderName (Ljava/lang/String;)V apz/c (Ljava/lang/String;)V
 MD: net/minecraft/tileentity/TileEntityCommandBlock/getCommand ()Ljava/lang/String; apz/c ()Ljava/lang/String;
 MD: net/minecraft/tileentity/TileEntityCommandBlock/getCommandSenderName ()Ljava/lang/String; apz/c_ ()Ljava/lang/String;
 MD: net/minecraft/tileentity/TileEntityCommandBlock/getDescriptionPacket ()Lnet/minecraft/network/packet/Packet; apz/m ()Lei;
@@ -15634,7 +15634,7 @@ MD: net/minecraft/tileentity/TileEntityDaylightDetector/updateEntity ()V aqb/h (
 MD: net/minecraft/tileentity/TileEntityDispenser/addItem (Lnet/minecraft/item/ItemStack;)I aqc/a (Lwm;)I
 MD: net/minecraft/tileentity/TileEntityDispenser/closeChest ()V aqc/g ()V
 MD: net/minecraft/tileentity/TileEntityDispenser/decrStackSize (II)Lnet/minecraft/item/ItemStack; aqc/a (II)Lwm;
-MD: net/minecraft/tileentity/TileEntityDispenser/func_94049_a (Ljava/lang/String;)V aqc/a (Ljava/lang/String;)V
+MD: net/minecraft/tileentity/TileEntityDispenser/setCustomName (Ljava/lang/String;)V aqc/a (Ljava/lang/String;)V
 MD: net/minecraft/tileentity/TileEntityDispenser/getInvName ()Ljava/lang/String; aqc/b ()Ljava/lang/String;
 MD: net/minecraft/tileentity/TileEntityDispenser/getInventoryStackLimit ()I aqc/d ()I
 MD: net/minecraft/tileentity/TileEntityDispenser/getRandomStackFromInventory ()I aqc/j ()I
@@ -15664,8 +15664,8 @@ MD: net/minecraft/tileentity/TileEntityEnderChest/updateEntity ()V aqf/h ()V
 MD: net/minecraft/tileentity/TileEntityFurnace/canSmelt ()Z aqg/u ()Z
 MD: net/minecraft/tileentity/TileEntityFurnace/closeChest ()V aqg/g ()V
 MD: net/minecraft/tileentity/TileEntityFurnace/decrStackSize (II)Lnet/minecraft/item/ItemStack; aqg/a (II)Lwm;
-MD: net/minecraft/tileentity/TileEntityFurnace/func_102007_a (ILnet/minecraft/item/ItemStack;I)Z aqg/a (ILwm;I)Z
-MD: net/minecraft/tileentity/TileEntityFurnace/func_102008_b (ILnet/minecraft/item/ItemStack;I)Z aqg/b (ILwm;I)Z
+MD: net/minecraft/tileentity/TileEntityFurnace/canInsertItem (ILnet/minecraft/item/ItemStack;I)Z aqg/a (ILwm;I)Z
+MD: net/minecraft/tileentity/TileEntityFurnace/canExtractItem (ILnet/minecraft/item/ItemStack;I)Z aqg/b (ILwm;I)Z
 MD: net/minecraft/tileentity/TileEntityFurnace/func_94129_a (Ljava/lang/String;)V aqg/a (Ljava/lang/String;)V
 MD: net/minecraft/tileentity/TileEntityFurnace/getBurnTimeRemainingScaled (I)I aqg/e (I)I
 MD: net/minecraft/tileentity/TileEntityFurnace/getCookProgressScaled (I)I aqg/d (I)I
@@ -15673,7 +15673,7 @@ MD: net/minecraft/tileentity/TileEntityFurnace/getInvName ()Ljava/lang/String; a
 MD: net/minecraft/tileentity/TileEntityFurnace/getInventoryStackLimit ()I aqg/d ()I
 MD: net/minecraft/tileentity/TileEntityFurnace/getItemBurnTime (Lnet/minecraft/item/ItemStack;)I aqg/a (Lwm;)I
 MD: net/minecraft/tileentity/TileEntityFurnace/getSizeInventory ()I aqg/j_ ()I
-MD: net/minecraft/tileentity/TileEntityFurnace/getSizeInventorySide (I)[I aqg/c (I)[I
+MD: net/minecraft/tileentity/TileEntityFurnace/getAccessibleSlotsFromSide (I)[I aqg/c (I)[I
 MD: net/minecraft/tileentity/TileEntityFurnace/getStackInSlot (I)Lnet/minecraft/item/ItemStack; aqg/a (I)Lwm;
 MD: net/minecraft/tileentity/TileEntityFurnace/getStackInSlotOnClosing (I)Lnet/minecraft/item/ItemStack; aqg/b (I)Lwm;
 MD: net/minecraft/tileentity/TileEntityFurnace/isBurning ()Z aqg/j ()Z
@@ -15690,17 +15690,17 @@ MD: net/minecraft/tileentity/TileEntityFurnace/writeToNBT (Lnet/minecraft/nbt/NB
 MD: net/minecraft/tileentity/TileEntityHopper/closeChest ()V aqi/g ()V
 MD: net/minecraft/tileentity/TileEntityHopper/decrStackSize (II)Lnet/minecraft/item/ItemStack; aqi/a (II)Lwm;
 MD: net/minecraft/tileentity/TileEntityHopper/func_102012_a (Lnet/minecraft/tileentity/Hopper;Lnet/minecraft/inventory/IInventory;II)Z aqi/a (Laqh;Llt;II)Z
-MD: net/minecraft/tileentity/TileEntityHopper/func_102013_b (Lnet/minecraft/inventory/IInventory;Lnet/minecraft/item/ItemStack;II)Z aqi/b (Llt;Lwm;II)Z
+MD: net/minecraft/tileentity/TileEntityHopper/canExtractItemFromInventory (Lnet/minecraft/inventory/IInventory;Lnet/minecraft/item/ItemStack;II)Z aqi/b (Llt;Lwm;II)Z
 MD: net/minecraft/tileentity/TileEntityHopper/func_102014_c (Lnet/minecraft/inventory/IInventory;Lnet/minecraft/item/ItemStack;II)Lnet/minecraft/item/ItemStack; aqi/c (Llt;Lwm;II)Lwm;
 MD: net/minecraft/tileentity/TileEntityHopper/func_102015_a (Lnet/minecraft/inventory/IInventory;Lnet/minecraft/item/ItemStack;II)Z aqi/a (Llt;Lwm;II)Z
-MD: net/minecraft/tileentity/TileEntityHopper/func_94114_a (Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z aqi/a (Lwm;Lwm;)Z
+MD: net/minecraft/tileentity/TileEntityHopper/areItemStacksEqualItem (Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z aqi/a (Lwm;Lwm;)Z
 MD: net/minecraft/tileentity/TileEntityHopper/func_96114_a (Lnet/minecraft/inventory/IInventory;Lnet/minecraft/entity/item/EntityItem;)Z aqi/a (Llt;Lrh;)Z
-MD: net/minecraft/tileentity/TileEntityHopper/func_96115_a (Ljava/lang/String;)V aqi/a (Ljava/lang/String;)V
-MD: net/minecraft/tileentity/TileEntityHopper/func_96118_b (Lnet/minecraft/tileentity/Hopper;)Lnet/minecraft/inventory/IInventory; aqi/b (Laqh;)Llt;
+MD: net/minecraft/tileentity/TileEntityHopper/setInventoryName (Ljava/lang/String;)V aqi/a (Ljava/lang/String;)V
+MD: net/minecraft/tileentity/TileEntityHopper/getInventoryAboveHopper (Lnet/minecraft/tileentity/Hopper;)Lnet/minecraft/inventory/IInventory; aqi/b (Laqh;)Llt;
 MD: net/minecraft/tileentity/TileEntityHopper/func_96119_a (Lnet/minecraft/world/World;DDD)Lnet/minecraft/entity/item/EntityItem; aqi/a (Laab;DDD)Lrh;
 MD: net/minecraft/tileentity/TileEntityHopper/func_98045_j ()Z aqi/j ()Z
-MD: net/minecraft/tileentity/TileEntityHopper/func_98046_c (I)V aqi/c (I)V
-MD: net/minecraft/tileentity/TileEntityHopper/func_98047_l ()Z aqi/l ()Z
+MD: net/minecraft/tileentity/TileEntityHopper/setTransferCooldown (I)V aqi/c (I)V
+MD: net/minecraft/tileentity/TileEntityHopper/isCoolingDown ()Z aqi/l ()Z
 MD: net/minecraft/tileentity/TileEntityHopper/getInvName ()Ljava/lang/String; aqi/b ()Ljava/lang/String;
 MD: net/minecraft/tileentity/TileEntityHopper/getInventoryAtLocation (Lnet/minecraft/world/World;DDD)Lnet/minecraft/inventory/IInventory; aqi/b (Laab;DDD)Llt;
 MD: net/minecraft/tileentity/TileEntityHopper/getInventoryStackLimit ()I aqi/d ()I
@@ -15843,7 +15843,7 @@ MD: net/minecraft/util/DamageSource/causeIndirectMagicDamage (Lnet/minecraft/ent
 MD: net/minecraft/util/DamageSource/causeMobDamage (Lnet/minecraft/entity/EntityLiving;)Lnet/minecraft/util/DamageSource; mg/a (Lng;)Lmg;
 MD: net/minecraft/util/DamageSource/causePlayerDamage (Lnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/util/DamageSource; mg/a (Lsq;)Lmg;
 MD: net/minecraft/util/DamageSource/causeThrownDamage (Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/DamageSource; mg/a (Lmp;Lmp;)Lmg;
-MD: net/minecraft/util/DamageSource/func_92087_a (Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/DamageSource; mg/a (Lmp;)Lmg;
+MD: net/minecraft/util/DamageSource/causeThornsDamage (Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/DamageSource; mg/a (Lmp;)Lmg;
 MD: net/minecraft/util/DamageSource/getDamageType ()Ljava/lang/String; mg/n ()Ljava/lang/String;
 MD: net/minecraft/util/DamageSource/getDeathMessage (Lnet/minecraft/entity/EntityLiving;)Ljava/lang/String; mg/b (Lng;)Ljava/lang/String;
 MD: net/minecraft/util/DamageSource/getEntity ()Lnet/minecraft/entity/Entity; mg/i ()Lmp;
@@ -16009,7 +16009,7 @@ MD: net/minecraft/util/StatCollector/func_94522_b (Ljava/lang/String;)Z bo/b (Lj
 MD: net/minecraft/util/StatCollector/translateToLocal (Ljava/lang/String;)Ljava/lang/String; bo/a (Ljava/lang/String;)Ljava/lang/String;
 MD: net/minecraft/util/StatCollector/translateToLocalFormatted (Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String; bo/a (Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
 MD: net/minecraft/util/StringTranslate/func_94519_a (Ljava/lang/String;Ljava/io/File;)V bp/a (Ljava/lang/String;Ljava/io/File;)V
-MD: net/minecraft/util/StringTranslate/func_94520_b (Ljava/lang/String;)Z bp/b (Ljava/lang/String;)Z
+MD: net/minecraft/util/StringTranslate/containsTranslateKey (Ljava/lang/String;)Z bp/b (Ljava/lang/String;)Z
 MD: net/minecraft/util/StringTranslate/getCurrentLanguage ()Ljava/lang/String; bp/c ()Ljava/lang/String;
 MD: net/minecraft/util/StringTranslate/getInstance ()Lnet/minecraft/util/StringTranslate; bp/a ()Lbp;
 MD: net/minecraft/util/StringTranslate/getLanguageList ()Ljava/util/TreeMap; bp/b ()Ljava/util/TreeMap;
@@ -16293,7 +16293,7 @@ MD: net/minecraft/world/World/extendedLevelsInChunkCache ()Z aab/R ()Z
 MD: net/minecraft/world/World/extinguishFire (Lnet/minecraft/entity/player/EntityPlayer;IIII)Z aab/a (Lsq;IIII)Z
 MD: net/minecraft/world/World/findClosestStructure (Ljava/lang/String;III)Lnet/minecraft/world/ChunkPosition; aab/b (Ljava/lang/String;III)Laat;
 MD: net/minecraft/world/World/findNearestEntityWithinAABB (Ljava/lang/Class;Lnet/minecraft/util/AxisAlignedBB;Lnet/minecraft/entity/Entity;)Lnet/minecraft/entity/Entity; aab/a (Ljava/lang/Class;Laqx;Lmp;)Lmp;
-MD: net/minecraft/world/World/func_102026_a (Lnet/minecraft/block/Block;I)Z aab/a (Lapa;I)Z
+MD: net/minecraft/world/World/isBlockTopFacingSurfaceSolid (Lnet/minecraft/block/Block;I)Z aab/a (Lapa;I)Z
 MD: net/minecraft/world/World/func_82735_a (Lnet/minecraft/entity/item/EntityMinecart;)Lnet/minecraft/server/gui/IUpdatePlayerListBox; aab/a (Lri;)Lgy;
 MD: net/minecraft/world/World/func_82738_a (J)V aab/a (J)V
 MD: net/minecraft/world/World/func_82739_e (IIIII)V aab/d (IIIII)V
@@ -16301,7 +16301,7 @@ MD: net/minecraft/world/World/func_82740_a (IIIIII)V aab/a (IIIIII)V
 MD: net/minecraft/world/World/func_85174_u (III)Z aab/v (III)Z
 MD: net/minecraft/world/World/func_92088_a (DDDDDDLnet/minecraft/nbt/NBTTagCompound;)V aab/a (DDDDDDLbs;)V
 MD: net/minecraft/world/World/func_96440_m (IIII)V aab/m (IIII)V
-MD: net/minecraft/world/World/func_98179_a (IIILnet/minecraft/world/EnumSkyBlock;)I aab/a (IIILaam;)I
+MD: net/minecraft/world/World/computeLightValue (IIILnet/minecraft/world/EnumSkyBlock;)I aab/a (IIILaam;)I
 MD: net/minecraft/world/World/getActualHeight ()I aab/Q ()I
 MD: net/minecraft/world/World/getBiomeGenForCoords (II)Lnet/minecraft/world/biome/BiomeGenBase; aab/a (II)Laav;
 MD: net/minecraft/world/World/getBlockDensity (Lnet/minecraft/util/Vec3;Lnet/minecraft/util/AxisAlignedBB;)F aab/a (Larc;Laqx;)F
@@ -16737,7 +16737,7 @@ MD: net/minecraft/world/chunk/NibbleArray/get (III)I abu/a (III)I
 MD: net/minecraft/world/chunk/NibbleArray/set (IIII)V abu/a (IIII)V
 MD: net/minecraft/world/chunk/storage/AnvilChunkLoader/checkedReadChunkFromNBT (Lnet/minecraft/world/World;IILnet/minecraft/nbt/NBTTagCompound;)Lnet/minecraft/world/chunk/Chunk; acj/a (Laab;IILbs;)Labw;
 MD: net/minecraft/world/chunk/storage/AnvilChunkLoader/chunkTick ()V acj/a ()V
-MD: net/minecraft/world/chunk/storage/AnvilChunkLoader/func_75824_a (Lnet/minecraft/world/ChunkCoordIntPair;Lnet/minecraft/nbt/NBTTagCompound;)V acj/a (Lzu;Lbs;)V
+MD: net/minecraft/world/chunk/storage/AnvilChunkLoader/addChunkToPending (Lnet/minecraft/world/ChunkCoordIntPair;Lnet/minecraft/nbt/NBTTagCompound;)V acj/a (Lzu;Lbs;)V
 MD: net/minecraft/world/chunk/storage/AnvilChunkLoader/loadChunk (Lnet/minecraft/world/World;II)Lnet/minecraft/world/chunk/Chunk; acj/a (Laab;II)Labw;
 MD: net/minecraft/world/chunk/storage/AnvilChunkLoader/readChunkFromNBT (Lnet/minecraft/world/World;Lnet/minecraft/nbt/NBTTagCompound;)Lnet/minecraft/world/chunk/Chunk; acj/a (Laab;Lbs;)Labw;
 MD: net/minecraft/world/chunk/storage/AnvilChunkLoader/saveChunk (Lnet/minecraft/world/World;Lnet/minecraft/world/chunk/Chunk;)V acj/a (Laab;Labw;)V
@@ -16998,7 +16998,7 @@ MD: net/minecraft/world/gen/layer/GenLayerSmooth/getInts (IIII)[I aiz/a (IIII)[I
 MD: net/minecraft/world/gen/layer/GenLayerSwampRivers/getInts (IIII)[I ajb/a (IIII)[I
 MD: net/minecraft/world/gen/layer/GenLayerVoronoiZoom/getInts (IIII)[I aje/a (IIII)[I
 MD: net/minecraft/world/gen/layer/GenLayerZoom/choose (II)I ajf/a (II)I
-MD: net/minecraft/world/gen/layer/GenLayerZoom/func_75915_a (JLnet/minecraft/world/gen/layer/GenLayer;I)Lnet/minecraft/world/gen/layer/GenLayer; ajf/a (JLait;I)Lait;
+MD: net/minecraft/world/gen/layer/GenLayerZoom/magnify (JLnet/minecraft/world/gen/layer/GenLayer;I)Lnet/minecraft/world/gen/layer/GenLayer; ajf/a (JLait;I)Lait;
 MD: net/minecraft/world/gen/layer/GenLayerZoom/getInts (IIII)[I ajf/a (IIII)[I
 MD: net/minecraft/world/gen/layer/GenLayerZoom/modeOrRandom (IIII)I ajf/b (IIII)I
 MD: net/minecraft/world/gen/layer/IntCache/func_85144_b ()Ljava/lang/String; air/b ()Ljava/lang/String;
@@ -17541,3 +17541,283 @@ MD: org/bouncycastle/jce/provider/BouncyCastleProvider/loadAlgorithms (Ljava/lan
 MD: org/bouncycastle/jce/provider/BouncyCastleProvider/setup ()V asp/a ()V
 MD: org/bouncycastle/jce/provider/BouncyCastleProviderAction/run ()Ljava/lang/Object; asq/run ()Ljava/lang/Object;
 MD: org/bouncycastle/util/Strings/toLowerCase (Ljava/lang/String;)Ljava/lang/String; ass/a (Ljava/lang/String;)Ljava/lang/String;
+# Marker class for determining we're 1.5.1-obfuscated at runtime
+CL: cpw/mods/fml/relauncher/MCPCCompatibilityMarker cpw/mods/fml/relauncher/MCPCCompatibilityMarker151
+# OBC Maven shade relocation
+# until we can do: PK: org/bukkit/craftbukkit/v1_5_R3 org/bukkit/craftbukkit/v1_5_R2
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftBeacon org/bukkit/craftbukkit/v1_5_R2/block/CraftBeacon
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftBlock$1 org/bukkit/craftbukkit/v1_5_R2/block/CraftBlock$1
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftBlock org/bukkit/craftbukkit/v1_5_R2/block/CraftBlock
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftBlockState org/bukkit/craftbukkit/v1_5_R2/block/CraftBlockState
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftBrewingStand org/bukkit/craftbukkit/v1_5_R2/block/CraftBrewingStand
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftChest org/bukkit/craftbukkit/v1_5_R2/block/CraftChest
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftCommandBlock org/bukkit/craftbukkit/v1_5_R2/block/CraftCommandBlock
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftCreatureSpawner org/bukkit/craftbukkit/v1_5_R2/block/CraftCreatureSpawner
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftDispenser org/bukkit/craftbukkit/v1_5_R2/block/CraftDispenser
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftDropper org/bukkit/craftbukkit/v1_5_R2/block/CraftDropper
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftFurnace org/bukkit/craftbukkit/v1_5_R2/block/CraftFurnace
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftHopper org/bukkit/craftbukkit/v1_5_R2/block/CraftHopper
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftJukebox org/bukkit/craftbukkit/v1_5_R2/block/CraftJukebox
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftNoteBlock org/bukkit/craftbukkit/v1_5_R2/block/CraftNoteBlock
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftSign org/bukkit/craftbukkit/v1_5_R2/block/CraftSign
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftSkull$1 org/bukkit/craftbukkit/v1_5_R2/block/CraftSkull$1
+CL: org/bukkit/craftbukkit/v1_5_R3/block/CraftSkull org/bukkit/craftbukkit/v1_5_R2/block/CraftSkull
+CL: org/bukkit/craftbukkit/v1_5_R3/chunkio/ChunkIOExecutor org/bukkit/craftbukkit/v1_5_R2/chunkio/ChunkIOExecutor
+CL: org/bukkit/craftbukkit/v1_5_R3/chunkio/ChunkIOProvider org/bukkit/craftbukkit/v1_5_R2/chunkio/ChunkIOProvider
+CL: org/bukkit/craftbukkit/v1_5_R3/chunkio/QueuedChunk org/bukkit/craftbukkit/v1_5_R2/chunkio/QueuedChunk
+CL: org/bukkit/craftbukkit/v1_5_R3/command/ColouredConsoleSender org/bukkit/craftbukkit/v1_5_R2/command/ColouredConsoleSender
+CL: org/bukkit/craftbukkit/v1_5_R3/command/CraftBlockCommandSender org/bukkit/craftbukkit/v1_5_R2/command/CraftBlockCommandSender
+CL: org/bukkit/craftbukkit/v1_5_R3/command/CraftConsoleCommandSender org/bukkit/craftbukkit/v1_5_R2/command/CraftConsoleCommandSender
+CL: org/bukkit/craftbukkit/v1_5_R3/command/CraftRemoteConsoleCommandSender org/bukkit/craftbukkit/v1_5_R2/command/CraftRemoteConsoleCommandSender
+CL: org/bukkit/craftbukkit/v1_5_R3/command/CraftSimpleCommandMap org/bukkit/craftbukkit/v1_5_R2/command/CraftSimpleCommandMap
+CL: org/bukkit/craftbukkit/v1_5_R3/command/ModCustomCommand org/bukkit/craftbukkit/v1_5_R2/command/ModCustomCommand
+CL: org/bukkit/craftbukkit/v1_5_R3/command/ServerCommandListener org/bukkit/craftbukkit/v1_5_R2/command/ServerCommandListener
+CL: org/bukkit/craftbukkit/v1_5_R3/command/ServerCommandSender org/bukkit/craftbukkit/v1_5_R2/command/ServerCommandSender
+CL: org/bukkit/craftbukkit/v1_5_R3/command/TicksPerSecondCommand org/bukkit/craftbukkit/v1_5_R2/command/TicksPerSecondCommand
+CL: org/bukkit/craftbukkit/v1_5_R3/conversations/ConversationTracker org/bukkit/craftbukkit/v1_5_R2/conversations/ConversationTracker
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftArt$1 org/bukkit/craftbukkit/v1_5_R2/CraftArt$1
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftArt org/bukkit/craftbukkit/v1_5_R2/CraftArt
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftChunk org/bukkit/craftbukkit/v1_5_R2/CraftChunk
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftChunkSnapshot org/bukkit/craftbukkit/v1_5_R2/CraftChunkSnapshot
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftCrashReport org/bukkit/craftbukkit/v1_5_R2/CraftCrashReport
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftEffect$1 org/bukkit/craftbukkit/v1_5_R2/CraftEffect$1
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftEffect org/bukkit/craftbukkit/v1_5_R2/CraftEffect
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftOfflinePlayer org/bukkit/craftbukkit/v1_5_R2/CraftOfflinePlayer
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftServer$1 org/bukkit/craftbukkit/v1_5_R2/CraftServer$1
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftServer$BooleanWrapper org/bukkit/craftbukkit/v1_5_R2/CraftServer$BooleanWrapper
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftServer org/bukkit/craftbukkit/v1_5_R2/CraftServer
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftSound org/bukkit/craftbukkit/v1_5_R2/CraftSound
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftTravelAgent org/bukkit/craftbukkit/v1_5_R2/CraftTravelAgent
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftWorld$1 org/bukkit/craftbukkit/v1_5_R2/CraftWorld$1
+CL: org/bukkit/craftbukkit/v1_5_R3/CraftWorld org/bukkit/craftbukkit/v1_5_R2/CraftWorld
+CL: org/bukkit/craftbukkit/v1_5_R3/enchantments/CraftEnchantment$1 org/bukkit/craftbukkit/v1_5_R2/enchantments/CraftEnchantment$1
+CL: org/bukkit/craftbukkit/v1_5_R3/enchantments/CraftEnchantment org/bukkit/craftbukkit/v1_5_R2/enchantments/CraftEnchantment
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/AbstractProjectile org/bukkit/craftbukkit/v1_5_R2/entity/AbstractProjectile
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftAgeable org/bukkit/craftbukkit/v1_5_R2/entity/CraftAgeable
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftAmbient org/bukkit/craftbukkit/v1_5_R2/entity/CraftAmbient
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftAnimals org/bukkit/craftbukkit/v1_5_R2/entity/CraftAnimals
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftArrow org/bukkit/craftbukkit/v1_5_R2/entity/CraftArrow
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftBat org/bukkit/craftbukkit/v1_5_R2/entity/CraftBat
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftBlaze org/bukkit/craftbukkit/v1_5_R2/entity/CraftBlaze
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftBoat org/bukkit/craftbukkit/v1_5_R2/entity/CraftBoat
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftCaveSpider org/bukkit/craftbukkit/v1_5_R2/entity/CraftCaveSpider
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftChicken org/bukkit/craftbukkit/v1_5_R2/entity/CraftChicken
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftComplexLivingEntity org/bukkit/craftbukkit/v1_5_R2/entity/CraftComplexLivingEntity
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftComplexPart org/bukkit/craftbukkit/v1_5_R2/entity/CraftComplexPart
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftCow org/bukkit/craftbukkit/v1_5_R2/entity/CraftCow
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftCreature org/bukkit/craftbukkit/v1_5_R2/entity/CraftCreature
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftCreeper org/bukkit/craftbukkit/v1_5_R2/entity/CraftCreeper
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftCustomEntity org/bukkit/craftbukkit/v1_5_R2/entity/CraftCustomEntity
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftEgg org/bukkit/craftbukkit/v1_5_R2/entity/CraftEgg
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftEnderCrystal org/bukkit/craftbukkit/v1_5_R2/entity/CraftEnderCrystal
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftEnderDragon org/bukkit/craftbukkit/v1_5_R2/entity/CraftEnderDragon
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftEnderDragonPart org/bukkit/craftbukkit/v1_5_R2/entity/CraftEnderDragonPart
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftEnderman org/bukkit/craftbukkit/v1_5_R2/entity/CraftEnderman
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftEnderPearl org/bukkit/craftbukkit/v1_5_R2/entity/CraftEnderPearl
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftEnderSignal org/bukkit/craftbukkit/v1_5_R2/entity/CraftEnderSignal
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftEntity org/bukkit/craftbukkit/v1_5_R2/entity/CraftEntity
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftExperienceOrb org/bukkit/craftbukkit/v1_5_R2/entity/CraftExperienceOrb
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftFakePlayer org/bukkit/craftbukkit/v1_5_R2/entity/CraftFakePlayer
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftFallingSand org/bukkit/craftbukkit/v1_5_R2/entity/CraftFallingSand
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftFireball org/bukkit/craftbukkit/v1_5_R2/entity/CraftFireball
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftFirework org/bukkit/craftbukkit/v1_5_R2/entity/CraftFirework
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftFish org/bukkit/craftbukkit/v1_5_R2/entity/CraftFish
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftFlying org/bukkit/craftbukkit/v1_5_R2/entity/CraftFlying
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftGhast org/bukkit/craftbukkit/v1_5_R2/entity/CraftGhast
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftGiant org/bukkit/craftbukkit/v1_5_R2/entity/CraftGiant
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftGolem org/bukkit/craftbukkit/v1_5_R2/entity/CraftGolem
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftHanging$1 org/bukkit/craftbukkit/v1_5_R2/entity/CraftHanging$1
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftHanging org/bukkit/craftbukkit/v1_5_R2/entity/CraftHanging
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftHumanEntity$1 org/bukkit/craftbukkit/v1_5_R2/entity/CraftHumanEntity$1
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftHumanEntity org/bukkit/craftbukkit/v1_5_R2/entity/CraftHumanEntity
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftIronGolem org/bukkit/craftbukkit/v1_5_R2/entity/CraftIronGolem
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftItem org/bukkit/craftbukkit/v1_5_R2/entity/CraftItem
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftItemFrame$1 org/bukkit/craftbukkit/v1_5_R2/entity/CraftItemFrame$1
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftItemFrame org/bukkit/craftbukkit/v1_5_R2/entity/CraftItemFrame
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftLargeFireball org/bukkit/craftbukkit/v1_5_R2/entity/CraftLargeFireball
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftLightningStrike org/bukkit/craftbukkit/v1_5_R2/entity/CraftLightningStrike
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftLivingEntity org/bukkit/craftbukkit/v1_5_R2/entity/CraftLivingEntity
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftMagmaCube org/bukkit/craftbukkit/v1_5_R2/entity/CraftMagmaCube
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftMinecart org/bukkit/craftbukkit/v1_5_R2/entity/CraftMinecart
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftMinecartChest org/bukkit/craftbukkit/v1_5_R2/entity/CraftMinecartChest
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftMinecartFurnace org/bukkit/craftbukkit/v1_5_R2/entity/CraftMinecartFurnace
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftMinecartHopper org/bukkit/craftbukkit/v1_5_R2/entity/CraftMinecartHopper
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftMinecartMobSpawner org/bukkit/craftbukkit/v1_5_R2/entity/CraftMinecartMobSpawner
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftMinecartRideable org/bukkit/craftbukkit/v1_5_R2/entity/CraftMinecartRideable
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftMinecartTNT org/bukkit/craftbukkit/v1_5_R2/entity/CraftMinecartTNT
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftMonster org/bukkit/craftbukkit/v1_5_R2/entity/CraftMonster
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftMushroomCow org/bukkit/craftbukkit/v1_5_R2/entity/CraftMushroomCow
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftOcelot org/bukkit/craftbukkit/v1_5_R2/entity/CraftOcelot
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftPainting org/bukkit/craftbukkit/v1_5_R2/entity/CraftPainting
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftPig org/bukkit/craftbukkit/v1_5_R2/entity/CraftPig
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftPigZombie org/bukkit/craftbukkit/v1_5_R2/entity/CraftPigZombie
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftPlayer org/bukkit/craftbukkit/v1_5_R2/entity/CraftPlayer
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftProjectile org/bukkit/craftbukkit/v1_5_R2/entity/CraftProjectile
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftSheep org/bukkit/craftbukkit/v1_5_R2/entity/CraftSheep
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftSilverfish org/bukkit/craftbukkit/v1_5_R2/entity/CraftSilverfish
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftSkeleton org/bukkit/craftbukkit/v1_5_R2/entity/CraftSkeleton
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftSlime org/bukkit/craftbukkit/v1_5_R2/entity/CraftSlime
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftSmallFireball org/bukkit/craftbukkit/v1_5_R2/entity/CraftSmallFireball
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftSnowball org/bukkit/craftbukkit/v1_5_R2/entity/CraftSnowball
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftSnowman org/bukkit/craftbukkit/v1_5_R2/entity/CraftSnowman
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftSpider org/bukkit/craftbukkit/v1_5_R2/entity/CraftSpider
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftSquid org/bukkit/craftbukkit/v1_5_R2/entity/CraftSquid
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftTameableAnimal org/bukkit/craftbukkit/v1_5_R2/entity/CraftTameableAnimal
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftThrownExpBottle org/bukkit/craftbukkit/v1_5_R2/entity/CraftThrownExpBottle
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftThrownPotion org/bukkit/craftbukkit/v1_5_R2/entity/CraftThrownPotion
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftTNTPrimed org/bukkit/craftbukkit/v1_5_R2/entity/CraftTNTPrimed
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftVehicle org/bukkit/craftbukkit/v1_5_R2/entity/CraftVehicle
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftVillager org/bukkit/craftbukkit/v1_5_R2/entity/CraftVillager
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftWaterMob org/bukkit/craftbukkit/v1_5_R2/entity/CraftWaterMob
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftWeather org/bukkit/craftbukkit/v1_5_R2/entity/CraftWeather
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftWitch org/bukkit/craftbukkit/v1_5_R2/entity/CraftWitch
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftWither org/bukkit/craftbukkit/v1_5_R2/entity/CraftWither
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftWitherSkull org/bukkit/craftbukkit/v1_5_R2/entity/CraftWitherSkull
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftWolf org/bukkit/craftbukkit/v1_5_R2/entity/CraftWolf
+CL: org/bukkit/craftbukkit/v1_5_R3/entity/CraftZombie org/bukkit/craftbukkit/v1_5_R2/entity/CraftZombie
+CL: org/bukkit/craftbukkit/v1_5_R3/event/CraftEventFactory$1 org/bukkit/craftbukkit/v1_5_R2/event/CraftEventFactory$1
+CL: org/bukkit/craftbukkit/v1_5_R3/event/CraftEventFactory org/bukkit/craftbukkit/v1_5_R2/event/CraftEventFactory
+CL: org/bukkit/craftbukkit/v1_5_R3/generator/CustomChunkGenerator$1 org/bukkit/craftbukkit/v1_5_R2/generator/CustomChunkGenerator$1
+CL: org/bukkit/craftbukkit/v1_5_R3/generator/CustomChunkGenerator$CustomBiomeGrid org/bukkit/craftbukkit/v1_5_R2/generator/CustomChunkGenerator$CustomBiomeGrid
+CL: org/bukkit/craftbukkit/v1_5_R3/generator/CustomChunkGenerator org/bukkit/craftbukkit/v1_5_R2/generator/CustomChunkGenerator
+CL: org/bukkit/craftbukkit/v1_5_R3/generator/InternalChunkGenerator org/bukkit/craftbukkit/v1_5_R2/generator/InternalChunkGenerator
+CL: org/bukkit/craftbukkit/v1_5_R3/generator/NetherChunkGenerator org/bukkit/craftbukkit/v1_5_R2/generator/NetherChunkGenerator
+CL: org/bukkit/craftbukkit/v1_5_R3/generator/NormalChunkGenerator org/bukkit/craftbukkit/v1_5_R2/generator/NormalChunkGenerator
+CL: org/bukkit/craftbukkit/v1_5_R3/generator/SkyLandsChunkGenerator org/bukkit/craftbukkit/v1_5_R2/generator/SkyLandsChunkGenerator
+CL: org/bukkit/craftbukkit/v1_5_R3/help/CommandAliasHelpTopic org/bukkit/craftbukkit/v1_5_R2/help/CommandAliasHelpTopic
+CL: org/bukkit/craftbukkit/v1_5_R3/help/CustomHelpTopic org/bukkit/craftbukkit/v1_5_R2/help/CustomHelpTopic
+CL: org/bukkit/craftbukkit/v1_5_R3/help/CustomIndexHelpTopic org/bukkit/craftbukkit/v1_5_R2/help/CustomIndexHelpTopic
+CL: org/bukkit/craftbukkit/v1_5_R3/help/HelpTopicAmendment org/bukkit/craftbukkit/v1_5_R2/help/HelpTopicAmendment
+CL: org/bukkit/craftbukkit/v1_5_R3/help/HelpYamlReader org/bukkit/craftbukkit/v1_5_R2/help/HelpYamlReader
+CL: org/bukkit/craftbukkit/v1_5_R3/help/MultipleCommandAliasHelpTopic org/bukkit/craftbukkit/v1_5_R2/help/MultipleCommandAliasHelpTopic
+CL: org/bukkit/craftbukkit/v1_5_R3/help/MultipleCommandAliasHelpTopicFactory org/bukkit/craftbukkit/v1_5_R2/help/MultipleCommandAliasHelpTopicFactory
+CL: org/bukkit/craftbukkit/v1_5_R3/help/SimpleHelpMap$1 org/bukkit/craftbukkit/v1_5_R2/help/SimpleHelpMap$1
+CL: org/bukkit/craftbukkit/v1_5_R3/help/SimpleHelpMap$IsCommandTopicPredicate org/bukkit/craftbukkit/v1_5_R2/help/SimpleHelpMap$IsCommandTopicPredicate
+CL: org/bukkit/craftbukkit/v1_5_R3/help/SimpleHelpMap org/bukkit/craftbukkit/v1_5_R2/help/SimpleHelpMap
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftContainer$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftContainer$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftContainer$2 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftContainer$2
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftContainer org/bukkit/craftbukkit/v1_5_R2/inventory/CraftContainer
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftEntityEquipment org/bukkit/craftbukkit/v1_5_R2/inventory/CraftEntityEquipment
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftFurnaceRecipe org/bukkit/craftbukkit/v1_5_R2/inventory/CraftFurnaceRecipe
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventory org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventory
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryAnvil org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryAnvil
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryBeacon org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryBeacon
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryBrewer org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryBrewer
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryCrafting org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryCrafting
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryCustom$MinecraftInventory org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryCustom$MinecraftInventory
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryCustom org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryCustom
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryDoubleChest org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryDoubleChest
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryEnchanting org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryEnchanting
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryFurnace org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryFurnace
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryMerchant org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryMerchant
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryPlayer org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryPlayer
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryView$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryView$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftInventoryView org/bukkit/craftbukkit/v1_5_R2/inventory/CraftInventoryView
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftItemFactory$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftItemFactory$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftItemFactory org/bukkit/craftbukkit/v1_5_R2/inventory/CraftItemFactory
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftItemStack$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftItemStack$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftItemStack org/bukkit/craftbukkit/v1_5_R2/inventory/CraftItemStack
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaBook$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaBook$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaBook org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaBook
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaCharge$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaCharge$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaCharge org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaCharge
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaEnchantedBook$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaEnchantedBook$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaEnchantedBook org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaEnchantedBook
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaFirework$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaFirework$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaFirework org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaFirework
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaItem$ItemMetaKey$Specific$To org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaItem$ItemMetaKey$Specific$To
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaItem$ItemMetaKey$Specific org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaItem$ItemMetaKey$Specific
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaItem$ItemMetaKey org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaItem$ItemMetaKey
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaItem$SerializableMeta org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaItem$SerializableMeta
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaItem org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaItem
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaLeatherArmor$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaLeatherArmor$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaLeatherArmor org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaLeatherArmor
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaMap$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaMap$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaMap org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaMap
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaPotion$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaPotion$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaPotion org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaPotion
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaSkull$1 org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaSkull$1
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftMetaSkull org/bukkit/craftbukkit/v1_5_R2/inventory/CraftMetaSkull
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftRecipe org/bukkit/craftbukkit/v1_5_R2/inventory/CraftRecipe
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftShapedRecipe org/bukkit/craftbukkit/v1_5_R2/inventory/CraftShapedRecipe
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CraftShapelessRecipe org/bukkit/craftbukkit/v1_5_R2/inventory/CraftShapelessRecipe
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/CustomModRecipe org/bukkit/craftbukkit/v1_5_R2/inventory/CustomModRecipe
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/InventoryIterator org/bukkit/craftbukkit/v1_5_R2/inventory/InventoryIterator
+CL: org/bukkit/craftbukkit/v1_5_R3/inventory/RecipeIterator org/bukkit/craftbukkit/v1_5_R2/inventory/RecipeIterator
+CL: org/bukkit/craftbukkit/v1_5_R3/LoggerOutputStream org/bukkit/craftbukkit/v1_5_R2/LoggerOutputStream
+CL: org/bukkit/craftbukkit/v1_5_R3/map/CraftMapCanvas org/bukkit/craftbukkit/v1_5_R2/map/CraftMapCanvas
+CL: org/bukkit/craftbukkit/v1_5_R3/map/CraftMapRenderer org/bukkit/craftbukkit/v1_5_R2/map/CraftMapRenderer
+CL: org/bukkit/craftbukkit/v1_5_R3/map/CraftMapView org/bukkit/craftbukkit/v1_5_R2/map/CraftMapView
+CL: org/bukkit/craftbukkit/v1_5_R3/map/RenderData org/bukkit/craftbukkit/v1_5_R2/map/RenderData
+CL: org/bukkit/craftbukkit/v1_5_R3/metadata/BlockMetadataStore org/bukkit/craftbukkit/v1_5_R2/metadata/BlockMetadataStore
+CL: org/bukkit/craftbukkit/v1_5_R3/metadata/EntityMetadataStore org/bukkit/craftbukkit/v1_5_R2/metadata/EntityMetadataStore
+CL: org/bukkit/craftbukkit/v1_5_R3/metadata/PlayerMetadataStore org/bukkit/craftbukkit/v1_5_R2/metadata/PlayerMetadataStore
+CL: org/bukkit/craftbukkit/v1_5_R3/metadata/WorldMetadataStore org/bukkit/craftbukkit/v1_5_R2/metadata/WorldMetadataStore
+CL: org/bukkit/craftbukkit/v1_5_R3/Overridden org/bukkit/craftbukkit/v1_5_R2/Overridden
+CL: org/bukkit/craftbukkit/v1_5_R3/potion/CraftPotionBrewer org/bukkit/craftbukkit/v1_5_R2/potion/CraftPotionBrewer
+CL: org/bukkit/craftbukkit/v1_5_R3/potion/CraftPotionEffectType org/bukkit/craftbukkit/v1_5_R2/potion/CraftPotionEffectType
+CL: org/bukkit/craftbukkit/v1_5_R3/scheduler/CraftAsyncDebugger org/bukkit/craftbukkit/v1_5_R2/scheduler/CraftAsyncDebugger
+CL: org/bukkit/craftbukkit/v1_5_R3/scheduler/CraftAsyncTask$1 org/bukkit/craftbukkit/v1_5_R2/scheduler/CraftAsyncTask$1
+CL: org/bukkit/craftbukkit/v1_5_R3/scheduler/CraftAsyncTask org/bukkit/craftbukkit/v1_5_R2/scheduler/CraftAsyncTask
+CL: org/bukkit/craftbukkit/v1_5_R3/scheduler/CraftFuture org/bukkit/craftbukkit/v1_5_R2/scheduler/CraftFuture
+CL: org/bukkit/craftbukkit/v1_5_R3/scheduler/CraftScheduler$1 org/bukkit/craftbukkit/v1_5_R2/scheduler/CraftScheduler$1
+CL: org/bukkit/craftbukkit/v1_5_R3/scheduler/CraftScheduler$2 org/bukkit/craftbukkit/v1_5_R2/scheduler/CraftScheduler$2
+CL: org/bukkit/craftbukkit/v1_5_R3/scheduler/CraftScheduler$3 org/bukkit/craftbukkit/v1_5_R2/scheduler/CraftScheduler$3
+CL: org/bukkit/craftbukkit/v1_5_R3/scheduler/CraftScheduler$4 org/bukkit/craftbukkit/v1_5_R2/scheduler/CraftScheduler$4
+CL: org/bukkit/craftbukkit/v1_5_R3/scheduler/CraftScheduler$5 org/bukkit/craftbukkit/v1_5_R2/scheduler/CraftScheduler$5
+CL: org/bukkit/craftbukkit/v1_5_R3/scheduler/CraftScheduler org/bukkit/craftbukkit/v1_5_R2/scheduler/CraftScheduler
+CL: org/bukkit/craftbukkit/v1_5_R3/scheduler/CraftTask org/bukkit/craftbukkit/v1_5_R2/scheduler/CraftTask
+CL: org/bukkit/craftbukkit/v1_5_R3/scoreboard/CraftCriteria org/bukkit/craftbukkit/v1_5_R2/scoreboard/CraftCriteria
+CL: org/bukkit/craftbukkit/v1_5_R3/scoreboard/CraftObjective org/bukkit/craftbukkit/v1_5_R2/scoreboard/CraftObjective
+CL: org/bukkit/craftbukkit/v1_5_R3/scoreboard/CraftScore org/bukkit/craftbukkit/v1_5_R2/scoreboard/CraftScore
+CL: org/bukkit/craftbukkit/v1_5_R3/scoreboard/CraftScoreboard org/bukkit/craftbukkit/v1_5_R2/scoreboard/CraftScoreboard
+CL: org/bukkit/craftbukkit/v1_5_R3/scoreboard/CraftScoreboardComponent org/bukkit/craftbukkit/v1_5_R2/scoreboard/CraftScoreboardComponent
+CL: org/bukkit/craftbukkit/v1_5_R3/scoreboard/CraftScoreboardManager org/bukkit/craftbukkit/v1_5_R2/scoreboard/CraftScoreboardManager
+CL: org/bukkit/craftbukkit/v1_5_R3/scoreboard/CraftScoreboardTranslations org/bukkit/craftbukkit/v1_5_R2/scoreboard/CraftScoreboardTranslations
+CL: org/bukkit/craftbukkit/v1_5_R3/scoreboard/CraftTeam org/bukkit/craftbukkit/v1_5_R2/scoreboard/CraftTeam
+CL: org/bukkit/craftbukkit/v1_5_R3/Spigot$1 org/bukkit/craftbukkit/v1_5_R2/Spigot$1
+CL: org/bukkit/craftbukkit/v1_5_R3/Spigot org/bukkit/craftbukkit/v1_5_R2/Spigot
+CL: org/bukkit/craftbukkit/v1_5_R3/SpigotTimings$WorldTimingsHandler org/bukkit/craftbukkit/v1_5_R2/SpigotTimings$WorldTimingsHandler
+CL: org/bukkit/craftbukkit/v1_5_R3/SpigotTimings org/bukkit/craftbukkit/v1_5_R2/SpigotTimings
+CL: org/bukkit/craftbukkit/v1_5_R3/TextWrapper org/bukkit/craftbukkit/v1_5_R2/TextWrapper
+CL: org/bukkit/craftbukkit/v1_5_R3/TrigMath org/bukkit/craftbukkit/v1_5_R2/TrigMath
+CL: org/bukkit/craftbukkit/v1_5_R3/updater/ArtifactDetails$ChannelDetails org/bukkit/craftbukkit/v1_5_R2/updater/ArtifactDetails$ChannelDetails
+CL: org/bukkit/craftbukkit/v1_5_R3/updater/ArtifactDetails$FileDetails org/bukkit/craftbukkit/v1_5_R2/updater/ArtifactDetails$FileDetails
+CL: org/bukkit/craftbukkit/v1_5_R3/updater/ArtifactDetails org/bukkit/craftbukkit/v1_5_R2/updater/ArtifactDetails
+CL: org/bukkit/craftbukkit/v1_5_R3/updater/AutoUpdater$1 org/bukkit/craftbukkit/v1_5_R2/updater/AutoUpdater$1
+CL: org/bukkit/craftbukkit/v1_5_R3/updater/AutoUpdater org/bukkit/craftbukkit/v1_5_R2/updater/AutoUpdater
+CL: org/bukkit/craftbukkit/v1_5_R3/updater/BukkitDLUpdaterService$DateDeserializer org/bukkit/craftbukkit/v1_5_R2/updater/BukkitDLUpdaterService$DateDeserializer
+CL: org/bukkit/craftbukkit/v1_5_R3/updater/BukkitDLUpdaterService org/bukkit/craftbukkit/v1_5_R2/updater/BukkitDLUpdaterService
+CL: org/bukkit/craftbukkit/v1_5_R3/util/AsynchronousExecutor$CallBackProvider org/bukkit/craftbukkit/v1_5_R2/util/AsynchronousExecutor$CallBackProvider
+CL: org/bukkit/craftbukkit/v1_5_R3/util/AsynchronousExecutor$Task org/bukkit/craftbukkit/v1_5_R2/util/AsynchronousExecutor$Task
+CL: org/bukkit/craftbukkit/v1_5_R3/util/AsynchronousExecutor org/bukkit/craftbukkit/v1_5_R2/util/AsynchronousExecutor
+CL: org/bukkit/craftbukkit/v1_5_R3/util/BlockStateListPopulator org/bukkit/craftbukkit/v1_5_R2/util/BlockStateListPopulator
+CL: org/bukkit/craftbukkit/v1_5_R3/util/CraftDamageSource org/bukkit/craftbukkit/v1_5_R2/util/CraftDamageSource
+CL: org/bukkit/craftbukkit/v1_5_R3/util/DatFileFilter org/bukkit/craftbukkit/v1_5_R2/util/DatFileFilter
+CL: org/bukkit/craftbukkit/v1_5_R3/util/ExceptionHandler org/bukkit/craftbukkit/v1_5_R2/util/ExceptionHandler
+CL: org/bukkit/craftbukkit/v1_5_R3/util/ExceptionReporter org/bukkit/craftbukkit/v1_5_R2/util/ExceptionReporter
+CL: org/bukkit/craftbukkit/v1_5_R3/util/FlatMap org/bukkit/craftbukkit/v1_5_R2/util/FlatMap
+CL: org/bukkit/craftbukkit/v1_5_R3/util/Java15Compat org/bukkit/craftbukkit/v1_5_R2/util/Java15Compat
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LazyHashSet org/bukkit/craftbukkit/v1_5_R2/util/LazyHashSet
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LazyPlayerSet org/bukkit/craftbukkit/v1_5_R2/util/LazyPlayerSet
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LongHash org/bukkit/craftbukkit/v1_5_R2/util/LongHash
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LongHashSet$Itr org/bukkit/craftbukkit/v1_5_R2/util/LongHashSet$Itr
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LongHashSet org/bukkit/craftbukkit/v1_5_R2/util/LongHashSet
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LongObjectHashMap$1 org/bukkit/craftbukkit/v1_5_R2/util/LongObjectHashMap$1
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LongObjectHashMap$Entry org/bukkit/craftbukkit/v1_5_R2/util/LongObjectHashMap$Entry
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LongObjectHashMap$KeyIterator org/bukkit/craftbukkit/v1_5_R2/util/LongObjectHashMap$KeyIterator
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LongObjectHashMap$KeySet org/bukkit/craftbukkit/v1_5_R2/util/LongObjectHashMap$KeySet
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LongObjectHashMap$ValueCollection org/bukkit/craftbukkit/v1_5_R2/util/LongObjectHashMap$ValueCollection
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LongObjectHashMap$ValueIterator org/bukkit/craftbukkit/v1_5_R2/util/LongObjectHashMap$ValueIterator
+CL: org/bukkit/craftbukkit/v1_5_R3/util/LongObjectHashMap org/bukkit/craftbukkit/v1_5_R2/util/LongObjectHashMap
+CL: org/bukkit/craftbukkit/v1_5_R3/util/ServerShutdownThread org/bukkit/craftbukkit/v1_5_R2/util/ServerShutdownThread
+CL: org/bukkit/craftbukkit/v1_5_R3/util/ShortConsoleLogFormatter org/bukkit/craftbukkit/v1_5_R2/util/ShortConsoleLogFormatter
+CL: org/bukkit/craftbukkit/v1_5_R3/util/StructureGrowDelegate org/bukkit/craftbukkit/v1_5_R2/util/StructureGrowDelegate
+CL: org/bukkit/craftbukkit/v1_5_R3/util/TerminalConsoleHandler org/bukkit/craftbukkit/v1_5_R2/util/TerminalConsoleHandler
+CL: org/bukkit/craftbukkit/v1_5_R3/util/UnsafeList$Itr org/bukkit/craftbukkit/v1_5_R2/util/UnsafeList$Itr
+CL: org/bukkit/craftbukkit/v1_5_R3/util/UnsafeList org/bukkit/craftbukkit/v1_5_R2/util/UnsafeList
+CL: org/bukkit/craftbukkit/v1_5_R3/util/Versioning org/bukkit/craftbukkit/v1_5_R2/util/Versioning
+CL: org/bukkit/craftbukkit/v1_5_R3/util/Waitable$Status org/bukkit/craftbukkit/v1_5_R2/util/Waitable$Status
+CL: org/bukkit/craftbukkit/v1_5_R3/util/Waitable org/bukkit/craftbukkit/v1_5_R2/util/Waitable
+CL: org/bukkit/craftbukkit/v1_5_R3/util/WeakCollection$1 org/bukkit/craftbukkit/v1_5_R2/util/WeakCollection$1
+CL: org/bukkit/craftbukkit/v1_5_R3/util/WeakCollection org/bukkit/craftbukkit/v1_5_R2/util/WeakCollection

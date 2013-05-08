@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
@@ -28,6 +29,7 @@ public class EntityEnderman extends EntityMob
      */
     private int teleportDelay = 0;
     private int field_70826_g = 0;
+    private boolean field_104003_g;
 
     public EntityEnderman(World par1World)
     {
@@ -83,6 +85,8 @@ public class EntityEnderman extends EntityMob
         {
             if (this.shouldAttackPlayer(entityplayer))
             {
+                this.field_104003_g = true;
+
                 if (this.field_70826_g == 0)
                 {
                     this.worldObj.playSoundAtEntity(entityplayer, "mob.endermen.stare", 1.0F, 1.0F);
@@ -204,6 +208,7 @@ public class EntityEnderman extends EntityMob
             {
                 this.entityToAttack = null;
                 this.setScreaming(false);
+                this.field_104003_g = false;
                 this.teleportRandomly();
             }
         }
@@ -212,7 +217,13 @@ public class EntityEnderman extends EntityMob
         {
             this.entityToAttack = null;
             this.setScreaming(false);
+            this.field_104003_g = false;
             this.teleportRandomly();
+        }
+
+        if (this.isScreaming() && !this.field_104003_g && this.rand.nextInt(100) == 0)
+        {
+            this.setScreaming(false);
         }
 
         this.isJumping = false;
@@ -469,8 +480,15 @@ public class EntityEnderman extends EntityMob
         {
             this.setScreaming(true);
 
+            if (par1DamageSource instanceof EntityDamageSource && par1DamageSource.getEntity() instanceof EntityPlayer)
+            {
+                this.field_104003_g = true;
+            }
+
             if (par1DamageSource instanceof EntityDamageSourceIndirect)
             {
+                this.field_104003_g = false;
+
                 for (int j = 0; j < 64; ++j)
                 {
                     if (this.teleportRandomly())

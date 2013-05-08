@@ -91,7 +91,7 @@ public class BlockHopper extends BlockContainer
         if (par6ItemStack.hasDisplayName())
         {
             TileEntityHopper tileentityhopper = getHopperTile(par1World, par2, par3, par4);
-            tileentityhopper.func_96115_a(par6ItemStack.getDisplayName());
+            tileentityhopper.setInventoryName(par6ItemStack.getDisplayName());
         }
     }
 
@@ -101,7 +101,7 @@ public class BlockHopper extends BlockContainer
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
         super.onBlockAdded(par1World, par2, par3, par4);
-        this.func_96471_k(par1World, par2, par3, par4);
+        this.updateMetadata(par1World, par2, par3, par4);
     }
 
     /**
@@ -119,7 +119,7 @@ public class BlockHopper extends BlockContainer
 
             if (tileentityhopper != null)
             {
-                par5EntityPlayer.func_94064_a(tileentityhopper);
+                par5EntityPlayer.displayGUIHopper(tileentityhopper);
             }
 
             return true;
@@ -132,15 +132,18 @@ public class BlockHopper extends BlockContainer
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        this.func_96471_k(par1World, par2, par3, par4);
+        this.updateMetadata(par1World, par2, par3, par4);
     }
 
-    private void func_96471_k(World par1World, int par2, int par3, int par4)
+    /**
+     * Updates the Metadata to include if the Hopper gets powered by Redstone or not
+     */
+    private void updateMetadata(World par1World, int par2, int par3, int par4)
     {
         int l = par1World.getBlockMetadata(par2, par3, par4);
         int i1 = getDirectionFromMetadata(l);
         boolean flag = !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
-        boolean flag1 = func_94452_d(l);
+        boolean flag1 = getIsBlockNotPoweredFromMetadata(l);
 
         if (flag != flag1)
         {
@@ -229,7 +232,7 @@ public class BlockHopper extends BlockContainer
         return Math.min(par0 & 7, 5); // CraftBukkit - Fix AIOOBE in callers
     }
 
-    public static boolean func_94452_d(int par0)
+    public static boolean getIsBlockNotPoweredFromMetadata(int par0)
     {
         return (par0 & 8) != 8;
     }
@@ -249,7 +252,7 @@ public class BlockHopper extends BlockContainer
      */
     public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
     {
-        return Container.func_94526_b((IInventory) getHopperTile(par1World, par2, par3, par4));
+        return Container.calcRedstoneFromInventory(getHopperTile(par1World, par2, par3, par4));
     }
 
     public static TileEntityHopper getHopperTile(IBlockAccess par0IBlockAccess, int par1, int par2, int par3)

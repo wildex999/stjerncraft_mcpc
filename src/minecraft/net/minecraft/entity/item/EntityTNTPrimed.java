@@ -128,7 +128,7 @@ public class EntityTNTPrimed extends Entity
         this.fuse = par1NBTTagCompound.getByte("Fuse");
     }
 
-    public EntityLiving func_94083_c()
+    public EntityLiving getTntPlacedBy()
     {
         return this.tntPlacedBy;
     }

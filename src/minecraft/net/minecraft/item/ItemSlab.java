@@ -3,6 +3,7 @@ package net.minecraft.item;
 import net.minecraft.block.BlockHalfSlab;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+
 public class ItemSlab extends ItemBlock
 {
     private final boolean isFullBlock;

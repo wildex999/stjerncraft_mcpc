@@ -1204,6 +1204,14 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
     }
 
+    public void func_104140_m()
+    {
+        if (this.chunkProvider.canSave())
+        {
+            this.chunkProvider.func_104112_b();
+        }
+    }
+
     /**
      * Saves the chunks to disk.
      */

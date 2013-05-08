@@ -216,7 +216,7 @@ public class VillageSiege
 
             if (this.theVillage.isInRange(i1, j1, k1) && SpawnerAnimals.canCreatureTypeSpawnAtLocation(EnumCreatureType.monster, this.worldObj, i1, j1, k1))
             {
-                return this.worldObj.getWorldVec3Pool().getVecFromPool((double) i1, (double) j1, (double) k1);
+                this.worldObj.getWorldVec3Pool().getVecFromPool((double)i1, (double)j1, (double)k1);
             }
         }
 

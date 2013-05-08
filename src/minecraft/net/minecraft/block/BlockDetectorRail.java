@@ -169,7 +169,7 @@ public class BlockDetectorRail extends BlockRailBase
 
             if (list.size() > 0)
             {
-                return Container.func_94526_b((IInventory)list.get(0));
+                return Container.calcRedstoneFromInventory((IInventory)list.get(0));
             }
         }
 

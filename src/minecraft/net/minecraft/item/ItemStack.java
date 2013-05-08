@@ -272,7 +272,7 @@ public final class ItemStack
             return;
         }
 
-        if (!(this.getHasSubtypes() || Item.itemsList[this.itemID].isDamageable() || this.itemID > 255))   // Should be usesDurability
+        if (!(this.getHasSubtypes() || Item.itemsList[this.itemID].isDamageable() || this.itemID > 255))
         {
             par1 = 0;
         }
@@ -301,8 +301,14 @@ public final class ItemStack
         return this.getItem().getItemMaxDamageFromStack(this);
     }
 
+    /**
+     * Attempts to damage the ItemStack with par1 amount of damage, If the ItemStack has the Unbreaking enchantment
+     * there is a chance for each point of damage to be negated. Returns true if it takes more damage than
+     * getMaxDamage(). Returns false otherwise or if the ItemStack can't be damaged or if all points of damage are
+     * negated.
+     */
     // Spigot start
-    public boolean func_96631_a(int par1, Random par2Random)
+    public boolean attemptDamageItem(int par1, Random par2Random)
     {
         return isDamaged(par1, par2Random, null);
     }
@@ -323,7 +329,7 @@ public final class ItemStack
 
                 for (int l = 0; j > 0 && l < par1; ++l)
                 {
-                    if (EnchantmentDurability.func_92097_a(this, j, par2Random))
+                    if (EnchantmentDurability.negateDamage(this, j, par2Random))
                     {
                         ++k;
                     }

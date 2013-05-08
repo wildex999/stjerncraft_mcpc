@@ -39,7 +39,7 @@ public class CraftCommandBlock extends CraftBlockState implements CommandBlock {
 
         if (result) {
             commandBlock.setCommand(command);
-            commandBlock.func_96104_c(name);
+            commandBlock.setCommandSenderName(name);
         }
 
         return result;

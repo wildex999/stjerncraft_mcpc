@@ -30,7 +30,7 @@ public class Event
     private Result result = Result.DEFAULT;
     private final boolean hasResult;
     private static ListenerList listeners = new ListenerList();
-    
+
     private static final Map<Class, Map<Class, Boolean>> annotationMap = new ConcurrentHashMap<Class, Map<Class, Boolean>>();
     
     public Event()
@@ -70,7 +70,7 @@ public class Event
         list.put(annotation, false);
         return false;
     }
-    
+
     /**
      * Determine if this function is cancelable at all. 
      * @return If access to setCanceled should be allowed

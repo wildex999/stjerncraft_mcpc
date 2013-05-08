@@ -11,12 +11,13 @@ import net.minecraft.world.World;
 public class EntityEnderCrystal extends Entity
 {
     /** Used to create the rotation animation when rendering the crystal. */
-    public int innerRotation = 0;
+    public int innerRotation;
     public int health;
 
     public EntityEnderCrystal(World par1World)
     {
         super(par1World);
+        this.innerRotation = 0;
         this.preventEntitySpawning = true;
         this.setSize(2.0F, 2.0F);
         this.yOffset = this.height / 2.0F;

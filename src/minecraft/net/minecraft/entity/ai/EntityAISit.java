@@ -2,6 +2,7 @@ package net.minecraft.entity.ai;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.passive.EntityTameable;
+
 public class EntityAISit extends EntityAIBase
 {
     private EntityTameable theEntity;

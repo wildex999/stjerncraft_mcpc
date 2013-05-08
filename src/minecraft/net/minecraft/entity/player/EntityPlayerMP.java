@@ -75,6 +75,7 @@ import net.minecraft.tileentity.TileEntityDropper;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.CombatTracker;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.FoodStats;
@@ -219,7 +220,14 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
         if (par1NBTTagCompound.hasKey("playerGameType"))
         {
-            this.theItemInWorldManager.setGameType(EnumGameType.getByID(par1NBTTagCompound.getInteger("playerGameType")));
+            if (MinecraftServer.getServer().func_104056_am())
+            {
+                this.theItemInWorldManager.setGameType(MinecraftServer.getServer().getGameType());
+            }
+            else
+            {
+                this.theItemInWorldManager.setGameType(EnumGameType.getByID(par1NBTTagCompound.getInteger("playerGameType")));
+            }
         }
 
         this.getBukkitEntity().readExtraData(par1NBTTagCompound); // CraftBukkit
@@ -825,7 +833,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         this.openContainer.addCraftingToCrafters(this);
     }
 
-    public void func_94064_a(TileEntityHopper par1TileEntityHopper)
+    public void displayGUIHopper(TileEntityHopper par1TileEntityHopper)
     {
         // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerHopper(this.inventory, par1TileEntityHopper));
@@ -843,7 +851,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         this.openContainer.addCraftingToCrafters(this);
     }
 
-    public void func_96125_a(EntityMinecartHopper par1EntityMinecartHopper)
+    public void displayGUIHopperMinecart(EntityMinecartHopper par1EntityMinecartHopper)
     {
         // CraftBukkit start - Inventory open hook
         Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerHopper(this.inventory, par1EntityMinecartHopper));
@@ -1352,8 +1360,12 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         this.experienceTotal = this.newTotalExp;
         this.experience = 0;
         this.deathTime = 0;
-        activePotionsMap.clear();
+        this.activePotionsMap.clear();
+        this.potionsNeedUpdate = true;
         this.openContainer = this.inventoryContainer;
+        this.attackingPlayer = null;
+        this.entityLivingToAttack = null;
+        this.field_94063_bt = new CombatTracker(this); // Should be combatTracker
         this.lastExperience = -1;
 
         if (this.keepLevel || keepInventory)

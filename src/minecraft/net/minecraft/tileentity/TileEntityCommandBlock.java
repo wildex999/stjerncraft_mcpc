@@ -16,11 +16,13 @@ import net.minecraft.world.World;
 
 public class TileEntityCommandBlock extends TileEntity implements ICommandSender
 {
-    private int field_96106_a = 0;
+    private int succesCount = 0;
 
     /** The command this block will execute when powered. */
     public String command = ""; // CraftBukkit - private -> public
-    private String field_96105_c = "@";
+
+    /** The name of command sender (usually username, but possibly "Rcon") */
+    private String commandSenderName = "@";
     // CraftBukkit start
     private final org.bukkit.command.BlockCommandSender sender;
 
@@ -103,7 +105,7 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
                     }
                     else
                     {
-                        EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(args[1]); // Should be getPlayer
+                        EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(args[1]);
 
                         if (player == null)
                         {
@@ -194,12 +196,15 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
      */
     public String getCommandSenderName()
     {
-        return this.field_96105_c;
+        return this.commandSenderName;
     }
 
-    public void func_96104_c(String par1Str)
+    /**
+     * Sets the name of the command sender
+     */
+    public void setCommandSenderName(String par1Str)
     {
-        this.field_96105_c = par1Str;
+        this.commandSenderName = par1Str;
     }
 
     public void sendChatToPlayer(String par1Str) {}
@@ -227,8 +232,8 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
     {
         super.writeToNBT(par1NBTTagCompound);
         par1NBTTagCompound.setString("Command", this.command);
-        par1NBTTagCompound.setInteger("SuccessCount", this.field_96106_a);
-        par1NBTTagCompound.setString("CustomName", this.field_96105_c);
+        par1NBTTagCompound.setInteger("SuccessCount", this.succesCount);
+        par1NBTTagCompound.setString("CustomName", this.commandSenderName);
     }
 
     /**
@@ -238,11 +243,11 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
     {
         super.readFromNBT(par1NBTTagCompound);
         this.command = par1NBTTagCompound.getString("Command");
-        this.field_96106_a = par1NBTTagCompound.getInteger("SuccessCount");
+        this.succesCount = par1NBTTagCompound.getInteger("SuccessCount");
 
         if (par1NBTTagCompound.hasKey("CustomName"))
         {
-            this.field_96105_c = par1NBTTagCompound.getString("CustomName");
+            this.commandSenderName = par1NBTTagCompound.getString("CustomName");
         }
     }
 
@@ -266,11 +271,11 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
 
     public int func_96103_d()
     {
-        return this.field_96106_a;
+        return this.succesCount;
     }
 
     public void func_96102_a(int par1)
     {
-        this.field_96106_a = par1;
+        this.succesCount = par1;
     }
 }

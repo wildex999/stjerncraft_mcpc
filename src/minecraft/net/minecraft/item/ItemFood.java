@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet8UpdateHealth;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
+
 public class ItemFood extends Item
 {
     /** Number of ticks to run while 'EnumAction'ing until result. */

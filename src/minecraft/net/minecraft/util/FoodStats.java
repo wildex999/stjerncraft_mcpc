@@ -25,8 +25,6 @@ public class FoodStats
     // CraftBukkit end
     private int prevFoodLevel = 20;
 
-    public FoodStats() {}
-
     /**
      * Args: int foodLevel, float foodSaturationModifier
      */

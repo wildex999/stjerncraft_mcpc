@@ -147,7 +147,7 @@ public class RelaunchClassLoader extends URLClassLoader
                 FMLRelaunchLog.info("DEBUG_CLASSLOADING_SAVE Enabled, saving all classes to \"%s\"", temp_folder.getAbsolutePath().replace('\\',  '/'));
                 temp_folder.mkdirs();
             }
-        }        
+        }
     }
 
     public void registerTransformer(String transformerClassName)

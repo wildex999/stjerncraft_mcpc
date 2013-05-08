@@ -154,7 +154,7 @@ public class BlockFire extends Block
                         par1World.setBlockToAir(par2, par3, par4);
                     }
                 }
-                else if (!flag && !this.canBlockCatchFire((IBlockAccess) par1World, par2, par3 - 1, par4) && l == 15 && par5Random.nextInt(4) == 0)
+                else if (!flag && !this.canBlockCatchFire(par1World, par2, par3 - 1, par4, UP) && l == 15 && par5Random.nextInt(4) == 0)
                 {
                     fireExtinguished(par1World, par2, par3, par4); // CraftBukkit - burn out
                 }
@@ -456,5 +456,5 @@ public class BlockFire extends Block
             newChance = block.getFireSpreadSpeed(world, x, y, z, world.getBlockMetadata(x, y, z), face);
         }
         return (newChance > oldChance ? newChance : oldChance);
-    }    
+    }
 }

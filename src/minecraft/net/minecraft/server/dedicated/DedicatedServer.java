@@ -84,7 +84,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         System.setOut(new PrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.INFO), true));
         System.setErr(new PrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.SEVERE), true));
         // CraftBukkit end
-        this.getLogAgent().logInfo("Starting minecraft server version 1.5.1");
+        this.getLogAgent().logInfo("Starting minecraft server version 1.5.2");
 
         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
         {
@@ -112,6 +112,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         this.setAllowFlight(this.settings.getBooleanProperty("allow-flight", false));
         this.setTexturePack(this.settings.getProperty("texture-pack", ""));
         this.setMOTD(this.settings.getProperty("motd", "A Minecraft Server"));
+        this.func_104055_i(this.settings.getBooleanProperty("force-gamemode", false));
 
         if (this.settings.getIntProperty("difficulty", 1) < 0)
         {
@@ -168,7 +169,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
             this.getLogAgent().logWarning("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
         }
         
-        FMLCommonHandler.instance().onServerStarted();        
+        FMLCommonHandler.instance().onServerStarted();
 
         // this.a((PlayerList) (new DedicatedPlayerList(this))); // CraftBukkit - moved up
         this.anvilConverterForAnvilFile = new AnvilSaveConverter(server.getWorldContainer()); // CraftBukkit - moved from MinecraftServer constructor
@@ -305,8 +306,8 @@ public class DedicatedServer extends MinecraftServer implements IServer
     public CrashReport addServerInfoToCrashReport(CrashReport par1CrashReport)
     {
         par1CrashReport = super.addServerInfoToCrashReport(par1CrashReport);
-        par1CrashReport.func_85056_g().addCrashSectionCallable("Is Modded", (Callable)(new CallableType(this)));
-        par1CrashReport.func_85056_g().addCrashSectionCallable("Type", (Callable)(new CallableServerType(this)));
+        par1CrashReport.func_85056_g().addCrashSectionCallable("Is Modded", new CallableType(this));
+        par1CrashReport.func_85056_g().addCrashSectionCallable("Type", new CallableServerType(this));
         return par1CrashReport;
     }
 
@@ -433,12 +434,6 @@ public class DedicatedServer extends MinecraftServer implements IServer
         return file1 != null ? file1.getAbsolutePath() : "No settings file";
     }
 
-    public void enableGui()
-    {
-        ServerGUI.initGUI(this);
-        this.guiIsEnabled = true;
-    }
-
     public boolean getGuiEnabled()
     {
         return this.guiIsEnabled;
@@ -504,5 +499,12 @@ public class DedicatedServer extends MinecraftServer implements IServer
     public ServerConfigurationManager getConfigurationManager()
     {
         return this.getDedicatedPlayerList();
+    }
+
+    @SideOnly(Side.SERVER)
+    public void enableGui()
+    {
+        ServerGUI.initGUI(this);
+        this.guiIsEnabled = true;
     }
 }

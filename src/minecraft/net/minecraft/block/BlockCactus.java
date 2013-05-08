@@ -180,5 +180,5 @@ public class BlockCactus extends Block implements IPlantable
     public int getPlantMetadata(World world, int x, int y, int z)
     {
         return -1;
-    }    
+    }
 }

@@ -635,7 +635,7 @@ public class Block
                 {
                     this.dropBlockAsItem_do(par1World, par2, par3, par4, item);
                 }
-            }                
+            }
         }
     }
 
@@ -1192,7 +1192,7 @@ public class Block
     public void fillWithRain(World par1World, int par2, int par3, int par4) {}
 
     @SideOnly(Side.CLIENT)
-    public boolean func_82505_u_()
+    public boolean isFlowerPot()
     {
         return false;
     }

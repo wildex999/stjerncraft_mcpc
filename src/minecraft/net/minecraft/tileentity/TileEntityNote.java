@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+
 public class TileEntityNote extends TileEntity
 {
     /** Note to play */
@@ -11,8 +12,6 @@ public class TileEntityNote extends TileEntity
 
     /** stores the latest redstone state */
     public boolean previousRedstoneState = false;
-
-    public TileEntityNote() {}
 
     /**
      * Writes a tile entity to NBT.

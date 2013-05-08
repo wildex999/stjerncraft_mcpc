@@ -347,7 +347,7 @@ public final class SpawnerAnimals
         {
             while (par6Random.nextFloat() < par1BiomeGenBase.getSpawningChance())
             {
-                SpawnListEntry spawnlistentry = (SpawnListEntry) WeightedRandom.getRandomItem(par0World.rand, (Collection) list);
+                SpawnListEntry spawnlistentry = (SpawnListEntry)WeightedRandom.getRandomItem(par0World.rand, list);
                 int i1 = spawnlistentry.minGroupCount + par6Random.nextInt(1 + spawnlistentry.maxGroupCount - spawnlistentry.minGroupCount);
                 int j1 = par2 + par6Random.nextInt(par4);
                 int k1 = par3 + par6Random.nextInt(par5);

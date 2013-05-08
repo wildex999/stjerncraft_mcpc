@@ -15,7 +15,7 @@ public class PotionEffect
     private int potionID;
 
     /** The duration of the potion effect */
-    private int duration;
+    public int duration;
 
     /** The amplifier of the potion effect */
     private int amplifier;
@@ -159,7 +159,7 @@ public class PotionEffect
         }
     }
 
-    public boolean func_102028_d()
+    public boolean isSplashPotionEffect()
     {
         return this.isSplashPotion;
     }
