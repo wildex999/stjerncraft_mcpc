@@ -87,7 +87,8 @@ public class EntityAIAttackOnCollide extends EntityAIBase
     public void resetTask()
     {
         // CraftBukkit start
-        EntityTargetEvent.TargetReason reason = this.entityTarget.isEntityAlive() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
+        // MCPC+ - add null check to entityTarget
+        EntityTargetEvent.TargetReason reason = this.entityTarget != null && this.entityTarget.isEntityAlive() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
         org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetEvent(attacker, null, reason);
         // CraftBukkit end
         this.entityTarget = null;
