@@ -6,12 +6,16 @@ A Forge/Bukkit/Spigot Minecraft Server
 Compilation
 -----------
 
-We use maven to handle our dependencies.
+We use Maven to handle our dependencies.
 
-* Install [Maven 3](http://maven.apache.org/download.html)
-* Check out and install [MCPC API](https://github.com/MinecraftPortCentral/Bukkit/tree/mcpc-api) 
+1. Install [Maven 3](http://maven.apache.org/download.html)
+2. Check out and install [MCPC API](https://github.com/MinecraftPortCentral/Bukkit/tree/mcpc-api) 
  * Note: this is not needed as the repository we use has MCPC-API too, but you might have a newer one (with your own changes :D)
-* Check out this repo and: `mvn initialize -P -built` then `mvn clean package`
+ * Check out this repo and run: 
+3. `mvn initialize -P -built`
+4. `mvn clean package`
+
+If you get "Could not find artifact net.minecraftforge:minecraft-forge:jar", repeat step 3. To fix "out of heap space", run mvn with more memory: MAVEN\_OPTS=-mx2G
 
 
 Profiling
