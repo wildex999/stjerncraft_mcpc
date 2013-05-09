@@ -900,8 +900,14 @@ public class Item
      *
      * @param stack The ItemStack
      * @param armorType Armor slot ID: 0: Helmet, 1: Chest, 2: Legs, 3: Boots
+     * @param entity The entity trying to equip the armor
      * @return True if the given ItemStack can be inserted in the slot
      */
+    public boolean isValidArmor(ItemStack stack, int armorType, Entity entity)
+    {
+        return isValidArmor(stack, armorType);
+    }
+    @Deprecated //Deprecated in 1.5.2, remove in 1.6, see EntityPlayer sensitive version above.
     public boolean isValidArmor(ItemStack stack, int armorType)
     {
         if (this instanceof ItemArmor)

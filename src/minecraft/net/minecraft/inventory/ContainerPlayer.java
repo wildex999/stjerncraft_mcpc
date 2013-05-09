@@ -23,7 +23,7 @@ public class ContainerPlayer extends Container
     private final EntityPlayer thePlayer;
     // CraftBukkit start
     private CraftInventoryView bukkitEntity = null;
-    private InventoryPlayer player;
+    protected InventoryPlayer player;
     // CraftBukkit end
 
     public ContainerPlayer(InventoryPlayer par1InventoryPlayer, boolean par2, EntityPlayer par3EntityPlayer)

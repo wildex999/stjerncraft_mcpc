@@ -223,7 +223,7 @@ public abstract class EntityLiving extends Entity
 
     /** Whether this entity should NOT despawn. */
     public boolean persistenceRequired = !this.canDespawn(); // CraftBukkit - private -> public, change value
-    protected CombatTracker field_94063_bt = new CombatTracker(this); // CraftBukkit - remove final
+    public CombatTracker field_94063_bt = new CombatTracker(this); // CraftBukkit - remove final // Forge - protected -> public
 
     /**
      * The number of updates over which the new position and rotation are to be applied to the entity.
