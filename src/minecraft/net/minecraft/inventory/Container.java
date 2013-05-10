@@ -36,14 +36,20 @@ public abstract class Container
 
     // CraftBukkit start
     public boolean checkReachable = true;
-    public InventoryView getBukkitView() { return null; } // MCPC+ - concrete, return null - for mod containers
+    public InventoryView getBukkitView() { return null; } // MCPC+ - concrete, return null - for mod containers TODO: synthesize a wrapper
     public void transferTo(Container other, org.bukkit.craftbukkit.entity.CraftHumanEntity player)
     {
         InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
-        ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
-        ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
-        ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
-        ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
+        // MCPC+ start - add null checks to skip modded inventories with no Bukkit wrappers
+        if (source != null) {
+            ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
+            ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
+        }
+        if (destination != null) {
+            ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
+            ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
+        }
+        // MCPC+ end
     }
     // CraftBukkit end
 
