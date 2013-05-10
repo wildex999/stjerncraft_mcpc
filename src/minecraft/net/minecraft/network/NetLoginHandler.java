@@ -214,7 +214,12 @@ public class NetLoginHandler extends NetHandler
     }
 
     public void completeConnection(String s)
-    {    
+    {
+        if (s != null)
+        {
+            this.raiseErrorAndDisconnect(s);
+        }
+
         // CraftBukkit start
         EntityPlayerMP entityplayermp = this.mcServer.getConfigurationManager().attemptLogin(this, this.clientUsername, this.hostname);
 
