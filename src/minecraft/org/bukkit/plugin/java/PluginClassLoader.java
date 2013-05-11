@@ -82,6 +82,7 @@ public class PluginClassLoader extends URLClassLoader {
         boolean pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", true);
         boolean reflectFields = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-field", true);
         boolean reflectClass = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-class", true);
+        boolean allowFuture = config.getBoolean("mcpc.plugin-settings.default.remap-allow-future", false);
 
         // plugin-specific overrides
         useCustomClassLoader = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader);
@@ -103,6 +104,14 @@ public class PluginClassLoader extends URLClassLoader {
         pluginInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".plugin-inheritance", pluginInherit);
         reflectFields = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-reflect-field", reflectFields);
         reflectClass = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-reflect-class", reflectClass);
+        allowFuture = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-allow-future", allowFuture);
+
+        if (!allowFuture) {
+            if (cpw.mods.fml.relauncher.FMLInjectionData.obf151()) {
+                remapNMS152 = false;
+                remapOBC152 = false;
+            }
+        }
 
         if (debug) {
             System.out.println("PluginClassLoader debugging enabled for "+pluginName);
