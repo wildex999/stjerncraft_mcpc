@@ -81,6 +81,7 @@ public class PluginClassLoader extends URLClassLoader {
         boolean globalInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", true);
         boolean pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", true);
         boolean reflectFields = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-field", true);
+        boolean reflectClass = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-class", true);
 
         // plugin-specific overrides
         useCustomClassLoader = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader);
@@ -101,6 +102,7 @@ public class PluginClassLoader extends URLClassLoader {
         globalInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".global-inheritance", globalInherit);
         pluginInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".plugin-inheritance", pluginInherit);
         reflectFields = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-reflect-field", reflectFields);
+        reflectClass = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-reflect-class", reflectClass);
 
         if (debug) {
             System.out.println("PluginClassLoader debugging enabled for "+pluginName);
@@ -157,10 +159,13 @@ public class PluginClassLoader extends URLClassLoader {
 
         remapper = new JarRemapper(jarMapping);
 
-        if (pluginInherit || reflectFields) {
+        if (pluginInherit || reflectFields || reflectClass) {
             remapperPreprocessor = new RemapperPreprocessor(
                     pluginInherit ? loader.getGlobalInheritanceMap() : null,
-                    reflectFields ? jarMapping : null);
+                    (reflectFields || reflectClass) ? jarMapping : null);
+
+            remapperPreprocessor.setRemapReflectField(reflectFields);
+            remapperPreprocessor.setRemapReflectClass(reflectClass);
             remapperPreprocessor.debug = debug;
         } else {
             remapperPreprocessor = null;
