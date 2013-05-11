@@ -387,7 +387,7 @@ public class TileEntity
         {
             bb = AxisAlignedBB.getAABBPool().getAABB(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
         }
-        else if (type == Block.chest)
+        else if (type == Block.chest || type == Block.chestTrapped)
         {
             bb = AxisAlignedBB.getAABBPool().getAABB(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
         }
