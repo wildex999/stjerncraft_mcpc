@@ -14,8 +14,10 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import org.bukkit.Bukkit;
 
 /**
  * This class forms the basis of the Netty integration. It implements
@@ -78,9 +80,9 @@ public class NettyNetworkManager extends ChannelInboundMessageHandlerAdapter<net
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         // TODO: Remove this once we are more stable
-        // Bukkit.getServer().getLogger().severe("======================= Start Netty Debug Log =======================");
-        // Bukkit.getServer().getLogger().log(Level.SEVERE, "Error caught whilst handling " + channel, cause);
-        // Bukkit.getServer().getLogger().severe("======================= End Netty Debug Log =======================");
+        Bukkit.getServer().getLogger().severe("======================= Start Netty Debug Log =======================");
+        Bukkit.getServer().getLogger().log(Level.SEVERE, "Error caught whilst handling " + channel, cause);
+        Bukkit.getServer().getLogger().severe("======================= End Netty Debug Log =======================");
         // Disconnect with generic reason + exception
         networkShutdown("disconnect.genericReason", new Object[]{"Internal exception: " + cause});
     }
