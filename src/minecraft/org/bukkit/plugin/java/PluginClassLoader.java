@@ -46,8 +46,6 @@ public class PluginClassLoader extends URLClassLoader {
     private static final int F_REMAP_OBC152     = 1 << 13;
     private static final int F_REMAP_NMSPRE_MASK= 0x0fff0000;  // "unversioned" NMS plugin version
 
-    public final static String current = "v1_5_R2";
-
     // This trick bypasses Maven Shade's package rewriting when using String literals [same trick in jline]
     private static final String org_bukkit_craftbukkit = new String(new char[] {'o','r','g','/','b','u','k','k','i','t','/','c','r','a','f','t','b','u','k','k','i','t'});
     // MCPC+ end
@@ -182,6 +180,16 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     /**
+     * Get the "native" obfuscation version, from our Maven shading version.
+     */
+    public static String getNativeVersion() {
+        // see https://github.com/mbax/VanishNoPacket/blob/master/src/main/java/org/kitteh/vanish/compat/NMSManager.java
+        final String packageName = org.bukkit.craftbukkit.CraftServer.class.getPackage().getName();
+
+        return packageName.substring(packageName.lastIndexOf('.')  + 1);
+    }
+
+    /**
      * Load NMS mappings from CraftBukkit mc-dev to repackaged srgnames for FML runtime deobf
      *
      * @param jarMapping An existing JarMappings instance to load into
@@ -201,7 +209,7 @@ public class PluginClassLoader extends URLClassLoader {
                 null, false);
 
         // resolve naming conflict in FML/CB
-        jarMapping.methods.put("net/minecraft/server/"+obfVersion+"/PlayerConnection/getPlayer ()Lorg/bukkit/craftbukkit/"+current+"/entity/CraftPlayer;", "getPlayerB");
+        jarMapping.methods.put("net/minecraft/server/"+obfVersion+"/PlayerConnection/getPlayer ()Lorg/bukkit/craftbukkit/"+getNativeVersion()+"/entity/CraftPlayer;", "getPlayerB");
 
         // remap bouncycastle to Forge's included copy, not the vanilla obfuscated copy (not in MCPC+), see #133
         jarMapping.packages.put("net/minecraft/"+obfVersion+"/org/bouncycastle", "org/bouncycastle");
@@ -249,25 +257,25 @@ public class PluginClassLoader extends URLClassLoader {
             }
 
             if ((flags & F_REMAP_OBC152) != 0) {
-                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_5_R3", org_bukkit_craftbukkit+"/"+current);
+                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_5_R3", org_bukkit_craftbukkit+"/"+getNativeVersion());
             }
 
             if ((flags & F_REMAP_OBC151) != 0) {
-                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_5_R2", org_bukkit_craftbukkit+"/"+current);
+                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_5_R2", org_bukkit_craftbukkit+"/"+getNativeVersion());
             }
 
             if ((flags & F_REMAP_OBC150) != 0) {
-                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_5_R1", org_bukkit_craftbukkit+"/"+current);
+                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_5_R1", org_bukkit_craftbukkit+"/"+getNativeVersion());
             }
 
             if ((flags & F_REMAP_OBC147) != 0) {
-                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_4_R1", org_bukkit_craftbukkit+"/"+current);
+                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_4_R1", org_bukkit_craftbukkit+"/"+getNativeVersion());
             }
 
             if ((flags & F_REMAP_OBC146) != 0) {
                 // Remap OBC v1_4_6  to v1_4_R1 (or current) for 1.4.6 plugin compatibility
                 // Note this should only be mapped statically - since plugins MAY use reflection to determine the OBC version
-                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_4_6", org_bukkit_craftbukkit+"/"+current);
+                jarMapping.packages.put(org_bukkit_craftbukkit+"/v1_4_6", org_bukkit_craftbukkit+"/"+getNativeVersion());
             }
 
             if ((flags & F_REMAP_OBCPRE) != 0) {
@@ -277,7 +285,7 @@ public class PluginClassLoader extends URLClassLoader {
 
                 // then map unversioned to current version
                 jarMapping.packages.put(org_bukkit_craftbukkit+"/libs/org/objectweb/asm", "org/objectweb/asm"); // ?
-                jarMapping.packages.put(org_bukkit_craftbukkit, org_bukkit_craftbukkit+"/"+current);
+                jarMapping.packages.put(org_bukkit_craftbukkit, org_bukkit_craftbukkit+"/"+getNativeVersion());
             }
 
             if ((flags & F_REMAP_NMSPRE_MASK) != 0) {
