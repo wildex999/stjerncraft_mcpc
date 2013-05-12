@@ -10,6 +10,7 @@
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <bukkit.version>${project.version}</bukkit.version>
+    <filename.version>1.5.2-R0.2</filename.version>
     <api.version>unknown</api.version>
     <minecraft.version>1.5.2</minecraft.version>
     <minecraft_version>1_5_R3</minecraft_version>
@@ -392,7 +393,7 @@
                         <remappedDependencies>
                             <param>net.minecraftforge:minecraft-forge:${forge.version}-${forge.remapped.revision}:jar</param>
                         </remappedDependencies>
-                        <finalName>mcpc-plus-${project.version}-f${forge.build}-${buildNumber}</finalName>
+                        <finalName>mcpc-plus-${filename.version}-forge${forge.build}-B${buildNumber}</finalName>
                     </configuration>
                 </execution>
                 <!-- 1.5.1 compatibility reobfuscation -->
@@ -407,7 +408,7 @@
                         <remappedDependencies>
                             <param>net.minecraftforge:minecraft-forge:${forge.version}-${forge.remapped.revision}:jar</param>
                         </remappedDependencies>
-                        <finalName>mcpc-plus-151compat-${project.version}-f${forge.build}-C${buildNumber}</finalName>
+                        <finalName>mcpc-plus-151compat-${filename.version}-forge${forge.build}-C${buildNumber}</finalName>
                     </configuration>
                 </execution>
              </executions>
