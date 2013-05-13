@@ -189,7 +189,7 @@ public final class ItemStack
         if (par1NBTTagCompound.hasKey("tag"))
         {
             // CraftBukkit - clear name from compound and make defensive copy as this data may be coming from the save thread
-            this.stackTagCompound = (NBTTagCompound) par1NBTTagCompound.getCompoundTag("tag").copy().setName("");
+            this.stackTagCompound = (NBTTagCompound) par1NBTTagCompound.getCompoundTag("tag").copy()
         }
     }
 
