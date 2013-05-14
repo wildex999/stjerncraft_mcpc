@@ -1,6 +1,6 @@
 // MCPC+ - proxy for FML log / CB jline compatibility
 // TODO: move out of NMS namespace
-package net.minecraft.server;
+package za.co.mcportcentral;
 
 import java.io.IOException;
 import jline.console.ConsoleReader;

@@ -73,7 +73,7 @@ public class FMLInjectionData
         if (!checkedObfuscated151) {
             // This class is reobfuscated (original name: MCPCCompatibilityMarker) in the 1.5.1-compatibility build
             // so we can detect it here. Load the proper 1.5.1 deobfuscation data instead of 1.5.2.
-            isObfuscated151 = classExists("cpw.mods.fml.relauncher.MCPCCompatibilityMarker151");
+            isObfuscated151 = classExists("za.co.mcportcentral.MCPCCompatibilityMarker151");
             checkedObfuscated151 = true;
         }
 

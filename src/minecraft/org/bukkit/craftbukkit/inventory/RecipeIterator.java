@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import za.co.mcportcentral.CustomModRecipe;
 
 
 public class RecipeIterator implements Iterator<Recipe> {

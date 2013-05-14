@@ -1,4 +1,4 @@
-package cpw.mods.fml.relauncher;
+package za.co.mcportcentral;
 
 public class MCPCCompatibilityMarker {
 

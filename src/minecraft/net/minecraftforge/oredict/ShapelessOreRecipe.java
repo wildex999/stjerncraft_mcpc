@@ -7,12 +7,11 @@ import java.util.Map.Entry;
 import java.util.List;
 
 // MCPC+ start
-import org.bukkit.craftbukkit.inventory.CustomModRecipe;
+import za.co.mcportcentral.CustomModRecipe;
 import org.bukkit.inventory.Recipe;
 // MCPC+ end
 
 import net.minecraft.block.Block;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;

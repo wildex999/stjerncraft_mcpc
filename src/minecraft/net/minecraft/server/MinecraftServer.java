@@ -74,8 +74,7 @@ import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 // CraftBukkit end
 // MCPC+ start
-import net.minecraftforge.common.Configuration;
-import java.io.FilenameFilter;
+import za.co.mcportcentral.FMLLogJLineBreakProxy;
 // MCPC+ end
 
 public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
@@ -248,7 +247,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         if (org.bukkit.craftbukkit.Main.useJline)
         {
-            net.minecraft.server.FMLLogJLineBreakProxy.reader = this.reader;
+            FMLLogJLineBreakProxy.reader = this.reader;
         }
 
         Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.util.ServerShutdownThread(this));

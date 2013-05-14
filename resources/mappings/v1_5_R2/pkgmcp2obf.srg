@@ -17461,6 +17461,6 @@ MD: net/minecraft/world/storage/WorldInfo/setWorldName (Ljava/lang/String;)V ajv
 MD: net/minecraft/world/storage/WorldInfo/setWorldTime (J)V ajv/c (J)V
 MD: net/minecraft/world/storage/WorldInfo/updateTagCompound (Lnet/minecraft/nbt/NBTTagCompound;Lnet/minecraft/nbt/NBTTagCompound;)V ajv/a (Lbs;Lbs;)V
 # Marker class for determining we're 1.5.1-obfuscated at runtime
-CL: cpw/mods/fml/relauncher/MCPCCompatibilityMarker cpw/mods/fml/relauncher/MCPCCompatibilityMarker151
+CL: za/co/mcportcentral/MCPCCompatibilityMarker za/co/mcportcentral/MCPCCompatibilityMarker151
 # OBC Maven shade relocation
 CL: org/bukkit/craftbukkit/v1_5_R3/* org/bukkit/craftbukkit/v1_5_R2/*

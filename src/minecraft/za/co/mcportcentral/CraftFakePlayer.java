@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.entity;
+package za.co.mcportcentral;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
@@ -11,6 +11,7 @@ import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.world.World;
 
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.player.PlayerJoinEvent;
