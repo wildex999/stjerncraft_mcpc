@@ -594,10 +594,12 @@ public class ItemInWorldManager
                 }
             }
 
-            // MCPC+ - Disabling this causes bukkit incompatibility with placing liquids(water, lava, etc.)
+            // MCPC+ start - Do not call this method when using a forge block, Fixes Thaumcraft Crucible bug. 
+            // Disabling this entirely causes bukkit incompatibility with placing liquids(water, lava, etc.)
             // If we have 'true' and no explicit deny *or* an explicit allow -- run the item part of the hook
-            if (par3ItemStack != null && ((!result && event.useItemInHand() != org.bukkit.event.Event.Result.DENY) || event.useItemInHand() == org.bukkit.event.Event.Result.ALLOW))
+            if (!Block.blocksList[i1].isForgeBlock && par3ItemStack != null && ((!result && event.useItemInHand() != org.bukkit.event.Event.Result.DENY) || event.useItemInHand() == org.bukkit.event.Event.Result.ALLOW))
             {
+            // MCPC+ end
                 this.tryUseItem(par1EntityPlayer, par2World, par3ItemStack);
             }
         }

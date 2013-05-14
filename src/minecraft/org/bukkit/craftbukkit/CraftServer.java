@@ -589,25 +589,6 @@ public final class CraftServer implements Server {
         return this.configuration.getBoolean("mcpc.flowing-lava-decay", false);
     }
 
-    private boolean[] simulatedPlaceBlockIDs = null;
-    private boolean defaultSimulateBlockPlace = false;
-
-    /** Get whether this block ID should send simulated BlockPlaceEvents
-     */
-    public boolean getSimulateBlockPlaceEvent(int blockID) {
-        if (simulatedPlaceBlockIDs == null) {
-            simulatedPlaceBlockIDs = new boolean[4096];
-            defaultSimulateBlockPlace = this.configuration.getBoolean("mcpc.simulate-block-place-event-default", false);
-            for (int id : this.configuration.getIntegerList("mcpc.simulate-block-place-event-IDs")) {
-                simulatedPlaceBlockIDs[id] = true;
-                getLogger().log(Level.INFO, (defaultSimulateBlockPlace ? "Disabling" : "Enabling") + " block placement event simulation for "+id);
-            }
-
-        }
-
-        return simulatedPlaceBlockIDs[blockID] ^ defaultSimulateBlockPlace;
-    }
-
     public boolean getDumpMaterials() {
         return this.configuration.getBoolean("mcpc.dump-materials", false);
     }

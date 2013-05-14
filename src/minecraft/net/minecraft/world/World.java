@@ -1641,6 +1641,10 @@ public abstract class World implements IBlockAccess
      */
     public boolean spawnEntityInWorld(Entity par1Entity)
     {
+        // MCPC+ start - do not drop any items during a place event. Fixes dupes in mods such as Flans
+        if (par1Entity instanceof EntityItem && this.callingPlaceEvent)
+            return false;
+        // MCPC+ end
         return this.addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.DEFAULT); // Set reason as DEFAULT
     }
 
@@ -3937,23 +3941,26 @@ public abstract class World implements IBlockAccess
         {
             if (par7Entity instanceof EntityPlayer)
             {
-                if (!getServer().getSimulateBlockPlaceEvent(block1.blockID)) {
-                    // Not all mods react well to our block placement simulation. See issue #456, among others.
-                    return result;
-                }
-
                 EntityPlayer player = (EntityPlayer)par7Entity;
                 ItemStack itemstack = (player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem() : null);
                 org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(this, par2, par3, par4);
                 this.callingPlaceEvent = true;
+                int metadata = 0;
                 if (itemstack != null && itemstack.getItem() instanceof ItemBlock)
                 {
                     ItemBlock itemblock = (ItemBlock)itemstack.getItem();
                     int itemData = itemblock.getMetadata(itemstack.getItemDamage());
-                    int metadata = Block.blocksList[par1].onBlockPlaced(this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, itemData);
+                    metadata = Block.blocksList[par1].onBlockPlaced(this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, itemData);
                     if (itemblock.placeBlockAt(itemstack, player, this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, metadata))
                     {
                         // since this is only a simulation, there is no need to play sound or decrement stacksize
+                    }
+                    // check to see if block has a tileentity and if so force an update. Fixes CompactSolars bug with EnergyNet
+                    if (block1.hasTileEntity(metadata))
+                    {
+                        TileEntity tileentity = this.getBlockTileEntity(par2, par3, par4);
+                        if (tileentity != null)
+                            tileentity.updateEntity();
                     }
                 }
                 this.curPlacedItemHitX = 0;
@@ -3967,7 +3974,7 @@ public abstract class World implements IBlockAccess
                 {
                     result = false; // cancel placement
                 }
-                blockstate.update(true); // revert blockstate since this is only a simulation
+                blockstate.update(true, false); // revert blockstate since this was only a simulation
                 this.callingPlaceEvent = false;
             }
         }
