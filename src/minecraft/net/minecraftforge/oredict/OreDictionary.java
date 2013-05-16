@@ -57,6 +57,7 @@ public class OreDictionary
             registerOre("oreDiamond", Block.oreDiamond);
             registerOre("oreRedstone", Block.oreRedstone);
             registerOre("oreEmerald", Block.oreEmerald);
+            registerOre("oreQuartz", Block.oreNetherQuartz);
         }
 
         // Build our list of items to replace with ore tags

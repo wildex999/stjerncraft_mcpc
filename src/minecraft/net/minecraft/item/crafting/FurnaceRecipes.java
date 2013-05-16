@@ -85,7 +85,7 @@ public class FurnaceRecipes
     public void addSmelting(int itemID, int metadata, ItemStack itemstack, float experience)
     {
         metaSmeltingList.put(Arrays.asList(itemID, metadata), itemstack);
-        metaExperience.put(Arrays.asList(itemID, metadata), experience);
+        metaExperience.put(Arrays.asList(itemstack.itemID, itemstack.getItemDamage()), experience);
     }
 
     /**

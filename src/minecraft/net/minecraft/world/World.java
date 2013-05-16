@@ -1746,7 +1746,7 @@ public abstract class World implements IBlockAccess
                 this.updateAllPlayersSleepingFlag();
             }
 
-            if (!flag && MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, this)))
+            if (MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, this)) && !flag)
             {
                 return false;
             }

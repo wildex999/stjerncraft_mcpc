@@ -249,7 +249,7 @@ public class BlockFlowing extends BlockFluid
                 {
                     this.triggerLavaMixEffects(par1World, par2, par3, par4);
                 }
-                else
+                else if (i1 != Block.snow.blockID)//Forge: Damn snow. // MCPC+ - TODO: make configurable
                 {
                     Block.blocksList[i1].dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
                 }

@@ -1057,4 +1057,15 @@ public class Item
             stack.itemDamage = 0;
         }
     }
+    
+    /**
+     * ItemStack sensitive version of {@link #canHarvestBlock(Block)} 
+     * @param par1Block The block trying to harvest
+     * @param itemStack The itemstack used to harvest the block
+     * @return true if can harvest the block
+     */
+    public boolean canHarvestBlock(Block par1Block, ItemStack itemStack)
+    {
+        return canHarvestBlock(par1Block);  
+    }
 }

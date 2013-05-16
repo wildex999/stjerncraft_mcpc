@@ -437,7 +437,7 @@ public final class ItemStack
      */
     public boolean canHarvestBlock(Block par1Block)
     {
-        return Item.itemsList[this.itemID].canHarvestBlock(par1Block);
+        return Item.itemsList[this.itemID].canHarvestBlock(par1Block, this);
     }
 
     public boolean interactWith(EntityLiving par1EntityLiving)
