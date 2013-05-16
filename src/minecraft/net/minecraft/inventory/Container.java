@@ -40,14 +40,33 @@ public abstract class Container
     public void transferTo(Container other, org.bukkit.craftbukkit.entity.CraftHumanEntity player)
     {
         InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
-        // MCPC+ start - add null checks to skip modded inventories with no Bukkit wrappers
+        // MCPC+ start - add null checks to skip modded inventories with no Bukkit wrappers, and
+        // catch AbstractMethodErrors for modded IInventory's with no onClose()
         if (source != null) {
-            ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
-            ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
+            try {
+                ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
+            } catch (AbstractMethodError ex) {
+                // modded
+            }
+
+            try {
+                ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
+            } catch (AbstractMethodError ex) {
+                // modded
+            }
         }
         if (destination != null) {
-            ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
-            ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
+            try {
+                ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
+            } catch (AbstractMethodError ex) {
+                // modded
+            }
+
+            try {
+                ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
+            } catch (AbstractMethodError ex) {
+                // modded
+            }
         }
         // MCPC+ end
     }
