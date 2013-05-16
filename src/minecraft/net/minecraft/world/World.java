@@ -3955,13 +3955,6 @@ public abstract class World implements IBlockAccess
                     {
                         // since this is only a simulation, there is no need to play sound or decrement stacksize
                     }
-                    // check to see if block has a tileentity and if so force an update. Fixes CompactSolars bug with EnergyNet
-                    if (block1.hasTileEntity(metadata))
-                    {
-                        TileEntity tileentity = this.getBlockTileEntity(par2, par3, par4);
-                        if (tileentity != null)
-                            tileentity.updateEntity();
-                    }
                 }
                 this.curPlacedItemHitX = 0;
                 this.curPlacedItemHitY = 0;
