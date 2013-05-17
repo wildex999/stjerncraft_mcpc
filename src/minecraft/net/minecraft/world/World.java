@@ -2039,6 +2039,8 @@ public abstract class World implements IBlockAccess
     public int getTopSolidOrLiquidBlock(int par1, int par2)
     {
         Chunk chunk = this.getChunkFromBlockCoords(par1, par2);
+        int x = par1;
+        int z = par2;
         int k = chunk.getTopFilledSegment() + 15;
         par1 &= 15;
 
@@ -2046,7 +2048,7 @@ public abstract class World implements IBlockAccess
         {
             int l = chunk.getBlockID(par1, k, par2);
 
-            if (l != 0 && Block.blocksList[l].blockMaterial.blocksMovement() && Block.blocksList[l].blockMaterial != Material.leaves && !Block.blocksList[l].isBlockFoliage(this, par1, k, par2))
+            if (l != 0 && Block.blocksList[l].blockMaterial.blocksMovement() && Block.blocksList[l].blockMaterial != Material.leaves && !Block.blocksList[l].isBlockFoliage(this, x, k, z))
             {
                 return k + 1;
             }
