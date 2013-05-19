@@ -1371,7 +1371,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         this.experience = 0;
         this.deathTime = 0;
         this.activePotionsMap.clear();
-        this.potionsNeedUpdate = true;
+        super.potionsNeedUpdate = true; // MCPC+ - change to super to temporarily workaround remapping bug with SpecialSource
         this.openContainer = this.inventoryContainer;
         this.attackingPlayer = null;
         this.entityLivingToAttack = null;
