@@ -149,7 +149,7 @@ public class ContainerEnchantment extends Container
                     CraftItemStack item = CraftItemStack.asCraftMirror(itemstack);
                     PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(player, this.getBukkitView(), this.worldPointer.getWorld().getBlockAt(this.posX, this.posY, this.posZ), item, this.enchantLevels, i);
                     event.setCancelled(!itemstack.isItemEnchantable());
-                    this.worldPointer.getServer().getPluginManager().callEvent(event);
+                    if (this.getBukkitView() != null) this.worldPointer.getServer().getPluginManager().callEvent(event); // MCPC+ - allow vanilla mods to bypass
 
                     if (event.isCancelled())
                     {
@@ -202,7 +202,7 @@ public class ContainerEnchantment extends Container
 
                     CraftItemStack item = CraftItemStack.asCraftMirror(itemstack);
                     EnchantItemEvent event = new EnchantItemEvent((Player) par1EntityPlayer.getBukkitEntity(), this.getBukkitView(), this.worldPointer.getWorld().getBlockAt(this.posX, this.posY, this.posZ), item, this.enchantLevels[par2], enchants, par2);
-                    this.worldPointer.getServer().getPluginManager().callEvent(event);
+                    if (this.getBukkitView() != null) this.worldPointer.getServer().getPluginManager().callEvent(event); // MCPC+ - allow vanilla mods to bypass
                     int level = event.getExpLevelCost();
 
                     if (event.isCancelled() || (level > par1EntityPlayer.experienceLevel && !par1EntityPlayer.capabilities.isCreativeMode) || enchants.isEmpty())

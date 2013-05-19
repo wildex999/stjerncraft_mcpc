@@ -537,7 +537,7 @@ public class CraftEventFactory {
         }
         // MCPC+ end
         InventoryOpenEvent event = new InventoryOpenEvent(container.getBukkitView());
-        server.getPluginManager().callEvent(event);
+        if (container.getBukkitView() != null) server.getPluginManager().callEvent(event); // MCPC+ - allow vanilla mods to bypass
 
         if (event.isCancelled()) {
             container.transferTo(player.openContainer, craftPlayer);
@@ -660,7 +660,7 @@ public class CraftEventFactory {
 
     public static void handleInventoryCloseEvent(net.minecraft.entity.player.EntityPlayer human) {
         InventoryCloseEvent event = new InventoryCloseEvent(human.openContainer.getBukkitView());
-        human.worldObj.getServer().getPluginManager().callEvent(event);
+        if (human.openContainer.getBukkitView() != null) human.worldObj.getServer().getPluginManager().callEvent(event); // MCPC+ - allow vanilla mods to bypass
         human.openContainer.transferTo(human.inventoryContainer, human.getBukkitEntity());
     }
 }

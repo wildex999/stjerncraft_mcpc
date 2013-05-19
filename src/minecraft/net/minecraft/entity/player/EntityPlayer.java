@@ -1531,10 +1531,9 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
         if (this.openContainer != null)
         {
-            // MCPC+ - note: though it says 'CraftBukkit' this might come from https://github.com/EcoCityCraft/Spigot/blob/master/CraftBukkit-Patches/0007-Address-BUKKIT-3286-by-firing-the-inventory-close-ev.patch
             // CraftBukkit start
             InventoryCloseEvent event = new InventoryCloseEvent(this.openContainer.getBukkitView());
-            Bukkit.getServer().getPluginManager().callEvent(event);
+            if (this.openContainer.getBukkitView() != null) Bukkit.getServer().getPluginManager().callEvent(event); // MCPC+ - allow vanilla mods to bypass
             // CraftBukkit end
             this.openContainer.onCraftGuiClosed(this);
         }
