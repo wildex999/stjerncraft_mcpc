@@ -31,5 +31,6 @@ public class WorldServerMulti extends WorldServer
     /**
      * Saves the chunks to disk.
      */
-    protected void saveLevel() throws MinecraftException {}
+    // MCPC+ - disable this so level.dat is created correctly in newly created worlds
+    //protected void saveLevel() throws MinecraftException {}
 }
