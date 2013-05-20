@@ -368,7 +368,10 @@ public class DimensionManager
     public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
         for (int id : unloadQueue) {
             WorldServer w = worlds.get(id);
-            MinecraftServer.getServer().server.unloadCraftWorld(w.getWorld(), true); // MCPC+ - unload through our new method for simplicity
+            if (w != null)
+            {
+                MinecraftServer.getServer().server.unloadCraftWorld(w.getWorld(), true); // MCPC+ - unload through our new method for simplicity
+            }
         }
         unloadQueue.clear();
     }
