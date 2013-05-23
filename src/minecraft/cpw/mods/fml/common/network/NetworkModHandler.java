@@ -96,6 +96,10 @@ public class NetworkModHandler
             }
         }
 
+        configureNetworkMod(container);
+    }
+    protected void configureNetworkMod(ModContainer container)
+    {
         if (this.checkHandler == null)
         {
             String versionBounds = mod.versionBounds();

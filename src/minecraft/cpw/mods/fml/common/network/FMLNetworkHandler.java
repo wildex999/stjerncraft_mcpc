@@ -41,6 +41,7 @@ import com.google.common.hash.Hashing;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.InjectedModContainer;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
@@ -273,6 +274,10 @@ public class FMLNetworkHandler
 
     public NetworkModHandler findNetworkModHandler(Object mc)
     {
+        if (mc instanceof InjectedModContainer)
+        {
+            return networkModHandlers.get(((InjectedModContainer)mc).wrappedContainer);
+        }
         if (mc instanceof ModContainer)
         {
             return networkModHandlers.get(mc);
