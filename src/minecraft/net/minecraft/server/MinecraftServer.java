@@ -329,17 +329,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             }
             else
             {
-                // MCPC+ - only load dimensions that need spawn loaded. Fixes issues with mods such as MystCraft and Dimensional Doors
-                if (DimensionManager.shouldLoadSpawn(dimension))
-                {
-                    WorldProvider provider = WorldProvider.getProviderForDimension(dimension);
-                    worldType = provider.getClass().getSimpleName();
-                    env = DimensionManager.registerBukkitEnvironment(provider.dimensionId, provider.getClass().getSimpleName());
-                    if (worldType.contains("WorldProvider"))
-                        worldType = worldType.replace("WorldProvider", "");
-                    name = "world_" + worldType.toLowerCase();
-                }
-                else continue;
+                WorldProvider provider = WorldProvider.getProviderForDimension(dimension);
+                worldType = provider.getClass().getSimpleName();
+                env = DimensionManager.registerBukkitEnvironment(provider.dimensionId, provider.getClass().getSimpleName());
+                worldType = worldType.replace("WorldProvider", "");
+                name = "world_" + worldType.toLowerCase();
             }
             org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
             worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
