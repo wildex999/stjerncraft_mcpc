@@ -938,7 +938,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     {
         IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
         // MCPC+ start - if provider is vanilla, proceed to create a bukkit compatible chunk generator
-        if (WorldProviderHell.class.isAssignableFrom(this.provider.getClass()) || WorldProviderSurface.class.isAssignableFrom(this.provider.getClass()) || WorldProviderEnd.class.isAssignableFrom(this.provider.getClass()))
+        if (this.provider.getClass().toString().length() <= 3 || this.provider.getClass().toString().contains("net.minecraft"))
         {
             // CraftBukkit start
             org.bukkit.craftbukkit.generator.InternalChunkGenerator gen;
