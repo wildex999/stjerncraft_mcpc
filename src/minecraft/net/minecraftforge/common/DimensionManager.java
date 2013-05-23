@@ -221,6 +221,7 @@ public class DimensionManager
             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
             FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         } else {
+            MinecraftServer.getServer().worlds.remove(getWorld(id)); // MCPC+ - remove world from our new world arraylist
             worlds.remove(id);
             MinecraftServer.getServer().worldTickTimes.remove(id);
             FMLLog.info("Unloading dimension %d", id);
@@ -242,10 +243,16 @@ public class DimensionManager
                 continue;
             }
             tmp.add(entry.getValue());
+            // MCPC+ start - add world if it does not exist
+            if (!MinecraftServer.getServer().worlds.contains(entry.getValue()))
+            {
+                System.out.println("Adding world " + entry.getValue().getWorldInfo().getWorldName());
+                MinecraftServer.getServer().worlds.add(entry.getValue());
+            }
+            // MCPC+ end
         }
 
         MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
-        MinecraftServer.getServer().worlds = tmp; // MCPC+
     }
 
     public static void initDimension(int dim) {
@@ -370,7 +377,7 @@ public class DimensionManager
             WorldServer w = worlds.get(id);
             if (w != null)
             {
-                MinecraftServer.getServer().server.unloadCraftWorld(w.getWorld(), true); // MCPC+ - unload through our new method for simplicity
+                MinecraftServer.getServer().server.unloadWorld(w.getWorld(), true); // MCPC+ - unload through our new method for simplicity
             }
         }
         unloadQueue.clear();

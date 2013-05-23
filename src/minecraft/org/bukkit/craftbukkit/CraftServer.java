@@ -846,53 +846,7 @@ public final class CraftServer implements Server {
         return unloadWorld(getWorld(name), save);
     }
 
-    public boolean unloadWorld(World world, boolean save) {
-        if (world == null) {
-            return false;
-        }
-
-        net.minecraft.world.WorldServer handle = ((CraftWorld) world).getHandle();
-
-        if (!(console.worlds.contains(handle))) {
-            return false;
-        }
-
-        if (!(handle.dimension > 1)) {
-            return false;
-        }
-
-        if (handle.playerEntities.size() > 0) {
-            return false;
-        }
-
-        WorldUnloadEvent e = new WorldUnloadEvent(handle.getWorld());
-        pluginManager.callEvent(e);
-
-        if (e.isCancelled()) {
-            return false;
-        }
-
-        if (save) {
-            try {
-                handle.saveAllChunks(true, null);
-                handle.flush();
-                WorldSaveEvent event = new WorldSaveEvent(handle.getWorld());
-                getPluginManager().callEvent(event);
-            } catch (net.minecraft.world.MinecraftException ex) {
-                getLogger().log(Level.SEVERE, null, ex);
-            }
-        }
-
-        // Forge start
-        MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle));
-        DimensionManager.setWorld(handle.dimension, null);
-        DimensionManager.unregisterDimension(handle.dimension);
-        // Forge end
-        return true;
-    }
-
-    // MCPC+ start - used by DimensionManager.unloadWorlds
-    public boolean unloadCraftWorld(World world, boolean save)
+    public boolean unloadWorld(World world, boolean save)
     {
         if (world == null)
             return false;
@@ -924,12 +878,14 @@ public final class CraftServer implements Server {
                 FMLLog.log(Level.SEVERE, ex, "Failed to save world " + handle.getWorld().getName() + " while unloading it.");
             }
         }
-        worlds.remove(world.getName());
+        worlds.remove(world.getName().toLowerCase());
+        console.worlds.remove(console.worlds.indexOf(handle));
+        // MCPC+ start - fire unload event then unload world
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle));
         DimensionManager.setWorld(handle.dimension, null);
+        // MCPC+ end
         return true;
     }
-    // MCPC+ end
 
     public net.minecraft.server.MinecraftServer getServer() {
         return console;

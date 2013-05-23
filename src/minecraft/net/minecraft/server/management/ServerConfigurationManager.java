@@ -607,13 +607,11 @@ public abstract class ServerConfigurationManager
         }
 
         // CraftBukkit start
-        byte actualDimension = (byte)worldserver.getWorld().getEnvironment().getId();
+        int actualDimension = worldserver.getWorld().getEnvironment().getId();
         // MCPC+ - support forge mods that use one provider for multiple dimensions
         if (!DimensionManager.shouldLoadSpawn(i))
-            actualDimension = (byte)i;
+            actualDimension = i;
         // MCPC+ end
-        // Force the client to refresh their chunk cache.
-        entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn((byte)(actualDimension >= 0 ? -1 : 0), (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayermp.theItemInWorldManager.getGameType()));
         entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(actualDimension, (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayermp.theItemInWorldManager.getGameType()));
         entityplayermp1.setWorld(worldserver);
         entityplayermp1.isDead = false;

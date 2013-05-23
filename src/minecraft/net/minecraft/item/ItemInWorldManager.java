@@ -598,7 +598,6 @@ public class ItemInWorldManager
             // If we have 'true' and no explicit deny *or* an explicit allow -- run the item part of the hook
             if (par3ItemStack != null && ((!result && event.useItemInHand() != org.bukkit.event.Event.Result.DENY) || event.useItemInHand() == org.bukkit.event.Event.Result.ALLOW))
             {
-            // MCPC+ end
                 this.tryUseItem(par1EntityPlayer, par2World, par3ItemStack);
             }
         }

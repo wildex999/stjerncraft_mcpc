@@ -41,7 +41,7 @@ public class ItemMap extends ItemMapBase
             mapdata.xCenter = Math.round((float)par2World.getWorldInfo().getSpawnX() / (float)i) * i;
             mapdata.zCenter = Math.round((float)(par2World.getWorldInfo().getSpawnZ() / i)) * i;
             //mapdata.dimension = (byte)((WorldServer) par2World).dimension;  // CraftBukkit - fixes Bukkit multiworld maps
-            mapdata.dimension = par2World.provider.dimensionId;            // MCPC+ - note - from FML, needed?
+            mapdata.dimension = par2World.provider.dimensionId; // MCPC+ - note - from FML, needed?
             mapdata.markDirty();
             par2World.setItemData(s, (WorldSavedData) mapdata);
             // CraftBukkit start
