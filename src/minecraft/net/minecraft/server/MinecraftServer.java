@@ -312,8 +312,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         WorldSettings worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
         worldsettings.func_82750_a(par6Str);
         WorldServer world;
-        WorldServer overWorld = initOverWorld(par1Str, par2Str, worldsettings);
 
+        org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(par1Str);
+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, theProfiler, this.getLogAgent()) : new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, worldsettings, theProfiler, this.getLogAgent(), Environment.getEnvironment(0), gen));
         for (int dimension : DimensionManager.getStaticDimensionIDs())
         {
             String worldType = "";
@@ -322,7 +323,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             Environment env = Environment.getEnvironment(dimension);
             if (dimension >= -1 && dimension <= 1)
             {
-                if (dimension == 0 || (dimension == -1 && !this.getAllowNether()) || (dimension == 1 && !this.server.getAllowEnd()))
+                if ((dimension == -1 && !this.getAllowNether()) || (dimension == 1 && !this.server.getAllowEnd()))
                     continue;
                 worldType = env.toString().toLowerCase();
                 name = par1Str + "_" + worldType;
@@ -335,7 +336,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 worldType = worldType.replace("WorldProvider", "");
                 name = "world_" + worldType.toLowerCase();
             }
-            org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
+            gen = this.server.getGenerator(name);
             worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
             worldsettings.func_82750_a(par6Str);
             String dim = "DIM" + dimension;
@@ -388,7 +389,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
             this.setUserMessage(name);
             // CraftBukkit
-            world = new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, this.worlds.get(0), this.theProfiler, this.getLogAgent(), Environment.getEnvironment(dimension), gen);
+            world = (dimension == 0 ? overWorld : new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, overWorld, this.theProfiler, this.getLogAgent(), env, gen));
             // MCPC+ end
             if (gen != null)
             {
@@ -413,34 +414,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         this.setDifficultyForAllWorlds(this.getDifficulty());
         this.initialWorldChunkLoad();
     }
-
-    // MCPC+ start - move overWorld initialization to it's own method for easier use above.
-    protected WorldServer initOverWorld(String par1Str, String par2Str, WorldSettings worldsettings)
-    {
-        org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(par1Str);    
-        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, theProfiler, this.getLogAgent()) : new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, worldsettings, theProfiler, this.getLogAgent(), Environment.getEnvironment(0), gen));
-        if (gen != null)
-        {
-            overWorld.getWorld().getPopulators().addAll(gen.getDefaultPopulators(overWorld.getWorld()));
-        }
-
-        this.server.scoreboardManager = new org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager(this, overWorld.getScoreboard());
-
-        this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(overWorld.getWorld()));
-        overWorld.addWorldAccess(new WorldManager(this, overWorld));
-
-        if (!this.isSinglePlayer())
-        {
-            overWorld.getWorldInfo().setGameType(this.getGameType());
-        }
-        
-        this.worlds.add(overWorld);
-        this.serverConfigManager.setPlayerManager(this.worlds.toArray(new WorldServer[this.worlds.size()]));
-        // CraftBukkit end
-        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((World)overWorld)); // Forge
-        return overWorld;
-    }
-    // MCPC+ end
 
     protected void initialWorldChunkLoad()
     {
