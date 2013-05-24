@@ -315,79 +315,83 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(par1Str);
         WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, theProfiler, this.getLogAgent()) : new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, worldsettings, theProfiler, this.getLogAgent(), Environment.getEnvironment(0), gen));
+        this.worlds.add(overWorld); // MCPC+ - CB expects overworld in position 0 so we must add it first
         for (int dimension : DimensionManager.getStaticDimensionIDs())
         {
             String worldType = "";
             String name = "";
             // MCPC+ start
             Environment env = Environment.getEnvironment(dimension);
-            if (dimension >= -1 && dimension <= 1)
+            if (dimension != 0)
             {
-                if ((dimension == -1 && !this.getAllowNether()) || (dimension == 1 && !this.server.getAllowEnd()))
-                    continue;
-                worldType = env.toString().toLowerCase();
-                name = par1Str + "_" + worldType;
-            }
-            else
-            {
-                WorldProvider provider = WorldProvider.getProviderForDimension(dimension);
-                worldType = provider.getClass().getSimpleName();
-                env = DimensionManager.registerBukkitEnvironment(provider.dimensionId, provider.getClass().getSimpleName());
-                worldType = worldType.replace("WorldProvider", "");
-                name = "world_" + worldType.toLowerCase();
-            }
-            gen = this.server.getGenerator(name);
-            worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
-            worldsettings.func_82750_a(par6Str);
-            String dim = "DIM" + dimension;
-            File newWorld = new File(new File(name), dim);
-            File oldWorld = new File(new File(par1Str), dim);
-
-            if ((!newWorld.isDirectory()) && (oldWorld.isDirectory()))
-            {
-                    final ILogAgent log = this.getLogAgent();
-                    log.logInfo("---- Migration of old " + worldType + " folder required ----");
-                    log.logInfo("Unfortunately due to the way that Minecraft implemented multiworld support in 1.6, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
-                    log.logInfo("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
-                    log.logInfo("Attempting to move " + oldWorld + " to " + newWorld + "...");
-
-                if (newWorld.exists())
+                if (dimension >= -1 && dimension <= 1)
                 {
-                        log.logSevere("A file or folder already exists at " + newWorld + "!");
-                        log.logInfo("---- Migration of old " + worldType + " folder failed ----");
-                }
-                else if (newWorld.getParentFile().mkdirs())
-                {
-                    if (oldWorld.renameTo(newWorld))
-                    {
-                            log.logInfo("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
-
-                        // Migrate world data too.
-                        try
-                        {
-                                com.google.common.io.Files.copy(new File(new File(par1Str), "level.dat"), new File(new File(name), "level.dat"));
-                        }
-                        catch (IOException exception)
-                        {
-                                log.logSevere("Unable to migrate world data.");
-                        }
-
-                            log.logInfo("---- Migration of old " + worldType + " folder complete ----");
-                    }
-                    else
-                    {
-                            log.logSevere("Could not move folder " + oldWorld + " to " + newWorld + "!");
-                            log.logInfo("---- Migration of old " + worldType + " folder failed ----");
-                    }
+                    if ((dimension == -1 && !this.getAllowNether()) || (dimension == 1 && !this.server.getAllowEnd()))
+                        continue;
+                    worldType = env.toString().toLowerCase();
+                    name = par1Str + "_" + worldType;
                 }
                 else
                 {
-                        log.logSevere("Could not create path for " + newWorld + "!");
-                        log.logInfo("---- Migration of old " + worldType + " folder failed ----");
+                    WorldProvider provider = WorldProvider.getProviderForDimension(dimension);
+                    worldType = provider.getClass().getSimpleName();
+                    env = DimensionManager.registerBukkitEnvironment(provider.dimensionId, provider.getClass().getSimpleName());
+                    worldType = worldType.replace("WorldProvider", "");
+                    name = "world_" + worldType.toLowerCase();
                 }
+                gen = this.server.getGenerator(name);
+                worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
+                worldsettings.func_82750_a(par6Str);
+                String dim = "DIM" + dimension;
+                File newWorld = new File(new File(name), dim);
+                File oldWorld = new File(new File(par1Str), dim);
+    
+                if ((!newWorld.isDirectory()) && (oldWorld.isDirectory()))
+                {
+                        final ILogAgent log = this.getLogAgent();
+                        log.logInfo("---- Migration of old " + worldType + " folder required ----");
+                        log.logInfo("Unfortunately due to the way that Minecraft implemented multiworld support in 1.6, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
+                        log.logInfo("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
+                        log.logInfo("Attempting to move " + oldWorld + " to " + newWorld + "...");
+    
+                    if (newWorld.exists())
+                    {
+                            log.logSevere("A file or folder already exists at " + newWorld + "!");
+                            log.logInfo("---- Migration of old " + worldType + " folder failed ----");
+                    }
+                    else if (newWorld.getParentFile().mkdirs())
+                    {
+                        if (oldWorld.renameTo(newWorld))
+                        {
+                                log.logInfo("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
+    
+                            // Migrate world data too.
+                            try
+                            {
+                                    com.google.common.io.Files.copy(new File(new File(par1Str), "level.dat"), new File(new File(name), "level.dat"));
+                            }
+                            catch (IOException exception)
+                            {
+                                    log.logSevere("Unable to migrate world data.");
+                            }
+    
+                                log.logInfo("---- Migration of old " + worldType + " folder complete ----");
+                        }
+                        else
+                        {
+                                log.logSevere("Could not move folder " + oldWorld + " to " + newWorld + "!");
+                                log.logInfo("---- Migration of old " + worldType + " folder failed ----");
+                        }
+                    }
+                    else
+                    {
+                            log.logSevere("Could not create path for " + newWorld + "!");
+                            log.logInfo("---- Migration of old " + worldType + " folder failed ----");
+                    }
+                }
+    
+                this.setUserMessage(name);
             }
-
-            this.setUserMessage(name);
             // CraftBukkit
             world = (dimension == 0 ? overWorld : new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, overWorld, this.theProfiler, this.getLogAgent(), env, gen));
             // MCPC+ end
@@ -405,7 +409,12 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 world.getWorldInfo().setGameType(this.getGameType());
             }
 
-            this.worlds.add(world);
+            // MCPC+ start - DimensionManager.setWorld adds all worlds except vanilla for us when the world is created.
+            if (dimension == -1 || dimension == 1)
+            {
+                this.worlds.add(world);
+            }
+            // MCPC+ end
 
             this.serverConfigManager.setPlayerManager(this.worlds.toArray(new WorldServer[this.worlds.size()]));
             // CraftBukkit end
