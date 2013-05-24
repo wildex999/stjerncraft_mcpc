@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraftforge.common.network.packet.DimensionRegisterPacket;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.MapMaker;
@@ -25,7 +26,10 @@ public abstract class ForgePacket
     public static final String CHANNEL_ID = "FORGE";
     enum Type
     {
-        FAKE_TEMP(ForgePacket.class);
+        /**
+         * Registers a dimension for a provider on client
+         */
+        REGISTERDIMENSION(DimensionRegisterPacket.class);
 
         private Class<? extends ForgePacket> packetType;
         private ConcurrentMap<INetworkManager, ForgePacket> partTracker;
@@ -175,7 +179,7 @@ public abstract class ForgePacket
         return UnsignedBytes.checkedCast(type.ordinal());
     }
 
-    public abstract byte[] generatePacket(Object... data);
+    public abstract byte[] generatePacket();
 
     public abstract ForgePacket consumePacket(byte[] data);
 

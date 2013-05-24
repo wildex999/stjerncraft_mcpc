@@ -1,5 +1,111 @@
 Changelog:
 
+Build 1.5.2-7.8.0.711
+	jdroque
+		Add support for servers to register dimensions on client.
+		In order to support multi-worlds such as MultiVerse, the server needs the
+		ability to register dimensions on client or many forge mods such as IC2
+		will not function correctly. This has been an issue for MCPC which
+		provides both Forge and Bukkit support to players. By adding the
+		DimensionRegisterPacket class, MCPC now has the ability to send the
+		required packet to client to register a dimension with DimensionManager.
+	LexManos: Cleanup Dimension Registration packet, generate takes no arguments, and added fix to world to prevent providers from overwriting the dimension ID.
+	LexManos: Fix potential GL issue when atlas animations bind textures without informating RenderEngine.
+
+Build 1.5.2-7.8.0.710
+	LexManos
+		Introduced the framework for Forge's packet handler system. Heavily based off FMLPacket.
+		Packet splitting and reconstruction is handled.
+
+Build 1.5.2-7.8.0.708
+	cpw
+		Updated FML:
+		MinecraftForge/FML@3bf50c4bbe82f0cc317dafcf2a569cb5210bc738 Fix server side derp with Forge network packet handler
+
+Build 1.5.2-7.8.0.707
+	LexManos: Fix type in biome list.
+	LexManos: Fixed creative tab rendering with invalid color closes #588
+
+Build 1.5.2-7.8.0.706
+	cpw
+		Add forge network handling support
+		Updated FML:
+		MinecraftForge/FML@4922e90d81d8b8b9374c4d04858a06c5bf03965c Separate network mod config from setup. Allows for Forge Packet Handler nicety
+
+Build 1.5.2-7.8.0.705
+	mehvids: Add hitInfo field to MovingObjectPosition for when an int doesn't suffice
+
+Build 1.5.2-7.8.0.704
+	LexManos: Fix another NPE when Items are in Block range with custom renderers, Modders keep your items out of the block range! Closes #581
+	LexManos: Fixed render count for stacks of blocks 40+ and distrabution of items based on scale. Closes #579
+
+Build 1.5.2-7.8.0.703
+	cpw: Remember x & z passed to getTopSolidOrLiquidBlock and use it for foliage tests. Fixes #575
+
+Build 1.5.2-7.8.0.702
+	cpw: Fix blending on the hotbar. Closes #574
+
+Build 1.5.2-7.8.0.701
+	cpw
+		Updated FML:
+		MinecraftForge/FML@23b070c7d02a8da44bf04c2f9ba2b485a44ad967 Alternative @SidedProxy setter for Scala.
+		MinecraftForge/FML@2cca7aa759b4b6c3a128ce43bbd924e4762c43c2 Some more Scala @SidedProxy adjustments. Now properly supporting pure singletons, i.e. object C {   @SidedProxy(...)   var proxy: P = null } Removed fallback, as all such singletons are properly handled by the new code now, and class implementations fall back to the code also used for plain Java mods.
+		MinecraftForge/FML@8517a824e5251c409e05999d42fc6d70497609f5 Merge declaration and initialization of a variable.
+		MinecraftForge/FML@a3a920437f3ede6841ae2c449a38975b02b28088 Merge pull request #230 from fnuecke/master
+	cpw: Add in a very simple stencil bit registry to try and arbitrate between mods wanting to use stencil bits in rendering
+
+Build 1.5.2-7.8.0.700
+	hbiede
+		Added oreQuartz
+		Gives a default quartz Ore Dictionary (I know of at least 3 used by different mods that use Nether Quartz as an equivalent).
+	gholdampf: updated FurnaceRecipes.java.patch
+	mike.stengel: Created an ItemStack sensitive version of canHarvestBlock.
+
+Build 1.5.2-7.8.0.699
+	CovertJaguar
+		Possible NPE if the liquid isn't in the LD
+		https://github.com/BuildCraft/BuildCraft/issues/787
+
+Build 1.5.2-7.8.0.698
+	LexManos: Fix NPE when rendering EntityItems that are not blocks but int he block range.
+
+Build 1.5.2-7.8.0.697
+	LexManos: Prevent water from dropping snowballs.
+
+Build 1.5.2-7.8.0.696
+	LexManos: Fire EntityJoinWorled event for forced entities {Players and there mounts} as well, just ignore the cancelled value.
+
+Build 1.5.2-7.8.0.695
+	LexManos
+		MinecraftForge/FML@787c0c4a6af3af60928b3a90f383a305a17a4347 Don't spit error on LWJGL not supporting 4.3 just warning.
+		Make custom item renderers attempt to use EQUIPPED type when running first person. For backwards compatiblity, will be removed in 1.6.
+		And a small change to make the 1.6 check not print it's stack trace.
+
+Build 1.5.2-7.8.0.693
+	purpleposeidon: Fix render bounding box of trapped double chests
+	jholcroft
+		Make getStencilBits static
+		Made getStencilBits static so it can be called.
+
+Build 1.5.2-7.8.0.692
+	LexManos: Move Partical rendering down in the order, after everything else. Should fix particals rendering behind water, digging process, and selection.
+
+Build 1.5.2-7.8.0.691
+	LexManos: Fixed NPE in rendering dragged items.
+
+Build 1.5.2-7.8.0.690
+	LexManos
+		Attempt to allocate a 8-bit stencil buffer when creating Minecraft's display context. If that throws an error it will revert back to it's default values.
+		Also contains a method for modders to rereive how many bits the context was created with. Closes #552
+
+Build 1.5.2-7.8.0.689
+	LexManos: EntityPlayer sensitive version of Item.isValidArmor, deprecated older version. Closes #551
+	LexManos: Changed to just plane entity for flexability.
+	LexManos: New RenderPlayer and RenderLiving events. Closes #493
+
+Build 1.5.2-7.8.0.688
+	pahimar: Update forge_at.cfg
+
 Build 1.5.2-7.8.0.687
 	mitchpetrie29: Separate EQUIPPED and EQUIPPED_FIRST_PERSON Item Render Types
 
