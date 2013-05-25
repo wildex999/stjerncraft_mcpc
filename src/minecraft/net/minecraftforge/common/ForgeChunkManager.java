@@ -559,7 +559,7 @@ public class ForgeChunkManager
 
         forcedChunks.remove(world);
         dormantChunkCache.remove(world);
-        tickets.remove(world); // MCPC+ - remove world reference to ticket
+
      // integrated server is shutting down
         if (!MinecraftServer.getServer().isServerRunning())
         {
