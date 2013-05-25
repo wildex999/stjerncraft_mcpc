@@ -563,31 +563,16 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             try {            
                 this.saveAllWorlds(false);
             } catch (MinecraftException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
-            /* CraftBukkit start - Handled in saveChunks
-            for (int i = 0; i < this.worldServer.length; ++i) {
-                WorldServer worldserver = this.worldServer[i];
-
-                worldserver.saveLevel();
-            }
-            // CraftBukkit end */
             for (int i = 0; i < this.worlds.size(); ++i)
             {
                 WorldServer worldserver = this.worlds.get(i);
-                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver)); // Forge
-            }
+                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
+                DimensionManager.setWorld(worldserver.provider.dimensionId, (WorldServer)null); // MCPC+
+			}
 
-            List<WorldServer> tmp = this.worlds;
-
-            for (WorldServer world : tmp)
-            {
-                DimensionManager.setWorld(world.dimension, (WorldServer)null);
-            }
-
-            // Forge end
             if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
             {
                 this.usageSnooper.stopSnooper();
