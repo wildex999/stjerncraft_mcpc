@@ -360,7 +360,11 @@ public abstract class World implements IBlockAccess
             this.worldInfo.setWorldName(s);
         }
 
+        // MCPC+ start - Guarantee provider dimension is not reset. This is required for mods that rely on the provider ID to match the client dimension. Without this, IC2 will send the wrong ID to clients.
+        int providerId = this.provider.dimensionId;
         this.provider.registerWorld(this);
+        this.provider.dimensionId = providerId;
+        // MCPC+ end
         this.chunkProvider = this.createChunkProvider();
 
         if (!this.worldInfo.isInitialized())

@@ -1667,7 +1667,7 @@ public class NetServerHandler extends NetHandler
     {
         if (this.playerEntity.isDead)
         {
-            return;    // CraftBukkit
+            return; // CraftBukkit
         }
 
         if (this.playerEntity.openContainer.windowId == par1Packet102WindowClick.window_Id && this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))

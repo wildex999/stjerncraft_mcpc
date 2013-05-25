@@ -28,7 +28,7 @@ public class ItemEmptyMap extends ItemMapBase
         int i = 128 * (1 << mapdata.scale);
         mapdata.xCenter = (int)(Math.round(par3EntityPlayer.posX / (double)i) * (long)i);
         mapdata.zCenter = (int)(Math.round(par3EntityPlayer.posZ / (double)i) * (long)i);
-        mapdata.dimension = (byte)((WorldServer) par2World).dimension;  // CraftBukkit - use bukkit dimension
+        mapdata.dimension = (byte)((WorldServer) par2World).provider.dimensionId;  // CraftBukkit - use bukkit dimension
         mapdata.markDirty();
         org.bukkit.craftbukkit.event.CraftEventFactory.callEvent(new org.bukkit.event.server.MapInitializeEvent(mapdata.mapView)); // CraftBukkit
         --par1ItemStack.stackSize;

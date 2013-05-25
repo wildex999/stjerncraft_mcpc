@@ -108,6 +108,8 @@ import cpw.mods.fml.common.FMLLog;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldSettings;
+import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
@@ -759,61 +761,28 @@ public final class CraftServer implements Server {
         net.minecraft.world.WorldType type = net.minecraft.world.WorldType.parseWorldType(creator.type().getName());
         boolean generateStructures = creator.generateStructures();
 
-        if (world != null) {
-            return world;
-        }
-
         if ((folder.exists()) && (!folder.isDirectory())) {
             throw new IllegalArgumentException("File exists with the name '" + name + "' and isn't a folder");
         }
 
-        if (generator == null) {
-            generator = getGenerator(name);
+        if (world != null) {
+            DimensionManager.addBukkitAlias(creator.name(), ((CraftWorld)getWorld(name)).getHandle().provider.dimensionId);
+            return world;
         }
 
-        net.minecraft.world.storage.ISaveFormat converter = new net.minecraft.world.chunk.storage.AnvilSaveConverter(getWorldContainer());
-        if (converter.isOldMapFormat(name)) {
-            getLogger().info("Converting world '" + name + "'");
-            converter.convertMapFormat(name, new net.minecraft.server.ConvertingProgressUpdate(console));
-        }
-
-        int dimension = CraftWorld.CUSTOM_DIMENSION_OFFSET + console.worlds.size();
-        boolean used = false;
-        do {
-            for (net.minecraft.world.WorldServer server : console.worlds) {
-                used = server.dimension == dimension;
-                if (used) {
-                    dimension++;
-                    break;
-                }
-            }
-        } while(used);
         boolean hardcore = false;
-
-        net.minecraft.world.WorldServer internal = new net.minecraft.world.WorldServer(console, new net.minecraft.world.chunk.storage.AnvilSaveHandler(getWorldContainer(), name, true), name, dimension, new net.minecraft.world.WorldSettings(creator.seed(), net.minecraft.world.EnumGameType.getByID(getDefaultGameMode().getValue()), generateStructures, hardcore, type), console.theProfiler, console.getLogAgent(), creator.environment(), generator);
-        DimensionManager.addMVDimension(dimension); // MCPC+ allows us to keep track of which dimensions belong to MV so we can avoid sending a Packet9Respawn.
-        DimensionManager.registerDimension(dimension, internal.provider.dimensionId); // MCPC+ registers MultiVerse dimensions with forge        
-        if (!(worlds.containsKey(name.toLowerCase()))) {
-            return null;
-        }
-
-        internal.mapStorage = console.worlds.get(0).mapStorage;
-        internal.worldScoreboard = getScoreboardManager().getMainScoreboard().getHandle();
-
-        internal.theEntityTracker = new net.minecraft.entity.EntityTracker(internal);
-        internal.addWorldAccess(new net.minecraft.world.WorldManager(console, internal));
-        internal.difficultySetting = 1;
-        internal.setAllowedSpawnTypes(true, true);
-        console.worlds.add(internal);
+        WorldSettings worldSettings = new WorldSettings(creator.seed(), net.minecraft.world.EnumGameType.getByID(getDefaultGameMode().getValue()), generateStructures, hardcore, type);
+        net.minecraft.world.WorldServer worldserver = DimensionManager.initDimension(creator, worldSettings);
 
         if (generator != null) {
-            internal.getWorld().getPopulators().addAll(generator.getDefaultPopulators(internal.getWorld()));
+            worldserver.getWorld().getPopulators().addAll(generator.getDefaultPopulators(worldserver.getWorld()));
         }
 
-        pluginManager.callEvent(new WorldInitEvent(internal.getWorld()));
-        System.out.print("Preparing start region for level " + (console.worlds.size() - 1) + " (Dimension: " + internal.dimension + ", Seed: " + internal.getSeed() + ")"); // MCPC+ - log dimension
+        pluginManager.callEvent(new WorldInitEvent(worldserver.getWorld()));
 
-        if (internal.getWorld().getKeepSpawnInMemory()) {
+        System.out.print("Preparing start region for level " + (console.worlds.size() - 1) + " (Dimension: " + worldserver.provider.dimensionId + ", Seed: " + worldserver.getSeed() + ")"); // MCPC+ - log dimension
+
+        if (worldserver.getWorld().getKeepSpawnInMemory()) {
             short short1 = 196;
             long i = System.currentTimeMillis();
             for (int j = -short1; j <= short1; j += 16) {
@@ -828,18 +797,17 @@ public final class CraftServer implements Server {
                         int i1 = (short1 * 2 + 1) * (short1 * 2 + 1);
                         int j1 = (j + short1) * (short1 * 2 + 1) + k + 1;
 
-                        System.out.println("Preparing spawn area for " + name + ", " + (j1 * 100 / i1) + "%");
+                        System.out.println("Preparing spawn area for " + worldserver.getWorld().getName() + ", " + (j1 * 100 / i1) + "%");
                         i = l;
                     }
 
-                    net.minecraft.util.ChunkCoordinates chunkcoordinates = internal.getSpawnPoint();
-                    internal.theChunkProviderServer.loadChunk(chunkcoordinates.posX + j >> 4, chunkcoordinates.posZ + k >> 4);
+                    net.minecraft.util.ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
+                    worldserver.theChunkProviderServer.loadChunk(chunkcoordinates.posX + j >> 4, chunkcoordinates.posZ + k >> 4);
                 }
             }
         }
-        pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
-        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(internal)); // Forge
-        return internal.getWorld();
+        pluginManager.callEvent(new WorldLoadEvent(worldserver.getWorld()));
+        return worldserver.getWorld();
     }
 
     public boolean unloadWorld(String name, boolean save) {
@@ -879,10 +847,9 @@ public final class CraftServer implements Server {
             }
         }
         worlds.remove(world.getName().toLowerCase());
-        console.worlds.remove(console.worlds.indexOf(handle));
         // MCPC+ start - fire unload event then unload world
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle));
-        DimensionManager.setWorld(handle.dimension, null);
+        DimensionManager.setWorld(handle.provider.dimensionId, null);
         // MCPC+ end
         return true;
     }
@@ -908,11 +875,10 @@ public final class CraftServer implements Server {
 
     public void addWorld(World world) {
         // Check if a World already exists with the UID.
-        // MCPC+ disable warning for now
-        /*if (getWorld(world.getUID()) != null) {
+        if (getWorld(world.getUID()) != null) {
             System.out.println("World " + world.getName() + " is a duplicate of another world and has been prevented from loading. Please delete the uid.dat file from " + world.getName() + "'s world directory if you want to be able to load the duplicate world.");
             return;
-        }*/
+        }
         worlds.put(world.getName().toLowerCase(), world);
     }
 
@@ -1265,10 +1231,12 @@ public final class CraftServer implements Server {
     }
 
     public File getWorldContainer() {
-        if (this.getServer().anvilFile != null) {
-            return this.getServer().anvilFile;
+        // MCPC+ start - return the proper container
+        if (DimensionManager.getWorld(0) != null)
+        {
+            return ((SaveHandler)DimensionManager.getWorld(0).getSaveHandler()).getWorldDirectory();
         }
-
+        // MCPC+ end
         if (container == null) {
             container = new File(configuration.getString("settings.world-container", "."));
         }

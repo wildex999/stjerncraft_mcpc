@@ -134,7 +134,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
     public WorldServer(MinecraftServer minecraftserver, ISaveHandler isavehandler, String s, int i, WorldSettings worldsettings, Profiler profiler, ILogAgent ilogagent, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen)
     {
-        super(isavehandler, s, worldsettings, env == null ? WorldProvider.getProviderForDimension(i) : WorldProvider.getProviderForDimension(env.getId()), profiler, ilogagent, gen, env); // MCPC+ - temporary fix for MV until the big MV commit =)
+        super(isavehandler, s, worldsettings, WorldProvider.getProviderForDimension(i), profiler, ilogagent, gen, env);
         this.dimension = i;
         this.pvpMode = minecraftserver.isPVPEnabled();
         // CraftBukkit end
@@ -1350,8 +1350,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
                 if (this.onBlockEventReceived(blockeventdata))
                 {
-                    // CraftBukkit - this.worldProvider.dimension -> this.dimension
-                    this.mcServer.getConfigurationManager().sendToAllNear((double) blockeventdata.getX(), (double) blockeventdata.getY(), (double) blockeventdata.getZ(), 64.0D, this.dimension, new Packet54PlayNoteBlock(blockeventdata.getX(), blockeventdata.getY(), blockeventdata.getZ(), blockeventdata.getBlockID(), blockeventdata.getEventID(), blockeventdata.getEventParameter()));
+                    this.mcServer.getConfigurationManager().sendToAllNear((double) blockeventdata.getX(), (double) blockeventdata.getY(), (double) blockeventdata.getZ(), 64.0D, this.provider.dimensionId, new Packet54PlayNoteBlock(blockeventdata.getX(), blockeventdata.getY(), blockeventdata.getZ(), blockeventdata.getBlockID(), blockeventdata.getEventID(), blockeventdata.getEventParameter()));
                 }
             }
 

@@ -52,7 +52,7 @@ public class WorldManager implements IWorldAccess
     public void playSound(String par1Str, double par2, double par4, double par6, float par8, float par9)
     {
         // CraftBukkit - this.world.dimension
-        this.mcServer.getConfigurationManager().sendToAllNear(par2, par4, par6, par8 > 1.0F ? (double)(16.0F * par8) : 16.0D, this.theWorldServer.dimension, new Packet62LevelSound(par1Str, par2, par4, par6, par8, par9));
+        this.mcServer.getConfigurationManager().sendToAllNear(par2, par4, par6, par8 > 1.0F ? (double)(16.0F * par8) : 16.0D, this.theWorldServer.provider.dimensionId, new Packet62LevelSound(par1Str, par2, par4, par6, par8, par9));
     }
 
     /**
@@ -61,7 +61,7 @@ public class WorldManager implements IWorldAccess
     public void playSoundToNearExcept(EntityPlayer par1EntityPlayer, String par2Str, double par3, double par5, double par7, float par9, float par10)
     {
         // CraftBukkit - this.world.dimension
-        this.mcServer.getConfigurationManager().sendToAllNearExcept(par1EntityPlayer, par3, par5, par7, par9 > 1.0F ? (double)(16.0F * par9) : 16.0D, this.theWorldServer.dimension, new Packet62LevelSound(par2Str, par3, par5, par7, par9, par10));
+        this.mcServer.getConfigurationManager().sendToAllNearExcept(par1EntityPlayer, par3, par5, par7, par9 > 1.0F ? (double)(16.0F * par9) : 16.0D, this.theWorldServer.provider.dimensionId, new Packet62LevelSound(par2Str, par3, par5, par7, par9, par10));
     }
 
     /**
@@ -95,7 +95,7 @@ public class WorldManager implements IWorldAccess
     public void playAuxSFX(EntityPlayer par1EntityPlayer, int par2, int par3, int par4, int par5, int par6)
     {
         // CraftBukkit - this.world.dimension
-        this.mcServer.getConfigurationManager().sendToAllNearExcept(par1EntityPlayer, (double) par3, (double) par4, (double) par5, 64.0D, this.theWorldServer.dimension, new Packet61DoorChange(par2, par3, par4, par5, par6, false));
+        this.mcServer.getConfigurationManager().sendToAllNearExcept(par1EntityPlayer, (double) par3, (double) par4, (double) par5, 64.0D, this.theWorldServer.provider.dimensionId, new Packet61DoorChange(par2, par3, par4, par5, par6, false));
     }
 
     public void broadcastSound(int par1, int par2, int par3, int par4, int par5)

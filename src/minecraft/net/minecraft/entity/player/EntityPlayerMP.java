@@ -278,7 +278,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
             this.setPosition(position.posX + 0.5, position.posY, position.posZ + 0.5);
         }
 
-        this.dimension = ((WorldServer) this.worldObj).dimension;
+        this.dimension = ((WorldServer) this.worldObj).provider.dimensionId;
         this.theItemInWorldManager.setWorld((WorldServer) world);
     }
     // CraftBukkit end

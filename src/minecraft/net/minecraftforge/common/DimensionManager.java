@@ -46,6 +46,7 @@ import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World.Environment;
+import org.bukkit.WorldCreator;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 // MCPC+ end
@@ -61,8 +62,12 @@ public class DimensionManager
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
     private static Multiset<Integer> leakedWorlds = HashMultiset.create();
-    private static ArrayList<Integer> mvDims = new ArrayList<Integer>(); // MCPC+ used to keep track of MV dimensions
-    private static final String FILE_SEPARATOR = System.getProperty("file.separator"); // MCPC+
+    // MCPC+ start
+    private static Hashtable<Class<? extends WorldProvider>, Integer> classToProviders = new Hashtable<Class<? extends WorldProvider>, Integer>();
+    private static ArrayList<Integer> bukkitDims = new ArrayList<Integer>(); // used to keep track of Bukkit dimensions
+    private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+    private static Hashtable<String, Integer> bukkitAliasMap = new Hashtable<String, Integer>();
+    // MCPC+ end
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
@@ -71,6 +76,7 @@ public class DimensionManager
             return false;
         }
         providers.put(id, provider);
+        classToProviders.put(provider, id);
         spawnSettings.put(id, keepLoaded);
         return true;
     }
@@ -236,9 +242,13 @@ public class DimensionManager
         if (worlds.get( 0) != null)
             tmp.add(worlds.get( 0));
         if (worlds.get(-1) != null)
+        {
             tmp.add(worlds.get(-1));
+        }
         if (worlds.get( 1) != null)
+        {
             tmp.add(worlds.get( 1));
+        }
 
         for (Entry<Integer, WorldServer> entry : worlds.entrySet())
         {
@@ -276,31 +286,111 @@ public class DimensionManager
         MinecraftServer mcServer = overworld.getMinecraftServer();
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        // MCPC+ start - handles hotloading dimensions such as Mystcraft
+        // MCPC+ start - handles hotloading dimensions
         String worldType;
         String name;
-        Environment env = Environment.getEnvironment(dim);
+        String oldName = "";
+        Environment env = Environment.getEnvironment(getProviderType(dim));
         if (dim >= -1 && dim <= 1)
         {
             if ((dim == -1 && !mcServer.getAllowNether()) || (dim == 1 && !mcServer.server.getAllowEnd()))
                 return;
             worldType = env.toString().toLowerCase();
-            name = mcServer.getFolderName() + '_' + worldType;
+            name = "DIM" + dim;
         }
         else
         {
             WorldProvider provider = WorldProvider.getProviderForDimension(dim);
-            worldType = provider.getClass().getSimpleName();
-            env = DimensionManager.registerBukkitEnvironment(provider.dimensionId, provider.getClass().getSimpleName());
-            if (worldType.contains("WorldProvider"))
-                worldType = worldType.replace("WorldProvider", "");
-            name = "world_" + worldType.toLowerCase();
+            worldType = provider.getClass().getSimpleName().toLowerCase();
+            worldType = worldType.replace("worldprovider", "");
+            oldName = "world_" + worldType;
+            worldType = worldType.replace("provider", "");
+
+            if (Environment.getEnvironment(DimensionManager.getProviderType(dim)) == null)
+                    env = DimensionManager.registerBukkitEnvironment(DimensionManager.getProviderType(provider.getClass()), worldType);
+
+            name = provider.getSaveFolder();
         }
+        if (oldName.contains("world_myst"))
+            oldName = oldName + File.separator + "age" + dim;
+
+        mcServer.migrateWorlds(worldType, oldName, overworld.getWorldInfo().getWorldName(), name); // MCPC+
         ChunkGenerator gen = mcServer.server.getGenerator(name);
         if (mcServer instanceof DedicatedServer) {
             worldSettings.func_82750_a(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));
         }
-        WorldServer world = new WorldServerMulti(mcServer, new AnvilSaveHandler(Bukkit.getServer().getWorldContainer(), name, true), name, dim, worldSettings, overworld, mcServer.theProfiler, overworld.getWorldLogAgent(), env, gen);
+        WorldServer world = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), name, dim, worldSettings, overworld, mcServer.theProfiler, overworld.getWorldLogAgent(), env, gen);
+
+        if (gen != null)
+        {
+            world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
+        }
+        mcServer.worlds.add(world);
+        mcServer.getConfigurationManager().setPlayerManager(mcServer.worlds.toArray(new WorldServer[mcServer.worlds.size()]));
+        // MCPC+ end
+        world.addWorldAccess(new WorldManager(mcServer, world));
+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
+        mcServer.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(world.getWorld()));
+        if (!mcServer.isSinglePlayer())
+        {
+            world.getWorldInfo().setGameType(mcServer.getGameType());
+        }
+
+        mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
+    }
+
+    // MCPC+ start - new method for handling creation of Bukkit dimensions. Currently supports MultiVerse
+    public static WorldServer initDimension(WorldCreator creator, WorldSettings worldSettings) {
+        WorldServer overworld = getWorld(0);
+        if (overworld == null) {
+            throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
+        }
+
+        MinecraftServer mcServer = overworld.getMinecraftServer();
+
+        String worldType;
+        String name;
+        System.out.println("initDimension CREATOR NAME = " + creator.name());
+        int dim = DimensionManager.getNextFreeDimId();
+        if (bukkitAliasMap.containsKey(creator.name()))
+        {
+            dim = bukkitAliasMap.get(creator.name());
+            System.out.println("FOUND MATCHING DIM " + dim + " for CREATOR " + creator.name());
+        }
+        else { 
+            System.out.println("STORING DIM " + dim + " for CREATOR " + creator.name());
+            bukkitAliasMap.put(creator.name(), dim);
+        }
+
+        System.out.println("DIM = " + dim + ", environment = " + creator.environment());
+        int providerId = 0;
+        if (creator.environment() != null)
+            providerId = creator.environment().getId();
+        try {
+            providerId = getProviderType(providerId);
+        }
+        catch (IllegalArgumentException e)
+        {
+            // do nothing
+        }
+        System.out.println("creator env id = " + providerId);
+        registerDimension(dim, providerId);
+        addBukkitDimension(dim);
+        Environment env = creator.environment();
+        System.out.println("env = " + env);
+
+        worldType = env.name().toLowerCase();
+
+        name = creator.name();
+
+        ChunkGenerator gen = mcServer.server.getGenerator(name);
+        if (mcServer instanceof DedicatedServer) {
+            worldSettings.func_82750_a(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));
+        }
+
+
+        WorldServer world = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), name, dim, worldSettings, overworld, mcServer.theProfiler, overworld.getWorldLogAgent(), env, gen);
+
         if (gen != null)
         {
             world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
@@ -316,6 +406,8 @@ public class DimensionManager
         }
 
         mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
+
+        return world;
     }
 
     public static WorldServer getWorld(int id)
@@ -480,23 +572,43 @@ public class DimensionManager
         Environment env = Environment.getEnvironment(dim);
         if (env == null) // MCPC+  if environment not found, register one
         {
-            if (providerName.contains("WorldProvider"))
-                providerName = providerName.replace("WorldProvider", "");
-
+            providerName = providerName.replace("WorldProvider", "");
             env = EnumHelper.addBukkitEnvironment(dim, providerName.toUpperCase());
             Environment.registerEnvironment(env);
         }
         return env;
     }
-    // MCPC+ end
-    public static void addMVDimension(int dim)
+
+    public static int getProviderType(Class<? extends WorldProvider> provider)
     {
-        if (!mvDims.contains(dim))
-            mvDims.add(dim);
+        return classToProviders.get(provider);
     }
 
-    public static boolean checkMVDim(int dim)
+    public static void addBukkitDimension(int dim)
     {
-        return mvDims.contains(dim);
+        if (!bukkitDims.contains(dim))
+            bukkitDims.add(dim);
     }
+
+    public static void removeBukkitDimension(int dim)
+    {
+        if (bukkitDims.contains(dim))
+            bukkitDims.remove(bukkitDims.indexOf(dim));
+    }
+
+    public static ArrayList<Integer> getBukkitDimensionIDs()
+    {
+        return bukkitDims;
+    }
+
+    public static boolean isBukkitDimension(int dim)
+    {
+        return bukkitDims.contains(dim);
+    }
+
+    public static void addBukkitAlias(String name, int dim)
+    {
+        bukkitAliasMap.put(name, dim);
+    }
+    // MCPC+ end
 }

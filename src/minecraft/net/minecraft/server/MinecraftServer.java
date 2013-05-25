@@ -320,76 +320,35 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         {
             String worldType = "";
             String name = "";
+            String oldName = "";
             // MCPC+ start
             Environment env = Environment.getEnvironment(dimension);
             if (dimension != 0)
             {
-                if (dimension >= -1 && dimension <= 1)
-                {
-                    if ((dimension == -1 && !this.getAllowNether()) || (dimension == 1 && !this.server.getAllowEnd()))
-                        continue;
-                    worldType = env.toString().toLowerCase();
-                    name = par1Str + "_" + worldType;
-                }
-                else
+                if ((dimension == -1 && !this.getAllowNether()) || (dimension == 1 && !this.server.getAllowEnd()))
+                    continue;
+                if (env == null)
                 {
                     WorldProvider provider = WorldProvider.getProviderForDimension(dimension);
-                    worldType = provider.getClass().getSimpleName();
-                    env = DimensionManager.registerBukkitEnvironment(provider.dimensionId, provider.getClass().getSimpleName());
-                    worldType = worldType.replace("WorldProvider", "");
-                    name = "world_" + worldType.toLowerCase();
+                    worldType = provider.getClass().getSimpleName().toLowerCase();
+                    worldType = worldType.replace("worldprovider", "");
+                    oldName = "world_" + worldType.toLowerCase();
+                    worldType = worldType.replace("provider", "");
+                    env = DimensionManager.registerBukkitEnvironment(DimensionManager.getProviderType(provider.getClass()), worldType);
+                    name = provider.getSaveFolder();
+                }
+                else 
+                {
+                    worldType = env.toString().toLowerCase();
+                    name = "DIM" + dimension;
+                    oldName = "world_" + worldType;
                 }
                 gen = this.server.getGenerator(name);
                 worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
                 worldsettings.func_82750_a(par6Str);
-                String dim = "DIM" + dimension;
-                File newWorld = new File(new File(name), dim);
-                File oldWorld = new File(new File(par1Str), dim);
-    
-                if ((!newWorld.isDirectory()) && (oldWorld.isDirectory()))
-                {
-                        final ILogAgent log = this.getLogAgent();
-                        log.logInfo("---- Migration of old " + worldType + " folder required ----");
-                        log.logInfo("Unfortunately due to the way that Minecraft implemented multiworld support in 1.6, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
-                        log.logInfo("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
-                        log.logInfo("Attempting to move " + oldWorld + " to " + newWorld + "...");
-    
-                    if (newWorld.exists())
-                    {
-                            log.logSevere("A file or folder already exists at " + newWorld + "!");
-                            log.logInfo("---- Migration of old " + worldType + " folder failed ----");
-                    }
-                    else if (newWorld.getParentFile().mkdirs())
-                    {
-                        if (oldWorld.renameTo(newWorld))
-                        {
-                                log.logInfo("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
-    
-                            // Migrate world data too.
-                            try
-                            {
-                                    com.google.common.io.Files.copy(new File(new File(par1Str), "level.dat"), new File(new File(name), "level.dat"));
-                            }
-                            catch (IOException exception)
-                            {
-                                    log.logSevere("Unable to migrate world data.");
-                            }
-    
-                                log.logInfo("---- Migration of old " + worldType + " folder complete ----");
-                        }
-                        else
-                        {
-                                log.logSevere("Could not move folder " + oldWorld + " to " + newWorld + "!");
-                                log.logInfo("---- Migration of old " + worldType + " folder failed ----");
-                        }
-                    }
-                    else
-                    {
-                            log.logSevere("Could not create path for " + newWorld + "!");
-                            log.logInfo("---- Migration of old " + worldType + " folder failed ----");
-                    }
-                }
-    
+
+                migrateWorlds(worldType, oldName, par1Str, name);
+
                 this.setUserMessage(name);
             }
             // CraftBukkit
@@ -408,14 +367,12 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             {
                 world.getWorldInfo().setGameType(this.getGameType());
             }
-
             // MCPC+ start - DimensionManager.setWorld adds all worlds except vanilla for us when the world is created.
             if (dimension == -1 || dimension == 1)
             {
                 this.worlds.add(world);
             }
             // MCPC+ end
-
             this.serverConfigManager.setPlayerManager(this.worlds.toArray(new WorldServer[this.worlds.size()]));
             // CraftBukkit end
             MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((World)world)); // Forge
@@ -563,16 +520,25 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             try {            
                 this.saveAllWorlds(false);
             } catch (MinecraftException e) {
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
+            /* CraftBukkit start - Handled in saveChunks
+            for (int i = 0; i < this.worldServer.length; ++i) {
+                WorldServer worldserver = this.worldServer[i];
+
+                worldserver.saveLevel();
+            }
+            // CraftBukkit end */
             for (int i = 0; i < this.worlds.size(); ++i)
             {
                 WorldServer worldserver = this.worlds.get(i);
-                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
-                DimensionManager.setWorld(worldserver.provider.dimensionId, (WorldServer)null); // MCPC+
-			}
+                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver)); // Forge
+                DimensionManager.setWorld(worldserver.provider.dimensionId, (WorldServer)null);
+            }
 
+            // Forge end
             if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
             {
                 this.usageSnooper.stopSnooper();
@@ -1376,11 +1342,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         this.worldIsBeingDeleted = true;
         this.getActiveAnvilConverter().flushCache();
 
-        // CraftBukkit start - This needs review, what does it do? (it's new)
         for (int i = 0; i < this.worlds.size(); ++i)
         {
             WorldServer worldserver = this.worlds.get(i);
-            // CraftBukkit end
 
             if (worldserver != null)
             {
@@ -1698,4 +1662,57 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             logger.log(Level.SEVERE, "Failed to start the minecraft server", exception);
         }
     }
+
+    // MCPC+ start - moved world migrations to its own method
+    public boolean migrateWorlds(String worldType, String oldWorldContainer, String newWorldContainer, String worldName)
+    {
+        boolean result = true;
+        File newWorld = new File(new File(newWorldContainer), worldName);
+        File oldWorld = new File(new File(oldWorldContainer), worldName);
+
+        if ((!newWorld.isDirectory()) && (oldWorld.isDirectory()))
+        {
+            final ILogAgent log = this.getLogAgent();
+            log.logInfo("---- Migration of old " + worldType + " folder required ----");
+            log.logInfo("MCPC has moved back to using the Forge World structure, your " + worldType + " folder will be moved to a new location in order to operate correctly.");
+            log.logInfo("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using MCPC in the future.");
+            log.logInfo("Attempting to move " + oldWorld + " to " + newWorld + "...");
+
+            if (newWorld.exists())
+            {
+                log.logSevere("A file or folder already exists at " + newWorld + "!");
+                log.logInfo("---- Migration of old " + worldType + " folder failed ----");
+                result = false;
+            }
+            else if (newWorld.getParent() == null || newWorld.getParentFile().mkdir())
+            {
+                log.logInfo("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
+
+                // Migrate world data
+                try
+                {
+                    com.google.common.io.Files.move(oldWorld, newWorld);
+                }
+                catch (IOException exception)
+                {
+                    log.logSevere("Unable to move world data.");
+                    exception.printStackTrace();
+                    result = false;
+                }
+                try
+                {
+                    com.google.common.io.Files.copy(new File(oldWorld.getParent(), "level.dat"), new File(newWorld, "level.dat"));
+                }
+                catch (IOException exception)
+                {
+                    log.logSevere("Unable to migrate world level.dat.");
+                }
+
+                log.logInfo("---- Migration of old " + worldType + " folder complete ----");
+            }
+            else result = false;
+        }
+        return result;
+    }
+    // MCPC+ end
 }

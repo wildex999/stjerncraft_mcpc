@@ -64,38 +64,9 @@ public class MapData extends WorldSavedData
     public void readFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         // CraftBukkit start
-        // Forge start
         NBTBase dimTag = par1NBTTagCompound.getTag("dimension");
         int dimension = (dimTag instanceof NBTTagByte) ? ((NBTTagByte) dimTag).data : ((NBTTagInt) dimTag).data;
 
-        // Forge end
-        
-        if (dimension >= 10)
-        {
-            long least = par1NBTTagCompound.getLong("UUIDLeast");
-            long most = par1NBTTagCompound.getLong("UUIDMost");
-
-            if (least != 0L && most != 0L)
-            {
-                this.uniqueId = new UUID(most, least);
-                CraftWorld world = (CraftWorld) server.getWorld(this.uniqueId);
-
-                // Check if the stored world details are correct.
-                if (world == null)
-                {
-                    /* All Maps which do not have their valid world loaded are set to a dimension which hopefully won't be reached.
-                       This is to prevent them being corrupted with the wrong map data. */
-                    dimension = 127;
-                }
-                else
-                {
-                    dimension = (byte) world.getHandle().dimension;
-                }
-            }
-        }
-
-        this.dimension = dimension;
-        // CraftBukkit end
         this.xCenter = par1NBTTagCompound.getInteger("xCenter");
         this.zCenter = par1NBTTagCompound.getInteger("zCenter");
         this.scale = par1NBTTagCompound.getByte("scale");
@@ -149,33 +120,6 @@ public class MapData extends WorldSavedData
      */
     public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
-        // CraftBukkit start
-        if (this.dimension >= 10)
-        {
-            if (this.uniqueId == null)
-            {
-                for (org.bukkit.World world : server.getWorlds())
-                {
-                    CraftWorld cWorld = (CraftWorld) world;
-
-                    if (cWorld.getHandle().dimension == this.dimension)
-                    {
-                        this.uniqueId = cWorld.getUID();
-                        break;
-                    }
-                }
-            }
-
-            /* Perform a second check to see if a matching world was found, this is a necessary
-               change incase Maps are forcefully unlinked from a World and lack a UID.*/
-            if (this.uniqueId != null)
-            {
-                par1NBTTagCompound.setLong("UUIDLeast", this.uniqueId.getLeastSignificantBits());
-                par1NBTTagCompound.setLong("UUIDMost", this.uniqueId.getMostSignificantBits());
-            }
-        }
-
-        // CraftBukkit end
         par1NBTTagCompound.setInteger("dimension", this.dimension);
         par1NBTTagCompound.setInteger("xCenter", this.xCenter);
         par1NBTTagCompound.setInteger("zCenter", this.zCenter);

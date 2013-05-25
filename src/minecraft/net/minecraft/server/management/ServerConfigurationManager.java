@@ -30,6 +30,7 @@ import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.network.packet.Packet201PlayerInfo;
 import net.minecraft.network.packet.Packet202PlayerAbilities;
 import net.minecraft.network.packet.Packet209SetPlayerTeam;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.network.packet.Packet3Chat;
 import net.minecraft.network.packet.Packet41EntityEffect;
 import net.minecraft.network.packet.Packet43Experience;
@@ -58,6 +59,8 @@ import net.minecraft.network.NetLoginHandler;
 
 import cpw.mods.fml.common.FMLLog;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.network.packet.DimensionRegisterPacket;
+import net.minecraftforge.common.network.ForgePacket;
 // CraftBukkit start
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -157,6 +160,13 @@ public abstract class ServerConfigurationManager
             maxPlayers = 60;
         }
 
+        // MCPC+ start - send DimensionRegisterPacket to client before attempting to login to a Bukkit dimension
+        if (DimensionManager.isBukkitDimension(par2EntityPlayerMP.dimension))
+        {
+            Packet250CustomPayload[] pkt = ForgePacket.makePacketSet(new DimensionRegisterPacket(par2EntityPlayerMP.dimension, worldserver.getWorld().getEnvironment().getId()));
+            par2EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(pkt[0]);
+        }
+        // MCPC+ end
         netserverhandler.sendPacketToPlayer(new Packet1Login(par2EntityPlayerMP.entityId, worldserver.getWorldInfo().getTerrainType(), par2EntityPlayerMP.theItemInWorldManager.getGameType(), worldserver.getWorldInfo().isHardcoreModeEnabled(), worldserver.provider.dimensionId, worldserver.difficultySetting, worldserver.getHeight(), maxPlayers));
         par2EntityPlayerMP.getBukkitEntity().sendSupportedChannels();
         // CraftBukkit end
@@ -588,7 +598,7 @@ public abstract class ServerConfigurationManager
             Player respawnPlayer = this.cserver.getPlayer(entityplayermp1);
             PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn);
             this.cserver.getPluginManager().callEvent(respawnEvent);
-            location = respawnEvent.getRespawnLocation();
+            //location = respawnEvent.getRespawnLocation(); // MCPC+ - avoid plugins changing our respawn location temporarily to fix death bug
             entityplayermp.reset();
         }
         else
@@ -608,9 +618,21 @@ public abstract class ServerConfigurationManager
 
         // CraftBukkit start
         int actualDimension = worldserver.getWorld().getEnvironment().getId();
-        // MCPC+ - support forge mods that use one provider for multiple dimensions
-        if (!DimensionManager.shouldLoadSpawn(i))
-            actualDimension = i;
+        // MCPC+ - change dim for bukkit added dimensions
+        if (DimensionManager.isBukkitDimension(i))
+        {
+            if (i != entityplayermp1.dimension)
+            {
+                actualDimension = i;
+            }
+            else 
+            {
+                actualDimension = worldserver.provider.dimensionId; // handle new respawn location which is based on bedspawn
+            }
+
+            Packet250CustomPayload[] pkt = ForgePacket.makePacketSet(new DimensionRegisterPacket(actualDimension, worldserver.getWorld().getEnvironment().getId()));
+            entityplayermp1.playerNetServerHandler.sendPacketToPlayer(pkt[0]);
+        }
         // MCPC+ end
         entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(actualDimension, (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayermp.theItemInWorldManager.getGameType()));
         entityplayermp1.setWorld(worldserver);
@@ -701,19 +723,6 @@ public abstract class ServerConfigurationManager
     {
         // MCPC+ start - Allow Forge hotloading on teleport
         WorldServer exitWorld = MinecraftServer.getServer().worldServerForDimension(i);
-        /*
-        if (entityplayermp.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET)   // plugins must specify exit from custom Bukkit worlds
-        {
-            // only target existing worlds (compensate for allow-nether/allow-end as false)
-            for (WorldServer world : this.mcServer.worlds)
-            {
-                if (world.dimension == i)
-                {
-                    exitWorld = world;
-                }
-            }
-        }
-        // MCPC+ end - */
 
         Location enter = entityplayermp.getBukkitEntity().getLocation();
         Location exit = null;
@@ -737,7 +746,7 @@ public abstract class ServerConfigurationManager
                     }
                 }
                 
-                if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().dimension != 0)
+                if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().provider.dimensionId != 0)
                 {
                     exit = exitWorld.getWorld().getSpawnLocation();
                 }
@@ -782,7 +791,7 @@ public abstract class ServerConfigurationManager
             exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = before;
         }
         // MCPC+ end
-        this.moveToWorld(entityplayermp, exitWorld.dimension, true, exit, false); // Vanilla doesn't check for suffocation when handling portals, so neither should we
+        this.moveToWorld(entityplayermp, exitWorld.provider.dimensionId, true, exit, false); // Vanilla doesn't check for suffocation when handling portals, so neither should we
 
         if (entityplayermp.motionX != velocity.getX() || entityplayermp.motionY != velocity.getY() || entityplayermp.motionZ != velocity.getZ())
         {
@@ -866,7 +875,7 @@ public abstract class ServerConfigurationManager
     {
         WorldServer worldserver = ((CraftWorld) enter.getWorld()).getHandle();
         WorldServer worldserver1 = ((CraftWorld) target.getWorld()).getHandle();
-        int i = worldserver.dimension;
+        int i = worldserver.provider.dimensionId;
         double y = enter.getY();
         float yaw = enter.getYaw();
         float pitch = enter.getPitch();
@@ -882,7 +891,7 @@ public abstract class ServerConfigurationManager
 
         worldserver.methodProfiler.a("moving");
         */
-        if (worldserver1.dimension == -1)
+        if (worldserver1.provider.dimensionId == -1)
         {
             d0 /= d2;
             d1 /= d2;
@@ -893,7 +902,7 @@ public abstract class ServerConfigurationManager
             }
             */
         }
-        else if (worldserver1.dimension == 0)
+        else if (worldserver1.provider.dimensionId == 0)
         {
             d0 *= d2;
             d1 *= d2;
