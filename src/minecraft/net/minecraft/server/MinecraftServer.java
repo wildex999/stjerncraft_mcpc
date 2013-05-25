@@ -1684,7 +1684,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 log.logInfo("---- Migration of old " + worldType + " folder failed ----");
                 result = false;
             }
-            else if (newWorld.getParent() == null || newWorld.getParentFile().mkdir())
+            else if (newWorld.getParentFile().mkdirs() || newWorld.getParentFile().exists())
             {
                 log.logInfo("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
 
