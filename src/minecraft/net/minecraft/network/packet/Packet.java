@@ -49,8 +49,11 @@ public abstract class Packet
 
     public Packet()
     {
-        if (packetClassToIdMap.get(this.getClass()) != null) // MCPC+ - Do not try to get a packet ID for a class that does not exist. Fixes Pixelmon
-            packetID = ((Integer) packetClassToIdMap.get(this.getClass())).intValue();
+        // MCPC+ start - Do not try to get a packet ID for a class that does not exist. Fixes Pixelmon
+        Integer packetID_ = (Integer) packetClassToIdMap.get(this.getClass());
+        if (packetID_ != null)
+            packetID = packetID_.intValue();
+        // MCPC+ end
     }
     // CraftBukkit end
 
