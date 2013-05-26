@@ -441,7 +441,7 @@ public class CraftBlock implements Block {
     }
 
     /* Build biome index based lookup table for BiomeBase to Biome mapping */
-    static {
+    public static void initMappings() { // MCPC+ - initializer to initMappings() method; called in CraftServer
         //BIOME_MAPPING = new Biome[net.minecraft.world.biome.BiomeGenBase.biomeList.length]; // MCPC+ - move up
         //BIOMEBASE_MAPPING = new net.minecraft.world.biome.BiomeGenBase[Biome.values().length]; // MCPC+ - move up
         BIOME_MAPPING[net.minecraft.world.biome.BiomeGenBase.swampland.biomeID] = Biome.SWAMPLAND;
@@ -485,7 +485,10 @@ public class CraftBlock implements Block {
                 BIOMEBASE_MAPPING[BIOME_MAPPING[i].ordinal()] = net.minecraft.world.biome.BiomeGenBase.biomeList[i];
             }
         }
-        // MCPC+ start - if mcpc.dump-materials is true, dump all materials with their corresponding id's
+    }
+
+    // MCPC+ start - if mcpc.dump-materials is true, dump all materials with their corresponding id's
+    public static void dumpMaterials() {
         if (FMLCommonHandler.instance().getMinecraftServerInstance().server.getDumpMaterials())
         {
             FMLLog.info("MCPC Dump Materials is ENABLED. Starting dump...");
@@ -500,8 +503,8 @@ public class CraftBlock implements Block {
             FMLLog.info("MCPC Dump Materials complete.");
             FMLLog.info("To disable these dumps, set mcpc.dump-materials to false in bukkit.yml.");
         }
-        // MCPC+ end        
     }
+    // MCPC+ end
 
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
         chunk.getCraftWorld().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);

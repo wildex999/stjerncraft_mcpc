@@ -69,6 +69,7 @@ import joptsimple.OptionSet;
 
 import org.bukkit.World.Environment;
 import org.bukkit.craftbukkit.SpigotTimings; // Spigot
+import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.world.WorldSaveEvent;
@@ -378,6 +379,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         }
         this.setDifficultyForAllWorlds(this.getDifficulty());
         this.initialWorldChunkLoad();
+        CraftBlock.dumpMaterials(); // MCPC+
     }
 
     protected void initialWorldChunkLoad()
