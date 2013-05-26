@@ -425,8 +425,15 @@ public abstract class ServerConfigurationManager
     }
     // MCPC+ end    
 
-    // CraftBukkit start - Whole method and signature
+    // MCPC+ start
     public EntityPlayerMP attemptLogin(NetLoginHandler pendingconnection, String s, String hostname)
+    {
+        return this.attemptLogin(pendingconnection, s, hostname, false);
+    }
+    // MCPC+ end
+
+    // CraftBukkit start - Whole method and signature
+    public EntityPlayerMP attemptLogin(NetLoginHandler pendingconnection, String s, String hostname, boolean vanillaLoginCheck)
     {
         // Instead of kicking then returning, we need to store the kick reason
         // in the event, check with plugins to see if it's ok, and THEN kick
@@ -480,7 +487,8 @@ public abstract class ServerConfigurationManager
             }
         }
 
-        this.cserver.getPluginManager().callEvent(event);
+        if (!vanillaLoginCheck) // MCPC+ - don't send an event to plugins while FML handles their VanillaLogin check
+            this.cserver.getPluginManager().callEvent(event);
 
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)
         {
