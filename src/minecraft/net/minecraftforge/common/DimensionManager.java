@@ -311,8 +311,6 @@ public class DimensionManager
 
             name = provider.getSaveFolder();
         }
-        if (oldName.contains("world_myst"))
-            oldName = oldName + File.separator + "age" + dim;
 
         mcServer.migrateWorlds(worldType, oldName, overworld.getWorldInfo().getWorldName(), name); // MCPC+
         ChunkGenerator gen = mcServer.server.getGenerator(name);
