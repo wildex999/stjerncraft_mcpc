@@ -95,6 +95,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
 
         this.getLogAgent().logInfo("Loading properties");
         this.settings = new PropertyManager(this.options, this.getLogAgent()); // CraftBukkit - CLI argument support
+        this.setConfigurationManager((ServerConfigurationManager)(new DedicatedPlayerList(this)));  // Spigot - moved up from below
 
         if (this.isSinglePlayer())
         {
@@ -145,11 +146,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
 
         try
         {
-            // Spigot start
-            this.networkThread = (!Boolean.getBoolean("org.spigotmc.netty.disabled"))
-                    ? new org.spigotmc.netty.NettyServerConnection(this, inetaddress, this.getServerPort())
-                    : new DedicatedServerListenThread(this, inetaddress, this.getServerPort());
-            // Spigot end
+            this.networkThread = new org.spigotmc.MultiplexingServerConnection(this); // Spigot
         }
         catch (Throwable ioexception)     // CraftBukkit - IOException -> Throwable
         {
@@ -159,7 +156,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
             return false;
         }
 
-         this.setConfigurationManager((ServerConfigurationManager)(new DedicatedPlayerList(this)));  // CraftBukkit // Spigot - moved to top of method
+        // this.setConfigurationManager((ServerConfigurationManager)(new DedicatedPlayerList(this)));  // CraftBukkit // Spigot - moved to top of method
 
         if (!this.isServerInOnlineMode())
         {

@@ -6,7 +6,7 @@ import io.netty.channel.ChannelPromise;
 
 public class OutboundManager extends ChannelOperationHandlerAdapter {
 
-    private static final int FLUSH_TIME = 5;
+    private static final int FLUSH_TIME = 3;
     private long lastFlush;
     public boolean flushNow = false;
 

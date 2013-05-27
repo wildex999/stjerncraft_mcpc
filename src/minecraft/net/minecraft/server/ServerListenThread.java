@@ -106,7 +106,7 @@ public class ServerListenThread extends Thread
 
                 // CraftBukkit end
                 NetLoginHandler netloginhandler = new NetLoginHandler(this.myNetworkListenThread.getServer(), socket, "Connection #" + this.connectionCounter++);
-                this.addPendingConnection(netloginhandler);
+                ((org.spigotmc.MultiplexingServerConnection) this.myNetworkListenThread.getServer().getNetworkThread()).register(netloginhandler); // Spigot
             }
             catch (IOException ioexception)
             {

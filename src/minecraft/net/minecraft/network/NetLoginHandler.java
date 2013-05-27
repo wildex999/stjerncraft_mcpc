@@ -101,7 +101,7 @@ public class NetLoginHandler extends NetHandler
             this.initializePlayerConnection();
         }
 
-        if (this.connectionTimer++ == 600)
+        if (this.connectionTimer++ == 6000)
         {
             this.raiseErrorAndDisconnect("Took too long to log in");
         }
@@ -304,9 +304,9 @@ public class NetLoginHandler extends NetHandler
             this.myTCPConnection.serverShutdown();
 
             // Spigot start
-            if (inetaddress != null && this.mcServer.getNetworkThread() instanceof DedicatedServerListenThread)
+            if (inetaddress != null)
             {
-                ((DedicatedServerListenThread)this.mcServer.getNetworkThread()).func_71761_a(inetaddress);
+                ((org.spigotmc.MultiplexingServerConnection) this.mcServer.getNetworkThread()).unThrottle(inetaddress);
             }
 
             // Spigot end

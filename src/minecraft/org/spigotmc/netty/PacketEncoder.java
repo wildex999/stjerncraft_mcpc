@@ -43,12 +43,12 @@ public class PacketEncoder extends MessageToByteEncoder<net.minecraft.network.pa
     }
 
     @Override
-    public void freeOutboundBuffer(ChannelHandlerContext ctx) throws Exception {
-        super.freeOutboundBuffer(ctx);
-        if (outBuf != null) {
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception
+    {
+        if ( outBuf != null )
+        {
             outBuf.release();
             outBuf = null;
         }
-        dataOut = null;
     }
 }

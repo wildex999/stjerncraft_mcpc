@@ -9,8 +9,6 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 
-import net.minecraft.network.packet.Packet;
-
 /**
  * Packet decoding class backed by a reusable {@link DataInputStream} which
  * backs the input {@link ByteBuf}. Reads an unsigned byte packet header and
@@ -28,7 +26,7 @@ public class PacketDecoder extends ReplayingDecoder<ReadState>
     }
 
     @Override
-    protected Packet decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, MessageBuf<Object> out) throws Exception
     {
         if ( input == null )
         {
@@ -53,14 +51,14 @@ public class PacketDecoder extends ReplayingDecoder<ReadState>
                         packet.readPacketData( input );
                     } catch ( EOFException ex )
                     {
-                        return null;
+                        return;
                     }
 
                     checkpoint( ReadState.HEADER );
                     net.minecraft.network.packet.Packet ret = packet;
                     packet = null;
-
-                    return ret;
+                    out.add( ret );
+                    break;
                 default:
                     throw new IllegalStateException();
             }
