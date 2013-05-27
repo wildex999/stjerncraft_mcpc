@@ -304,9 +304,9 @@ public class NetLoginHandler extends NetHandler
             this.myTCPConnection.serverShutdown();
 
             // Spigot start
-            if (inetaddress != null)
+            if (inetaddress != null && this.mcServer.getNetworkThread() instanceof DedicatedServerListenThread)
             {
-                ((org.spigotmc.MultiplexingServerConnection) this.mcServer.getNetworkThread()).unThrottle(inetaddress);
+                ((DedicatedServerListenThread)this.mcServer.getNetworkThread()).func_71761_a(inetaddress);
             }
 
             // Spigot end

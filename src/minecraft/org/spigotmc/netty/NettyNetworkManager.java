@@ -5,7 +5,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundMessageHandlerAdapter;
 import io.netty.channel.socket.SocketChannel;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.security.PrivateKey;
@@ -15,9 +14,10 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import org.spigotmc.MultiplexingServerConnection;
+import org.bukkit.Bukkit;
 
 /**
  * This class forms the basis of the Netty integration. It implements
@@ -29,7 +29,7 @@ public class NettyNetworkManager extends ChannelInboundMessageHandlerAdapter<net
     private static final ExecutorService threadPool = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("Async Packet Handler - %1$d").build());
     private static final net.minecraft.server.MinecraftServer server = net.minecraft.server.MinecraftServer.getServer();
     private static final PrivateKey key = server.getKeyPair().getPrivate();
-    private static final MultiplexingServerConnection serverConnection = (MultiplexingServerConnection) server.getNetworkThread();
+    private static final NettyServerConnection serverConnection = (NettyServerConnection) server.getNetworkThread();
     /*========================================================================*/
     private final Queue<net.minecraft.network.packet.Packet> syncPackets = new ConcurrentLinkedQueue<net.minecraft.network.packet.Packet>();
     private final List<net.minecraft.network.packet.Packet> highPriorityQueue = new AbstractList<net.minecraft.network.packet.Packet>() {
@@ -63,17 +63,13 @@ public class NettyNetworkManager extends ChannelInboundMessageHandlerAdapter<net
         // Channel and address groundwork first
         channel = ctx.channel();
         address = channel.remoteAddress();
-        // Check the throttle
-        if (serverConnection.throttle(((InetSocketAddress) channel.remoteAddress()).getAddress())) {
-            channel.close();
-        }
         // Then the socket adaptor
         socketAdaptor = NettySocketAdaptor.adapt((SocketChannel) channel);
         // Followed by their first handler
         connection = new net.minecraft.network.NetLoginHandler(server, this);
         // Finally register the connection
         connected = true;
-        serverConnection.register((net.minecraft.network.NetLoginHandler) connection);
+        serverConnection.pendingConnections.add((net.minecraft.network.NetLoginHandler) connection);
     }
 
     @Override
@@ -96,8 +92,6 @@ public class NettyNetworkManager extends ChannelInboundMessageHandlerAdapter<net
         if (connected) {
             if (msg instanceof net.minecraft.network.packet.Packet252SharedKey) {
                 secret = ((net.minecraft.network.packet.Packet252SharedKey) msg).getSharedKey(key);
-                Cipher decrypt = NettyServerConnection.getCipher(Cipher.DECRYPT_MODE, secret);
-                channel.pipeline().addBefore("decoder", "decrypt", new CipherDecoder(decrypt));
             }
 
             if (msg.canProcessAsync()) {
@@ -151,14 +145,16 @@ public class NettyNetworkManager extends ChannelInboundMessageHandlerAdapter<net
             if (packet != null) {
                 highPriorityQueue.add(packet);
 
-                if (packet instanceof net.minecraft.network.packet.Packet255KickDisconnect) {
-                    channel.pipeline().get(OutboundManager.class).flushNow = true;
-                }
-
-                channel.write(packet, channel.voidPromise());
+                // If needed, check and prepare encryption phase
+                // We don't send the packet here as it is sent just before the cipher handler has been added to ensure we can safeguard from any race conditions
+                // Which are caused by the slow first initialization of the cipher SPI
                 if (packet instanceof net.minecraft.network.packet.Packet252SharedKey) {
                     Cipher encrypt = NettyServerConnection.getCipher(Cipher.ENCRYPT_MODE, secret);
-                    channel.pipeline().addBefore("decoder", "encrypt", new CipherEncoder(encrypt));
+                    Cipher decrypt = NettyServerConnection.getCipher(Cipher.DECRYPT_MODE, secret);
+                    CipherCodec codec = new CipherCodec(encrypt, decrypt, (net.minecraft.network.packet.Packet252SharedKey) packet);
+                    channel.pipeline().addBefore("decoder", "cipher", codec);
+                } else {
+                    channel.write(packet);
                 }
             }
         }
