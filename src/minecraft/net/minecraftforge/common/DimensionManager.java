@@ -147,6 +147,14 @@ public class DimensionManager
             if (id >= 0)
             {
                 dimensionMap.set(id);
+
+                // MCPC+ start - set up map for world name to dimension
+                if (id > 1) {
+                    WorldProvider provider = WorldProvider.getProviderForDimension(id);
+                    String name = provider.getSaveFolder();
+                    bukkitAliasMap.put(name.toLowerCase(), id);
+                }
+                // MCPC+ end
             }
         }
         // MCPC+ end
@@ -323,7 +331,7 @@ public class DimensionManager
         {
             world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
         }
-        mcServer.worlds.add(world);
+        //mcServer.worlds.add(world); world is added to this collection in setWorld. since  it is a list and not a set, it will be added twice
         mcServer.getConfigurationManager().setPlayerManager(mcServer.worlds.toArray(new WorldServer[mcServer.worlds.size()]));
         // MCPC+ end
         world.addWorldAccess(new WorldManager(mcServer, world));
@@ -350,14 +358,14 @@ public class DimensionManager
         String name;
         System.out.println("initDimension CREATOR NAME = " + creator.name());
         int dim = DimensionManager.getNextFreeDimId();
-        if (bukkitAliasMap.containsKey(creator.name()))
+        if (bukkitAliasMap.containsKey(creator.name().toLowerCase()))
         {
-            dim = bukkitAliasMap.get(creator.name());
+            dim = bukkitAliasMap.get(creator.name().toLowerCase());
             System.out.println("FOUND MATCHING DIM " + dim + " for CREATOR " + creator.name());
         }
         else { 
             System.out.println("STORING DIM " + dim + " for CREATOR " + creator.name());
-            bukkitAliasMap.put(creator.name(), dim);
+            bukkitAliasMap.put(creator.name().toLowerCase(), dim);
         }
 
         System.out.println("DIM = " + dim + ", environment = " + creator.environment());
@@ -393,7 +401,7 @@ public class DimensionManager
         {
             world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
         }
-        mcServer.worlds.add(world);
+        //mcServer.worlds.add(world); world is added to this collection in setWorld. since  it is a list and not a set, it will be added twice
         mcServer.getConfigurationManager().setPlayerManager(mcServer.worlds.toArray(new WorldServer[mcServer.worlds.size()]));
         // MCPC+ end
         world.addWorldAccess(new WorldManager(mcServer, world));
@@ -606,7 +614,11 @@ public class DimensionManager
 
     public static void addBukkitAlias(String name, int dim)
     {
-        bukkitAliasMap.put(name, dim);
+        bukkitAliasMap.put(name.toLowerCase(), dim);
+    }
+
+    public static Integer getBukkitAliasDim(String name) {
+        return bukkitAliasMap.get(name.toLowerCase());
     }
     // MCPC+ end
 }

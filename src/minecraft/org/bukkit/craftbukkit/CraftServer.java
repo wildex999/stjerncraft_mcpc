@@ -860,8 +860,16 @@ public final class CraftServer implements Server {
 
     public World getWorld(String name) {
         Validate.notNull(name, "Name cannot be null");
-
-        return worlds.get(name.toLowerCase());
+        name = name.toLowerCase();
+        World result = worlds.get(name);
+        if (result == null) {
+            Integer dim = DimensionManager.getBukkitAliasDim(name);
+            if (dim != null && dim != 0) {
+                WorldServer worldServer = net.minecraft.server.MinecraftServer.getServer().worldServerForDimension(dim);
+                result = worldServer.getWorld();
+            }
+        }
+        return result;
     }
 
     public World getWorld(UUID uid) {
