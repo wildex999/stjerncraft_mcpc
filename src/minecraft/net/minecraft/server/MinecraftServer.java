@@ -313,14 +313,19 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         worldsettings.func_82750_a(par6Str);
         WorldServer world;
 
-        org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(par1Str);
-        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, theProfiler, this.getLogAgent()) : new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, worldsettings, theProfiler, this.getLogAgent(), Environment.getEnvironment(0), gen));
+        org.bukkit.generator.ChunkGenerator overWorldGen = this.server.getGenerator(par1Str);
+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, theProfiler, this.getLogAgent()) : new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), par2Str, true), par2Str, 0, worldsettings, theProfiler, this.getLogAgent(), Environment.getEnvironment(0), overWorldGen));
+        if (overWorldGen != null)
+        {
+            overWorld.getWorld().getPopulators().addAll(overWorldGen.getDefaultPopulators(overWorld.getWorld()));
+        }
         this.worlds.add(overWorld); // MCPC+ - CB expects overworld in position 0 so we must add it first
         for (int dimension : DimensionManager.getStaticDimensionIDs())
         {
             String worldType = "";
             String name = "";
             String oldName = "";
+            org.bukkit.generator.ChunkGenerator gen = null;
             // MCPC+ start
             Environment env = Environment.getEnvironment(dimension);
             if (dimension != 0)
