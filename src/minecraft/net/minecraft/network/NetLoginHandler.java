@@ -40,7 +40,7 @@ public class NetLoginHandler extends NetHandler
 
     /** Reference to the MinecraftServer object. */
     private final MinecraftServer mcServer;
-    public final INetworkManager myTCPConnection; // Spigot - TcpConnection -> INetworkManager
+    public final TcpConnection myTCPConnection;
     public boolean connectionComplete = false;
     private int connectionTimer = 0;
     public String clientUsername = null;
@@ -54,39 +54,17 @@ public class NetLoginHandler extends NetHandler
     private SecretKey sharedKey = null;
     public String hostname = ""; // CraftBukkit - add field
 
-    // Spigot start
-    public NetLoginHandler(MinecraftServer minecraftserver, org.spigotmc.netty.NettyNetworkManager networkManager)
-    {
-        this.mcServer = minecraftserver;
-        this.myTCPConnection = networkManager;
-    }
-    // Spigot end
-
     public NetLoginHandler(MinecraftServer par1MinecraftServer, Socket par2Socket, String par3Str) throws java.io.IOException   // CraftBukkit - throws IOException
     {
         this.mcServer = par1MinecraftServer;
         this.myTCPConnection = new TcpConnection(par1MinecraftServer.getLogAgent(), par2Socket, par3Str, this, par1MinecraftServer.getKeyPair().getPrivate());
-        // this.myTCPConnection.field_74468_e = 0; // Spigot
+        this.myTCPConnection.field_74468_e = 0;
     }
 
     // CraftBukkit start
     public Socket getSocket()
     {
-        // MCPC+ start - bypass inheritance for runtime deobf, see #729
-        //return this.myTCPConnection.getSocket();
-        if (this.myTCPConnection instanceof TcpConnection)
-        {
-            return ((TcpConnection) this.myTCPConnection).getSocket();
-        }
-        else if (this.myTCPConnection instanceof org.spigotmc.netty.NettyNetworkManager)
-        {
-            return ((org.spigotmc.netty.NettyNetworkManager) this.myTCPConnection).getSocket();
-        }
-        else
-        {
-            throw new IllegalArgumentException("Unknown network manager implementation: " + this.myTCPConnection.getClass().getName());
-        }
-        // MCPC+ end
+        return this.myTCPConnection.getSocket();
     }
     // CraftBukkit end
 
@@ -264,7 +242,7 @@ public class NetLoginHandler extends NetHandler
             // CraftBukkit
             org.bukkit.event.server.ServerListPingEvent pingEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callServerListPingEvent(this.mcServer.server, getSocket().getInetAddress(), this.mcServer.getMOTD(), serverconfigurationmanager.getCurrentPlayerCount(), serverconfigurationmanager.getMaxPlayers());
 
-            if (true)
+            if (par1Packet254ServerPing.readSuccessfully == 1)
             {
                 // CraftBukkit start - Fix decompile issues, don't create a list from an array
                 Object[] list = new Object[] { 1,
@@ -303,13 +281,11 @@ public class NetLoginHandler extends NetHandler
             this.myTCPConnection.addToSendQueue(new Packet255KickDisconnect(s));
             this.myTCPConnection.serverShutdown();
 
-            // Spigot start
-            if (inetaddress != null)
+            if (inetaddress != null && this.mcServer.getNetworkThread() instanceof DedicatedServerListenThread)
             {
-                ((org.spigotmc.MultiplexingServerConnection) this.mcServer.getNetworkThread()).unThrottle(inetaddress);
+                ((DedicatedServerListenThread)this.mcServer.getNetworkThread()).func_71761_a(inetaddress);
             }
 
-            // Spigot end
             this.connectionComplete = true;
         }
         catch (Exception exception)

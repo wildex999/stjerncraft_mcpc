@@ -47,7 +47,5 @@ public interface INetworkManager
      */
     void networkShutdown(String s, Object... aobject);
 
-    //java.net.Socket getSocket(); // Spigot // MCPC+ - remove
-
     void setSocketAddress(java.net.SocketAddress address); // Spigot
 }
