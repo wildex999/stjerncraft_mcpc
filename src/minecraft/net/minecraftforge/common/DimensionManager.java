@@ -269,7 +269,6 @@ public class DimensionManager
             // MCPC+ start - add world if it does not exist
             if (!MinecraftServer.getServer().worlds.contains(entry.getValue()))
             {
-                System.out.println("Adding world " + entry.getValue().getWorldInfo().getWorldName());
                 MinecraftServer.getServer().worlds.add(entry.getValue());
             }
             // MCPC+ end
@@ -356,19 +355,15 @@ public class DimensionManager
 
         String worldType;
         String name;
-        System.out.println("initDimension CREATOR NAME = " + creator.name());
         int dim = DimensionManager.getNextFreeDimId();
         if (bukkitAliasMap.containsKey(creator.name().toLowerCase()))
         {
             dim = bukkitAliasMap.get(creator.name().toLowerCase());
-            System.out.println("FOUND MATCHING DIM " + dim + " for CREATOR " + creator.name());
         }
         else { 
-            System.out.println("STORING DIM " + dim + " for CREATOR " + creator.name());
             bukkitAliasMap.put(creator.name().toLowerCase(), dim);
         }
 
-        System.out.println("DIM = " + dim + ", environment = " + creator.environment());
         int providerId = 0;
         if (creator.environment() != null)
             providerId = creator.environment().getId();
@@ -379,21 +374,17 @@ public class DimensionManager
         {
             // do nothing
         }
-        System.out.println("creator env id = " + providerId);
+
         registerDimension(dim, providerId);
         addBukkitDimension(dim);
         Environment env = creator.environment();
-        System.out.println("env = " + env);
-
         worldType = env.name().toLowerCase();
-
         name = creator.name();
-
         ChunkGenerator gen = mcServer.server.getGenerator(name);
+
         if (mcServer instanceof DedicatedServer) {
             worldSettings.func_82750_a(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));
         }
-
 
         WorldServer world = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), name, dim, worldSettings, overworld, mcServer.theProfiler, overworld.getWorldLogAgent(), env, gen);
 

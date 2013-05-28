@@ -603,6 +603,14 @@ public final class CraftServer implements Server {
     {
         return this.configuration.getBoolean("mcpc.world-leak-debug", false);
     }
+
+    public String getBukkitToForgeMapping(String name)
+    {
+        String result = this.configuration.getString("mcpc.bukkit-to-forge-mappings." + name);
+        if (result == null)
+            result = name;
+        return result;
+    }
     // MCPC+ end    
 
     public void reload() {
@@ -860,6 +868,8 @@ public final class CraftServer implements Server {
 
     public World getWorld(String name) {
         Validate.notNull(name, "Name cannot be null");
+        if (name.startsWith("world_"))
+            name = getBukkitToForgeMapping(name.toLowerCase());
         name = name.toLowerCase();
         World result = worlds.get(name);
         if (result == null) {
