@@ -625,15 +625,11 @@ public abstract class ServerConfigurationManager
         }
 
         // CraftBukkit start
-        int actualDimension = worldserver.getWorld().getEnvironment().getId();
+        int actualDimension = i;
         // MCPC+ - change dim for bukkit added dimensions
         if (DimensionManager.isBukkitDimension(i))
         {
-            if (i != entityplayermp1.dimension)
-            {
-                actualDimension = i;
-            }
-            else 
+            if (i == entityplayermp1.dimension)
             {
                 actualDimension = worldserver.provider.dimensionId; // handle new respawn location which is based on bedspawn
             }
