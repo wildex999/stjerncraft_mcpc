@@ -119,6 +119,8 @@ public abstract class ServerConfigurationManager
      */
     private int playerPingIndex = 0;
 
+    private boolean vanillaLoginCheck = false; // MCPC+
+
     // CraftBukkit start
     private CraftServer cserver;
 
@@ -423,17 +425,21 @@ public abstract class ServerConfigurationManager
     {
         disconnect(entityPlayerMP);
     }
-    // MCPC+ end    
 
-    // MCPC+ start
-    public EntityPlayerMP attemptLogin(NetLoginHandler pendingconnection, String s, String hostname)
+    public EntityPlayerMP attemptLoginNoEvent(NetLoginHandler pendingconnection, String s, String hostname)
     {
-        return this.attemptLogin(pendingconnection, s, hostname, false);
+        EntityPlayerMP entity;
+
+        this.vanillaLoginCheck = true;
+        entity = attemptLogin(pendingconnection, s, hostname);
+        this.vanillaLoginCheck = false;
+
+        return entity;
     }
     // MCPC+ end
 
     // CraftBukkit start - Whole method and signature
-    public EntityPlayerMP attemptLogin(NetLoginHandler pendingconnection, String s, String hostname, boolean vanillaLoginCheck)
+    public EntityPlayerMP attemptLogin(NetLoginHandler pendingconnection, String s, String hostname)
     {
         // Instead of kicking then returning, we need to store the kick reason
         // in the event, check with plugins to see if it's ok, and THEN kick
@@ -487,7 +493,7 @@ public abstract class ServerConfigurationManager
             }
         }
 
-        if (!vanillaLoginCheck) // MCPC+ - don't send an event to plugins while FML handles their VanillaLogin check
+        if (!this.vanillaLoginCheck) // MCPC+ - don't send an event to plugins while FML handles their VanillaLogin check
             this.cserver.getPluginManager().callEvent(event);
 
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)

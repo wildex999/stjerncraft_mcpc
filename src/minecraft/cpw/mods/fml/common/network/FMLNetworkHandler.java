@@ -197,7 +197,7 @@ public class FMLNetworkHandler
         // Vanilla reasons first
         // MCPC start
         ServerConfigurationManager playerList = server.getConfigurationManager();
-        EntityPlayer player = playerList.attemptLogin(netLoginHandler, netLoginHandler.clientUsername, netLoginHandler.hostname, true);
+        EntityPlayer player = playerList.attemptLoginNoEvent(netLoginHandler, netLoginHandler.clientUsername, netLoginHandler.hostname);
         return player != null;
         // MCPC end
     }
