@@ -854,11 +854,9 @@ public final class CraftServer implements Server {
                 FMLLog.log(Level.SEVERE, ex, "Failed to save world " + handle.getWorld().getName() + " while unloading it.");
             }
         }
+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle)); // MCPC+ - fire unload event before removing world
         worlds.remove(world.getName().toLowerCase());
-        // MCPC+ start - fire unload event then unload world
-        MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle));
-        DimensionManager.setWorld(handle.provider.dimensionId, null);
-        // MCPC+ end
+        DimensionManager.setWorld(handle.provider.dimensionId, null); // MCPC+ - remove world from DimensionManager
         return true;
     }
 
