@@ -720,9 +720,9 @@ public abstract class ServerConfigurationManager
 
         GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
         // MCPC+ start - handle chunk requests for mods that call this method directly such as Twilight Forest.
-        if (!worldserver.getServer().getLoadChunkOnRequest())
+        if (!worldserver1.getServer().getLoadChunkOnRequest())
         {
-            worldserver.theChunkProviderServer.loadChunkOnProvideRequest = false;
+            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = false;
         }
         // MCPC+ end
     }
