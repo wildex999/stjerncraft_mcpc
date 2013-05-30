@@ -7,7 +7,7 @@ package net.minecraftforge.client;
 
 import java.util.BitSet;
 
-import org.lwjgl.opengl.Display;
+//import org.lwjgl.opengl.Display; // MCPC+ - remove client code
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -56,12 +56,12 @@ public class MinecraftForgeClient
 
     public static int getRenderPass()
     {
-        return ForgeHooksClient.renderPass;
+        return 0; //ForgeHooksClient.renderPass; // MCPC+ - remove client code
     }
 
     public static int getStencilBits()
     {
-        return ForgeHooksClient.stencilBits;
+        return 0; //ForgeHooksClient.stencilBits; // MCPC+ - remove client code
     }
 
 
