@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -28,12 +28,17 @@ public class DummyModContainer implements ModContainer
 {
     private ModMetadata md;
     private ArtifactVersion processedVersion;
+    private String label;
 
     public DummyModContainer(ModMetadata md)
     {
         this.md = md;
     }
 
+    public DummyModContainer(String label)
+    {
+        this.label = label;
+    }
     public DummyModContainer()
     {
     }
@@ -156,5 +161,11 @@ public class DummyModContainer implements ModContainer
     public Certificate getSigningCertificate()
     {
         return null;
+    }
+
+    @Override
+    public String toString()
+    {
+        return md != null ? getModId() : "Dummy Container ("+label+") @" + System.identityHashCode(this);
     }
 }
