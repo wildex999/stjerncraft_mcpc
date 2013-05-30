@@ -33,7 +33,6 @@ public class CraftCustomAmbient extends CraftAmbient {
 
     public EntityType getType() {
         EntityType type = EntityType.fromName(this.entityName);
-        System.out.println("type = " + type + " for entityName " + this.entityName);
         if (type != null)
             return type;
         else return EntityType.UNKNOWN;
