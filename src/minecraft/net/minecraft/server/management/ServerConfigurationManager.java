@@ -507,7 +507,7 @@ public abstract class ServerConfigurationManager
     }
 
     // MCPC+ start - vanilla compatibility
-    public EntityPlayerMP createPlayerForUser(String player)
+    public EntityPlayerMP processLogin(String player)
     {
         return processLogin(getPlayerForUsername(player));
     }

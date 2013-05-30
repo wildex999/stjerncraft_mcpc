@@ -296,7 +296,7 @@ public class EntityCreeper extends EntityMob
         super.onStruckByLightning(par1EntityLightningBolt);
 
         // MCPC+ start
-        if (par1EntityLightningBolt.getBukkitEntity() != null)
+        if (par1EntityLightningBolt != null)
         {
             // CraftBukkit start
             if (CraftEventFactory.callCreeperPowerEvent(this, par1EntityLightningBolt, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled())

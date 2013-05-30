@@ -221,7 +221,7 @@ public class EntityPig extends EntityAnimal
             EntityPigZombie entitypigzombie = new EntityPigZombie(this.worldObj);
 
             // MCPC+ start
-            if (par1EntityLightningBolt.getBukkitEntity() != null)
+            if (par1EntityLightningBolt != null)
             {
                 // CraftBukkit start
                 if (CraftEventFactory.callPigZapEvent(this, par1EntityLightningBolt, entitypigzombie).isCancelled())

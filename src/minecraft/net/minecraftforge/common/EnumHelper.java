@@ -71,13 +71,13 @@ public class EnumHelper
         return (World.Environment)addEnum(World.Environment.class, name, new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
     }
 
-    public static EntityType addBukkitEntityType(String name, Class<? extends org.bukkit.entity.Entity> clazz, int typeId, boolean independent) {
-        EntityType bukkitType = addEnum(EntityType.class, name, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, new Object[] { name, clazz, typeId, independent });
+    public static EntityType addBukkitEntityType(String name, int typeId, boolean independent) {
+        EntityType bukkitType = addEnum(EntityType.class, name, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, new Object[] { name, org.bukkit.craftbukkit.entity.CraftCustomLivingEntity.class, typeId, independent });
 
         Map<String, EntityType> NAME_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP"); // TODO: access
         Map<Short, EntityType> ID_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
 
-        NAME_MAP.put(name, bukkitType);
+        NAME_MAP.put(name.toLowerCase(), bukkitType);
         ID_MAP.put((short)typeId, bukkitType);
 
 

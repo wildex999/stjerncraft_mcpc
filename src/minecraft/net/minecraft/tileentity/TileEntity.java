@@ -266,7 +266,7 @@ public class TileEntity
     public void func_85027_a(CrashReportCategory par1CrashReportCategory)
     {
         par1CrashReportCategory.addCrashSectionCallable("Name", new CallableTileEntityName(this));
-        CrashReportCategory.func_85068_a(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID, this.getBlockMetadata());
+        CrashReportCategory.func_85068_a(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.getBlockType() == null ? 0 : this.getBlockType().blockID, this.getBlockMetadata()); // MCPC+ - dont pass blocktype if null
         par1CrashReportCategory.addCrashSectionCallable("Actual block type", new CallableTileEntityID(this));
         par1CrashReportCategory.addCrashSectionCallable("Actual block data value", new CallableTileEntityData(this));
     }

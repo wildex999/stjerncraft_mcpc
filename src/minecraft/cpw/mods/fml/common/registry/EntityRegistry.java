@@ -45,6 +45,7 @@ import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 // MCPC+ start
 import net.minecraftforge.common.EnumHelper;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.entity.EntityType;
 // MCPC+ end
 
 public class EntityRegistry
@@ -124,6 +125,7 @@ public class EntityRegistry
     private ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
     private Map<String,ModContainer> entityNames = Maps.newHashMap();
     private BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
+    public static Map<Class <? extends Entity>, String> entityTypeMap = Maps.newHashMap(); // MCPC+ - used by CraftCustomEntity
     public static EntityRegistry instance()
     {
         return INSTANCE;
@@ -153,6 +155,7 @@ public class EntityRegistry
     public static void registerModEntity(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
         instance().doModEntityRegistration(entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
+        registerBukkitType(entityClass, entityName); // MCPC+ - register EntityType for Bukkit
     }
 
     private void doModEntityRegistration(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
@@ -202,9 +205,7 @@ public class EntityRegistry
         }
         id = instance().validateAndClaimId(id);
         EntityList.addMapping(entityClass, entityName, id);
-        // MCPC+ start
-        EnumHelper.addBukkitEntityType(entityName, org.bukkit.entity.Entity.class, id, false);
-        // MCPC+ end
+        registerBukkitType(entityClass, entityName); // MCPC+ - register EntityType for Bukkit
     }
 
     private int validateAndClaimId(int id)
@@ -257,10 +258,39 @@ public class EntityRegistry
         }
         instance().validateAndClaimId(id);
         EntityList.addMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
-        // MCPC+ start
-        EnumHelper.addBukkitEntityType(entityName, org.bukkit.entity.Entity.class, id, false);
-        // MCPC+ end
+        registerBukkitType(entityClass, entityName); // MCPC+ - register EntityType for Bukkit
     }
+
+    // MCPC+ start
+    private static void registerBukkitType(Class <? extends Entity > entityClass, String entityName)
+    {
+        ModContainer activeModContainer = Loader.instance().activeModContainer();
+        String modId = "unknown";
+        // fixup bad entity names from mods
+        if (entityName.contains("."))
+        {
+            if ((entityName.indexOf(".") + 1) < entityName.length())
+                entityName = entityName.substring(entityName.indexOf(".") + 1, entityName.length());
+        }
+        entityName.replace("entity", "");
+        if (entityName.startsWith("ent"))
+            entityName.replace("ent", "");
+        entityName = entityName.replaceAll("[^A-Za-z0-9]", ""); // remove all non-digits/alphanumeric
+        if (activeModContainer != null)
+            modId = activeModContainer.getModId();
+        entityName = modId + "." + entityName;
+        short entityHashCode = (short)(entityClass.getName().hashCode()^(entityClass.getName().hashCode()>>>16));
+        FMLLog.info("addBukkitEntityType " + entityName + " with ID " + entityHashCode);
+        entityTypeMap.put(entityClass, entityName);
+        EnumHelper.addBukkitEntityType(entityName, entityHashCode, false);
+    }
+
+    // used by CraftCustomEntity
+    public static String getCustomEntityTypeName(Class <? extends Entity > entityClass)
+    {
+        return entityTypeMap.get(entityClass);
+    }
+    // MCPC+ end
 
     public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
