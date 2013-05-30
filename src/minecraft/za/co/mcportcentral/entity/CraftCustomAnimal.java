@@ -1,18 +1,19 @@
-package org.bukkit.craftbukkit.entity;
+package za.co.mcportcentral.entity;
 
 import net.minecraft.entity.Entity;
 
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftAnimals;
 import org.bukkit.entity.EntityType;
 
 import cpw.mods.fml.common.registry.EntityRegistry;
 
-public class CraftCustomLivingEntity extends CraftLivingEntity {
+public class CraftCustomAnimal extends CraftAnimals {
 
     public Class<? extends Entity> entityClass;
     public String entityName;
 
-    public CraftCustomLivingEntity(CraftServer server, net.minecraft.entity.EntityLiving entity) {
+    public CraftCustomAnimal(CraftServer server, net.minecraft.entity.passive.EntityAnimal entity) {
         super(server, entity);
         this.entityClass = entity.getClass();
         this.entityName = EntityRegistry.getCustomEntityTypeName(entityClass);
@@ -21,18 +22,13 @@ public class CraftCustomLivingEntity extends CraftLivingEntity {
     }
 
     @Override
-    public net.minecraft.entity.EntityLiving getHandle() {
-        return (net.minecraft.entity.EntityLiving) entity;
+    public net.minecraft.entity.passive.EntityAnimal getHandle() {
+        return (net.minecraft.entity.passive.EntityAnimal) entity;
     }
 
     @Override
     public String toString() {
         return this.entityName;
-    }
-
-    public Class<? extends Entity> getEntityClass()
-    {
-        return this.entityClass;
     }
 
     public EntityType getType() {

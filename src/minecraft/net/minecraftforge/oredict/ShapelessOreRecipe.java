@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import java.util.List;
 
 // MCPC+ start
-import za.co.mcportcentral.CustomModRecipe;
+import za.co.mcportcentral.potion.CustomModRecipe;
 import org.bukkit.inventory.Recipe;
 // MCPC+ end
 

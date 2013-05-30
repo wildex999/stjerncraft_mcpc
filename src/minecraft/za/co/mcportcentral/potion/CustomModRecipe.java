@@ -1,4 +1,4 @@
-package za.co.mcportcentral;
+package za.co.mcportcentral.potion;
 
 import net.minecraft.item.crafting.IRecipe;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;

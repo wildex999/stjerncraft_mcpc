@@ -279,10 +279,8 @@ public class EntityRegistry
         if (activeModContainer != null)
             modId = activeModContainer.getModId();
         entityName = modId + "." + entityName;
-        short entityHashCode = (short)(entityClass.getName().hashCode()^(entityClass.getName().hashCode()>>>16));
-        FMLLog.info("addBukkitEntityType " + entityName + " with ID " + entityHashCode);
         entityTypeMap.put(entityClass, entityName);
-        EnumHelper.addBukkitEntityType(entityName, entityHashCode, false);
+        // EntityType is added to Bukkit in Entity.getBukkitEntity() in order to support multiple custom classes
     }
 
     // used by CraftCustomEntity

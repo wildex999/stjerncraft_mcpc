@@ -49,6 +49,7 @@ import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.TravelAgent;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Vehicle;
@@ -67,6 +68,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.plugin.PluginManager;
 // CraftBukkit end
+// MCPC+ start
+import cpw.mods.fml.common.registry.EntityRegistry;
+import net.minecraftforge.common.EnumHelper;
+// MCPC+ end
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -2083,6 +2088,15 @@ public abstract class Entity
         {
             this.bukkitEntity = CraftEntity.getEntity(this.worldObj.getServer(), this);
         }
+        // MCPC+ start - if this entity is a registered Bukkit Type and does not already exist, add it to EntityType
+        String customName = EntityRegistry.getCustomEntityTypeName(this.getClass());
+        if (customName != null && EntityType.fromName(customName) == null)
+        {
+            short entityHashCode = (short)(this.getClass().getName().hashCode()^(this.getClass().getName().hashCode()>>>16));
+            FMLLog.info("addBukkitEntityType " + customName + " for class " + this.bukkitEntity.getClass() + " with ID " + entityHashCode);
+            EnumHelper.addBukkitEntityType(customName, this.bukkitEntity.getClass(), entityHashCode, false);
+        }
+        // MCPC+ end
 
         return this.bukkitEntity;
     }

@@ -5,7 +5,8 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.util.Java15Compat;
-import za.co.mcportcentral.CustomModRecipe;
+
+import za.co.mcportcentral.potion.CustomModRecipe; // MCPC+
 
 public class CraftInventoryCrafting extends CraftInventory implements CraftingInventory {
     private final net.minecraft.inventory.IInventory resultInventory;

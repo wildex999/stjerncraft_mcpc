@@ -1,4 +1,4 @@
-package za.co.mcportcentral;
+package za.co.mcportcentral.entity;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
