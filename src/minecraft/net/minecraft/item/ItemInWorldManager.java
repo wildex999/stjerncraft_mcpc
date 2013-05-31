@@ -594,9 +594,10 @@ public class ItemInWorldManager
                 }
             }
 
-            // Disabling this entirely causes bukkit incompatibility with placing liquids(water, lava, etc.)
+            // MCPC+ - ignore incorrect result from Thaumcraft crucible to prevent flooding extra water
+            boolean noTry = par2World.blockHasTileEntity(par4, par5, par6) && par2World.getBlockTileEntity(par4, par5, par6).getClass().getName().equals("thaumcraft.common.tiles.TileCrucible");
             // If we have 'true' and no explicit deny *or* an explicit allow -- run the item part of the hook
-            if (par3ItemStack != null && ((!result && event.useItemInHand() != org.bukkit.event.Event.Result.DENY) || event.useItemInHand() == org.bukkit.event.Event.Result.ALLOW))
+            if (!noTry && par3ItemStack != null && ((!result && event.useItemInHand() != org.bukkit.event.Event.Result.DENY) || event.useItemInHand() == org.bukkit.event.Event.Result.ALLOW))
             {
                 this.tryUseItem(par1EntityPlayer, par2World, par3ItemStack);
             }
