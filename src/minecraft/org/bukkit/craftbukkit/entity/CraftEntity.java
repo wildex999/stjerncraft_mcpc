@@ -16,14 +16,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 // MCPC+ start
-import za.co.mcportcentral.entity.CraftCustomAmbient;
-import za.co.mcportcentral.entity.CraftCustomAnimal;
-import za.co.mcportcentral.entity.CraftCustomCreature;
-import za.co.mcportcentral.entity.CraftCustomEntity;
-import za.co.mcportcentral.entity.CraftCustomLivingEntity;
-import za.co.mcportcentral.entity.CraftCustomMonster;
-import za.co.mcportcentral.entity.CraftCustomWaterMob;
-import za.co.mcportcentral.entity.CraftFakePlayer;
+import za.co.mcportcentral.entity.*;
 // MCPC+ end
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
@@ -64,6 +57,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                     else if (entity instanceof net.minecraft.entity.passive.EntityTameable) {
                         if (entity instanceof net.minecraft.entity.passive.EntityWolf) { return new CraftWolf(server, (net.minecraft.entity.passive.EntityWolf) entity); }
                         else if (entity instanceof net.minecraft.entity.passive.EntityOcelot) { return new CraftOcelot(server, (net.minecraft.entity.passive.EntityOcelot) entity); } // MCPC+
+                        else { return new CraftCustomTameableAnimal(server, (net.minecraft.entity.passive.EntityTameable) entity); } // MCPC+
                     }
                     else if (entity instanceof net.minecraft.entity.passive.EntitySheep) { return new CraftSheep(server, (net.minecraft.entity.passive.EntitySheep) entity); }
                     else { return new CraftCustomAnimal(server, (net.minecraft.entity.passive.EntityAnimal) entity); } // MCPC+
