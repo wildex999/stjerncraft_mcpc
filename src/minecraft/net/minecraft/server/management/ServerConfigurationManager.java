@@ -507,9 +507,41 @@ public abstract class ServerConfigurationManager
     }
 
     // MCPC+ start - vanilla compatibility
-    public EntityPlayerMP createPlayerForUser(String player)
+    public EntityPlayerMP createPlayerForUser(String par1Str)
     {
-        return processLogin(getPlayerForUsername(player));
+        ArrayList arraylist = new ArrayList();
+        EntityPlayerMP entityplayermp;
+
+        for (int i = 0; i < this.playerEntityList.size(); ++i)
+        {
+            entityplayermp = (EntityPlayerMP)this.playerEntityList.get(i);
+
+            if (entityplayermp.username.equalsIgnoreCase(par1Str))
+            {
+                arraylist.add(entityplayermp);
+            }
+        }
+
+        Iterator iterator = arraylist.iterator();
+
+        while (iterator.hasNext())
+        {
+            entityplayermp = (EntityPlayerMP)iterator.next();
+            entityplayermp.playerNetServerHandler.kickPlayerFromServer("You logged in from another location");
+        }
+
+        Object object;
+
+        if (this.mcServer.isDemo())
+        {
+            object = new DemoWorldManager(this.mcServer.worldServerForDimension(0));
+        }
+        else
+        {
+            object = new ItemInWorldManager(this.mcServer.worldServerForDimension(0));
+        }
+
+        return new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), par1Str, (ItemInWorldManager) object);
     }
     // MCPC+ end
 
