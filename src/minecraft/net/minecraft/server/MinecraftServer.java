@@ -339,7 +339,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                     worldType = worldType.replace("worldprovider", "");
                     oldName = "world_" + worldType.toLowerCase();
                     worldType = worldType.replace("provider", "");
-                    env = DimensionManager.registerBukkitEnvironment(DimensionManager.getProviderType(provider.getClass()), worldType);
+                    env = Environment.getEnvironment(DimensionManager.getProviderType(provider.getClass()));
                     name = provider.getSaveFolder();
                 }
                 else 

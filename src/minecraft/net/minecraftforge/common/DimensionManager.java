@@ -75,6 +75,15 @@ public class DimensionManager
         {
             return false;
         }
+        // MCPC+ start - register provider with bukkit
+        if (id != -1 && id != 0 && id != 1) // ignore vanilla
+        {
+            String worldType = provider.getSimpleName().toLowerCase();
+            worldType = worldType.replace("worldprovider", "");
+            worldType = worldType.replace("provider", "");
+            registerBukkitEnvironment(id, worldType);
+        }
+        // MCPC+ end
         providers.put(id, provider);
         classToProviders.put(provider, id);
         spawnSettings.put(id, keepLoaded);

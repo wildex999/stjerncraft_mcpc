@@ -725,14 +725,14 @@ public abstract class ServerConfigurationManager
     {
         int j = par1EntityPlayerMP.dimension;
         WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
-        // MCPC+ start - handle chunk requests for mods that call this method directly such as Twilight Forest.
-        if (!worldserver.getServer().getLoadChunkOnRequest())
-        {
-            worldserver.theChunkProviderServer.loadChunkOnProvideRequest = true;
-        }
-        // MCPC+ end
         par1EntityPlayerMP.dimension = par2;
         WorldServer worldserver1 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+        // MCPC+ start - handle chunk requests for mods that call this method directly such as Twilight Forest.
+        if (!worldserver1.getServer().getLoadChunkOnRequest())
+        {
+            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = true;
+        }
+        // MCPC+ end
         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, worldserver1.getWorldInfo().getTerrainType(), worldserver1.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
         worldserver.removePlayerEntityDangerously(par1EntityPlayerMP);
         par1EntityPlayerMP.isDead = false;
