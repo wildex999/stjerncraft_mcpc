@@ -15,7 +15,7 @@ import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
 public class ShapelessRecipes implements IRecipe
 {
     /** Is the ItemStack that you get when craft the recipe. */
-    private final ItemStack recipeOutput;
+    public final ItemStack recipeOutput; // Spigot
 
     /** Is a List of ItemStack that composes the recipe. */
     public final List recipeItems;
@@ -106,4 +106,11 @@ public class ShapelessRecipes implements IRecipe
     {
         return this.recipeItems.size();
     }
+
+    // Spigot start
+    public java.util.List<ItemStack> getIngredients()
+    {
+        return java.util.Collections.unmodifiableList(recipeItems);
+    }
+    // Spigot end
 }

@@ -23,4 +23,6 @@ public interface IRecipe
     ItemStack getRecipeOutput();
 
     org.bukkit.inventory.Recipe toBukkitRecipe(); // CraftBukkit
+
+    java.util.List<ItemStack> getIngredients(); // Spigot
 }

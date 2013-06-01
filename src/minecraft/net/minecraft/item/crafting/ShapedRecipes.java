@@ -21,7 +21,7 @@ public class ShapedRecipes implements IRecipe
     public final ItemStack[] recipeItems;
 
     /** Is the ItemStack that you get when craft the recipe. */
-    private ItemStack recipeOutput;
+    public ItemStack recipeOutput; // Spigot
 
     /** Is the itemID of the output item that you get when craft the recipe. */
     public final int recipeOutputItemID;
@@ -222,4 +222,11 @@ public class ShapedRecipes implements IRecipe
         this.field_92101_f = true;
         return this;
     }
+
+    // Spigot start
+    public java.util.List<ItemStack> getIngredients()
+    {
+        return java.util.Arrays.asList(recipeItems);
+    }
+    // Spigot end
 }
