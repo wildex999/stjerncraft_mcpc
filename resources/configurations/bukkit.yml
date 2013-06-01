@@ -133,6 +133,8 @@ ticks-per:
     animal-spawns: 400
     monster-spawns: 1
     autosave: 0
+    hopper-transfer: 8
+    hopper-check: 8
 auto-updater:
     enabled: true
     on-broken: [warn-console, warn-ops]

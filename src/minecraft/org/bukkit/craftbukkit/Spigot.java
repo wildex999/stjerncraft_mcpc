@@ -30,6 +30,8 @@ public class Spigot {
     public static List<String> bungeeIPs;
     public static int textureResolution = 16;
     public static final Pattern validName = Pattern.compile("^[a-zA-Z0-9_-]{2,16}$");
+    public static int hopperTransferCooldown = 8;
+    public static int hopperCheckCooldown = 8;
 
     public static void initialize(CraftServer server, SimpleCommandMap commandMap, YamlConfiguration configuration) {
         if (configuration.getBoolean("settings.tps-command", true)) { // MCPC+ - config option to allow mods to replace command
@@ -73,6 +75,8 @@ public class Spigot {
         tabPing = configuration.getBoolean("settings.tab-ping", tabPing);
         bungeeIPs = configuration.getStringList("settings.bungee-proxies");
         textureResolution = configuration.getInt("settings.texture-resolution", textureResolution);
+        hopperTransferCooldown = configuration.getInt("ticks-per.hopper-transfer", hopperTransferCooldown);
+        hopperCheckCooldown = configuration.getInt("ticks-per.hopper-check", hopperCheckCooldown);
 
         // MCPC+ start - add config option to disable metrics
         if (configuration.getBoolean("settings.metrics-enable", true))

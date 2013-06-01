@@ -293,18 +293,20 @@ public class TileEntityHopper extends TileEntity implements Hopper
 
                 if (flag)
                 {
-                    this.setTransferCooldown(8);
+                    this.setTransferCooldown(org.bukkit.craftbukkit.Spigot.hopperTransferCooldown); // Spigot
                     this.onInventoryChanged();
                     return true;
                 }
             }
+        }
 
-            return false;
+        // Spigot start
+        // just set this if no other function hasn't set a delay already
+        if (this.transferCooldown == 0) {
+            this.setTransferCooldown(org.bukkit.craftbukkit.Spigot.hopperCheckCooldown);
         }
-        else
-        {
-            return false;
-        }
+        return false;
+        // Spigot end
     }
 
     /**
@@ -352,7 +354,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
                     if (event.isCancelled())
                     {
                         this.setInventorySlotContents(i, itemstack);
-                        this.setTransferCooldown(8); // Delay hopper checks
+                        this.setTransferCooldown(org.bukkit.craftbukkit.Spigot.hopperTransferCooldown); // Delay hopper checks // Spigot
                         return false;
                     }
 
@@ -468,11 +470,11 @@ public class TileEntityHopper extends TileEntity implements Hopper
 
                 if (par0Hopper instanceof TileEntityHopper)
                 {
-                    ((TileEntityHopper) par0Hopper).setTransferCooldown(8); // Delay hopper checks
+                    ((TileEntityHopper) par0Hopper).setTransferCooldown(org.bukkit.craftbukkit.Spigot.hopperTransferCooldown); // Delay hopper checks // Spigot
                 }
                 else if (par0Hopper instanceof EntityMinecartHopper)
                 {
-                    ((EntityMinecartHopper) par0Hopper).setTransferTicker(4); // Delay hopper minecart checks
+                    ((EntityMinecartHopper) par0Hopper).setTransferTicker(org.bukkit.craftbukkit.Spigot.hopperTransferCooldown/2); // Delay hopper minecart checks // Spigot
                 }
                 
                 return false;
@@ -612,7 +614,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
             {
                 if (par0IInventory instanceof TileEntityHopper)
                 {
-                    ((TileEntityHopper)par0IInventory).setTransferCooldown(8);
+                    ((TileEntityHopper)par0IInventory).setTransferCooldown(org.bukkit.craftbukkit.Spigot.hopperTransferCooldown); // Spigot
                 }
 
                 par0IInventory.onInventoryChanged();
