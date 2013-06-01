@@ -197,18 +197,9 @@ public class NetLoginHandler extends NetHandler
         {
             this.raiseErrorAndDisconnect(s);
         }
-
-        // CraftBukkit start
-        EntityPlayerMP entityplayermp = this.mcServer.getConfigurationManager().attemptLogin(this, this.clientUsername, this.hostname);
-
-        if (entityplayermp == null)
-        {
-            return;
-            // CraftBukkit end
-        }
         else
         {
-            entityplayermp = this.mcServer.getConfigurationManager().processLogin(entityplayermp); // CraftBukkit - this.h -> s // MCPC+ - reuse variable
+            EntityPlayerMP entityplayermp = this.mcServer.getConfigurationManager().createPlayerForUser(this.clientUsername);
 
             if (entityplayermp != null)
             {

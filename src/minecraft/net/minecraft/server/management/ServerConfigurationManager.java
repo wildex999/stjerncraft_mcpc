@@ -426,18 +426,6 @@ public abstract class ServerConfigurationManager
         disconnect(entityPlayerMP);
     }
 
-    public EntityPlayerMP attemptLoginNoEvent(NetLoginHandler pendingconnection, String s, String hostname)
-    {
-        EntityPlayerMP entity;
-
-        this.vanillaLoginCheck = true;
-        entity = attemptLogin(pendingconnection, s, hostname);
-        this.vanillaLoginCheck = false;
-
-        return entity;
-    }
-    // MCPC+ end
-
     // CraftBukkit start - Whole method and signature
     public EntityPlayerMP attemptLogin(NetLoginHandler pendingconnection, String s, String hostname)
     {
@@ -493,8 +481,7 @@ public abstract class ServerConfigurationManager
             }
         }
 
-        if (!this.vanillaLoginCheck) // MCPC+ - don't send an event to plugins while FML handles their VanillaLogin check
-            this.cserver.getPluginManager().callEvent(event);
+        this.cserver.getPluginManager().callEvent(event);
 
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)
         {
@@ -545,7 +532,7 @@ public abstract class ServerConfigurationManager
     }
     // MCPC+ end
 
-    public EntityPlayerMP processLogin(EntityPlayerMP player)   // CraftBukkit - String -> EntityPlayer
+    public EntityPlayerMP processLogin(EntityPlayerMP player) // MCPC+ - no longer used
     {
         String s = player.username; // CraftBukkit
         ArrayList arraylist = new ArrayList();
@@ -644,7 +631,7 @@ public abstract class ServerConfigurationManager
             Player respawnPlayer = this.cserver.getPlayer(entityplayermp1);
             PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn);
             this.cserver.getPluginManager().callEvent(respawnEvent);
-            //location = respawnEvent.getRespawnLocation(); // MCPC+ - avoid plugins changing our respawn location temporarily to fix death bug
+            location = respawnEvent.getRespawnLocation();
             entityplayermp.reset();
         }
         else
@@ -662,7 +649,6 @@ public abstract class ServerConfigurationManager
             entityplayermp1.setPosition(entityplayermp1.posX, entityplayermp1.posY + 1.0D, entityplayermp1.posZ);
         }
 
-        // CraftBukkit start
         int actualDimension = i;
         // MCPC+ - change dim for bukkit added dimensions
         if (DimensionManager.isBukkitDimension(i))
@@ -676,6 +662,7 @@ public abstract class ServerConfigurationManager
             entityplayermp1.playerNetServerHandler.sendPacketToPlayer(pkt[0]);
         }
         // MCPC+ end
+        // CraftBukkit start
         entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(actualDimension, (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayermp.theItemInWorldManager.getGameType()));
         entityplayermp1.setWorld(worldserver);
         entityplayermp1.isDead = false;

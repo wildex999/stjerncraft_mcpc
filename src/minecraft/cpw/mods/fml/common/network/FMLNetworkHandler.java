@@ -195,11 +195,11 @@ public class FMLNetworkHandler
     private boolean handleVanillaLoginKick(NetLoginHandler netLoginHandler, MinecraftServer server, SocketAddress address, String userName)
     {
         // Vanilla reasons first
-        // MCPC start
+        // MCPC+ start
         ServerConfigurationManager playerList = server.getConfigurationManager();
-        EntityPlayer player = playerList.attemptLoginNoEvent(netLoginHandler, netLoginHandler.clientUsername, netLoginHandler.hostname);
+        EntityPlayer player = playerList.attemptLogin(netLoginHandler, netLoginHandler.clientUsername, netLoginHandler.hostname);
         return player != null;
-        // MCPC end
+        // MCPC+ end
     }
 
     public static void handleLoginPacketOnServer(NetLoginHandler handler, Packet1Login login)

@@ -307,7 +307,7 @@ public class SaveHandler implements ISaveHandler, IPlayerFileData
             // CraftBukkit start
             if (par1EntityPlayer instanceof EntityPlayerMP)
             {
-                CraftPlayer player = (CraftPlayer) par1EntityPlayer.bukkitEntity;
+                CraftPlayer player = (CraftPlayer) par1EntityPlayer.getBukkitEntity(); // MCPC+ - make sure we set our bukkitEntity to avoid null
                 player.setFirstPlayed(new File(playersDirectory, par1EntityPlayer.username + ".dat").lastModified());
             }
 
