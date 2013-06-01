@@ -155,6 +155,8 @@ public final class CraftServer implements Server {
     private boolean dumpMaterials = false;
     private boolean loadChunkOnRequest = true;
     private boolean worldLeakDebug = false;
+    // Some mods such as Twilight Forest listen for specific events as their WorldProvider loads to hotload its dimension. This prevents this from happening so MV can create worlds using the same provider without issue.
+    public boolean craftWorldLoading = false;
     // MCPC+ end
 
     // Orebfuscator use
@@ -787,7 +789,7 @@ public final class CraftServer implements Server {
         }
 
         pluginManager.callEvent(new WorldInitEvent(worldserver.getWorld()));
-
+        this.craftWorldLoading = true;
         System.out.print("Preparing start region for level " + (console.worlds.size() - 1) + " (Dimension: " + worldserver.provider.dimensionId + ", Seed: " + worldserver.getSeed() + ")"); // MCPC+ - log dimension
 
         if (worldserver.getWorld().getKeepSpawnInMemory()) {
@@ -815,6 +817,7 @@ public final class CraftServer implements Server {
             }
         }
         pluginManager.callEvent(new WorldLoadEvent(worldserver.getWorld()));
+        this.craftWorldLoading = false;
         return worldserver.getWorld();
     }
 

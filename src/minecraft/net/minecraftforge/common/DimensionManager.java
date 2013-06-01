@@ -313,6 +313,12 @@ public class DimensionManager
             throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
         }
         try {
+            // MCPC+ start - Fixes MultiVerse issue when mods such as Twilight Forest try to hotload their dimension when using its WorldProvider
+            if(overworld.getMinecraftServer().server.craftWorldLoading)
+            {
+                return;
+            }
+            // MCPC+ end
             DimensionManager.getProviderType(dim);
         } catch (Exception e) {
             System.err.println("Cannot Hotload Dim: " + e.getMessage());
