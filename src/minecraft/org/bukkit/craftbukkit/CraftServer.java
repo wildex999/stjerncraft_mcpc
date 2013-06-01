@@ -133,7 +133,7 @@ public final class CraftServer implements Server {
     protected final net.minecraft.server.MinecraftServer console;
     protected final net.minecraft.server.dedicated.DedicatedPlayerList playerList;
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
-    public YamlConfiguration configuration; // Spigot private -> protected // MCPC+ - public for JavaPluginLoader
+    public YamlConfiguration configuration = Main.configuration; // MCPC+ - use Main configuration
     private final Yaml yaml = new Yaml(new SafeConstructor());
     private final Map<String, OfflinePlayer> offlinePlayers = new MapMaker().softValues().makeMap();
     private final AutoUpdater updater;
@@ -203,9 +203,11 @@ public final class CraftServer implements Server {
         }
 
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
-        configuration.options().copyDefaults(true);
-        configuration.setDefaults(YamlConfiguration.loadConfiguration(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml")));
-        saveConfig();
+        // MCPC+ start - moved to Main so FML/Forge can access during server startup
+        //configuration.options().copyDefaults(true);
+        //configuration.setDefaults(YamlConfiguration.loadConfiguration(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml")));
+        //saveConfig();
+        // MCPC+ end
         ((SimplePluginManager) pluginManager).useTimings(configuration.getBoolean("settings.plugin-profiling"));
         monsterSpawn = configuration.getInt("spawn-limits.monsters");
         animalSpawn = configuration.getInt("spawn-limits.animals");
@@ -607,8 +609,6 @@ public final class CraftServer implements Server {
     public String getBukkitToForgeMapping(String name)
     {
         String result = this.configuration.getString("mcpc.bukkit-to-forge-mappings." + name);
-        if (result == null)
-            result = name;
         return result;
     }
     // MCPC+ end    
@@ -866,7 +866,7 @@ public final class CraftServer implements Server {
 
     public World getWorld(String name) {
         Validate.notNull(name, "Name cannot be null");
-        if (name.startsWith("world_"))
+        if (getBukkitToForgeMapping(name.toLowerCase()) != null)
             name = getBukkitToForgeMapping(name.toLowerCase());
         name = name.toLowerCase();
         World result = worlds.get(name);

@@ -9,11 +9,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.bukkit.configuration.file.YamlConfiguration; // MCPC+
 
 public class Main {
     public static boolean useJline = true;
     public static boolean useConsole = true;
     // MCPC start
+    public static YamlConfiguration configuration;
+    public static File configFile;
     public static void main(String[] args) {
         net.minecraft.server.MinecraftServer.main(args);
     }
@@ -151,7 +154,18 @@ public class Main {
                 if (options.has("noconsole")) {
                     useConsole = false;
                 }
-                return options; // MCPC
+                // MCPC+ start - initialize config
+                configFile = (File) options.valueOf("bukkit-settings");
+                configuration = YamlConfiguration.loadConfiguration(configFile);
+                configuration.options().copyDefaults(true);
+                configuration.setDefaults(YamlConfiguration.loadConfiguration(Main.class.getClassLoader().getResourceAsStream("configurations/bukkit.yml")));
+                try {
+                    configuration.save(configFile);
+                } catch (IOException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Could not save " + configFile, ex);
+                }
+                return options;
+                // MCPC+ end
             } catch (Throwable t) {
                 t.printStackTrace();
             }

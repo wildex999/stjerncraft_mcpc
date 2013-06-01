@@ -38,10 +38,13 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 // MCPC+ start
+import java.io.IOException;
+
 import org.bukkit.Location;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.Main;
+
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
 // MCPC+ end
 
 import com.google.common.base.Function;
@@ -75,7 +78,7 @@ public class GameRegistry
     private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
     private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
     private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
-    private static Configuration config = new Configuration(new File(Loader.instance().getConfigDir(), "forge.cfg")); // MCPC+
+    private static org.bukkit.configuration.file.YamlConfiguration configuration = Main.configuration; // MCPC+
     /**
      * Register a world generator - something that inserts new block types into the world
      *
@@ -84,9 +87,19 @@ public class GameRegistry
     public static void registerWorldGenerator(IWorldGenerator generator)
     {
         // MCPC+ start - add config options to enable/disable mod world generators
-        config.load();
-        Property modWorldGen = config.get("worldgeneration", Loader.instance().activeModContainer().getModId(), true);
-        if (!modWorldGen.getBoolean(true))
+        String modId = Loader.instance().activeModContainer().getModId();
+        modId = modId.replaceAll("[^A-Za-z0-9]", ""); // remove all non-digits/alphanumeric
+        modId.replace(" ", "_");
+        String generatorName = modId + "-" + generator.getClass().getSimpleName();
+        if (!configuration.isBoolean("world-settings.default.worldgen-" + generatorName))
+                configuration.set("world-settings.default.worldgen-" + generatorName, true);
+        boolean generatorEnabled = configuration.getBoolean("world-settings.default.worldgen-" + generatorName);
+        try {
+            configuration.save((File) Main.configFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (!generatorEnabled)
         {
             FMLLog.info(Loader.instance().activeModContainer().getModId() + " world generator " + generator + " is DISABLED. Skipping registration.");
         }
@@ -95,7 +108,6 @@ public class GameRegistry
             FMLLog.info(Loader.instance().activeModContainer().getModId() + " registered world generator " + generator);
             worldGenerators.add(generator);
         }
-        config.save();
         // MCPC+ end
     }
 

@@ -41,12 +41,18 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
 // MCPC+ start
+import java.io.IOException;
+
+import cpw.mods.fml.common.Loader;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.Main;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 // MCPC+ end
@@ -67,6 +73,7 @@ public class DimensionManager
     private static ArrayList<Integer> bukkitDims = new ArrayList<Integer>(); // used to keep track of Bukkit dimensions
     private static final String FILE_SEPARATOR = System.getProperty("file.separator");
     private static Hashtable<String, Integer> bukkitAliasMap = new Hashtable<String, Integer>();
+    private static org.bukkit.configuration.file.YamlConfiguration configuration = Main.configuration;
     // MCPC+ end
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
@@ -75,13 +82,26 @@ public class DimensionManager
         {
             return false;
         }
-        // MCPC+ start - register provider with bukkit
+        // MCPC+ start - register provider with bukkit and add appropriate config option
+        String worldType = "unknown";
         if (id != -1 && id != 0 && id != 1) // ignore vanilla
         {
-            String worldType = provider.getSimpleName().toLowerCase();
+            worldType = provider.getSimpleName().toLowerCase();
             worldType = worldType.replace("worldprovider", "");
             worldType = worldType.replace("provider", "");
             registerBukkitEnvironment(id, worldType);
+        }
+        else
+        {
+            worldType = Environment.getEnvironment(id).name().toLowerCase();
+        }
+        if (!configuration.isBoolean("world-settings.default.keeploaded-environment-" + worldType))
+            configuration.set("world-settings.default.keeploaded-environment-" + worldType, keepLoaded);
+        keepLoaded = configuration.getBoolean("world-settings.default.keeploaded-environment-" + worldType);
+        try {
+            configuration.save(Main.configFile);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         // MCPC+ end
         providers.put(id, provider);
@@ -469,7 +489,8 @@ public class DimensionManager
     }
 
     public static void unloadWorld(int id) {
-        unloadQueue.add(id);
+        if (!shouldLoadSpawn(id)) // MCPC+ - prevent mods from force unloading if we have it disabled
+            unloadQueue.add(id);
     }
 
     /*
