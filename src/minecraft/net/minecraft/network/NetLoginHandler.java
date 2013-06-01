@@ -53,6 +53,7 @@ public class NetLoginHandler extends NetHandler
     /** Secret AES key obtained from the client's Packet252SharedKey */
     private SecretKey sharedKey = null;
     public String hostname = ""; // CraftBukkit - add field
+    public EntityPlayerMP player; // MCPC+ reference to current player logging in
 
     public NetLoginHandler(MinecraftServer par1MinecraftServer, Socket par2Socket, String par3Str) throws java.io.IOException   // CraftBukkit - throws IOException
     {
@@ -199,8 +200,11 @@ public class NetLoginHandler extends NetHandler
         }
         else
         {
-            EntityPlayerMP entityplayermp = this.mcServer.getConfigurationManager().createPlayerForUser(this.clientUsername);
-
+            // MCPC+ start - handleVanillaLoginKick creates a valid player, so use it if not null
+            EntityPlayerMP entityplayermp = this.player;
+            if (this.player == null)
+                entityplayermp = this.mcServer.getConfigurationManager().createPlayerForUser(this.clientUsername);
+            // MCPC+ end
             if (entityplayermp != null)
             {
                 this.mcServer.getConfigurationManager().initializeConnectionToPlayer((INetworkManager) this.myTCPConnection, entityplayermp);

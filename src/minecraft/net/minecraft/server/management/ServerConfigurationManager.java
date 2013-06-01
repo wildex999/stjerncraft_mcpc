@@ -119,8 +119,6 @@ public abstract class ServerConfigurationManager
      */
     private int playerPingIndex = 0;
 
-    private boolean vanillaLoginCheck = false; // MCPC+
-
     // CraftBukkit start
     private CraftServer cserver;
 
