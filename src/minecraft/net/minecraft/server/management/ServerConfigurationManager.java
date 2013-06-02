@@ -582,7 +582,18 @@ public abstract class ServerConfigurationManager
     }
 
     public EntityPlayerMP moveToWorld(EntityPlayerMP entityplayermp, int i, boolean flag, Location location, boolean avoidSuffocation)
-    {            
+    {
+        // MCPC+ start - handle canRespawnHere for mods
+        World world = mcServer.worldServerForDimension(i);
+        if (world == null)
+        {
+            i = 0;
+        }
+        else if (!world.provider.canRespawnHere())
+        {
+            i = world.provider.getRespawnDimension(entityplayermp);
+        }
+        // MCPC+ end
         // CraftBukkit end
         entityplayermp.getServerForPlayer().getEntityTracker().removePlayerFromTrackers(entityplayermp);
         // entityplayermp.o().getTracker().untrackEntity(entityplayermp); // CraftBukkit
@@ -591,17 +602,27 @@ public abstract class ServerConfigurationManager
         this.mcServer.worldServerForDimension(entityplayermp.dimension).removePlayerEntityDangerously(entityplayermp);
         ChunkCoordinates chunkcoordinates = entityplayermp.getBedLocation();
         boolean flag1 = entityplayermp.isSpawnForced();
+        entityplayermp.dimension = i; // MCPC+
         // CraftBukkit start
         EntityPlayerMP entityplayermp1 = entityplayermp;
         org.bukkit.World fromWorld = entityplayermp1.getBukkitEntity().getWorld();
         entityplayermp1.playerConqueredTheEnd = false;
         entityplayermp1.clonePlayer(entityplayermp, flag);
+        entityplayermp1.dimension = i; // MCPC+
         ChunkCoordinates chunkcoordinates1;
 
         if (location == null)
         {
             boolean isBedSpawn = false;
             CraftWorld cworld = (CraftWorld) this.mcServer.server.getWorld(entityplayermp.spawnWorld);
+            // MCPC+ start - handle canRespawnHere for mods
+            if (world != null && !world.provider.canRespawnHere())
+            {
+                cworld = (CraftWorld) mcServer.worldServerForDimension(i).getWorld(); // make sure to hotload the dimension if it got unloaded
+                if (chunkcoordinates == null)
+                    location = new Location(cworld, cworld.getSpawnLocation().getX() + 0.5, cworld.getSpawnLocation().getY(), cworld.getSpawnLocation().getZ() + 0.5); // use the spawnpoint as location
+            }
+            // MCPC+ end
 
             if (cworld != null && chunkcoordinates != null)
             {
@@ -629,7 +650,7 @@ public abstract class ServerConfigurationManager
             Player respawnPlayer = this.cserver.getPlayer(entityplayermp1);
             PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn);
             this.cserver.getPluginManager().callEvent(respawnEvent);
-            location = respawnEvent.getRespawnLocation();
+            //location = respawnEvent.getRespawnLocation(); // MCPC+ - avoid plugins changing our respawn location. Breaks DimensionalDoors respawning in Limbo
             entityplayermp.reset();
         }
         else
