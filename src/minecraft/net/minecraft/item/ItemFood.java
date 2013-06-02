@@ -65,7 +65,8 @@ public class ItemFood extends Item
             par3EntityPlayer.getFoodStats().addStats(event.getFoodLevel() - oldFoodLevel, this.getSaturationModifier());
         }
 
-        ((EntityPlayerMP) par3EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet8UpdateHealth(par3EntityPlayer.getHealth(), par3EntityPlayer.getFoodStats().foodLevel, par3EntityPlayer.getFoodStats().foodSaturationLevel));
+        // Spigot - this next line fixes health scaling
+        ((EntityPlayerMP) par3EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet8UpdateHealth(((EntityPlayerMP) par3EntityPlayer).getScaledHealth(), par3EntityPlayer.getFoodStats().foodLevel, par3EntityPlayer.getFoodStats().foodSaturationLevel));
         // CraftBukkit end
         par2World.playSoundAtEntity(par3EntityPlayer, "random.burp", 0.5F, par2World.rand.nextFloat() * 0.1F + 0.9F);
         this.onFoodEaten(par1ItemStack, par2World, par3EntityPlayer);

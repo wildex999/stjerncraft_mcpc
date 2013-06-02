@@ -706,7 +706,10 @@ public abstract class EntityLiving extends Entity
     {
         if (this.maxHealth != this.getMaxHealth() && this.getHealth() > 0)
         {
-            return this.getHealth() * this.getMaxHealth() / this.maxHealth + 1;
+            // Spigot start
+            int health = (int)((((double) this.getHealth()) / this.maxHealth) * this.getMaxHealth());
+            return health > 0 ? health : 1;
+            // Spigot end
         }
         else
         {

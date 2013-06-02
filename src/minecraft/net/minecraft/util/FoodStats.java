@@ -68,7 +68,8 @@ public class FoodStats
                     this.foodLevel = event.getFoodLevel();
                 }
 
-                ((EntityPlayerMP) par1EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet8UpdateHealth(par1EntityPlayer.getHealth(), this.foodLevel, this.foodSaturationLevel));
+                // Spigot - This next line fixes health scaling
+                ((EntityPlayerMP) par1EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet8UpdateHealth(((EntityPlayerMP) par1EntityPlayer).getScaledHealth(), this.foodLevel, this.foodSaturationLevel));
                 // CraftBukkit end
             }
         }
