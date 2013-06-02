@@ -393,8 +393,23 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
             entityarrow.setFire(100);
         }
 
+        // Spigot -  Skeletons should throw EntityShootBowEvents
+        org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(this, this.getHeldItem(), entityarrow, 1.6F);
+
+        if (event.isCancelled())
+        {
+            event.getProjectile().remove();
+            return;
+        }
+
+        if (event.getProjectile() == entityarrow.getBukkitEntity())
+        {
+            this.worldObj.spawnEntityInWorld(entityarrow);
+        }
+
+        // Spigot end
         this.playSound("random.bow", 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
-        this.worldObj.spawnEntityInWorld(entityarrow);
+        // this.world.addEntity(entityarrow); // Spigot - moved up
     }
 
     /**
