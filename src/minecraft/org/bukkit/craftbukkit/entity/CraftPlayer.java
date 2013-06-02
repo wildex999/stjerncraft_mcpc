@@ -268,13 +268,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         getHandle().playerNetServerHandler.sendPacketToPlayer(packet);
     }
 
-    public void playEffect(Location loc, Effect effect, int data) {
-        if (getHandle().playerNetServerHandler == null) return;
-
-        int packetData = effect.getId();
-        net.minecraft.network.packet.Packet61DoorChange packet = new net.minecraft.network.packet.Packet61DoorChange(packetData, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), data, false);
-        getHandle().playerNetServerHandler.sendPacketToPlayer(packet);
+    // Spigot start
+    public void playEffect(Location location, Effect effect, int data) {
+        spigot().playEffect(location, effect, data, 0, 0f, 0f, 0f, 1f, 1, 64);
     }
+    // Spigot end
 
     public <T> void playEffect(Location loc, Effect effect, T data) {
         if (data != null) {
@@ -282,9 +280,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         } else {
             Validate.isTrue(effect.getData() == null, "Wrong kind of data for this effect!");
         }
-
-        int datavalue = data == null ? 0 : CraftEffect.getDataValue(effect, data);
-        playEffect(loc, effect, datavalue);
+        if (data != null && data.getClass().equals(org.bukkit.material.MaterialData.class)) {
+            org.bukkit.material.MaterialData materialData = (org.bukkit.material.MaterialData) data;
+            Validate.isTrue(!materialData.getItemType().isBlock(), "Material must be block");
+            spigot().playEffect(loc, effect, materialData.getItemType().getId(), materialData.getData(), 0, 0, 0, 1, 1, 64);
+        } else {
+            int datavalue = data == null ? 0 : CraftEffect.getDataValue(effect, data);
+            playEffect(loc, effect, datavalue);
+        }
     }
 
     public void sendBlockChange(Location loc, Material material, byte data) {
@@ -1016,8 +1019,55 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     // Spigot start
-    /*public InetSocketAddress getRawAddress() {
-        return (getHandle().playerNetServerHandler == null) ? null : (InetSocketAddress) getHandle().playerNetServerHandler.netManager.getSocket().getRemoteSocketAddress();
-    }*/ // MCPC+ disabled temporarily
+    private final Spigot spigot = new Spigot()
+    {
+        @Override
+        public InetSocketAddress getRawAddress()
+        {
+            return ( getHandle().playerNetServerHandler == null ) ? null : (InetSocketAddress) getHandle().playerNetServerHandler.netManager.getSocket().getRemoteSocketAddress();
+        }
+
+        @Override
+        public void playEffect(Location location, Effect effect, int id, int data, float offsetX, float offsetY, float offsetZ, float speed, int particleCount, int radius)
+        {
+            Validate.notNull( location, "Location cannot be null" );
+            Validate.notNull( effect, "Effect cannot be null" );
+            Validate.notNull( location.getWorld(), "World cannot be null" );
+
+            net.minecraft.network.packet.Packet packet;
+            if ( effect.getType() != Effect.Type.PARTICLE )
+            {
+                int packetData = effect.getId();
+                packet = new net.minecraft.network.packet.Packet61DoorChange( packetData, location.getBlockX(), location.getBlockY(), location.getBlockZ(), id, false );
+            } else
+            {
+                StringBuilder particleFullName = new StringBuilder();
+                particleFullName.append( effect.getName() );
+
+                if ( effect.getData() != null && ( effect.getData().equals( Material.class ) || effect.getData().equals( org.bukkit.material.MaterialData.class ) ) )
+                {
+                    particleFullName.append( '_' ).append( id );
+                }
+
+                if ( effect.getData() != null && effect.getData().equals( org.bukkit.material.MaterialData.class ) )
+                {
+                    particleFullName.append( '_' ).append( data );
+                }
+                packet = new net.minecraft.network.packet.Packet63WorldParticles( effect.getName(), (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, particleCount, radius );
+            }
+
+            if ( !location.getWorld().equals( getWorld() ) )
+            {
+                return;
+            }
+
+            getHandle().playerNetServerHandler.sendPacketToPlayer( packet );
+        }
+    };
+
+    public Spigot spigot()
+    {
+        return spigot;
+    }
     // Spigot end
 }

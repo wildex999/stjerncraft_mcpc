@@ -42,6 +42,21 @@ public class Packet63WorldParticles extends Packet
 
     public Packet63WorldParticles() {}
 
+    // Spigot start - Added constructor
+    public Packet63WorldParticles(String particleName, float x, float y, float z, float offsetX, float offsetY, float offsetZ, float speed, int count)
+    {
+        particleName = particleName;
+        posX = x;
+        posY = y;
+        posZ = z;
+        offsetX = offsetX;
+        offsetY = offsetY;
+        offsetZ = offsetZ;
+        speed = speed;
+        quantity = count;
+    }
+    // Spigot end
+
     /**
      * Abstract. Reads the raw packet data from the data stream.
      */
