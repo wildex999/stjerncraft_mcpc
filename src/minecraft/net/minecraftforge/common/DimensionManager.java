@@ -415,7 +415,7 @@ public class DimensionManager
         Environment env = creator.environment();
         worldType = env.name().toLowerCase();
         name = creator.name();
-        ChunkGenerator gen = mcServer.server.getGenerator(name);
+        ChunkGenerator gen = creator.generator();
 
         if (mcServer instanceof DedicatedServer) {
             worldSettings.func_82750_a(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));

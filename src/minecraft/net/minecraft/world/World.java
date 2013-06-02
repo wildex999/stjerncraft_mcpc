@@ -392,6 +392,7 @@ public abstract class World implements IBlockAccess
 
             this.worldInfo.setServerInitialized(true);
         }
+        this.provider.dimensionId = providerId; // MCPC+ - Fix for TerrainControl injecting their own WorldProvider
 
         // MCPC+ start - add Forge
         if (this instanceof WorldServer)

@@ -784,10 +784,6 @@ public final class CraftServer implements Server {
         WorldSettings worldSettings = new WorldSettings(creator.seed(), net.minecraft.world.EnumGameType.getByID(getDefaultGameMode().getValue()), generateStructures, hardcore, type);
         net.minecraft.world.WorldServer worldserver = DimensionManager.initDimension(creator, worldSettings);
 
-        if (generator != null) {
-            worldserver.getWorld().getPopulators().addAll(generator.getDefaultPopulators(worldserver.getWorld()));
-        }
-
         pluginManager.callEvent(new WorldInitEvent(worldserver.getWorld()));
         this.craftWorldLoading = true;
         System.out.print("Preparing start region for level " + (console.worlds.size() - 1) + " (Dimension: " + worldserver.provider.dimensionId + ", Seed: " + worldserver.getSeed() + ")"); // MCPC+ - log dimension
