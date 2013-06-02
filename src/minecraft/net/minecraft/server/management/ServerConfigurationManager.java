@@ -589,7 +589,7 @@ public abstract class ServerConfigurationManager
         {
             i = 0;
         }
-        else if (!world.provider.canRespawnHere())
+        else if (!world.provider.canRespawnHere() && i != 0 && i != -1 && i != 1) // ignore vanilla
         {
             i = world.provider.getRespawnDimension(entityplayermp);
         }
