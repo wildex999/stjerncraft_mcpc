@@ -2142,56 +2142,50 @@ public class NetServerHandler extends NetHandler
             boolean flag3 = itemstack == null || itemstack.getItemDamage() >= 0 && itemstack.getItemDamage() >= 0 && itemstack.stackSize <= 64 && itemstack.stackSize > 0;
 
             // CraftBukkit start - Call click event
-            if (flag1 || flag)   // Insist on valid slot
+            if (flag || (flag1 && !ItemStack.areItemStacksEqual(this.playerEntity.inventoryContainer.getSlot(par1Packet107CreativeSetSlot.slot).getStack(), par1Packet107CreativeSetSlot.itemStack)))   // Insist on valid slot
             {
-                ItemStack existingItem = this.playerEntity.inventoryContainer.getSlot(par1Packet107CreativeSetSlot.slot).getStack();
+                org.bukkit.entity.HumanEntity player = this.playerEntity.getBukkitEntity();
+                InventoryView inventory = new CraftInventoryView(player, player.getInventory(), this.playerEntity.inventoryContainer);
+                org.bukkit.inventory.ItemStack item = CraftItemStack.asBukkitCopy(par1Packet107CreativeSetSlot.itemStack); // Should be packet107setcreativeslot.newitem
+                SlotType type = SlotType.QUICKBAR;
 
-                // Client assumes that the server forgets the contents of the inventory.  It doesn't.
-                if (!ItemStack.areItemStacksEqual(existingItem, par1Packet107CreativeSetSlot.itemStack))
+                if (flag)
                 {
-                    org.bukkit.entity.HumanEntity player = this.playerEntity.getBukkitEntity();
-                    InventoryView inventory = new CraftInventoryView(player, player.getInventory(), this.playerEntity.inventoryContainer);
-                    org.bukkit.inventory.ItemStack item = CraftItemStack.asBukkitCopy(par1Packet107CreativeSetSlot.itemStack); // Should be packet107setcreativeslot.newitem
-                    SlotType type = SlotType.QUICKBAR;
-
-                    if (flag)
+                    type = SlotType.OUTSIDE;
+                }
+                else if (par1Packet107CreativeSetSlot.slot < 36)
+                {
+                    if (par1Packet107CreativeSetSlot.slot >= 5 && par1Packet107CreativeSetSlot.slot < 9)
                     {
-                        type = SlotType.OUTSIDE;
+                        type = SlotType.ARMOR;
                     }
-                    else if (par1Packet107CreativeSetSlot.slot < 36)
+                    else
                     {
-                        if (par1Packet107CreativeSetSlot.slot >= 5 && par1Packet107CreativeSetSlot.slot < 9)
+                        type = SlotType.CONTAINER;
+                    }
+                }
+
+                InventoryCreativeEvent event = new InventoryCreativeEvent(inventory, type, flag ? -999 : par1Packet107CreativeSetSlot.slot, item);
+                server.getPluginManager().callEvent(event);
+                itemstack = CraftItemStack.asNMSCopy(event.getCursor());
+
+                switch (event.getResult())
+                {
+                    case ALLOW:
+                        // Plugin cleared the id / stacksize checks
+                        flag2 = flag3 = true;
+                        break;
+                    case DEFAULT:
+                        break;
+                    case DENY:
+                        // Reset the slot
+                        if (par1Packet107CreativeSetSlot.slot >= 0)
                         {
-                            type = SlotType.ARMOR;
+                            this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(this.playerEntity.inventoryContainer.windowId, par1Packet107CreativeSetSlot.slot, this.playerEntity.inventoryContainer.getSlot(par1Packet107CreativeSetSlot.slot).getStack()));
+                            this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(-1, -1, null));
                         }
-                        else
-                        {
-                            type = SlotType.CONTAINER;
-                        }
-                    }
 
-                    InventoryCreativeEvent event = new InventoryCreativeEvent(inventory, type, flag ? -999 : par1Packet107CreativeSetSlot.slot, item);
-                    server.getPluginManager().callEvent(event);
-                    itemstack = CraftItemStack.asNMSCopy(event.getCursor());
-
-                    switch (event.getResult())
-                    {
-                        case ALLOW:
-                            // Plugin cleared the id / stacksize checks
-                            flag2 = flag3 = true;
-                            break;
-                        case DEFAULT:
-                            break;
-                        case DENY:
-                            // Reset the slot
-                            if (par1Packet107CreativeSetSlot.slot >= 0)
-                            {
-                                this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(this.playerEntity.inventoryContainer.windowId, par1Packet107CreativeSetSlot.slot, this.playerEntity.inventoryContainer.getSlot(par1Packet107CreativeSetSlot.slot).getStack()));
-                                this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(-1, -1, null));
-                            }
-
-                            return;
-                    }
+                        return;
                 }
             }
 
