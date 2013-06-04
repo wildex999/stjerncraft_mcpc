@@ -585,12 +585,14 @@ public abstract class ServerConfigurationManager
     {
         // MCPC+ start - handle canRespawnHere for mods
         World world = mcServer.worldServerForDimension(i);
+        boolean canRespawnHere = true;
         if (world == null)
         {
             i = 0;
         }
         else if (!world.provider.canRespawnHere() && i != 0 && i != -1 && i != 1) // ignore vanilla
         {
+            canRespawnHere = false;
             i = world.provider.getRespawnDimension(entityplayermp);
         }
         // MCPC+ end
@@ -650,7 +652,8 @@ public abstract class ServerConfigurationManager
             Player respawnPlayer = this.cserver.getPlayer(entityplayermp1);
             PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn);
             this.cserver.getPluginManager().callEvent(respawnEvent);
-            //location = respawnEvent.getRespawnLocation(); // MCPC+ - avoid plugins changing our respawn location. Breaks DimensionalDoors respawning in Limbo
+            if (canRespawnHere) // MCPC+ - avoid plugins changing our respawn location if a forge mod wants a change. Breaks DimensionalDoors respawning in Limbo
+                location = respawnEvent.getRespawnLocation();
             entityplayermp.reset();
         }
         else
@@ -668,15 +671,10 @@ public abstract class ServerConfigurationManager
             entityplayermp1.setPosition(entityplayermp1.posX, entityplayermp1.posY + 1.0D, entityplayermp1.posZ);
         }
 
-        int actualDimension = i;
+        int actualDimension = worldserver.provider.dimensionId;
         // MCPC+ - change dim for bukkit added dimensions
-        if (DimensionManager.isBukkitDimension(i))
+        if (DimensionManager.isBukkitDimension(actualDimension))
         {
-            if (i == entityplayermp1.dimension)
-            {
-                actualDimension = worldserver.provider.dimensionId; // handle new respawn location which is based on bedspawn
-            }
-
             Packet250CustomPayload[] pkt = ForgePacket.makePacketSet(new DimensionRegisterPacket(actualDimension, worldserver.getWorld().getEnvironment().getId()));
             entityplayermp1.playerNetServerHandler.sendPacketToPlayer(pkt[0]);
         }
