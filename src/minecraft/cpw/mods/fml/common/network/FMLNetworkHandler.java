@@ -169,6 +169,7 @@ public class FMLNetworkHandler
         case CONNECTION_VALID:
             netLoginHandler.completeConnection(null);
             loginStates.remove(netLoginHandler);
+            server.getConfigurationManager().currentPlayer = null; // MCPC+
             break;
         case MISSING_MODS_OR_VERSIONS:
             netLoginHandler.completeConnection(((CraftServer) Bukkit.getServer()).configuration.getString("settings.fml-missing-mods-message", "The server requires mods that are absent or out of date on your client")); // MCPC+
@@ -198,8 +199,6 @@ public class FMLNetworkHandler
         // MCPC+ start
         ServerConfigurationManager playerList = server.getConfigurationManager();
         EntityPlayerMP player = playerList.attemptLogin(netLoginHandler, netLoginHandler.clientUsername, netLoginHandler.hostname);
-        if (player != null)
-            netLoginHandler.player = player;
         return player != null;
         // MCPC+ end
     }

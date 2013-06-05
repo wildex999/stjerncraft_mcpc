@@ -118,6 +118,7 @@ public abstract class ServerConfigurationManager
      * index into playerEntities of player to ping, updated every tick; currently hardcoded to max at 200 players
      */
     private int playerPingIndex = 0;
+    public EntityPlayerMP currentPlayer; // MCPC+ - reference to current player logging in
 
     // CraftBukkit start
     private CraftServer cserver;
@@ -430,8 +431,15 @@ public abstract class ServerConfigurationManager
         // Instead of kicking then returning, we need to store the kick reason
         // in the event, check with plugins to see if it's ok, and THEN kick
         // depending on the outcome.
-        EntityPlayerMP entity = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), s, this.mcServer.isDemo() ? new DemoWorldManager(this.mcServer.worldServerForDimension(0)) : new ItemInWorldManager(this.mcServer.worldServerForDimension(0)));
-        Player player = entity.getBukkitEntity();
+        // MCPC+ start
+        boolean allowLoginEvent = false;
+        if (this.currentPlayer == null)
+        {
+            allowLoginEvent = true;
+            this.currentPlayer = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), s, this.mcServer.isDemo() ? new DemoWorldManager(this.mcServer.worldServerForDimension(0)) : new ItemInWorldManager(this.mcServer.worldServerForDimension(0)));
+        }
+        // MCPC+ end
+        Player player = this.currentPlayer.getBukkitEntity();
         PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, pendingconnection.getSocket().getInetAddress());
         SocketAddress socketaddress = pendingconnection.myTCPConnection.getSocketAddress();
 
@@ -479,7 +487,8 @@ public abstract class ServerConfigurationManager
             }
         }
 
-        this.cserver.getPluginManager().callEvent(event);
+        if (allowLoginEvent) // MCPC+ - only send one event
+            this.cserver.getPluginManager().callEvent(event);
 
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)
         {
@@ -487,7 +496,7 @@ public abstract class ServerConfigurationManager
             return null;
         }
 
-        return entity;
+        return this.currentPlayer;
         // CraftBukkit end
     }
 
