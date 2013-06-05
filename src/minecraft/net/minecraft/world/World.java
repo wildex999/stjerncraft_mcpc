@@ -355,10 +355,15 @@ public abstract class World implements IBlockAccess
         if (this.worldInfo == null)
         {
             this.worldInfo = new WorldInfo(worldsettings, s);
+            this.worldInfo.setDimension(this.provider.dimensionId); // MCPC+ - Save dimension to level.dat
         }
         else
         {
             this.worldInfo.setWorldName(s);
+            // MCPC+ start - Use saved dimension from level.dat. Fixes issues with MultiVerse
+            if (this.worldInfo.getDimension() != 0 && this.worldInfo.getDimension() != -1 && this.worldInfo.getDimension() != 1)
+                this.provider.dimensionId = this.worldInfo.getDimension();
+            // MCPC+ end
         }
 
         // MCPC+ start - Guarantee provider dimension is not reset. This is required for mods that rely on the provider ID to match the client dimension. Without this, IC2 will send the wrong ID to clients.
@@ -392,9 +397,7 @@ public abstract class World implements IBlockAccess
 
             this.worldInfo.setServerInitialized(true);
         }
-        this.provider.dimensionId = providerId; // MCPC+ - Fix for TerrainControl injecting their own WorldProvider
 
-        // MCPC+ start - add Forge
         if (this instanceof WorldServer)
         {
             this.perWorldStorage = new MapStorage(new WorldSpecificSaveHandler((WorldServer)this, idatamanager));
@@ -404,7 +407,6 @@ public abstract class World implements IBlockAccess
             this.perWorldStorage = new MapStorage((ISaveHandler)null);
         }
         VillageCollection villagecollection = (VillageCollection)perWorldStorage.loadData(VillageCollection.class, "villages");
-        // MCPC+ end
 
         if (villagecollection == null)
         {

@@ -776,7 +776,6 @@ public final class CraftServer implements Server {
         }
 
         if (world != null) {
-            DimensionManager.addBukkitAlias(creator.name(), ((CraftWorld)getWorld(name)).getHandle().provider.dimensionId);
             return world;
         }
 
@@ -869,13 +868,6 @@ public final class CraftServer implements Server {
             name = getBukkitToForgeMapping(name.toLowerCase());
         name = name.toLowerCase();
         World result = worlds.get(name);
-        /*if (result == null) { // MCPC+ disable hotloading worlds for plugins for now due to memory leaks
-            Integer dim = DimensionManager.getBukkitAliasDim(name);
-            if (dim != null && dim != 0) {
-                WorldServer worldServer = net.minecraft.server.MinecraftServer.getServer().worldServerForDimension(dim);
-                result = worldServer.getWorld();
-            }
-        }*/
         return result;
     }
 

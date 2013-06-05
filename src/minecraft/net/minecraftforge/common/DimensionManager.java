@@ -72,7 +72,6 @@ public class DimensionManager
     private static Hashtable<Class<? extends WorldProvider>, Integer> classToProviders = new Hashtable<Class<? extends WorldProvider>, Integer>();
     private static ArrayList<Integer> bukkitDims = new ArrayList<Integer>(); // used to keep track of Bukkit dimensions
     private static final String FILE_SEPARATOR = System.getProperty("file.separator");
-    private static Hashtable<String, Integer> bukkitAliasMap = new Hashtable<String, Integer>();
     private static org.bukkit.configuration.file.YamlConfiguration configuration = Main.configuration;
     // MCPC+ end
 
@@ -176,14 +175,6 @@ public class DimensionManager
             if (id >= 0)
             {
                 dimensionMap.set(id);
-
-                // MCPC+ start - set up map for world name to dimension
-                if (id > 1) {
-                    WorldProvider provider = WorldProvider.getProviderForDimension(id);
-                    String name = provider.getSaveFolder();
-                    bukkitAliasMap.put(name.toLowerCase(), id);
-                }
-                // MCPC+ end
             }
         }
         // MCPC+ end
@@ -365,7 +356,6 @@ public class DimensionManager
         {
             world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
         }
-        //mcServer.worlds.add(world); world is added to this collection in setWorld. since  it is a list and not a set, it will be added twice
         mcServer.getConfigurationManager().setPlayerManager(mcServer.worlds.toArray(new WorldServer[mcServer.worlds.size()]));
         // MCPC+ end
         world.addWorldAccess(new WorldManager(mcServer, world));
@@ -390,14 +380,6 @@ public class DimensionManager
 
         String worldType;
         String name;
-        int dim = DimensionManager.getNextFreeDimId();
-        if (bukkitAliasMap.containsKey(creator.name().toLowerCase()))
-        {
-            dim = bukkitAliasMap.get(creator.name().toLowerCase());
-        }
-        else { 
-            bukkitAliasMap.put(creator.name().toLowerCase(), dim);
-        }
 
         int providerId = 0;
         if (creator.environment() != null)
@@ -410,37 +392,44 @@ public class DimensionManager
             // do nothing
         }
 
-        registerDimension(dim, providerId);
-        addBukkitDimension(dim);
         Environment env = creator.environment();
         worldType = env.name().toLowerCase();
         name = creator.name();
-        ChunkGenerator gen = creator.generator();
+        int dim = DimensionManager.getNextFreeDimId();
+        // Use saved dimension from level.dat if it exists. This guarantees that after a world is created, the same dimension will be used. Fixes issues with MultiVerse
+        AnvilSaveHandler saveHandler = new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true);
+        if (saveHandler.loadWorldInfo() != null)
+        {
+            dim = saveHandler.loadWorldInfo().getDimension();
+        }
 
+        registerDimension(dim, providerId);
+        addBukkitDimension(dim);
+        ChunkGenerator gen = creator.generator();
         if (mcServer instanceof DedicatedServer) {
             worldSettings.func_82750_a(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));
         }
 
-        WorldServer world = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), name, dim, worldSettings, overworld, mcServer.theProfiler, overworld.getWorldLogAgent(), env, gen);
+        WorldServer world = new WorldServerMulti(mcServer, saveHandler, name, dim, worldSettings, overworld, mcServer.theProfiler, overworld.getWorldLogAgent(), env, gen);
 
         if (gen != null)
         {
             world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
         }
-        //mcServer.worlds.add(world); world is added to this collection in setWorld. since  it is a list and not a set, it will be added twice
+        world.provider.dimensionId = dim; // MCPC+ - Fix for TerrainControl injecting their own WorldProvider
         mcServer.getConfigurationManager().setPlayerManager(mcServer.worlds.toArray(new WorldServer[mcServer.worlds.size()]));
-        // MCPC+ end
+
         world.addWorldAccess(new WorldManager(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
         {
             world.getWorldInfo().setGameType(mcServer.getGameType());
         }
-
         mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
 
         return world;
     }
+    // MCPC+ end
 
     public static WorldServer getWorld(int id)
     {
@@ -637,15 +626,6 @@ public class DimensionManager
     public static boolean isBukkitDimension(int dim)
     {
         return bukkitDims.contains(dim);
-    }
-
-    public static void addBukkitAlias(String name, int dim)
-    {
-        bukkitAliasMap.put(name.toLowerCase(), dim);
-    }
-
-    public static Integer getBukkitAliasDim(String name) {
-        return bukkitAliasMap.get(name.toLowerCase());
     }
     // MCPC+ end
 }

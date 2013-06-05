@@ -347,7 +347,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                     worldType = env.toString().toLowerCase();
                     name = "DIM" + dimension;
                     oldName = par1Str + "_" + worldType;
-                    oldName.replaceAll(" ", "_");
+                    oldName = oldName.replaceAll(" ", "_");
                 }
                 gen = this.server.getGenerator(name);
                 worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
