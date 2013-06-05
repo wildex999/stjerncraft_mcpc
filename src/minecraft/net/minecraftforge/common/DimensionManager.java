@@ -395,12 +395,20 @@ public class DimensionManager
         Environment env = creator.environment();
         worldType = env.name().toLowerCase();
         name = creator.name();
-        int dim = DimensionManager.getNextFreeDimId();
+        int dim = 0;
         // Use saved dimension from level.dat if it exists. This guarantees that after a world is created, the same dimension will be used. Fixes issues with MultiVerse
         AnvilSaveHandler saveHandler = new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true);
         if (saveHandler.loadWorldInfo() != null)
         {
-            dim = saveHandler.loadWorldInfo().getDimension();
+            int savedDim = saveHandler.loadWorldInfo().getDimension();
+            if (savedDim != 0 && savedDim != -1 && savedDim != 1)
+            {
+                dim = savedDim;
+            }
+        }
+        if (dim == 0)
+        {
+            dim = getNextFreeDimId();
         }
 
         registerDimension(dim, providerId);

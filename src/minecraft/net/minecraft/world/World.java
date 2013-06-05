@@ -361,8 +361,12 @@ public abstract class World implements IBlockAccess
         {
             this.worldInfo.setWorldName(s);
             // MCPC+ start - Use saved dimension from level.dat. Fixes issues with MultiVerse
-            if (this.worldInfo.getDimension() != 0 && this.worldInfo.getDimension() != -1 && this.worldInfo.getDimension() != 1)
+            if (this.worldInfo.getDimension() != 0)
                 this.provider.dimensionId = this.worldInfo.getDimension();
+            else
+            {
+                this.worldInfo.setDimension(this.provider.dimensionId);
+            }
             // MCPC+ end
         }
 
