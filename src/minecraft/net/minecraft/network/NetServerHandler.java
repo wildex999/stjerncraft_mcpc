@@ -1690,6 +1690,15 @@ public class NetServerHandler extends NetHandler
             InventoryAction action = InventoryAction.UNKNOWN;
             ItemStack itemstack = null;
 
+            // MCPC+ start - allow vanilla to bypass (mod containers)
+            if (inventory == null)
+            {
+                itemstack = this.playerEntity.openContainer.slotClick(par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick, par1Packet102WindowClick.holdingShift, this.playerEntity);
+            }
+            else
+            {
+            // MCPC+ end
+
             if (par1Packet102WindowClick.inventorySlot == -1)
             {
                 type = SlotType.OUTSIDE; // override
@@ -1983,7 +1992,17 @@ public class NetServerHandler extends NetHandler
 
                 if (par1Packet102WindowClick.inventorySlot == 0 && top instanceof CraftingInventory)
                 {
-                    org.bukkit.inventory.Recipe recipe = ((CraftingInventory) top).getRecipe();
+                    // MCPC+ start - vanilla compatibility (mod recipes)
+                    org.bukkit.inventory.Recipe recipe = null;
+                    try
+                    {
+                        recipe = ((CraftingInventory) top).getRecipe();
+                    }
+                    catch (AbstractMethodError e)
+                    {
+                        // do nothing
+                    }
+                    // MCPC+ end
 
                     if (recipe != null)
                     {
@@ -2062,6 +2081,7 @@ public class NetServerHandler extends NetHandler
                         return;
                 }
             }
+            } // MCPC+
 
             // CraftBukkit end
 
