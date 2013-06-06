@@ -1686,7 +1686,7 @@ public class NetServerHandler extends NetHandler
             {
                 InventoryView inventory = this.playerEntity.openContainer.getBukkitView();
                 type = CraftInventoryView.getSlotType(inventory, par1Packet102WindowClick.inventorySlot); // MCPC+ - moved declaration up
-                InventoryClickEvent event = new InventoryClickEvent(inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1, par1Packet102WindowClick.holdingShift == 6);
+                InventoryClickEvent event = new InventoryClickEvent(inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1);
                 org.bukkit.inventory.Inventory top = inventory.getTopInventory();
 
                 if (par1Packet102WindowClick.inventorySlot == 0 && top instanceof CraftingInventory)
@@ -1704,7 +1704,7 @@ public class NetServerHandler extends NetHandler
     
                     if (recipe != null)
                     {
-                        event = new org.bukkit.event.inventory.CraftItemEvent(recipe, inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1, par1Packet102WindowClick.holdingShift == 6);
+                        event = new org.bukkit.event.inventory.CraftItemEvent(recipe, inventory, type, par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick != 0, par1Packet102WindowClick.holdingShift == 1);
                     }
                 }
     
@@ -1823,7 +1823,7 @@ public class NetServerHandler extends NetHandler
                 slot = SlotType.OUTSIDE;
             }
 
-            InventoryClickEvent event = new InventoryClickEvent(inventory, slot, slot == SlotType.OUTSIDE ? -999 : par1Packet107CreativeSetSlot.slot, false, false, false);
+            InventoryClickEvent event = new InventoryClickEvent(inventory, slot, slot == SlotType.OUTSIDE ? -999 : par1Packet107CreativeSetSlot.slot, false, false);
             server.getPluginManager().callEvent(event);
             org.bukkit.inventory.ItemStack item = event.getCurrentItem();
 
