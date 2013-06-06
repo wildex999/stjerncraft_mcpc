@@ -167,9 +167,10 @@ public class FMLNetworkHandler
             loginStates.put(netLoginHandler, CONNECTION_VALID);
             break;
         case CONNECTION_VALID:
+            server.getConfigurationManager().allowLoginEvent = true; // MCPC+ - allow login event to be sent
             netLoginHandler.completeConnection(null);
+            server.getConfigurationManager().allowLoginEvent = false; // MCPC+ - reset login event flag
             loginStates.remove(netLoginHandler);
-            server.getConfigurationManager().currentPlayer = null; // MCPC+
             break;
         case MISSING_MODS_OR_VERSIONS:
             netLoginHandler.completeConnection(((CraftServer) Bukkit.getServer()).configuration.getString("settings.fml-missing-mods-message", "The server requires mods that are absent or out of date on your client")); // MCPC+
