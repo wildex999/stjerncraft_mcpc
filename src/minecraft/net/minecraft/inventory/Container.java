@@ -225,7 +225,7 @@ public abstract class Container
             }
             else if (this.field_94536_g == 2)
             {
-                if (!this.field_94537_h.isEmpty())
+                if (!this.field_94537_h.isEmpty() && getBukkitView() != null) // MCPC+ - only for containers with Bukkit wrappers
                 {
                     itemstack1 = inventoryplayer.getItemStack().copy();
                     l = inventoryplayer.getItemStack().stackSize;
@@ -299,6 +299,48 @@ public abstract class Container
 
                     // CraftBukkit end
                 }
+                // MCPC+ start - vanilla behavior for modded containers with no Bukkit wrapper
+                else if (!this.field_94537_h.isEmpty())
+                {
+                    itemstack1 = inventoryplayer.getItemStack().copy();
+                    l = inventoryplayer.getItemStack().stackSize;
+                    Iterator iterator = this.field_94537_h.iterator();
+
+                    while (iterator.hasNext())
+                    {
+                        Slot slot1 = (Slot)iterator.next();
+
+                        if (slot1 != null && func_94527_a(slot1, inventoryplayer.getItemStack(), true) && slot1.isItemValid(inventoryplayer.getItemStack()) && inventoryplayer.getItemStack().stackSize >= this.field_94537_h.size() && this.func_94531_b(slot1))
+                        {
+                            ItemStack itemstack2 = itemstack1.copy();
+                            int j1 = slot1.getHasStack() ? slot1.getStack().stackSize : 0;
+                            func_94525_a(this.field_94537_h, this.field_94535_f, itemstack2, j1);
+
+                            if (itemstack2.stackSize > itemstack2.getMaxStackSize())
+                            {
+                                itemstack2.stackSize = itemstack2.getMaxStackSize();
+                            }
+
+                            if (itemstack2.stackSize > slot1.getSlotStackLimit())
+                            {
+                                itemstack2.stackSize = slot1.getSlotStackLimit();
+                            }
+
+                            l -= itemstack2.stackSize - j1;
+                            slot1.putStack(itemstack2);
+                        }
+                    }
+
+                    itemstack1.stackSize = l;
+
+                    if (itemstack1.stackSize <= 0)
+                    {
+                        itemstack1 = null;
+                    }
+
+                    inventoryplayer.setItemStack(itemstack1);
+                }
+                // MCPC+ end
 
                 this.func_94533_d();
             }
