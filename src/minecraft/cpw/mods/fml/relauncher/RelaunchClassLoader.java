@@ -384,19 +384,7 @@ public class RelaunchClassLoader extends URLClassLoader
         {
             for (IClassTransformer transformer : transformers)
             {
-                // MCPC+ start - log which transformer is broken
-                try {
-                    basicClass = transformer.transform(name, transformedName, basicClass);
-                } catch (Throwable t) {
-                    if (basicClass == null) {
-                        // a coremod failed to transform a non-existent class -- rather than failing,
-                        // continue to allow the next transformer(s) to attempt to transform
-                        continue;
-                    }
-                    FMLRelaunchLog.log(Level.SEVERE, "Failed to transform class %s using transformer %s. basicClass = %snull.", name, transformer.getClass().getName(), basicClass == null ? "" : "non-");
-                    throw new Error(t);
-                }
-                // MCPC+ end
+                basicClass = transformer.transform(name, transformedName, basicClass);
             }
         }
         return basicClass;
