@@ -118,6 +118,7 @@ public final class ItemStack
      */
     public Item getItem()
     {
+        if (this.itemID < 0) return null; // MCPC+
         return Item.itemsList[this.itemID];
     }
 
