@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import cpw.mods.fml.common.registry.BlockProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -48,7 +49,7 @@ import net.minecraftforge.common.RotationHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Block
+public class Block implements BlockProxy // MCPC+ - marker interface
 {
     protected static int[] blockFireSpreadSpeed = new int[4096];
     protected static int[] blockFlammability = new int[4096];

@@ -26,8 +26,8 @@ public class FMLCorePlugin implements IFMLLoadingPlugin
     public String[] getASMTransformerClass()
     {
         return new String[] {
-                             "cpw.mods.fml.common.asm.transformers.AccessTransformer",
-                             "cpw.mods.fml.common.asm.transformers.MarkerTransformer",
+                             "cpw.mods.fml.common.asm.transformers.AccessTransformer", // MCPC+ - still needed for ensurePublicAccessFor()
+                             //"cpw.mods.fml.common.asm.transformers.MarkerTransformer", // MCPC+ - statically applied marker interfaces in the source, instead of dynamically at runtime
                              "cpw.mods.fml.common.asm.transformers.SideTransformer",
                             };
     }

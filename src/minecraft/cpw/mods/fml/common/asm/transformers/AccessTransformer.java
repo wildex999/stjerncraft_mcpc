@@ -87,7 +87,7 @@ public class AccessTransformer implements IClassTransformer
 
     public AccessTransformer() throws IOException
     {
-        this("fml_at.cfg");
+        //this("fml_at.cfg"); // MCPC+ - statically applied access transformers at compile-time instead of runtime
     }
     protected AccessTransformer(String rulesFile) throws IOException
     {

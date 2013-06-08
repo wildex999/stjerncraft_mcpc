@@ -1,6 +1,7 @@
 package net.minecraft.item;
 
 import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.common.registry.ItemProxy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
@@ -29,7 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.IArmorTextureProvider;
 
-public class Item
+public class Item implements ItemProxy // MCPC+ - marker interface
 {
     private CreativeTabs tabToDisplayOn = null;
 

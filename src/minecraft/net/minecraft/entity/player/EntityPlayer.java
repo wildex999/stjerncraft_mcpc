@@ -92,7 +92,7 @@ import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 
-public abstract class EntityPlayer extends EntityLiving implements ICommandSender
+public abstract class EntityPlayer extends EntityLiving implements ICommandSender, cpw.mods.fml.common.network.Player // MCPC+ - marker interface
 {
     public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
     public int maxHealth = 20;

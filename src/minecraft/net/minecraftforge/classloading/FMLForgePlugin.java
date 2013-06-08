@@ -18,7 +18,7 @@ public class FMLForgePlugin implements IFMLLoadingPlugin
     public String[] getASMTransformerClass()
     {
         return new String[]{ 
-                                "net.minecraftforge.transformers.ForgeAccessTransformer",
+                                //"net.minecraftforge.transformers.ForgeAccessTransformer", // MCPC+ - not needed since we statically apply the access transformers at compile-time
                                 "net.minecraftforge.transformers.EventTransformer"
                            };
     }
