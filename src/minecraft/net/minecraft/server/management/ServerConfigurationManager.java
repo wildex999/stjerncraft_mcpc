@@ -452,7 +452,8 @@ public abstract class ServerConfigurationManager
         {
             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, cserver.whitelistMessage); // Spigot
         }
-        else
+        // MCPC+ start - if login event is allowed, execute remaining login code
+        else if (allowLoginEvent)
         {
             String s2 = socketaddress.toString();
             s2 = s2.substring(s2.indexOf("/") + 1);
@@ -478,10 +479,9 @@ public abstract class ServerConfigurationManager
             {
                 event.disallow(PlayerLoginEvent.Result.ALLOWED, s2);
             }
-        }
-
-        if (allowLoginEvent) // MCPC+ - send login event if allowed
             this.cserver.getPluginManager().callEvent(event);
+        }
+        // MCPC+ end
 
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)
         {
