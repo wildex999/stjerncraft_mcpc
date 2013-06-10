@@ -47,11 +47,18 @@ public final class CraftItemStack extends ItemStack {
         if (original == null) {
             return new ItemStack(Material.AIR);
         }
+
+        // MCPC+ start - return non-strictly-Bukkit stack in order to preserve full NBT tags
+        return asCraftMirror(copyNMSStack(original, original.stackSize));
+
+        /*
         ItemStack stack = new ItemStack(original.itemID, original.stackSize, (short) original.getItemDamage());
         if (hasItemMeta(original)) {
-            stack.setItemMeta(getItemMeta(original));
+            stack.setItemMeta(getItemMeta(original)); // MCPC+ - TODO: wrap arbitrary mod NBT in ItemMeta
         }
         return stack;
+        */
+        // MCPC+ end
     }
 
     public static CraftItemStack asCraftMirror(net.minecraft.item.ItemStack original) {

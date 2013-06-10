@@ -520,7 +520,15 @@ public final class ItemStack
             --this.animationsToGo;
         }
 
-        Item.itemsList[this.itemID].onUpdate(this, par1World, par2Entity, par3, par4);
+        // MCPC+ start - print exception instead of kicking client (if they have a corrupted item in their inventory)
+        try {
+            Item.itemsList[this.itemID].onUpdate(this, par1World, par2Entity, par3, par4);
+        } catch (Throwable ex) {
+            System.out.println("updateAnimation exception");
+            ex.printStackTrace();
+            return;
+        }
+        // MCPC+ end
     }
 
     public void onCrafting(World par1World, EntityPlayer par2EntityPlayer, int par3)
