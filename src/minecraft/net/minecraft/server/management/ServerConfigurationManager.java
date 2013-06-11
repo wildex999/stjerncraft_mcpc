@@ -606,13 +606,15 @@ public abstract class ServerConfigurationManager
         this.mcServer.worldServerForDimension(entityplayermp.dimension).removePlayerEntityDangerously(entityplayermp);
         ChunkCoordinates chunkcoordinates = entityplayermp.getBedLocation();
         boolean flag1 = entityplayermp.isSpawnForced();
-        entityplayermp.dimension = i; // MCPC+
+        // MCPC+ start
+        if (!canRespawnHere)
+            entityplayermp.dimension = i;
+        // MCPC+ end
         // CraftBukkit start
         EntityPlayerMP entityplayermp1 = entityplayermp;
         org.bukkit.World fromWorld = entityplayermp1.getBukkitEntity().getWorld();
         entityplayermp1.playerConqueredTheEnd = false;
         entityplayermp1.clonePlayer(entityplayermp, flag);
-        entityplayermp1.dimension = i; // MCPC+
         ChunkCoordinates chunkcoordinates1;
 
         if (location == null)
@@ -620,7 +622,7 @@ public abstract class ServerConfigurationManager
             boolean isBedSpawn = false;
             CraftWorld cworld = (CraftWorld) this.mcServer.server.getWorld(entityplayermp.spawnWorld);
             // MCPC+ start - handle canRespawnHere for mods
-            if (world != null && !world.provider.canRespawnHere())
+            if (world != null && !canRespawnHere)
             {
                 cworld = (CraftWorld) mcServer.worldServerForDimension(i).getWorld(); // make sure to hotload the dimension if it got unloaded
                 if (chunkcoordinates == null)
