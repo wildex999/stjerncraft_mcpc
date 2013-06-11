@@ -70,6 +70,7 @@ public class SlotFurnace extends Slot
      */
     protected void onCrafting(ItemStack par1ItemStack)
     {
+        if (par1ItemStack == null) return; // MCPC+ - fix "random crash" when picking up items from furnace slots, #1222
         par1ItemStack.onCrafting(this.thePlayer.worldObj, this.thePlayer, this.field_75228_b);
 
         if (!this.thePlayer.worldObj.isRemote)
