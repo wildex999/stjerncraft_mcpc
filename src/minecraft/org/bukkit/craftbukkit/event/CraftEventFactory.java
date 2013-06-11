@@ -45,6 +45,13 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.InventoryView;
+// MCPC+ start
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import org.bukkit.entity.Item;
+import org.bukkit.craftbukkit.entity.CraftItem;
+// MCPC+ end
+
 
 public class CraftEventFactory {
     public static final net.minecraft.util.DamageSource MELTING = CraftDamageSource.copyOf(net.minecraft.util.DamageSource.onFire);
@@ -329,7 +336,17 @@ public class CraftEventFactory {
         for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
             if (stack == null || stack.getType() == Material.AIR) continue;
 
-            world.dropItemNaturally(entity.getLocation(), stack);
+            // MCPC+ start - add support for Forge's PlayerDropsEvent
+            Item item = world.dropItemNaturally(entity.getLocation(), stack);
+            if (victim.captureDrops)
+            {
+                Entity entityitem = ((CraftItem)item).getHandle();
+                if (entityitem instanceof EntityItem)
+                {
+                    victim.capturedDrops.add((EntityItem)entityitem);
+                }
+            }
+            // MCPC+ end
         }
 
         return event;

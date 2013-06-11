@@ -489,6 +489,8 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
                     loot.add(CraftItemStack.asCraftMirror(this.inventory.armorInventory[i]));
                 }
             }
+            captureDrops = true;
+            capturedDrops.clear();
         }
 
         org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, this.field_94063_bt.func_94546_b());
@@ -501,10 +503,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
         // CraftBukkit - we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
         if (!keepInventory)
-        {
-            captureDrops = true;
-            capturedDrops.clear();
-                    
+        {    
             for (int i = 0; i < this.inventory.mainInventory.length; ++i)
             {
                 this.inventory.mainInventory[i] = null;
@@ -514,18 +513,19 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
             {
                 this.inventory.armorInventory[i] = null;
             }
-            
+            // MCPC+ start
             captureDrops = false;
-            // MCPC+ start - rename forgeEvent
             PlayerDropsEvent forgeEvent = new PlayerDropsEvent(this, par1DamageSource, capturedDrops, recentlyHit > 0);
-            if (!MinecraftForge.EVENT_BUS.post(forgeEvent))
-            // MCPC+ end
+            MinecraftForge.EVENT_BUS.post(forgeEvent);
+            // Avoid duplicate drops. This needs to be fixed if mods need to cancel event.
+            /*if (!MinecraftForge.EVENT_BUS.post(forgeEvent))
             {
                 for (EntityItem item : capturedDrops)
                 {
                     joinEntityItemWithWorld(item);
                 }
-            }            
+            }*/
+            // MCPC+ end
         }
 
         this.closeScreen();
