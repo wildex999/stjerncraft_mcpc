@@ -1,6 +1,8 @@
 package net.minecraft.world;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -4754,5 +4756,24 @@ public abstract class World implements IBlockAccess
             }
         }
         return count;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean extendedLevelsInChunkCache() {
+        return false;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public float getBrightness(int arg0, int arg1, int arg2, int arg3) {
+        return 0;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getLightBrightnessForSkyBlocks(int arg0, int arg1, int arg2,
+            int arg3) {
+        return 0;
     }
 }

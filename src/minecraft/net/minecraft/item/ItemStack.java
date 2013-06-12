@@ -228,7 +228,9 @@ public final class ItemStack
      */
     public boolean isItemDamaged()
     {
-        return this.isItemStackDamageable() && this.getItem().isItemStackDamaged(this);
+        boolean damaged = itemDamage > 0;
+        if (getItem() != null) damaged = getItem().isDamaged(this);
+        return this.isItemStackDamageable() && damaged;
     }
 
     /**
@@ -236,7 +238,11 @@ public final class ItemStack
      */
     public int getItemDamageForDisplay()
     {
-        return this.getItem().getItemDamageFromStackForDisplay(this);
+        if (getItem() != null)
+        {
+            return getItem().getDisplayDamage(this);
+        }
+        return this.itemDamage;
     }
 
     /**
@@ -244,8 +250,11 @@ public final class ItemStack
      */
     public int getItemDamage()
     {
-        if (this.getItem() == null) return this.itemDamage; // MCPC+ - fallback if null item
-        return this.getItem().getItemDamageFromStack(this);
+        if (getItem() != null)
+        {
+            return getItem().getDamage(this);
+        }
+        return this.itemDamage;
     }
 
     /**
@@ -253,45 +262,18 @@ public final class ItemStack
      */
     public void setItemDamage(int par1)
     {
-        // MCPC+ start - fallback to itemDamage if no item(?)
-        if (this.getItem() == null)
+        if (getItem() != null)
         {
-            this.itemDamage = par1;
-        }
-        else
-        {
-            this.getItem().setItemDamageForStack(this, par1); // Forge
-        }
-        // MCPC+ end
-        // MCPC+ - remove filter (for mods adding new data values on vanilla items, e.g. Railcraft)
-        /*
-        // CraftBukkit start - Filter out data for items that shouldn't have it
-        // The crafting system uses this value for a special purpose so we have to allow it
-        if (par1 == 32767)
-        {
-            this.itemDamage = par1;
+            getItem().setDamage(this, par1);
             return;
         }
 
-        if (!(this.getHasSubtypes() || Item.itemsList[this.itemID].isDamageable() || this.itemID > 255))
-        {
-            par1 = 0;
-        }
-
-        // Filter wool to avoid confusing the client
-        if (this.itemID == Block.cloth.blockID)
-        {
-            par1 = Math.min(15, par1);
-        }
-
-        // CraftBukkit end
         this.itemDamage = par1;
 
-        if (this.itemDamage < -1)   // CraftBukkit - don't filter -1, we use it
+        if (this.itemDamage < 0)
         {
             this.itemDamage = 0;
         }
-        */
     }
 
     /**
@@ -299,7 +281,7 @@ public final class ItemStack
      */
     public int getMaxDamage()
     {
-        return this.getItem().getItemMaxDamageFromStack(this);
+        return this.getItem().getMaxDamage(this);
     }
 
     /**
@@ -359,8 +341,8 @@ public final class ItemStack
                 }
             }
 
-            this.itemDamage += par1;
-            return this.itemDamage > this.getMaxDamage();
+            setItemDamage(getItemDamage() + par1); //Redirect through Item's callback if applicable.
+            return getItemDamage() > getMaxDamage();
         }
     }
 

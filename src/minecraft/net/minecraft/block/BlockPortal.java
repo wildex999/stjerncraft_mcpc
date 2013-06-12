@@ -126,7 +126,7 @@ public class BlockPortal extends BlockBreakable
             org.bukkit.World bworld = par1World.getWorld();
             // CraftBukkit end
 
-            if (par1World.getBlockId(par2 - b0, par3, par4 - b1) == 0)
+            if (par1World.isAirBlock(par2 - b0, par3, par4 - b1))
             {
                 par2 -= b0;
                 par4 -= b1;

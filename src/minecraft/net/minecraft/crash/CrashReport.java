@@ -237,7 +237,8 @@ public class CrashReport
             StackTraceElement stacktraceelement = null;
             StackTraceElement stacktraceelement1 = null;
 
-            if (astacktraceelement != null && astacktraceelement.length - j < astacktraceelement.length && astacktraceelement.length - j >= 0) // MCPC+ - negative check
+            int idx = astacktraceelement.length - j; //Forge fix AIOOB exception.
+            if (astacktraceelement != null && idx < astacktraceelement.length && idx >= 0)
             {
                 stacktraceelement = astacktraceelement[astacktraceelement.length - j];
 

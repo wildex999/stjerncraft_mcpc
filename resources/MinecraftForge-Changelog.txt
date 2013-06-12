@@ -1,5 +1,86 @@
 Changelog:
 
+Build 1.5.2-7.8.0.733
+	cpw: Make glass panes and iron fences connect to block sides based on solidity. This does change IBlockAccess, so anything with a custom IBlockAccess may need to implement the new method.
+
+Build 1.5.2-7.8.0.732
+	LexManos: Forgot most important side, release script.
+
+Build 1.5.2-7.8.0.731
+	LexManos: Fixed changelog generation.
+
+Build 1.5.2-7.8.0.730
+	LexManos: Fix AIOOB exception in crash reporting if exception does not have a stack. Possible, but odd.
+
+Build 1.5.2-7.8.0.729
+	LexManos: Fix hoes being able to till dirt under other blocks, and made it look for air type blocks.
+	LexManos: Add NPE protection to refernce to MinecraftServer.worldServer
+
+Build 1.5.2-7.8.0.728
+	LexManos: Fix Air block check in BlockPortal.
+
+Build 1.5.2-7.8.0.727
+	LexManos
+		Add NPE protection to ItemStack delegates. Closes #601
+		Also cleaned up the names of said delegates, we do not have to follow MCP's crowdsourced names as they are very bad.
+		Redirected damage through setItemDamage to allow items to have finder control of breaking.
+
+Build 1.5.2-7.8.0.726
+	LexManos: Disable ImageIO's File based cache, should speed up texturepack loading/stitching.
+
+Build 1.5.2-7.8.0.725
+	cpw
+		Updated FML:
+		MinecraftForge/FML@24c405665105a789a0708a7e30c8bcb96899da6b Add in an optional modid identifier for @SidedProxy. It's main use is when both scala and java @Mods reside in the same package, and you want the @SidedProxy behaviour for a specific @Mod language type. In general it should not be needed otherwise.
+		MinecraftForge/FML@cd0466395a8f1af3ec44f124bf4088df2d318603 Fix sysout with trailing messages after a newline
+
+Build 1.5.2-7.8.0.724-newliquid
+	jeffreykog: RenderGameOverlayEvent.Post(ALL) is now called in GuiIngameForge
+	LexManos: Fix arbitrary GUIContainer text coloring by forcing lighting to be disabled. Closes #594
+	cpw: Patch village distance checking to use floats instead of ints, to avoid int wrapping
+	cpw: Fix isAir check to see if a portal can light. Should fix w/Railcraft and others
+	LexManos: Make changelog generation non-fatal untill we get jenkins issue figured out.
+	LexManos: Add cache for ASM Event Handler bridge classes, should not need to redefine a class to invoke the same method on different instances.
+	LexManos: Ignore registration of a object that is already registered. Preventing duplicate callback invocations. Thanks King_Lemming for pointing this out.
+	cpw
+		Updated FML:
+		MinecraftForge/FML@6f3da9736531153629fb4213e3b2cae776bfb50a Don't throw an exception if the scala adapter find a java proxy. I may add some distinguishers to @SidedProxy so you know which mod it's for.
+		MinecraftForge/FML@59fe905695421a5be9370b0009ef794abaaf75bb Don't continue trying to send events to mods that depend on errored mods.
+
+Build 1.5.2-7.8.0.723
+	cpw
+		Updated FML:
+		MinecraftForge/FML@6f3da9736531153629fb4213e3b2cae776bfb50a Don't throw an exception if the scala adapter find a java proxy. I may add some distinguishers to @SidedProxy so you know which mod it's for.
+		MinecraftForge/FML@59fe905695421a5be9370b0009ef794abaaf75bb Don't continue trying to send events to mods that depend on errored mods.
+
+Build 1.5.2-7.8.0.722
+	jeffreykog: RenderGameOverlayEvent.Post(ALL) is now called in GuiIngameForge
+
+Build 1.5.2-7.8.0.721
+	LexManos: Ignore registration of a object that is already registered. Preventing duplicate callback invocations. Thanks King_Lemming for pointing this out.
+
+Build 1.5.2-7.8.0.720
+	LexManos: Add cache for ASM Event Handler bridge classes, should not need to redefine a class to invoke the same method on different instances.
+
+Build 1.5.2-7.8.0.719
+	cpw: Fix isAir check to see if a portal can light. Should fix w/Railcraft and others
+	LexManos: Make changelog generation non-fatal untill we get jenkins issue figured out.
+
+Build 1.5.2-7.8.0.716
+	cpw: Patch village distance checking to use floats instead of ints, to avoid int wrapping
+
+Build 1.5.2-7.8.0.715
+	LexManos: Fix arbitrary GUIContainer text coloring by forcing lighting to be disabled. Closes #594
+
+Build 1.5.2-7.8.0.713
+	cpw
+		Updated FML:
+		MinecraftForge/FML@843a13c1ab1e3901160082fa63c557243fb64675 Try and clean up cycle detection output a bit
+		MinecraftForge/FML@82e9de8641c6a559eec711ea6d1e940d99cbc98f More tweaks to the mod sorting code
+		MinecraftForge/FML@ac97370f94d10beee5f021795cddda827c4411d4 Add in a pretty sorting error screen
+		MinecraftForge/FML@f1d68ed4c82cd28e50ec6a0befc55ff0165bfe08 Throw the sorting exception
+		MinecraftForge/FML@edc1fb24e2cad9badd2dd18ccccd590d77156e18 Send the "suspect list", and print the suspect versions
+
 Build 1.5.2-7.8.0.711
 	jdroque
 		Add support for servers to register dimensions on client.

@@ -503,7 +503,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
         // CraftBukkit - we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
         if (!keepInventory)
-        {    
+        {
             for (int i = 0; i < this.inventory.mainInventory.length; ++i)
             {
                 this.inventory.mainInventory[i] = null;

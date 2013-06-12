@@ -1008,6 +1008,11 @@ public class Item implements ItemProxy // MCPC+ - marker interface
      * @param stack The itemstack that is damaged
      * @return the damage value
      */
+    public int getDamage(ItemStack stack)
+    {
+        return getItemDamageFromStack(stack);
+    }
+    @Deprecated
     public int getItemDamageFromStack(ItemStack stack)
     {
         return stack.itemDamage;
@@ -1018,20 +1023,31 @@ public class Item implements ItemProxy // MCPC+ - marker interface
      * @param stack the stack
      * @return the damage value
      */
+    public int getDisplayDamage(ItemStack stack)
+    {
+        return getItemDamageFromStackForDisplay(stack);
+    }
+    @Deprecated
     public int getItemDamageFromStackForDisplay(ItemStack stack)
     {
         return stack.itemDamage;
     }
 
     /**
-     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item, but can be overridden here for other sources such as NBT.
+     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item, 
+     * but can be overridden here for other sources such as NBT.
      *
      * @param stack The itemstack that is damaged
      * @return the damage value
      */
+    public int getMaxDamage(ItemStack stack)
+    {
+        return getItemMaxDamageFromStack(stack);
+    }
+    @Deprecated
     public int getItemMaxDamageFromStack(ItemStack stack)
     {
-        return maxDamage;
+        return getMaxDamage();
     }
 
     /**
@@ -1039,6 +1055,11 @@ public class Item implements ItemProxy // MCPC+ - marker interface
      * @param stack the stack
      * @return if the stack is damaged
      */
+    public boolean isDamaged(ItemStack stack)
+    {
+        return isItemStackDamaged(stack);
+    }
+    @Deprecated
     public boolean isItemStackDamaged(ItemStack stack)
     {
         return stack.itemDamage > 0;
@@ -1049,6 +1070,11 @@ public class Item implements ItemProxy // MCPC+ - marker interface
      * @param stack the stack
      * @param damage the new damage value
      */
+    public void setDamage(ItemStack stack, int damage)
+    {
+        setItemDamageForStack(stack, damage);
+    }
+    @Deprecated
     public void setItemDamageForStack(ItemStack stack, int damage)
     {
         stack.itemDamage = damage;
