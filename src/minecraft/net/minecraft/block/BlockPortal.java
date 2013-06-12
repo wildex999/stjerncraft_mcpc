@@ -144,6 +144,7 @@ public class BlockPortal extends BlockBreakable
                     if (l != -1 && l != 2 || i1 != -1 && i1 != 3)
                     {
                         int j1 = par1World.getBlockId(par2 + b0 * l, par3 + i1, par4 + b1 * l);
+                        boolean isAirBlock = par1World.isAirBlock(par2 + b0 * l, par3 + i1, par4 + b1 * l);
 
                         if (flag)
                         {
@@ -156,7 +157,7 @@ public class BlockPortal extends BlockBreakable
                                 blocks.add(bworld.getBlockAt(par2 + b0 * l, par3 + i1, par4 + b1 * l)); // CraftBukkit
                             }
                         }
-                        else if (j1 != 0 && j1 != Block.fire.blockID)
+                        else if (!isAirBlock && j1 != Block.fire.blockID)
                         {
                             return false;
                         }

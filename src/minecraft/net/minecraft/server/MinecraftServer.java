@@ -532,13 +532,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             this.getLogAgent().logInfo("Saving worlds");
             this.saveAllWorlds(false);
 
-            /* CraftBukkit start - Handled in saveChunks
-            for (int i = 0; i < this.worldServer.length; ++i) {
-                WorldServer worldserver = this.worldServer[i];
-
-                worldserver.saveLevel();
-            }
-            // CraftBukkit end */
             for (int i = 0; i < this.worlds.size(); ++i)
             {
                 WorldServer worldserver = this.worlds.get(i);
@@ -546,7 +539,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 DimensionManager.setWorld(worldserver.provider.dimensionId, (WorldServer)null);
             }
 
-            // Forge end
             if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
             {
                 this.usageSnooper.stopSnooper();
@@ -628,9 +620,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         {
             if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
             {
-                return;    // Forge
+                return;
             }
-
             throwable.printStackTrace();
             this.getLogAgent().logSevereException("Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
             CrashReport crashreport = null;
@@ -665,7 +656,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             {
                 if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
                 {
-                    return;// Forge
+                    return;
                 }
                 this.stopServer();
                 this.serverStopped = true;
@@ -687,6 +678,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
                 // CraftBukkit end
                 FMLCommonHandler.instance().handleServerStopped();
+                this.serverStopped = true;
                 this.systemExitNow();
             }
         }
