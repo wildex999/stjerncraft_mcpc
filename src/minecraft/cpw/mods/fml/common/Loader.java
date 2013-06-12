@@ -61,6 +61,7 @@ import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLLoadEvent;
+import cpw.mods.fml.common.functions.ArtifactVersionNameFunction;
 import cpw.mods.fml.common.functions.ModIdFunction;
 import cpw.mods.fml.common.modloader.BaseModProxy;
 import cpw.mods.fml.common.registry.GameData;
@@ -214,13 +215,7 @@ public class Loader
                     FMLLog.severe("The mod %s does not wish to run in Minecraft version %s. You will have to remove it to play.", mod.getModId(), getMCVersionString());
                     throw new WrongMinecraftVersionException(mod);
                 }
-                Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new Function<ArtifactVersion, String>()
-                {
-                    public String apply(ArtifactVersion v)
-                    {
-                        return v.getLabel();
-                    }
-                });
+                Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new ArtifactVersionNameFunction());
                 Set<ArtifactVersion> versionMissingMods = Sets.newHashSet();
                 Set<String> missingMods = Sets.difference(names.keySet(), modVersions.keySet());
                 if (!missingMods.isEmpty())
@@ -481,7 +476,7 @@ public class Loader
         mods = Lists.newArrayList();
         namedMods = Maps.newHashMap();
         modController = new LoadController(this);
-        modController.transition(LoaderState.LOADING);
+        modController.transition(LoaderState.LOADING, false);
         ModDiscoverer disc = identifyMods();
         disableRequestedMods();
         FMLLog.fine("Reloading logging properties from %s", loggingProperties.getPath());
@@ -505,7 +500,7 @@ public class Loader
                 }
             }
         }
-        modController.transition(LoaderState.CONSTRUCTING);
+        modController.transition(LoaderState.CONSTRUCTING, false);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable());
         FMLLog.fine("Mod signature data");
         for (ModContainer mod : getActiveModList())
@@ -516,9 +511,9 @@ public class Loader
         {
             FMLLog.fine("No user mod signature data found");
         }
-        modController.transition(LoaderState.PREINITIALIZATION);
+        modController.transition(LoaderState.PREINITIALIZATION, false);
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable(), canonicalConfigDir);
-        modController.transition(LoaderState.INITIALIZATION);
+        modController.transition(LoaderState.INITIALIZATION, false);
     }
 
     private void disableRequestedMods()
@@ -694,12 +689,12 @@ public class Loader
     {
         // Mod controller should be in the initialization state here
         modController.distributeStateMessage(LoaderState.INITIALIZATION);
-        modController.transition(LoaderState.POSTINITIALIZATION);
+        modController.transition(LoaderState.POSTINITIALIZATION, false);
         // Construct the "mod object table" so mods can refer to it in IMC and postinit
         GameData.buildModObjectTable();
         modController.distributeStateMessage(FMLInterModComms.IMCEvent.class);
         modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);
-        modController.transition(LoaderState.AVAILABLE);
+        modController.transition(LoaderState.AVAILABLE, false);
         modController.distributeStateMessage(LoaderState.AVAILABLE);
         // Dump the custom registry data map, if necessary
         GameData.dumpRegistry(minecraftDir);
@@ -743,7 +738,7 @@ public class Loader
         try
         {
             modController.distributeStateMessage(LoaderState.SERVER_STARTING, server);
-            modController.transition(LoaderState.SERVER_STARTING);
+            modController.transition(LoaderState.SERVER_STARTING, false);
         }
         catch (Throwable t)
         {
@@ -756,13 +751,13 @@ public class Loader
     public void serverStarted()
     {
         modController.distributeStateMessage(LoaderState.SERVER_STARTED);
-        modController.transition(LoaderState.SERVER_STARTED);
+        modController.transition(LoaderState.SERVER_STARTED, false);
     }
 
     public void serverStopping()
     {
         modController.distributeStateMessage(LoaderState.SERVER_STOPPING);
-        modController.transition(LoaderState.SERVER_STOPPING);
+        modController.transition(LoaderState.SERVER_STOPPING, false);
     }
 
     public BiMap<ModContainer, Object> getModObjectList()
@@ -801,16 +796,8 @@ public class Loader
     public void serverStopped()
     {
         modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
-        try
-        {
-            modController.transition(LoaderState.SERVER_STOPPED);
-        }
-        catch (LoaderException e)
-        {
-            modController.forceState(LoaderState.SERVER_STOPPED);
-            // Discard any exceptions here - they mask other, real, exceptions
-        }
-        modController.transition(LoaderState.AVAILABLE);
+        modController.transition(LoaderState.SERVER_STOPPED, true);
+        modController.transition(LoaderState.AVAILABLE, true);
     }
 
     public boolean serverAboutToStart(Object server)
@@ -818,7 +805,7 @@ public class Loader
         try
         {
             modController.distributeStateMessage(LoaderState.SERVER_ABOUT_TO_START, server);
-            modController.transition(LoaderState.SERVER_ABOUT_TO_START);
+            modController.transition(LoaderState.SERVER_ABOUT_TO_START, false);
         }
         catch (Throwable t)
         {
