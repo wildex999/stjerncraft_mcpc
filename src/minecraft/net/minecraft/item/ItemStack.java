@@ -76,12 +76,12 @@ public final class ItemStack
         this.itemFrame = null;
         this.itemID = par1;
         this.stackSize = par2;
-        // CraftBukkit start - Pass to setData to do filtering
-        this.setItemDamage(par3);
-        //if (this.damage < 0) {
-        //    this.damage = 0;
-        //}
-        // CraftBukkit end
+        this.itemDamage = par3;
+
+        if (this.itemDamage < 0)
+        {
+            this.itemDamage = 0;
+        }
     }
 
     public static ItemStack loadItemStackFromNBT(NBTTagCompound par0NBTTagCompound)
