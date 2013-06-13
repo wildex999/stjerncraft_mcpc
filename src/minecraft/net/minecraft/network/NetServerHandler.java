@@ -2039,6 +2039,7 @@ public class NetServerHandler extends NetHandler
                         switch (action)
                         {
                                 // Modified other slots
+                            case PICKUP_ALL:
                             case MOVE_TO_OTHER_INVENTORY:
                             case HOTBAR_MOVE_AND_READD:
                             case HOTBAR_SWAP:
@@ -2048,7 +2049,6 @@ public class NetServerHandler extends NetHandler
                                 break;
 
                                 // Modified cursor and clicked
-                            case PICKUP_ALL:
                             case PICKUP_SOME:
                             case PICKUP_HALF:
                             case PICKUP_ONE:
