@@ -172,7 +172,11 @@ public class ChunkProviderServer implements IChunkProvider
         if (chunk == null)
         {
             org.bukkit.craftbukkit.SpigotTimings.syncChunkLoadTimer.startTiming(); // Spigot
-            chunk = this.safeLoadChunk(i, j);
+            chunk = ForgeChunkManager.fetchDormantChunk(LongHash.toLong(i, j), this.worldObj);
+            if (chunk == null)
+            {
+                chunk = this.safeLoadChunk(i, j);
+            }
 
             if (chunk == null)
             {
