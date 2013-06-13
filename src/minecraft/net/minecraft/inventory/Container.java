@@ -291,6 +291,10 @@ public abstract class Container
                             needsUpdate = true;
                         }
                     }
+                    else
+                    {
+                        inventoryplayer.setItemStack(oldCursor);
+                    }
 
                     if (needsUpdate && par4EntityPlayer instanceof EntityPlayerMP)
                     {
