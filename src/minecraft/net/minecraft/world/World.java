@@ -88,6 +88,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import za.co.mcportcentral.entity.CraftFakePlayer;
 // CraftBukkit end
 
 
@@ -784,6 +785,69 @@ public abstract class World implements IBlockAccess
             return false;
         }
     }
+
+    // MCPC+ start - new helper method for adding mod events
+
+    public boolean trySetBlockAndMetadata(int x, int y, int z, int blockID, int metadata, int flags, String username, boolean doLogin) // original name
+    {
+        return trySetBlock(x, y, z, blockID, metadata, flags, username, doLogin);
+    }
+
+    /**
+     * Attempt to set a block in the world, sending required events and cancelling if necessary.
+     * @param x
+     * @param y
+     * @param z
+     * @param blockID
+     * @param metadata
+     * @param flags
+     * @param username A real player's username (possibly offline) or fake player name enclosed in [brackets]
+     * @param doLogin If true, sends join events for fake players (should be configurable in the mod)
+     * @return true if successful, false if denied. Mods MUST not continue if denied.
+     */
+    public boolean trySetBlock(int x, int y, int z, int blockID, int metadata, int flags, String username, boolean doLogin)
+    {
+        int oldBlockID = this.getBlockId(x, y, z);
+        int oldMetadata = this.getBlockMetadata(x, y, z);
+
+        if (blockID == oldBlockID && metadata == oldMetadata) {
+            // no change
+            return false;
+        }
+
+        org.bukkit.entity.Player player = CraftFakePlayer.getPossiblyRealPlayerBukkitEntity(this, username, doLogin);
+
+        if (blockID == 0)
+        {
+            // Block break - modeled after ItemInWorldManager#tryHarvestBlock
+            org.bukkit.block.Block block = this.getWorld().getBlockAt(x, y, z);
+            org.bukkit.event.block.BlockBreakEvent event = new org.bukkit.event.block.BlockBreakEvent(block, player);
+
+            this.getServer().getPluginManager().callEvent(event);
+
+            if (event.isCancelled())
+            {
+                return false;
+            }
+            return setBlock(x, y, z, blockID, metadata, flags);
+        }
+        else
+        {
+            // Block place - delegate to ItemBlock#processBlockPlace
+            int clickedX = x, clickedY = y, clickedZ = z;
+            ItemStack itemstack = null;
+
+            return ItemBlock.processBlockPlace(this,
+                    ((org.bukkit.craftbukkit.entity.CraftPlayer)player).getHandle(),
+                    itemstack,
+                    x, y, z,
+                    blockID,
+                    metadata,
+                    clickedX, clickedY, clickedZ);
+        }
+    }
+    // MCPC+ end
+
 
     /**
      * Returns the block's material.
