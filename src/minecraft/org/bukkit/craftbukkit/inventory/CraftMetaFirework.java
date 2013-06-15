@@ -143,7 +143,7 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
             case BURST:
                 return 4;
             default:
-                throw new AssertionError(type);
+                throw new IllegalStateException(type.toString()); // Spigot
         }
     }
 
@@ -160,7 +160,7 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
             case 4:
                 return Type.BURST;
             default:
-                throw new AssertionError(nbt);
+                throw new IllegalStateException(Integer.toString(nbt)); // Spigot
         }
     }
 
