@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -449,7 +450,7 @@ public class BlockVine extends Block implements IShearable
     }
 
     @Override
-    public boolean isLadder(World world, int x, int y, int z)
+    public boolean isLadder(World world, int x, int y, int z, EntityLiving entity)
     {
         return true;
     }

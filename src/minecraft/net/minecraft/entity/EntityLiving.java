@@ -1715,7 +1715,7 @@ public abstract class EntityLiving extends Entity
         int j = MathHelper.floor_double(this.boundingBox.minY);
         int k = MathHelper.floor_double(this.posZ);
         int l = this.worldObj.getBlockId(i, j, k);
-        return ForgeHooks.isLivingOnLadder(Block.blocksList[l], worldObj, i, j, k);
+        return ForgeHooks.isLivingOnLadder(Block.blocksList[l], worldObj, i, j, k, this);
     }
 
     /**

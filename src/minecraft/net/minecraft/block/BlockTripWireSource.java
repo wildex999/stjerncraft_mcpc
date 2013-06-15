@@ -80,10 +80,10 @@ public class BlockTripWireSource extends Block
      */
     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
     {
-        return par1World.isBlockSolidOnSide(par2 - 1, par3, par4, SOUTH) ||
-               par1World.isBlockSolidOnSide(par2 + 1, par3, par4, NORTH) ||
-               par1World.isBlockSolidOnSide(par2, par3, par4 - 1, EAST ) ||
-               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST );
+        return par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST ) ||
+               par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST ) ||
+               par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH) ||
+               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH);
     }
 
     /**
@@ -93,22 +93,22 @@ public class BlockTripWireSource extends Block
     {
         byte b0 = 0;
 
-        if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST, true))
+        if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true))
         {
             b0 = 2;
         }
 
-        if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, EAST, true))
+        if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true))
         {
             b0 = 0;
         }
 
-        if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, NORTH, true))
+        if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST, true))
         {
             b0 = 1;
         }
 
-        if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, SOUTH, true))
+        if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST, true))
         {
             b0 = 3;
         }
@@ -138,22 +138,22 @@ public class BlockTripWireSource extends Block
                 int j1 = i1 & 3;
                 boolean flag = false;
 
-                if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, SOUTH) && j1 == 3)
+                if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST) && j1 == 3)
                 {
                     flag = true;
                 }
 
-                if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, NORTH) && j1 == 1)
+                if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST) && j1 == 1)
                 {
                     flag = true;
                 }
 
-                if (!par1World.isBlockSolidOnSide(par2, par3, par4 - 1, EAST) && j1 == 0)
+                if (!par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH) && j1 == 0)
                 {
                     flag = true;
                 }
 
-                if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST) && j1 == 2)
+                if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH) && j1 == 2)
                 {
                     flag = true;
                 }

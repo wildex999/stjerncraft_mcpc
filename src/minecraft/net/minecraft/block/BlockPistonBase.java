@@ -440,7 +440,7 @@ public class BlockPistonBase extends Block
 
                 int i2 = par0World.getBlockId(i1, j1, k1);
 
-                if (i2 != 0)
+                if (!par0World.isAirBlock(i1, j1, k1))
                 {
                     if (!canPushBlock(i2, par0World, i1, j1, k1, true))
                     {
@@ -490,7 +490,7 @@ public class BlockPistonBase extends Block
 
                 i2 = par1World.getBlockId(i1, j1, k1);
 
-                if (i2 != 0)
+                if (!par1World.isAirBlock(i1, j1, k1))
                 {
                     if (!canPushBlock(i2, par1World, i1, j1, k1, true))
                     {
@@ -511,7 +511,7 @@ public class BlockPistonBase extends Block
                         continue;
                     }
 
-                    //With our change to how snowballs are dropped this needs to dissallow to mimic vanilla behavior.
+                    //With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
                     float chance = (Block.blocksList[i2] instanceof BlockSnow ? -1.0f : 1.0f);
                     Block.blocksList[i2].dropBlockAsItemWithChance(par1World, i1, j1, k1, par1World.getBlockMetadata(i1, j1, k1), chance, 0);
                     par1World.setBlockToAir(i1, j1, k1);
