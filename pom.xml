@@ -4,13 +4,13 @@
 <groupId>mcpc</groupId>
 <artifactId>mcpc-plus</artifactId>
 <packaging>jar</packaging>
-<version>1.5.2-R0.2-SNAPSHOT</version>
+<version>1.5.2-R1.1-SNAPSHOT</version>
 <name>mcpc-plus</name>
 <url>http://www.mcportcentral.co.za/</url>
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <bukkit.version>${project.version}</bukkit.version>
-    <filename.version>1.5.2-R0.2</filename.version>
+    <filename.version>1.5.2-R1.1</filename.version>
     <api.version>unknown</api.version>
     <minecraft.version>1.5.2</minecraft.version>
     <minecraft_version>1_5_R3</minecraft_version>
