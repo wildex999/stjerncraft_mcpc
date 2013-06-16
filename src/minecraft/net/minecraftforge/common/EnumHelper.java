@@ -72,7 +72,7 @@ public class EnumHelper
         return (World.Environment)addEnum(World.Environment.class, name, new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
     }
 
-    public static EntityType addBukkitEntityType(String name, Class <? extends CraftEntity> clazz, int typeId, boolean independent) {
+    public static EntityType addBukkitEntityType(String name, Class <? extends org.bukkit.entity.Entity> clazz, int typeId, boolean independent) {
         EntityType bukkitType = addEnum(EntityType.class, name, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, new Object[] { name, clazz, typeId, independent });
 
         Map<String, EntityType> NAME_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP"); // TODO: access
