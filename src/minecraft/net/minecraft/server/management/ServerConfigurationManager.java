@@ -1561,7 +1561,10 @@ public abstract class ServerConfigurationManager
      */
     public String[] getAvailablePlayerDat()
     {
-        return this.mcServer.worlds.get(0).getSaveHandler().getSaveHandler().getAvailablePlayerDat(); // CraftBukkit
+        // MCPC+ start - don't crash if the overworld isn't loaded
+        List<WorldServer> worldServers = this.mcServer.worlds;
+        return worldServers.isEmpty() ? new String[0] : worldServers.get(0).getSaveHandler().getSaveHandler().getAvailablePlayerDat(); // CraftBukkit
+        // MCPC+ end
     }
 
     public boolean isWhiteListEnabled()
