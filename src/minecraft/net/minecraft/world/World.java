@@ -90,6 +90,7 @@ import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import za.co.mcportcentral.entity.CraftFakePlayer;
 // CraftBukkit end
+import net.minecraft.nbt.NBTTagCompound; // MCPC+
 
 
 public abstract class World implements IBlockAccess
@@ -4022,6 +4023,12 @@ public abstract class World implements IBlockAccess
             {
                 EntityPlayer player = (EntityPlayer)par7Entity;
                 ItemStack itemstack = (player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem() : null);
+                NBTTagCompound savedCompound = null;
+                if (itemstack != null)
+                {
+                    savedCompound = itemstack.getTagCompound(); // save current itemstack NBT
+                    itemstack.setTagCompound(new NBTTagCompound()); // dont use any itemstack NBT in our simulation, fixes MFR DSU dupe
+                }
                 org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(this, par2, par3, par4);
                 this.callingPlaceEvent = true;
                 if (itemstack != null && itemstack.getItem() instanceof ItemBlock)
@@ -4047,6 +4054,10 @@ public abstract class World implements IBlockAccess
                 }
                 blockstate.update(true, false); // revert blockstate since this was only a simulation
                 this.callingPlaceEvent = false;
+                if (savedCompound != null)
+                {
+                    itemstack.setTagCompound(savedCompound); // restore itemstack NBT
+                }
             }
         }
         return result;
