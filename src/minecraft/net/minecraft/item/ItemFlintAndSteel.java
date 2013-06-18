@@ -63,9 +63,7 @@ public class ItemFlintAndSteel extends Item
         }
         else
         {
-            int i1 = par3World.getBlockId(par4, par5, par6);
-
-            if (i1 == 0)
+            if (par3World.isAirBlock(par4, par5, par6))
             {
                 // CraftBukkit start - Store the clicked block
                 if (CraftEventFactory.callBlockIgniteEvent(par3World, par4, par5, par6, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, par2EntityPlayer).isCancelled())
