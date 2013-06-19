@@ -4024,7 +4024,7 @@ public abstract class World implements IBlockAccess
                 EntityPlayer player = (EntityPlayer)par7Entity;
                 ItemStack itemstack = (player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem() : null);
                 NBTTagCompound savedCompound = null;
-                if (itemstack != null)
+                if (itemstack != null && itemstack.getTagCompound() != null)
                 {
                     savedCompound = itemstack.getTagCompound(); // save current itemstack NBT
                     itemstack.setTagCompound(new NBTTagCompound()); // dont use any itemstack NBT in our simulation, fixes MFR DSU dupe
