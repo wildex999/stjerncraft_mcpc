@@ -278,7 +278,10 @@ public final class CraftServer implements Server {
     }
 
     public void enablePlugins(PluginLoadOrder type) {
-        org.bukkit.craftbukkit.block.CraftBlock.initMappings(); // MCPC+
+        // MCPC+ start - initialize mod wrappers
+        org.bukkit.craftbukkit.block.CraftBlock.initMappings();
+        org.bukkit.craftbukkit.entity.CraftEntity.initMappings();
+        // MCPC+ end
         if (type == PluginLoadOrder.STARTUP) {
             helpMap.clear();
             helpMap.initializeGeneralTopics();

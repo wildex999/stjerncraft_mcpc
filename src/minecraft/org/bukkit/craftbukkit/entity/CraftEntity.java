@@ -1,8 +1,12 @@
 package org.bukkit.craftbukkit.entity;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import cpw.mods.fml.common.FMLLog;
+import net.minecraft.entity.Entity;
+import net.minecraftforge.common.EnumHelper;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -310,6 +314,19 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (net.minecraft.entity.Entity.class.isAssignableFrom(nmsClass)) { return CraftCustomEntity.class; }
 
         throw new AssertionError("Unknown entity class " + nmsClass == null ? null : nmsClass); // MCPC - show the entity that caused exception
+    }
+
+    // add Bukkit wrappers
+    public static void initMappings() {
+        for (Map.Entry<Class<? extends Entity>, String> entry : cpw.mods.fml.common.registry.EntityRegistry.entityTypeMap.entrySet()) {
+            Class<? extends Entity> entityClass = entry.getKey();
+            String entityName = entry.getValue();
+
+            short entityHashCode = (short)(entityClass.getName().hashCode()^(entityClass.getName().hashCode()>>>16));
+            Class<? extends org.bukkit.entity.Entity> bukkitEntityClass = CraftEntity.getEntityClass(entityClass);
+            FMLLog.info("2addBukkitEntityType " + entityName + " for class " + bukkitEntityClass + " with ID " + entityHashCode);
+            EnumHelper.addBukkitEntityType(entityName, bukkitEntityClass, entityHashCode, false);
+        }
     }
     // MCPC+ end
 

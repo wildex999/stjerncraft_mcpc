@@ -2088,15 +2088,6 @@ public abstract class Entity
         {
             this.bukkitEntity = CraftEntity.getEntity(this.worldObj.getServer(), this);
         }
-        // MCPC+ start - if this entity is a registered Bukkit Type and does not already exist, add it to EntityType
-        String customName = EntityRegistry.getCustomEntityTypeName(this.getClass());
-        if (customName != null && EntityType.fromName(customName) == null)
-        {
-            short entityHashCode = (short)(this.getClass().getName().hashCode()^(this.getClass().getName().hashCode()>>>16));
-            FMLLog.info("addBukkitEntityType " + customName + " for class " + this.bukkitEntity.getClass() + " with ID " + entityHashCode);
-            EnumHelper.addBukkitEntityType(customName, this.bukkitEntity.getClass(), entityHashCode, false);
-        }
-        // MCPC+ end
 
         return this.bukkitEntity;
     }
