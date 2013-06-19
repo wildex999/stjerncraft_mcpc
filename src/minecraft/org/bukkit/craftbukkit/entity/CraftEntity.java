@@ -321,12 +321,34 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         for (Map.Entry<Class<? extends Entity>, String> entry : cpw.mods.fml.common.registry.EntityRegistry.entityTypeMap.entrySet()) {
             Class<? extends Entity> entityClass = entry.getKey();
             String entityName = entry.getValue();
+            int entityId = getEntityTypeIDfromClass(entityClass);
 
-            short entityHashCode = (short)(entityClass.getName().hashCode()^(entityClass.getName().hashCode()>>>16));
             Class<? extends org.bukkit.entity.Entity> bukkitEntityClass = CraftEntity.getEntityClass(entityClass);
-            FMLLog.info("2addBukkitEntityType " + entityName + " for class " + bukkitEntityClass + " with ID " + entityHashCode);
-            EnumHelper.addBukkitEntityType(entityName, bukkitEntityClass, entityHashCode, false);
+            EnumHelper.addBukkitEntityType(entityName, bukkitEntityClass, entityId, false);
         }
+    }
+
+    // Lookup entity id from NMS entity class
+    private static int getEntityTypeIDfromClass(Class entityClass) {
+        // check both maps, since mods can add to either
+
+        Map<Class, Integer> classToIDMapping = cpw.mods.fml.relauncher.ReflectionHelper.getPrivateValue(net.minecraft.entity.EntityList.class, null, "field_75624_e", "classToIDMapping");
+        if (classToIDMapping.containsKey(entityClass)) {
+            return classToIDMapping.get(entityClass);
+        }
+
+        Map<Integer, Class> IDtoClassMapping = cpw.mods.fml.relauncher.ReflectionHelper.getPrivateValue(net.minecraft.entity.EntityList.class, null, "field_75623_d", "IDtoClassMapping");
+        for (Map.Entry<Integer, Class> entry : IDtoClassMapping.entrySet()) {
+            int entityId = entry.getKey();
+            Class thisEntityClass = entry.getValue();
+
+            if (thisEntityClass.getName().equals(entityClass.getName())) {
+                return entityId;
+            }
+        }
+
+        // if there is no entity ID, choose a negative integer based on the class name
+        return -Math.abs(entityClass.getName().hashCode()^(entityClass.getName().hashCode()>>>16));
     }
     // MCPC+ end
 
