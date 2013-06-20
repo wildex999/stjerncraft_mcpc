@@ -1268,8 +1268,7 @@ public abstract class ServerConfigurationManager
      */
     public boolean areCommandsAllowed(String par1Str)
     {
-        // CraftBukkit
-        return this.ops.contains(par1Str.trim().toLowerCase()) || this.mcServer.isSinglePlayer() && this.mcServer.worlds.get(0).getWorldInfo().areCommandsAllowed() && this.mcServer.getServerOwner().equalsIgnoreCase(par1Str) || this.commandsAllowedForAll;
+        return this.ops.contains(par1Str.trim().toLowerCase()) || this.mcServer.isSinglePlayer() && this.mcServer.worldServers[0].getWorldInfo().areCommandsAllowed() && this.mcServer.getServerOwner().equalsIgnoreCase(par1Str) || this.commandsAllowedForAll;
     }
 
     public EntityPlayerMP getPlayerForUsername(String par1Str)

@@ -103,7 +103,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
     /** The server's port. */
     private int serverPort = -1;
-    public WorldServer[] worldServers; // MCPC+ - vanilla compatibility
+    public WorldServer[] worldServers = new WorldServer[0]; // MCPC+ - vanilla compatibility
 
     /** The ServerConfigurationManager instance. */
     private ServerConfigurationManager serverConfigManager;
