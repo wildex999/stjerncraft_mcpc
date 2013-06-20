@@ -16,6 +16,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.craftbukkit.CraftChunk;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
@@ -361,7 +362,12 @@ public class CraftBlock implements Block {
     }
 
     public boolean isEmpty() {
-        return getType() == Material.AIR;
+        // MCPC+ start - support custom air blocks (Railcraft player aura tracking block)
+        //return getType() == Material.AIR;
+        if (getType() == Material.AIR) return true;
+        if (!(getWorld() instanceof CraftWorld)) return false;
+        return ((CraftWorld) getWorld()).getHandle().isAirBlock(getX(), getY(), getZ());
+        // MCPC+ end
     }
 
     public boolean isLiquid() {
