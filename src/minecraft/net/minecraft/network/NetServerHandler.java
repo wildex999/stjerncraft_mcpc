@@ -1968,10 +1968,16 @@ public class NetServerHandler extends NetHandler
                     action = InventoryAction.NOTHING;
 
                     // Quick check for if we have any of the item
+                    // MCPC+ start - can't call getContents() on modded IInventory; CB-added method
+                    try {
                     if (inventory.getTopInventory().contains(cursor.itemID) || inventory.getBottomInventory().contains(cursor.itemID))
                     {
                         action = InventoryAction.COLLECT_TO_CURSOR;
                     }
+                    } catch (AbstractMethodError ex) {
+                        // nothing we can do
+                    }
+                    // MCPC+ end
                 }
             }
 
