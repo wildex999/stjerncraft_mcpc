@@ -1268,7 +1268,8 @@ public abstract class ServerConfigurationManager
      */
     public boolean areCommandsAllowed(String par1Str)
     {
-        return this.ops.contains(par1Str.trim().toLowerCase()) || this.mcServer.isSinglePlayer() && this.mcServer.worldServers[0].getWorldInfo().areCommandsAllowed() && this.mcServer.getServerOwner().equalsIgnoreCase(par1Str) || this.commandsAllowedForAll;
+        if (par1Str == null) return false; // MCPC+ - fixes Aether ServerPlayerAPI initialization which passes a null username
+        return this.ops.contains(par1Str.trim().toLowerCase()) || (this.mcServer.isSinglePlayer() && this.mcServer.worldServers[0].getWorldInfo().areCommandsAllowed() && this.mcServer.getServerOwner().equalsIgnoreCase(par1Str)) || this.commandsAllowedForAll;
     }
 
     public EntityPlayerMP getPlayerForUsername(String par1Str)
