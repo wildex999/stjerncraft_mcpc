@@ -516,15 +516,14 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
             // MCPC+ start
             captureDrops = false;
             PlayerDropsEvent forgeEvent = new PlayerDropsEvent(this, par1DamageSource, capturedDrops, recentlyHit > 0);
-            MinecraftForge.EVENT_BUS.post(forgeEvent);
-            // Avoid duplicate drops. This needs to be fixed if mods need to cancel event.
-            /*if (!MinecraftForge.EVENT_BUS.post(forgeEvent))
+
+            if (!MinecraftForge.EVENT_BUS.post(forgeEvent))
             {
                 for (EntityItem item : capturedDrops)
                 {
                     joinEntityItemWithWorld(item);
                 }
-            }*/
+            }
             // MCPC+ end
         }
 

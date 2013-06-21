@@ -312,12 +312,19 @@ public class CraftEventFactory {
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         victim.expToDrop = event.getDroppedExp();
+        // MCPC+ start - handle any drop changes from plugins
+        victim.calledDeathEvent = true;
 
-        for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
-            if (stack == null || stack.getType() == Material.AIR) continue;
-
-            world.dropItemNaturally(entity.getLocation(), stack);
+        victim.capturedDrops.clear();
+        for (org.bukkit.inventory.ItemStack stack : event.getDrops())
+        {
+            net.minecraft.entity.item.EntityItem entityitem = new net.minecraft.entity.item.EntityItem(((CraftWorld)entity.getWorld()).getHandle(), entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), CraftItemStack.asNMSCopy(stack));
+            if (entityitem != null)
+            {
+                victim.capturedDrops.add((EntityItem)entityitem);
+            }
         }
+        // MCPC+ end
 
         return event;
     }
@@ -338,11 +345,11 @@ public class CraftEventFactory {
             if (stack == null || stack.getType() == Material.AIR) continue;
 
             // MCPC+ start - add support for Forge's PlayerDropsEvent
-            Item item = world.dropItemNaturally(entity.getLocation(), stack);
+            //world.dropItemNaturally(entity.getLocation(), stack); // handle world drop in EntityPlayerMP
             if (victim.captureDrops)
             {
-                Entity entityitem = ((CraftItem)item).getHandle();
-                if (entityitem instanceof EntityItem)
+                net.minecraft.entity.item.EntityItem entityitem = new net.minecraft.entity.item.EntityItem(((CraftWorld)entity.getWorld()).getHandle(), entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), CraftItemStack.asNMSCopy(stack));
+                if (entityitem != null)
                 {
                     victim.capturedDrops.add((EntityItem)entityitem);
                 }

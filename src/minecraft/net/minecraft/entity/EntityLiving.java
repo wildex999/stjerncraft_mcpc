@@ -53,6 +53,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeHooks;
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -275,6 +276,7 @@ public abstract class EntityLiving extends Entity
     // CraftBukkit end
     // MCPC+ start
     private int randomDropResult = 0;
+    public boolean calledDeathEvent = false;
     // MCPC+ end
 
     public EntityLiving(World par1World)
@@ -1386,7 +1388,7 @@ public abstract class EntityLiving extends Entity
                 this.dropFewItems(this.recentlyHit > 0, i);
                 this.dropEquipment(this.recentlyHit > 0, i);
 
-                if (false && this.recentlyHit > 0)   // CraftBukkit - move rare item drop call to dropDeathLoot
+                /*if (this.recentlyHit > 0)   // CraftBukkit - move rare item drop call to dropDeathLoot
                 {
                     j = this.rand.nextInt(200) - i;
 
@@ -1394,9 +1396,9 @@ public abstract class EntityLiving extends Entity
                     {
                         this.dropRareDrop(j <= 0 ? 1 : 0);
                     }
-                }
+                }*/
             }
-            else     // CraftBukkit
+            else // CraftBukkit
             {
                 CraftEventFactory.callEntityDeathEvent(this); // CraftBukkit
             }
@@ -1405,14 +1407,26 @@ public abstract class EntityLiving extends Entity
 
             if (!ForgeHooks.onLivingDrops(this, par1DamageSource, capturedDrops, i, recentlyHit > 0, j))
             {
+                // MCPC+ start - if death event has not been called, capture drops for plugins then fire event
+                if (!this.calledDeathEvent)
+                {
+                    java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+                    for (EntityItem item : capturedDrops)
+                    {
+                        loot.add(CraftItemStack.asCraftMirror(item.getEntityItem()));
+                    }
+                    CraftEventFactory.callEntityDeathEvent(this, loot);
+                }
+                // MCPC+ end
                 for (EntityItem item : capturedDrops)
                 {
                     worldObj.spawnEntityInWorld(item);
                 }
-            }            
+            }
         }
 
         this.worldObj.setEntityState(this, (byte)3);
+        this.calledDeathEvent = false;
     }
 
     // CraftBukkit start - Change return type to ItemStack
