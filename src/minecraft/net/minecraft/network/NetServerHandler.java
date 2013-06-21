@@ -2281,13 +2281,10 @@ public class NetServerHandler extends NetHandler
                 {
                     for (i = 0; i < par1Packet130UpdateSign.signLines[j].length(); ++i)
                     {
-                        // Spigot start
-                        if (!ChatAllowedCharacters.isAllowedCharacter(par1Packet130UpdateSign.signLines[j].charAt(i)))
+                        if (!ChatAllowedCharacters.isAllowedCharacter(par1Packet130UpdateSign.signLines[j].charAt(i)))   // Spigot
                         {
                             flag = false;
-                            break;
                         }
-                        // Spigot end
                     }
                 }
 
