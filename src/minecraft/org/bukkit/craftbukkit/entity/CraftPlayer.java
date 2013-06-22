@@ -1021,11 +1021,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     // Spigot start
     private final Spigot spigot = new Spigot()
     {
+        /* MCPC+ - remove
         @Override
         public InetSocketAddress getRawAddress()
         {
             return ( getHandle().playerNetServerHandler == null ) ? null : (InetSocketAddress) getHandle().playerNetServerHandler.netManager.getSocket().getRemoteSocketAddress();
         }
+        */
 
         @Override
         public void playEffect(Location location, Effect effect, int id, int data, float offsetX, float offsetY, float offsetZ, float speed, int particleCount, int radius)
