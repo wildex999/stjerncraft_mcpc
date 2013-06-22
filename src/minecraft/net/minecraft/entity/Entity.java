@@ -320,7 +320,7 @@ public abstract class Entity
         this.worldObj = par1World;
         this.setPosition(0.0D, 0.0D, 0.0D);
 
-        if (par1World != null)
+        if (par1World != null && par1World.getWorld() != null) // MCPC+ - add second null check for Worlds without CraftWorld
         {
             this.dimension = par1World.provider.dimensionId;
             // Spigot start
