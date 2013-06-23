@@ -736,13 +736,12 @@ public class Chunk
 
                     if (Block.blocksList[par4] != null && Block.blocksList[par4].hasTileEntity(par5))
                     {
-                        // CraftBukkit start - Don't create tile entity if placement failed
-                        if (this.getBlockID(par1, par2, par3) != par4)
+                        // MCPC+ start - Don't create tile entity while processing the BlockPlaceEvent
+                        if (this.worldObj.callingPlaceEvent)
                         {
                             return false;
                         }
-
-                        // CraftBukkit end
+                        // MCPC+ end
                         tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
 
                         if (tileentity == null)
