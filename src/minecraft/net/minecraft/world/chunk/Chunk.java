@@ -736,15 +736,9 @@ public class Chunk
 
                     if (Block.blocksList[par4] != null && Block.blocksList[par4].hasTileEntity(par5))
                     {
-                        // MCPC+ start - Don't create tile entity while processing the BlockPlaceEvent
-                        if (this.worldObj.callingPlaceEvent)
-                        {
-                            return false;
-                        }
-                        // MCPC+ end
                         tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
 
-                        if (tileentity == null)
+                        if (tileentity == null && !this.worldObj.callingPlaceEvent) // MCPC+ - Don't create a tile entity while processing the BlockPlaceEvent
                         {
                             tileentity = Block.blocksList[par4].createTileEntity(this.worldObj, par5);
                             this.worldObj.setBlockTileEntity(j2, par2, k2, tileentity);
