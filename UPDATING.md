@@ -35,13 +35,32 @@ The Bukkit API dependency for MCPC+ is maintained as za.co.mcportcentral:mcpc-ap
 
 Be sure to push to MCPC-API before MCPC-Plus if there are any required API changes.
 
+Merge Spigot-API patches in the same way.
+
 ### Updating Spigot
 
 * org.bukkit
 * org.spigotmc
 * net.minecraft
 
-Checkout [Spigot](https://github.com/EcoCityCraft/Spigot), patch, run [Srg2Source](https://github.com/MinecraftForge/Srg2Source), diff and merge.
+[Spigot](http://www.spigotmc.org/) source is distributed as patches on top of CraftBukkit and Bukkit,
+in the [Spigot](http://github.com/EcoCityCraft/Spigot) repository. [Spigot-Server](https://github.com/EcoCityCraft/Spigot-Server) and
+[Spigot-API](https://github.com/EcoCityCraft/Spigot-API) repositories are auto-generated from the patch repository (on top of CraftBukkit
+and Bukkit, respectively), and can be used to merge Spigot changes into MCPC+.
+
+Checkout Spigot-Server, compile and install (including Spigot-API if necessary).
+
+Run spigot-remap from [MinecraftRemapping](https://github.com/agaricusb/MinecraftRemapping). This will run [Srg2Source](https://github.com/MinecraftForge/Srg2Source)
+to remap the source to MCP mappings, suitable for merging into MCPC+.
+
+Diff and merge the changes, committing preserving the original author and date for each original commit. Prefix the
+original commit message with "Spigot patch: " for new patches. Include a link to GitHub for the Spigot patch *and git revision*
+in the end of the commit message (see the previous MCPC+ Spigot commits for examples).
+
+If significant changes are required for MCPC+ integration beyond the original Spigot patch, make the changes
+in a separate commit under your own authorship.
+
+For updating Spigot patches, repeat the same process except prefix the commit message with "Spigot patch update: ".
 
 ## Updating Forge and FML
 
@@ -69,4 +88,22 @@ After merging:
 
 4.  Create the new remapped Forge dependency: `mvn initialize -P -built`
 5. `git commit -am "Update to Forge ..."`
+
+## Updating Minecraft
+
+Update mappings in `resources/mappings` in a subdirectory matching the CraftBukkit
+obfuscation version ("v" followed by major version, then an increasing counter starting
+at 1 for each major Minecraft version, incrementing by one for each obfuscation change).
+See [MinecraftRemapping](http://github.com/agaricusb/MinecraftRemapping) repository
+and commit history for how to generate the required mappings (mcp for Forge dependency,
+pkgmcp2obf for reobfuscation, cb2numpkg for plugin loader).
+
+Update Bukkit.
+
+Update CraftBukkit. Either start from scratch with MCPBukkit, or merge in the Minecraft updates,
+whichever is most feasible.
+
+Update Forge.
+
+Update Spigot.
 
