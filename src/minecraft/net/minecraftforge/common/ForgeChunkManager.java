@@ -745,6 +745,12 @@ public class ForgeChunkManager
             FMLLog.severe("The mod %s attempted to force load a chunk with an invalid ticket. This is not permitted.", ticket.modId);
             return;
         }
+        // MCPC+ start - guarantee forced chunks are loaded
+        if (chunk != null && ticket != null)
+        {
+            ticket.world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
+        }
+        // MCPC+ end
         ticket.requestedChunks.add(chunk);
         MinecraftForge.EVENT_BUS.post(new ForceChunkEvent(ticket, chunk));
 
