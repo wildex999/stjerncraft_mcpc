@@ -322,7 +322,7 @@ public class CraftEventFactory {
     public static EntityDeathEvent callEntityDeathEvent(net.minecraft.entity.EntityLiving victim, List<org.bukkit.inventory.ItemStack> drops) {
         CraftLivingEntity entity = (CraftLivingEntity) victim.getBukkitEntity();
         EntityDeathEvent event = new EntityDeathEvent(entity, drops, victim.getExpReward());
-        org.bukkit.World world = entity.getWorld();
+        //org.bukkit.World world = entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         victim.expToDrop = event.getDroppedExp();
@@ -332,7 +332,7 @@ public class CraftEventFactory {
         victim.capturedDrops.clear();
         for (org.bukkit.inventory.ItemStack stack : event.getDrops())
         {
-            net.minecraft.entity.item.EntityItem entityitem = new net.minecraft.entity.item.EntityItem(((CraftWorld)entity.getWorld()).getHandle(), entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), CraftItemStack.asNMSCopy(stack));
+            net.minecraft.entity.item.EntityItem entityitem = new net.minecraft.entity.item.EntityItem(victim.worldObj, entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), CraftItemStack.asNMSCopy(stack));
             if (entityitem != null)
             {
                 victim.capturedDrops.add((EntityItem)entityitem);
@@ -346,7 +346,7 @@ public class CraftEventFactory {
     public static PlayerDeathEvent callPlayerDeathEvent(net.minecraft.entity.player.EntityPlayerMP victim, List<org.bukkit.inventory.ItemStack> drops, String deathMessage) {
         CraftPlayer entity = victim.getBukkitEntity();
         PlayerDeathEvent event = new PlayerDeathEvent(entity, drops, victim.getExpReward(), 0, deathMessage);
-        org.bukkit.World world = entity.getWorld();
+        //org.bukkit.World world = entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         victim.keepLevel = event.getKeepLevel();
@@ -362,7 +362,7 @@ public class CraftEventFactory {
             //world.dropItemNaturally(entity.getLocation(), stack); // handle world drop in EntityPlayerMP
             if (victim.captureDrops)
             {
-                net.minecraft.entity.item.EntityItem entityitem = new net.minecraft.entity.item.EntityItem(((CraftWorld)entity.getWorld()).getHandle(), entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), CraftItemStack.asNMSCopy(stack));
+                net.minecraft.entity.item.EntityItem entityitem = new net.minecraft.entity.item.EntityItem(victim.worldObj, entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), CraftItemStack.asNMSCopy(stack));
                 if (entityitem != null)
                 {
                     victim.capturedDrops.add((EntityItem)entityitem);
