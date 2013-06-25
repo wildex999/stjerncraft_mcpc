@@ -56,11 +56,6 @@ public class BlockFlowing extends BlockFluid
      */
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
-        // CraftBukkit start
-        org.bukkit.World bworld = par1World.getWorld();
-        org.bukkit.Server server = par1World.getServer();
-        org.bukkit.block.Block source = bworld == null ? null : bworld.getBlockAt(par2, par3, par4);
-        // CraftBukkit end
         int l = this.getFlowDecay(par1World, par2, par3, par4);
         byte b0 = 1;
 
@@ -71,6 +66,13 @@ public class BlockFlowing extends BlockFluid
 
         boolean flag = true;
         int i1;
+
+        // MCPC+ - move CB edit to after variable initialization for coremod compatibility
+        // CraftBukkit start
+        org.bukkit.World bworld = par1World.getWorld();
+        org.bukkit.Server server = par1World.getServer();
+        org.bukkit.block.Block source = bworld == null ? null : bworld.getBlockAt(par2, par3, par4);
+        // CraftBukkit end
 
         if (l > 0)
         {
