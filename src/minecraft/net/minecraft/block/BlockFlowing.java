@@ -402,6 +402,7 @@ public class BlockFlowing extends BlockFluid
             }
             else
             {
+                if (Block.blocksList[l] == null) return false; // MCPC+ - add null check, fixes #1327
                 Material material = Block.blocksList[l].blockMaterial;
                 return material == Material.portal ? true : material.blocksMovement();
             }
