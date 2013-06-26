@@ -733,7 +733,7 @@ public class ForgeChunkManager
      */
     public static void forceChunk(Ticket ticket, ChunkCoordIntPair chunk)
     {
-        if (ticket == null || chunk == null)
+        if (ticket == null || chunk == null || isForceLoadingChunks) // MCPC+ - if we are already force loading a chunk, ignore
         {
             return;
         }
@@ -747,7 +747,7 @@ public class ForgeChunkManager
             return;
         }
         // MCPC+ start - load forced chunk if it has not already been loaded
-        if (!getPersistentChunksFor(ticket.world).containsKey(chunk) && !ticket.world.getChunkProvider().chunkExists(chunk.chunkXPos, chunk.chunkZPos) && !isForceLoadingChunks)
+        if (!getPersistentChunksFor(ticket.world).containsKey(chunk) && !ticket.world.getChunkProvider().chunkExists(chunk.chunkXPos, chunk.chunkZPos))
         {
             isForceLoadingChunks = true;
             Chunk loadedChunk = ticket.world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
