@@ -99,7 +99,7 @@ public class ForgeChunkManager
     private static int dormantChunkCacheSize;
 
     private static Set<String> warnedMods = Sets.newHashSet();
-    private static boolean isForceLoadingChunks = false; // MCPC+ - prevents forceChunks from getting stuck in loop while force loading a chunk
+    private static boolean isForceLoadingChunk = false; // MCPC+ - prevents forceChunk from getting stuck in loop
     /**
      * All mods requiring chunkloading need to implement this to handle the
      * re-registration of chunk tickets at world loading time
@@ -733,7 +733,7 @@ public class ForgeChunkManager
      */
     public static void forceChunk(Ticket ticket, ChunkCoordIntPair chunk)
     {
-        if (ticket == null || chunk == null || isForceLoadingChunks) // MCPC+ - if we are already force loading a chunk, ignore
+        if (ticket == null || chunk == null || isForceLoadingChunk) // MCPC+ - if we are already force loading a chunk, ignore
         {
             return;
         }
@@ -749,9 +749,9 @@ public class ForgeChunkManager
         // MCPC+ start - load forced chunk if it has not already been loaded
         if (!getPersistentChunksFor(ticket.world).containsKey(chunk) && !ticket.world.getChunkProvider().chunkExists(chunk.chunkXPos, chunk.chunkZPos))
         {
-            isForceLoadingChunks = true;
+            isForceLoadingChunk = true;
             Chunk loadedChunk = ticket.world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
-            isForceLoadingChunks = false;
+            isForceLoadingChunk = false;
         }
         // MCPC+ end
         ticket.requestedChunks.add(chunk);
