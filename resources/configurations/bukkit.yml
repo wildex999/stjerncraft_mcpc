@@ -47,7 +47,6 @@ settings:
 mcpc:
     connection-logging: false
     dump-materials: false
-    world-leak-debug: false
     infinite-water-source: true
     flowing-lava-decay: false
     load-chunk-on-request: true

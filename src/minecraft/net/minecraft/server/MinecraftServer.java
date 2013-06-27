@@ -319,7 +319,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         {
             overWorld.getWorld().getPopulators().addAll(overWorldGen.getDefaultPopulators(overWorld.getWorld()));
         }
-        this.worlds.add(overWorld); // MCPC+ - CB expects overworld in position 0 so we must add it first
+
         for (int dimension : DimensionManager.getStaticDimensionIDs())
         {
             String worldType = "";
@@ -357,7 +357,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
                 this.setUserMessage(name);
             }
-            // CraftBukkit
+
             world = (dimension == 0 ? overWorld : new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, overWorld, this.theProfiler, this.getLogAgent(), env, gen));
             // MCPC+ end
             if (gen != null)
@@ -373,12 +373,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             {
                 world.getWorldInfo().setGameType(this.getGameType());
             }
-            // MCPC+ start - DimensionManager.setWorld adds all worlds except vanilla for us when the world is created.
-            if (dimension == -1 || dimension == 1)
-            {
-                this.worlds.add(world);
-            }
-            // MCPC+ end
+
             this.serverConfigManager.setPlayerManager(this.worlds.toArray(new WorldServer[this.worlds.size()]));
             // CraftBukkit end
             MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((World)world)); // Forge

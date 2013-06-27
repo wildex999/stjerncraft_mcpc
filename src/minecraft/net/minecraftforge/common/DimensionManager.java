@@ -213,33 +213,28 @@ public class DimensionManager
 
     public static Integer[] getIDs(boolean check)
     {
-        // MCPC+ start - check config option and only log world leak messages if enabled
-        if (MinecraftServer.getServer().server.getWorldLeakDebug())
+        if (check)
         {
-            if (check)
+            List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
+            allWorlds.removeAll(worlds.values());
+            for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
             {
-                List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
-                allWorlds.removeAll(worlds.values());
-                for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
+                World w = li.next();
+                leakedWorlds.add(System.identityHashCode(w));
+            }
+            for (World w : allWorlds)
+            {
+                int leakCount = leakedWorlds.count(System.identityHashCode(w));
+                if (leakCount == 5)
                 {
-                    World w = li.next();
-                    leakedWorlds.add(System.identityHashCode(w));
+                    FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurences). Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to MCPC.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
                 }
-                for (World w : allWorlds)
+                else if (leakCount % 5 == 0)
                 {
-                    int leakCount = leakedWorlds.count(System.identityHashCode(w));
-                    if (leakCount == 5)
-                    {
-                        FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurences). Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to MCPC.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
-                    }
-                    else if (leakCount % 5 == 0)
-                    {
-                        FMLLog.fine("The world %x (%s) may have leaked: seen %d times. Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to MCPC.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName(), leakCount);
-                    }
+                    FMLLog.fine("The world %x (%s) may have leaked: seen %d times. Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to MCPC.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName(), leakCount);
                 }
             }
         }
-        // MCPC+ end
         return getIDs();
     }
     public static Integer[] getIDs()
@@ -251,10 +246,10 @@ public class DimensionManager
     {
         if (world != null) {
             worlds.put(id, world);
-            // MCPC+ start - check config option and only log world leak messages if enabled
-            if (MinecraftServer.getServer().server.getWorldLeakDebug())
+            // MCPC+ start - handle all world adds here for Bukkit
+            if (!MinecraftServer.getServer().worlds.contains(world))
             {
-                weakWorldMap.put(world, world);
+                MinecraftServer.getServer().worlds.add(world);
             }
             // MCPC+ end
             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
@@ -286,12 +281,6 @@ public class DimensionManager
                 continue;
             }
             tmp.add(entry.getValue());
-            // MCPC+ start - add world if it does not exist
-            if (!MinecraftServer.getServer().worlds.contains(entry.getValue()))
-            {
-                MinecraftServer.getServer().worlds.add(entry.getValue());
-            }
-            // MCPC+ end
         }
 
         MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
