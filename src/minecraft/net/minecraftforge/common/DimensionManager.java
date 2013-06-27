@@ -246,6 +246,7 @@ public class DimensionManager
     {
         if (world != null) {
             worlds.put(id, world);
+            weakWorldMap.put(world, world);
             // MCPC+ start - handle all world adds here for Bukkit
             if (!MinecraftServer.getServer().worlds.contains(world))
             {
