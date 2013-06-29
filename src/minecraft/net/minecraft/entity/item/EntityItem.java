@@ -121,17 +121,20 @@ public class EntityItem extends Entity
         this.lastTick = MinecraftServer.currentTick;
         // CraftBukkit end
 
-        if (lastTick % 2 == 0)   // Spigot
-        {
+        boolean forceUpdate = this.ticksExisted % 75 == 1; // MCPC+ - optimize item tick updates
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
         this.motionY -= 0.03999999910593033D;
-        this.noClip = this.pushOutOfBlocks(this.posX, (this.boundingBox.minY + this.boundingBox.maxY) / 2.0D, this.posZ);
+        // MCPC+ start - if forced
+        if (forceUpdate || noClip) {
+            this.noClip = this.pushOutOfBlocks(this.posX, (this.boundingBox.minY + this.boundingBox.maxY) / 2.0D, this.posZ);
+        }
+        // MCPC+ end
         this.moveEntity(this.motionX, this.motionY, this.motionZ);
         boolean flag = (int)this.prevPosX != (int)this.posX || (int)this.prevPosY != (int)this.posY || (int)this.prevPosZ != (int)this.posZ;
 
-        if (flag || this.ticksExisted % 25 == 0)
+        if ((flag && this.ticksExisted % 5 == 0) || forceUpdate) // MCPC+ - if forced
         {
             if (this.worldObj.getBlockMaterial(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) == Material.lava)
             {
@@ -141,7 +144,7 @@ public class EntityItem extends Entity
                 this.playSound("random.fizz", 0.4F, 2.0F + this.rand.nextFloat() * 0.4F);
             }
 
-            if (!this.worldObj.isRemote)
+            if (forceUpdate && !this.worldObj.isRemote) // MCPC+ - if forced
             {
                 this.searchForOtherItemsNearby();
             }
@@ -168,9 +171,9 @@ public class EntityItem extends Entity
         {
             this.motionY *= -0.5D;
         }
-        } // Spigot
 
         // ++this.age; // CraftBukkit - Moved up
+        ++this.age; // MCPC+ - Moved back down
 
         ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
         
