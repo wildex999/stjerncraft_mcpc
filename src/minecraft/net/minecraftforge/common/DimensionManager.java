@@ -213,28 +213,33 @@ public class DimensionManager
 
     public static Integer[] getIDs(boolean check)
     {
-        if (check)
+        // MCPC+ start - check config option and only log world leak messages if enabled
+        if (MinecraftServer.getServer().server.getWorldLeakDebug())
         {
-            List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
-            allWorlds.removeAll(worlds.values());
-            for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
+            if (check)
             {
-                World w = li.next();
-                leakedWorlds.add(System.identityHashCode(w));
-            }
-            for (World w : allWorlds)
-            {
-                int leakCount = leakedWorlds.count(System.identityHashCode(w));
-                if (leakCount == 5)
+                List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
+                allWorlds.removeAll(worlds.values());
+                for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
                 {
-                    FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurences). Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to MCPC.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
+                    World w = li.next();
+                    leakedWorlds.add(System.identityHashCode(w));
                 }
-                else if (leakCount % 5 == 0)
+                for (World w : allWorlds)
                 {
-                    FMLLog.fine("The world %x (%s) may have leaked: seen %d times. Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to MCPC.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName(), leakCount);
+                    int leakCount = leakedWorlds.count(System.identityHashCode(w));
+                    if (leakCount == 5)
+                    {
+                        FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurences). Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to MCPC.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
+                    }
+                    else if (leakCount % 5 == 0)
+                    {
+                        FMLLog.fine("The world %x (%s) may have leaked: seen %d times. Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to MCPC.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName(), leakCount);
+                    }
                 }
             }
         }
+        // MCPC+ end
         return getIDs();
     }
     public static Integer[] getIDs()
@@ -246,8 +251,12 @@ public class DimensionManager
     {
         if (world != null) {
             worlds.put(id, world);
-            weakWorldMap.put(world, world);
-            // MCPC+ start - handle all world adds here for Bukkit
+            // MCPC+ start - check config option and only log world leak messages if enabled
+            if (MinecraftServer.getServer().server.getWorldLeakDebug())
+            {
+                weakWorldMap.put(world, world);
+            }
+            // handle all world adds here for Bukkit
             if (!MinecraftServer.getServer().worlds.contains(world))
             {
                 MinecraftServer.getServer().worlds.add(world);
