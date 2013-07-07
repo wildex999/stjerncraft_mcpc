@@ -70,6 +70,7 @@ import org.bukkit.plugin.PluginManager;
 // CraftBukkit end
 // MCPC+ start
 import cpw.mods.fml.common.registry.EntityRegistry;
+import net.minecraft.world.Teleporter;
 import net.minecraftforge.common.EnumHelper;
 // MCPC+ end
 import net.minecraftforge.common.IExtendedEntityProperties;
@@ -2600,24 +2601,14 @@ public abstract class Entity
             // int j = this.dimension;
             // MCPC+ start - Allow Forge hotloading on teleport
             WorldServer exitWorld = minecraftserver.worldServerForDimension(par1);
-            /*
-            if (this.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET)   // Plugins must specify exit from custom Bukkit worlds
-            {
-                // Only target existing worlds (compensate for allow-nether/allow-end as false)
-                for (WorldServer world : minecraftserver.worlds)
-                {
-                    if (world.dimension == par1)
-                    {
-                        exitWorld = world;
-                    }
-                }
-            }
-            // MCPC+ end - */
 
             Location enter = this.getBukkitEntity().getLocation();
             Location exit = exitWorld != null ? minecraftserver.getConfigurationManager().calculateTarget(enter, minecraftserver.worldServerForDimension(par1)) : null;
             boolean useTravelAgent = exitWorld != null && !(this.dimension == 1 && exitWorld.dimension == 1); // don't use agent for custom worlds or return from THE_END
-            TravelAgent agent = exit != null ? (TravelAgent)((CraftWorld) exit.getWorld()).getHandle().getDefaultTeleporter() : org.bukkit.craftbukkit.CraftTravelAgent.DEFAULT;  // return arbitrary TA to compensate for implementation dependent plugins
+            // MCPC+ start - check if teleporter is instance of TravelAgent before attempting to cast to it
+            Teleporter teleporter = exit != null ? ((CraftWorld) exit.getWorld()).getHandle().getDefaultTeleporter() : null;
+            TravelAgent agent = (teleporter != null && teleporter instanceof TravelAgent) ? (TravelAgent)teleporter : org.bukkit.craftbukkit.CraftTravelAgent.DEFAULT;  // return arbitrary TA to compensate for implementation dependent plugins
+            // MCPC+ end
             EntityPortalEvent event = new EntityPortalEvent(this.getBukkitEntity(), enter, exit, agent);
             event.useTravelAgent(useTravelAgent);
             event.getEntity().getServer().getPluginManager().callEvent(event);
