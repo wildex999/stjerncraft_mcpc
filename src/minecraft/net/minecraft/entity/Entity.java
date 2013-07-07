@@ -990,7 +990,7 @@ public abstract class Entity
             d11 = this.posZ - d5;
 
             // CraftBukkit start
-            if ((this.isCollidedHorizontally) && (this.getBukkitEntity() instanceof Vehicle))
+            if ((this.isCollidedHorizontally) && (this.getBukkitEntity() instanceof Vehicle) && this.worldObj.getWorld() != null) // MCPC+ - fixes MFR NPE with grinder/slaughterhouse
             {
                 Vehicle vehicle = (Vehicle) this.getBukkitEntity();
                 org.bukkit.block.Block block = this.worldObj.getWorld().getBlockAt(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY - (double) this.yOffset), MathHelper.floor_double(this.posZ));
