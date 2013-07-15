@@ -66,28 +66,33 @@ public class BlockDropper extends BlockDispenser
                     // CraftBukkit start - Fire event when pushing items into other inventories
                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(itemstack.copy().splitStack(1));
                     org.bukkit.inventory.Inventory destinationInventory;
-
-                    // Have to special case large chests as they work oddly
-                    if (iinventory instanceof InventoryLargeChest)
+                    InventoryMoveItemEvent event = null; // MCPC+
+                    // MCPC+ start - vanilla compatibility
+                    if (iinventory.getOwner() != null)
                     {
-                        destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) iinventory);
-                    }
-                    else
-                    {
-                        destinationInventory = iinventory.getOwner().getInventory();
-                    }
+                        // Have to special case large chests as they work oddly
+                        if (iinventory instanceof InventoryLargeChest)
+                        {
+                            destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) iinventory);
+                        }
+                        else
+                        {
+                            destinationInventory = iinventory.getOwner().getInventory();
+                        }
 
-                    InventoryMoveItemEvent event = new InventoryMoveItemEvent(tileentitydispenser.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
-                    par1World.getServer().getPluginManager().callEvent(event);
-
-                    if (event.isCancelled())
-                    {
-                        return;
+                        event = new InventoryMoveItemEvent(tileentitydispenser.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
+                        par1World.getServer().getPluginManager().callEvent(event);
+    
+                        if (event.isCancelled())
+                        {
+                            return;
+                        }
                     }
+                    // MCPC+ end
 
                     itemstack1 = TileEntityHopper.insertStack(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[i1]);
 
-                    if (event.getItem().equals(oitemstack) && itemstack1 == null)
+                    if (((event != null && event.getItem().equals(oitemstack) && itemstack1 == null)) || (event == null && itemstack1 == null)) // MCPC+
                     {
                         // CraftBukkit end
                         itemstack1 = itemstack.copy();
