@@ -512,14 +512,18 @@ public class TileEntityHopper extends TileEntity implements Hopper
         else
         {
             // CraftBukkit start
-            InventoryPickupItemEvent event = new InventoryPickupItemEvent(par0IInventory.getOwner().getInventory(), (org.bukkit.entity.Item) par1EntityItem.getBukkitEntity());
-            par1EntityItem.worldObj.getServer().getPluginManager().callEvent(event);
-
-            if (event.isCancelled())
+            // MCPC+ start - vanilla compatibility
+            if (par0IInventory.getOwner() != null && par1EntityItem.getBukkitEntity() != null)
             {
-                return false;
+                InventoryPickupItemEvent event = new InventoryPickupItemEvent(par0IInventory.getOwner().getInventory(), (org.bukkit.entity.Item) par1EntityItem.getBukkitEntity());
+                par1EntityItem.worldObj.getServer().getPluginManager().callEvent(event);
+    
+                if (event.isCancelled())
+                {
+                    return false;
+                }
             }
-
+            // MCPC+ end
             // CraftBukkit end
             ItemStack itemstack = par1EntityItem.getEntityItem().copy();
             ItemStack itemstack1 = insertStack(par0IInventory, itemstack, -1);
