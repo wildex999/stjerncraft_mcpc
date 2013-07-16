@@ -2161,6 +2161,7 @@ public abstract class World implements IBlockAccess
         CrashReport crashreport;
         CrashReportCategory crashreportcategory;
 
+        long lastChunk = Long.MIN_VALUE; // Spigot - cache chunk x, z cords for unload queue
         for (i = 0; i < this.weatherEffects.size(); ++i)
         {
             entity = (Entity)this.weatherEffects.get(i);
@@ -2173,12 +2174,16 @@ public abstract class World implements IBlockAccess
 
             ChunkProviderServer chunkProviderServer = ((WorldServer) this).theChunkProviderServer;
 
-            if (chunkProviderServer.chunksToUnload.contains(MathHelper.floor_double(entity.posX) >> 4, MathHelper.floor_double(entity.posZ) >> 4))
-            {
-                continue;
+            // Spigot start - check last chunk to see if this loaded (fast cache)
+            long chunk = org.bukkit.craftbukkit.util.LongHash.toLong(MathHelper.floor_double(entity.posX) >> 4, MathHelper.floor_double(entity.posZ) >> 4);
+            if (lastChunk != chunk) {
+                if (chunkProviderServer.chunksToUnload.contains(chunk)) { // Spigot end
+                    continue;
+                }
             }
 
             // CraftBukkit end
+            lastChunk = chunk; // Spigot
 
             try
             {
@@ -2216,6 +2221,7 @@ public abstract class World implements IBlockAccess
             }
         }
 
+        lastChunk = Long.MIN_VALUE; // Spigot
         this.theProfiler.endStartSection("remove");
         this.loadedEntityList.removeAll(this.unloadedEntityList);
         int j;
@@ -2249,12 +2255,16 @@ public abstract class World implements IBlockAccess
             // CraftBukkit start - Don't tick entities in chunks queued for unload
             ChunkProviderServer chunkProviderServer = ((WorldServer) this).theChunkProviderServer;
 
-            if (chunkProviderServer.chunksToUnload.contains(MathHelper.floor_double(entity.posX) >> 4, MathHelper.floor_double(entity.posZ) >> 4))
-            {
-                continue;
+            // Spigot start - check last chunk to see if this loaded (fast cache)
+            long chunk = org.bukkit.craftbukkit.util.LongHash.toLong(MathHelper.floor_double(entity.posX) >> 4, MathHelper.floor_double(entity.posZ) >> 4);
+            if (lastChunk != chunk) {
+                if (chunkProviderServer.chunksToUnload.contains(chunk)) { // Spigot end
+                    continue;
+                }
             }
 
             // CraftBukkit end
+            lastChunk = Long.MIN_VALUE; // Spigot
 
             if (entity.ridingEntity != null)
             {
