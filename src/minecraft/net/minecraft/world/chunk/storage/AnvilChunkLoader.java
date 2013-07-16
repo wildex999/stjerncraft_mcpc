@@ -137,6 +137,13 @@ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
 
     protected Object[] a(World world, int i, int j, NBTTagCompound nbttagcompound)   // CraftBukkit - return Chunk -> Object[]
     {
+        // MCPC+ start
+        if(nbttagcompound == null)
+        {
+            world.getWorldLogAgent().logSevere("Chunk file at " + i + "," + j + " is missing nbt tag data, this is not good!");
+            return null;
+        }
+        // MCPC+ end
         if (!nbttagcompound.hasKey("Level"))
         {
             world.getWorldLogAgent().logSevere("Chunk file at " + i + "," + j + " is missing level data, skipping");
