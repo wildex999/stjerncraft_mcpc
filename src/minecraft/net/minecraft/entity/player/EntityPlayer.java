@@ -91,6 +91,7 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import net.minecraft.server.MinecraftServer; // MCPC+
 
 public abstract class EntityPlayer extends EntityLiving implements ICommandSender, cpw.mods.fml.common.network.Player // MCPC+ - marker interface
 {
@@ -597,6 +598,12 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
         this.inventory.decrementAnimations();
         this.prevCameraYaw = this.cameraYaw;
+        // MCPC+ start - check if landMovementFactor has passed our player-speed-max limit
+        if (MinecraftServer.getServer().server.getLandMovementMax() > 0 && this.landMovementFactor > MinecraftServer.getServer().server.getLandMovementMax())
+        {
+            this.landMovementFactor = (float)MinecraftServer.getServer().server.getLandMovementMax();
+        }
+        // MCPC+ end
         super.onLivingUpdate();
         this.landMovementFactor = this.capabilities.getWalkSpeed();
         this.jumpMovementFactor = this.speedInAir;
