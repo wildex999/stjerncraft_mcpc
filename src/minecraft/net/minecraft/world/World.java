@@ -197,7 +197,8 @@ public abstract class World implements IBlockAccess
     public boolean spawnPeacefulMobs = true;
 
     /** Positions to update */
-    protected gnu.trove.map.hash.TLongShortHashMap activeChunkSet; // Spigot
+    protected gnu.trove.map.hash.TLongShortHashMap activeChunkSet_CB; // Spigot
+    public Set activeChunkSet = new HashSet(); // vanilla compatibility
     public long ticksPerAnimalSpawns;
     public long ticksPerMonsterSpawns;
     // CraftBukkit end
@@ -320,8 +321,8 @@ public abstract class World implements IBlockAccess
         this.chunkTickRadius = (byte)((this.getServer().getViewDistance() < 7) ? this.getServer().getViewDistance() : 7); // CraftBukkit - don't tick chunks we don't load for player
         // CraftBukkit end
         // Spigot start
-        activeChunkSet = new gnu.trove.map.hash.TLongShortHashMap(world.growthPerTick * 5, 0.7f, Long.MIN_VALUE, Short.MIN_VALUE);
-        activeChunkSet.setAutoCompactionFactor(0);
+        activeChunkSet_CB = new gnu.trove.map.hash.TLongShortHashMap(world.growthPerTick * 5, 0.7f, Long.MIN_VALUE, Short.MIN_VALUE);
+        activeChunkSet_CB.setAutoCompactionFactor(0);
         // Spigot end
         this.ambientTickCountdown = this.rand.nextInt(12000);
         this.lightUpdateBlockList = new int[32768];
@@ -3395,8 +3396,9 @@ public abstract class World implements IBlockAccess
             int chunkZ = MathHelper.floor_double(entityplayer.posZ / 16.0D);
             // Always update the chunk the player is on
             long key = chunkToKey(chunkX, chunkZ);
-            int existingPlayers = Math.max(0, activeChunkSet.get(key)); //filter out -1's
-            activeChunkSet.put(key, (short)(existingPlayers + 1));
+            int existingPlayers = Math.max(0, activeChunkSet_CB.get(key)); //filter out -1's
+            activeChunkSet_CB.put(key, (short)(existingPlayers + 1));
+            activeChunkSet.add(new ChunkCoordIntPair(chunkX, chunkZ)); // MCPC+ - vanilla compatibility
 
             // Check and see if we update the chunks surrounding the player this tick
             for (int chunk = 0; chunk < chunksPerPlayer; chunk++)
@@ -3405,9 +3407,10 @@ public abstract class World implements IBlockAccess
                 int dz = (rand.nextBoolean() ? 1 : -1) * rand.nextInt(randRange);
                 long hash = chunkToKey(dx + chunkX, dz + chunkZ);
 
-                if (!activeChunkSet.contains(hash) && this.chunkExists(dx + chunkX, dz + chunkZ))
+                if (!activeChunkSet_CB.contains(hash) && this.chunkExists(dx + chunkX, dz + chunkZ))
                 {
-                    activeChunkSet.put(hash, (short) - 1); //no players
+                    activeChunkSet_CB.put(hash, (short) - 1); //no players
+                    activeChunkSet.add(new ChunkCoordIntPair(dx + chunkX, dz + chunkZ)); // MCPC+ - vanilla compatibility
                 }
             }
         }

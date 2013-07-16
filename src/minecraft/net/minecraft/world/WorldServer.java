@@ -524,16 +524,17 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         // Iterator iterator = this.chunkTickList.iterator();
 
         // Spigot start
-        for (TLongShortIterator iter = activeChunkSet.iterator(); iter.hasNext();)
+        for (TLongShortIterator iter = activeChunkSet_CB.iterator(); iter.hasNext();)
         {
             iter.advance();
             long chunkCoord = iter.key();
             int chunkX = World.keyToX(chunkCoord);
             int chunkZ = World.keyToZ(chunkCoord);
 
-            // If unloaded, or in procedd of being unloaded, drop it
+            // If unloaded, or in process of being unloaded, drop it
             if ((!this.chunkExists(chunkX, chunkZ)) || (this.theChunkProviderServer.chunksToUnload.contains(chunkX, chunkZ)))
             {
+                activeChunkSet.remove(new ChunkCoordIntPair(chunkX, chunkZ)); // MCPC+ - vanilla compatibility
                 iter.remove();
                 continue;
             }
@@ -1285,10 +1286,10 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
 
         /* Remove
-        explosion.a = flag;
-        explosion.b = flag1;
-        explosion.a();
-        explosion.a(false);
+        explosion.isFlaming = par9;
+        explosion.isSmoking = par10;
+        explosion.doExplosionA();
+        explosion.doExplosionB(false);
         */
         // CraftBukkit end - TODO: Check if explosions are still properly implemented
 
