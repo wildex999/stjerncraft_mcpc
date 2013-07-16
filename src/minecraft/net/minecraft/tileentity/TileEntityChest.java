@@ -20,7 +20,7 @@ import org.bukkit.entity.HumanEntity;
 
 public class TileEntityChest extends TileEntity implements IInventory
 {
-    private ItemStack[] chestContents = new ItemStack[27]; // CraftBukkit - 36 -> 27
+    private ItemStack[] chestContents = new ItemStack[36];
 
     /** Determines if the check for adjacent chests has taken place. */
     public boolean adjacentChestChecked = false;

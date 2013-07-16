@@ -19,7 +19,7 @@ import org.bukkit.inventory.InventoryHolder;
 
 public abstract class EntityMinecartContainer extends EntityMinecart implements IInventory
 {
-    private ItemStack[] minecartContainerItems = new ItemStack[27]; // CraftBukkit - 36 -> 27
+    private ItemStack[] minecartContainerItems = new ItemStack[36];
 
     /**
      * When set to true, the minecart will drop all items when setDead() is called. When false (such as when travelling
