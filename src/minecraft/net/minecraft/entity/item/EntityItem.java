@@ -172,8 +172,7 @@ public class EntityItem extends Entity
             this.motionY *= -0.5D;
         }
 
-        // ++this.age; // CraftBukkit - Moved up
-        ++this.age; // MCPC+ - Moved back down
+        // ++this.age; // CraftBukkit - Moved up (base age on wall time)
 
         ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
         

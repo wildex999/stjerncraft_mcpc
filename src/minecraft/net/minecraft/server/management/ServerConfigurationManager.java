@@ -808,7 +808,19 @@ public abstract class ServerConfigurationManager
             }
         }
 
-        TravelAgent agent = exit != null ? (TravelAgent)((CraftWorld) exit.getWorld()).getHandle().getDefaultTeleporter() : org.bukkit.craftbukkit.CraftTravelAgent.DEFAULT;  // return arbitrary TA to compensate for implementation dependent plugins
+        // MCPC+ start - allow for forge mods to be the teleporter
+        TravelAgent agent = null;
+        if (exit != null) {
+            net.minecraft.world.Teleporter teleporter = ((CraftWorld)exit.getWorld()).getHandle().getDefaultTeleporter();
+            if (teleporter instanceof TravelAgent) {
+                agent = (TravelAgent)teleporter;
+            }
+        }
+        if (agent == null) {
+            agent = org.bukkit.craftbukkit.CraftTravelAgent.DEFAULT; // return arbitrary TA to compensate for implementation dependent plugins
+        }
+        // MCPC+ end
+
         PlayerPortalEvent event = new PlayerPortalEvent(entityplayermp.getBukkitEntity(), enter, exit, agent, cause);
         event.useTravelAgent(useTravelAgent);
         Bukkit.getServer().getPluginManager().callEvent(event);
