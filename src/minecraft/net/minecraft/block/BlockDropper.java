@@ -88,12 +88,11 @@ public class BlockDropper extends BlockDispenser
                             return;
                         }
                     }
-                    // MCPC+ end
+                    itemstack1 = TileEntityHopper.insertStack(iinventory, event != null ? CraftItemStack.asNMSCopy(event.getItem()) : itemstack.copy().splitStack(1), Facing.oppositeSide[i1]);
 
-                    itemstack1 = TileEntityHopper.insertStack(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[i1]);
-
-                    if (((event != null && event.getItem().equals(oitemstack) && itemstack1 == null)) || (event == null && itemstack1 == null)) // MCPC+
+                    if (((event != null && event.getItem().equals(oitemstack) && itemstack1 == null)) || (event == null && itemstack1 == null))
                     {
+                        // MCPC+ end
                         // CraftBukkit end
                         itemstack1 = itemstack.copy();
 
