@@ -44,6 +44,7 @@ settings:
     bungee-proxies:
       - 127.0.0.1
     texture-resolution: 16
+    metrics-enable: true
 mcpc:
     connection-logging: false
     dump-materials: false
@@ -53,7 +54,7 @@ mcpc:
     load-chunk-on-request: true
     warn-place-no-tile-entity: true
     banned-item-IDs: []
-    enable-banned-item-IDs: false
+    enable-banned-items: false
     player-speed-max:
         land: -1
     fake-players:

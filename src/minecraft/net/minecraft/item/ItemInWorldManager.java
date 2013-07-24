@@ -168,7 +168,7 @@ public class ItemInWorldManager
             net.minecraftforge.event.entity.player.PlayerInteractEvent playerinteractevent1 = ForgeEventFactory.onPlayerInteract(this.thisPlayerMP, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4); // Forge
 
             // CraftBukkit start
-            if (playerinteractevent.isCancelled() || playerinteractevent1.isCanceled() || (this.thisPlayerMP.inventory.getCurrentItem() != null && GameRegistry.isItemBanned(this.thisPlayerMP.inventory.getCurrentItem()))) // Forge
+            if (playerinteractevent.isCancelled() || playerinteractevent1.isCanceled() || GameRegistry.isItemBanned(this.thisPlayerMP.inventory.getCurrentItem())) // Forge
             {
                 // Let the client know the block still exists
                 ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
@@ -354,7 +354,6 @@ public class ItemInWorldManager
         if (this.thisPlayerMP instanceof EntityPlayerMP)
         {
             org.bukkit.block.Block block = this.theWorld.getWorld().getBlockAt(par1, par2, par3);
-
             // Tell client the block is gone immediately then process events
             if (theWorld.getBlockTileEntity(par1, par2, par3) == null)
             {
@@ -543,7 +542,7 @@ public class ItemInWorldManager
             net.minecraftforge.event.entity.player.PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
             // MCPC+ start
             // if forge event is explicitly cancelled, return
-            if (forgeEvent.isCanceled() || (par3ItemStack != null && (GameRegistry.isItemBanned(par3ItemStack))))
+            if (forgeEvent.isCanceled() || GameRegistry.isItemBanned(par3ItemStack))
             {
                 thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
                 return false;

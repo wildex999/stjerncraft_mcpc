@@ -158,8 +158,6 @@ public final class CraftServer implements Server {
     private double landMovementMax = -1;
     // Some mods such as Twilight Forest listen for specific events as their WorldProvider loads to hotload its dimension. This prevents this from happening so MV can create worlds using the same provider without issue.
     public boolean craftWorldLoading = false;
-    private boolean[] bannedItemIDs = null;
-    private boolean enableBannedItemIDs = false;
     // MCPC+ end
 
     // Orebfuscator use
@@ -624,22 +622,6 @@ public final class CraftServer implements Server {
     {
         String result = this.configuration.getString("mcpc.bukkit-to-forge-mappings." + name);
         return result;
-    }
-
-    public boolean isItemBanned(int itemID) {
-        enableBannedItemIDs = this.configuration.getBoolean("mcpc.enable-banned-item-IDs", false);
-        if (enableBannedItemIDs)
-        {
-            if (bannedItemIDs == null) {
-                bannedItemIDs = new boolean[32000];
-                    for (int id : this.configuration.getIntegerList("mcpc.banned-item-IDs")) {
-                        bannedItemIDs[id] = true;
-                        getLogger().log(Level.INFO, ("Banning") + " item ID " +id);
-                    }
-            }
-            return bannedItemIDs[itemID];
-        }
-        else return false;
     }
     // MCPC+ end    
 

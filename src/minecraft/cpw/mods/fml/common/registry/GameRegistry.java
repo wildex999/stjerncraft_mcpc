@@ -14,6 +14,7 @@ package cpw.mods.fml.common.registry;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -79,12 +80,36 @@ public class GameRegistry
     private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
     private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
     private static org.bukkit.configuration.file.YamlConfiguration configuration = Main.configuration; // MCPC+
-    private static boolean[] bannedItemIDs = null;
+    private static Map<Integer, BannedBlock> bannedItemCache = new HashMap(); 
     /**
      * Register a world generator - something that inserts new block types into the world
      *
      * @param generator
      */
+    static 
+    {
+        // init banned items
+        if (configuration.getBoolean("mcpc.enable-banned-items"))
+        {
+            for (String bannedData : configuration.getStringList("mcpc.banned-item-IDs")) {
+                int seperator = bannedData.indexOf(':');
+                if (seperator > 0 && (bannedData.length() - 1) > seperator)
+                {
+                    int id = Integer.parseInt(bannedData.substring(0, seperator));
+                    int meta = Integer.parseInt(bannedData.substring(seperator + 1, bannedData.length()));
+                    bannedItemCache.put(id, new BannedBlock(id, meta));
+                    FMLLog.info("Banning" + " item ID " +id);
+                }
+                else
+                {
+                    int id = Integer.parseInt(bannedData);
+                    bannedItemCache.put(id, new BannedBlock(id, -1));
+                    FMLLog.info("Banning" + " item ID " +id);
+                }
+            }
+        }
+    }
+
     public static void registerWorldGenerator(IWorldGenerator generator)
     {
         // MCPC+ start - add config options to enable/disable mod world generators
@@ -324,18 +349,18 @@ public class GameRegistry
     }
 
     public static boolean isItemBanned(ItemStack itemstack) {
-        if (configuration.getBoolean("mcpc.enable-banned-item-IDs") && itemstack != null && !(itemstack.getItem() instanceof ItemBlock))
+        if (configuration.getBoolean("mcpc.enable-banned-items") && itemstack != null)
         {
-            if (bannedItemIDs == null) {
-                bannedItemIDs = new boolean[32000];
-                    for (int id : configuration.getIntegerList("mcpc.banned-item-IDs")) {
-                        bannedItemIDs[id] = true;
-                        FMLLog.info("Banning" + " item ID " +id);
-                    }
+            if (bannedItemCache.containsKey(itemstack.itemID))
+            {
+                BannedBlock block = bannedItemCache.get(itemstack.itemID);
+                if (block.blockID == itemstack.itemID && (block.meta == itemstack.getItemDamage() || block.meta == -1))
+                {
+                    return true;
+                }
             }
-            return bannedItemIDs[itemstack.itemID];
         }
-        else return false;
+        return false;
     }
     // MCPC+ end
 
@@ -488,7 +513,8 @@ public class GameRegistry
 	 */
 	public static void registerCustomItemStack(String name, ItemStack itemStack)
 	{
-	    GameData.registerCustomItemStack(name, itemStack);
+	    if (!isItemBanned(itemStack)) // MCPC+ - check if item is banned
+	        GameData.registerCustomItemStack(name, itemStack);
 	}
 	/**
 	 * Lookup an itemstack based on mod and name. It will create "default" itemstacks from blocks and items if no

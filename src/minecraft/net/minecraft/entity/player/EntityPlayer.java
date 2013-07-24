@@ -91,7 +91,10 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-import net.minecraft.server.MinecraftServer; // MCPC+
+// MCPC+ start
+import net.minecraft.server.MinecraftServer;
+import cpw.mods.fml.common.registry.GameRegistry;
+// MCPC+ end
 
 public abstract class EntityPlayer extends EntityLiving implements ICommandSender, cpw.mods.fml.common.network.Player // MCPC+ - marker interface
 {
@@ -1290,7 +1293,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
     public boolean interactWith(Entity par1Entity)
     {
-        if (MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(this, par1Entity)))
+        if (MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(this, par1Entity)) || GameRegistry.isItemBanned(this.inventory.getCurrentItem())) // MCPC+ - check if item is banned
         {
             return false;
         }
