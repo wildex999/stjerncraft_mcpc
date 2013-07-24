@@ -9,6 +9,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import cpw.mods.fml.common.registry.GameRegistry; // MCPC+
 
 import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
 
@@ -167,6 +168,10 @@ public class CraftingManager
     // CraftBukkit - default -> public
     public ShapedRecipes addRecipe(ItemStack par1ItemStack, Object ... par2ArrayOfObj)
     {
+        // MCPC+ check if item is banned and if so disable recipe
+        if (GameRegistry.isItemBanned(par1ItemStack))
+            return null;
+        // MCPC+ end
         String s = "";
         int i = 0;
         int j = 0;
@@ -242,6 +247,10 @@ public class CraftingManager
     // CraftBukkit - default -> public
     public void addShapelessRecipe(ItemStack par1ItemStack, Object ... par2ArrayOfObj)
     {
+        // MCPC+ check if item is banned and if so disable recipe
+        if (GameRegistry.isItemBanned(par1ItemStack))
+            return;
+        // MCPC+ end
         ArrayList arraylist = new ArrayList();
         Object[] aobject1 = par2ArrayOfObj;
         int i = par2ArrayOfObj.length;

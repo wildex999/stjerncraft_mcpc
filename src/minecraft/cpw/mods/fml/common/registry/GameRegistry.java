@@ -79,6 +79,7 @@ public class GameRegistry
     private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
     private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
     private static org.bukkit.configuration.file.YamlConfiguration configuration = Main.configuration; // MCPC+
+    private static boolean[] bannedItemIDs = null;
     /**
      * Register a world generator - something that inserts new block types into the world
      *
@@ -292,11 +293,12 @@ public class GameRegistry
             org.bukkit.Material.setMaterialName(item.itemID, materialName);
         }
     }
-    // MCPC+ end
 
+    // Check to see if the item ID is banned before registering it
     public static void addRecipe(ItemStack output, Object... params)
     {
-        addShapedRecipe(output, params);
+        if (output != null && !isItemBanned(output))
+            addShapedRecipe(output, params);
     }
 
     public static IRecipe addShapedRecipe(ItemStack output, Object... params)
@@ -306,7 +308,8 @@ public class GameRegistry
 
     public static void addShapelessRecipe(ItemStack output, Object... params)
     {
-        CraftingManager.getInstance().addShapelessRecipe(output, params);
+        if (output != null && !isItemBanned(output))
+            CraftingManager.getInstance().addShapelessRecipe(output, params);
     }
 
     public static void addRecipe(IRecipe recipe)
@@ -316,8 +319,25 @@ public class GameRegistry
 
     public static void addSmelting(int input, ItemStack output, float xp)
     {
-        FurnaceRecipes.smelting().addSmelting(input, output, xp);
+        if (!isItemBanned(output))
+            FurnaceRecipes.smelting().addSmelting(input, output, xp);
     }
+
+    public static boolean isItemBanned(ItemStack itemstack) {
+        if (configuration.getBoolean("mcpc.enable-banned-item-IDs") && itemstack != null && !(itemstack.getItem() instanceof ItemBlock))
+        {
+            if (bannedItemIDs == null) {
+                bannedItemIDs = new boolean[32000];
+                    for (int id : configuration.getIntegerList("mcpc.banned-item-IDs")) {
+                        bannedItemIDs[id] = true;
+                        FMLLog.info("Banning" + " item ID " +id);
+                    }
+            }
+            return bannedItemIDs[itemstack.itemID];
+        }
+        else return false;
+    }
+    // MCPC+ end
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
     {
