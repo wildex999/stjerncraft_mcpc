@@ -38,13 +38,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
+
 // MCPC+ start
 import java.io.IOException;
-
+import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.Main;
-
 import net.minecraft.entity.player.EntityPlayerMP;
 // MCPC+ end
 
@@ -80,7 +80,7 @@ public class GameRegistry
     private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
     private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
     private static org.bukkit.configuration.file.YamlConfiguration configuration = Main.configuration; // MCPC+
-    private static Map<Integer, BannedBlock> bannedItemCache = new HashMap(); 
+    private static Map<Integer, List<BannedItem>> bannedItemsCache = new HashMap();
     /**
      * Register a world generator - something that inserts new block types into the world
      *
@@ -97,13 +97,31 @@ public class GameRegistry
                 {
                     int id = Integer.parseInt(bannedData.substring(0, seperator));
                     int meta = Integer.parseInt(bannedData.substring(seperator + 1, bannedData.length()));
-                    bannedItemCache.put(id, new BannedBlock(id, meta));
+                    if (bannedItemsCache.containsKey(id))
+                    {
+                        bannedItemsCache.get(id).add(new BannedItem(id, meta));
+                    }
+                    else
+                    {
+                        List bannedItems = new ArrayList();
+                        bannedItems.add(new BannedItem(id, meta));
+                        bannedItemsCache.put(id, bannedItems);
+                    }
                     FMLLog.info("Banning" + " item ID " +id);
                 }
                 else
                 {
                     int id = Integer.parseInt(bannedData);
-                    bannedItemCache.put(id, new BannedBlock(id, -1));
+                    if (bannedItemsCache.containsKey(id))
+                    {
+                        bannedItemsCache.get(id).add(new BannedItem(id, -1));
+                    }
+                    else
+                    {
+                        List bannedItems = new ArrayList();
+                        bannedItems.add(new BannedItem(id, -1));
+                        bannedItemsCache.put(id, bannedItems);
+                    }
                     FMLLog.info("Banning" + " item ID " +id);
                 }
             }
@@ -351,12 +369,16 @@ public class GameRegistry
     public static boolean isItemBanned(ItemStack itemstack) {
         if (configuration.getBoolean("mcpc.enable-banned-items") && itemstack != null)
         {
-            if (bannedItemCache.containsKey(itemstack.itemID))
+            if (bannedItemsCache.containsKey(itemstack.itemID))
             {
-                BannedBlock block = bannedItemCache.get(itemstack.itemID);
-                if (block.blockID == itemstack.itemID && (block.meta == itemstack.getItemDamage() || block.meta == -1))
+                List<BannedItem> bannedItems = bannedItemsCache.get(itemstack.itemID);
+                for (int i = 0; i < bannedItems.size(); i++)
                 {
-                    return true;
+                    BannedItem block = bannedItems.get(i);
+                    if (block.blockID == itemstack.itemID && (block.meta == itemstack.getItemDamage() || block.meta == -1))
+                    {
+                        return true;
+                    }
                 }
             }
         }
