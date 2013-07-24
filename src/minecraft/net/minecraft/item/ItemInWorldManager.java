@@ -542,7 +542,7 @@ public class ItemInWorldManager
             net.minecraftforge.event.entity.player.PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
             // MCPC+ start
             // if forge event is explicitly cancelled, return
-            if (forgeEvent.isCanceled())
+            if (forgeEvent.isCanceled() || (par3ItemStack != null && (MinecraftServer.getServer().server.isItemBanned(par3ItemStack.itemID))))
             {
                 thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
                 return false;

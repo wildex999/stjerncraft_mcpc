@@ -52,6 +52,8 @@ mcpc:
     flowing-lava-decay: false
     load-chunk-on-request: true
     warn-place-no-tile-entity: true
+    banned-item-IDs: []
+    enable-banned-item-IDs: false
     player-speed-max:
         land: -1
     fake-players:
