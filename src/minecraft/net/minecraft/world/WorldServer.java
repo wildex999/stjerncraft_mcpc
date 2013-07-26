@@ -360,7 +360,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
 
         // CraftBukkit end
-        timings.doTickRest.startTiming(); // Spigot
+        timings.doChunkUnload.startTiming(); // Spigot
         this.theProfiler.endStartSection("chunkSource");
         this.chunkProvider.unloadQueuedChunks();
         int j = this.calculateSkylightSubtracted(1.0F);
@@ -372,26 +372,42 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
         this.worldInfo.incrementTotalWorldTime(this.worldInfo.getWorldTotalTime() + 1L);
         this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
+        timings.doChunkUnload.stopTiming(); // Spigot
         this.theProfiler.endStartSection("tickPending");
+        timings.doTickPending.startTiming(); // Spigot
         this.tickUpdates(false);
+        timings.doTickPending.stopTiming(); // Spigot
         this.theProfiler.endStartSection("tickTiles");
+        timings.doTickTiles.startTiming(); // Spigot
         this.tickBlocksAndAmbiance();
+        timings.doTickTiles.stopTiming(); // Spigot
         this.theProfiler.endStartSection("chunkMap");
+        timings.doChunkMap.startTiming(); // Spigot
         this.thePlayerManager.updatePlayerInstances();
+        timings.doChunkMap.stopTiming(); // Spigot
         this.theProfiler.endStartSection("village");
+        timings.doVillages.startTiming(); // Spigot
         this.villageCollectionObj.tick();
         this.villageSiegeObj.tick();
+        timings.doVillages.stopTiming(); // Spigot
         this.theProfiler.endStartSection("portalForcer");
+        timings.doPortalForcer.startTiming(); // Spigot
         this.field_85177_Q.removeStalePortalLocations(this.getTotalWorldTime());
         for (Teleporter tele : customTeleporters)
         {
             tele.removeStalePortalLocations(getTotalWorldTime());
         }
+        timings.doPortalForcer.stopTiming(); // Spigot
         this.theProfiler.endSection();
+        timings.doSounds.startTiming(); // Spigot
         this.sendAndApplyBlockEvents();
+        timings.doSounds.stopTiming(); // Spigot
         if (this.getWorld() != null) // MCPC+
+        {
+            timings.doChunkGC.startTiming(); // Spigot
             this.getWorld().processChunkGC(); // CraftBukkit
-        timings.doTickRest.stopTiming(); // Spigot
+            timings.doChunkGC.stopTiming(); // Spigot
+        }
     }
 
     /**
