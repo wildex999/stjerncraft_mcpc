@@ -52,7 +52,7 @@ mcpc:
     infinite-water-source: true
     flowing-lava-decay: false
     load-chunk-on-request: true
-    warn-place-no-tile-entity: true
+    warn-place-no-tile-entity: false
     banned-item-IDs: []
     enable-banned-items: false
     player-speed-max:
