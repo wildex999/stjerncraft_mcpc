@@ -14,6 +14,7 @@ package cpw.mods.fml.common.event;
 
 import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.common.LoaderState.ModState;
+import org.bukkit.plugin.PluginLoadOrder; // MCPC+
 
 public class FMLServerAboutToStartEvent extends FMLStateEvent {
 
@@ -23,6 +24,12 @@ public class FMLServerAboutToStartEvent extends FMLStateEvent {
     {
         super(data);
         this.server = (MinecraftServer) data[0];
+        // MCPC+ start
+        // since we modify bukkit enums, we need to guarantee that plugins are
+        // loaded after all mods have been loaded by FML to avoid race conditions.
+        MinecraftServer.getServer().server.loadPlugins();
+        MinecraftServer.getServer().server.enablePlugins(PluginLoadOrder.STARTUP);
+        // MCPC+ end
     }
     @Override
     public ModState getModState()

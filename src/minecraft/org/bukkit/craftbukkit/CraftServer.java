@@ -242,8 +242,10 @@ public final class CraftServer implements Server {
         } catch (IOException e) {
         }
         // Spigot end
-        loadPlugins();
-        enablePlugins(PluginLoadOrder.STARTUP);
+        // MCPC+ start - moved to FMLServerAboutToStart
+        //loadPlugins();
+        //enablePlugins(PluginLoadOrder.STARTUP);
+        // MCPC+ end
     }
 
     private File getConfigFile() {
