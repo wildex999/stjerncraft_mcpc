@@ -204,7 +204,7 @@ public class ItemBlock extends Item
            return false;
        }
 
-       if (world.getBlockId(x, y, z) == this.blockID)
+       if (world.getBlockId(x, y, z) == this.blockID && !world.callingPlaceEvent) // MCPC+
        {
            Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player, stack);
            Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
