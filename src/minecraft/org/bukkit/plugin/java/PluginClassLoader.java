@@ -78,8 +78,8 @@ public class PluginClassLoader extends URLClassLoader {
         boolean remapOBCPre = config.getBoolean("mcpc.plugin-settings.default.remap-obc-pre", false);
         boolean globalInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", true);
         boolean pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", true);
-        boolean reflectFields = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-field", false);
-        boolean reflectClass = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-class", false);
+        boolean reflectFields = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-field", true);
+        boolean reflectClass = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-class", true);
         boolean allowFuture = config.getBoolean("mcpc.plugin-settings.default.remap-allow-future", false);
 
         // plugin-specific overrides
@@ -166,13 +166,13 @@ public class PluginClassLoader extends URLClassLoader {
 
         remapper = new JarRemapper(jarMapping);
 
-        if (pluginInherit) { //|| reflectFields || reflectClass) {  // MCPC+ - disable reflect until SS is fixed
+        if (pluginInherit || reflectFields || reflectClass) {
             remapperPreprocessor = new RemapperPreprocessor(
                     pluginInherit ? loader.getGlobalInheritanceMap() : null,
                     (reflectFields || reflectClass) ? jarMapping : null);
 
-            // remapperPreprocessor.setRemapReflectField(reflectFields);
-            // remapperPreprocessor.setRemapReflectClass(reflectClass);
+            remapperPreprocessor.setRemapReflectField(reflectFields);
+            remapperPreprocessor.setRemapReflectClass(reflectClass);
             remapperPreprocessor.debug = debug;
         } else {
             remapperPreprocessor = null;
