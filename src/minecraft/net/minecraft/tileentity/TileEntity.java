@@ -23,8 +23,6 @@ import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 
 public class TileEntity
 {
-    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getTileEntityTimings(this); // Spigot
-
     /**
      * A HashMap storing string names of classes mapping to the actual java.lang.Class type.
      */
@@ -52,6 +50,7 @@ public class TileEntity
     /** the Block type that this TileEntity is contained within */
     public Block blockType;
 
+    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getTileEntityTimings(this); // Spigot
     /**
      * Adds a new two-way mapping between the class and its string name in both hashmaps.
      */
