@@ -857,7 +857,7 @@ public abstract class World implements IBlockAccess
     public Material getBlockMaterial(int par1, int par2, int par3)
     {
         int l = this.getBlockId(par1, par2, par3);
-        return l == 0 ? Material.air : Block.blocksList[l].blockMaterial;
+        return l == 0 || Block.blocksList[l] == null ? Material.air : Block.blocksList[l].blockMaterial; // MCPC+
     }
 
     /**

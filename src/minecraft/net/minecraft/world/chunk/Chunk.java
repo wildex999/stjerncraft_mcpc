@@ -1276,7 +1276,7 @@ public class Chunk
             while (i1 > 0 && l == -1)
             {
                 int j1 = this.getBlockID(par1, i1, par2);
-                Material material = j1 == 0 ? Material.air : Block.blocksList[j1].blockMaterial;
+                Material material = j1 == 0 || Block.blocksList[j1] == null ? Material.air : Block.blocksList[j1].blockMaterial; // MCPC+
 
                 if (!material.blocksMovement() && !material.isLiquid())
                 {
