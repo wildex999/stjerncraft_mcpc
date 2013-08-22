@@ -3380,7 +3380,7 @@ public abstract class World implements IBlockAccess
             return;
         }
 
-        if (playerEntities.size() == 0)
+        if (false) // MCPC+ remove player entity check so chunk loaders work properly
         {
             return;
         }
