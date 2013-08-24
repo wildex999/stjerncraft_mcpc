@@ -19,7 +19,15 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import cpw.mods.fml.common.registry.GameRegistry; // MCPC+
+// MCPC+ start
+import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ContainerPlayer;
+import net.minecraft.inventory.IInventory;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+import org.bukkit.event.inventory.InventoryType;
+// MCPC+ end
 
 public class ItemInWorldManager
 {
@@ -573,6 +581,32 @@ public class ItemInWorldManager
             else if (!par1EntityPlayer.isSneaking() || par3ItemStack == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6))
             {
                 result = Block.blocksList[i1].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
+                // MCPC+ start - if bukkitView is null, create one. Required for Ender Chests since they do not use NetworkRegistry.openRemoteGUI
+                if (!(thisPlayerMP.openContainer instanceof ContainerPlayer))
+                {
+                    if (thisPlayerMP.openContainer.getBukkitView() == null)
+                    {
+                        TileEntity te = thisPlayerMP.worldObj.getBlockTileEntity(par4, par5, par6);
+                        if (te != null && te instanceof IInventory)
+                        {
+                            IInventory teInv = (IInventory)te;
+                            CraftInventory inventory = new CraftInventory(teInv);
+                            thisPlayerMP.openContainer.bukkitView = new CraftInventoryView(thisPlayerMP.getBukkitEntity(), inventory, thisPlayerMP.openContainer);
+                        }
+                        else
+                        {
+                            thisPlayerMP.openContainer.bukkitView = new CraftInventoryView(thisPlayerMP.getBukkitEntity(), MinecraftServer.getServer().server.createInventory(thisPlayerMP.getBukkitEntity(), InventoryType.CHEST), thisPlayerMP.openContainer);
+                        }
+
+                        thisPlayerMP.openContainer = CraftEventFactory.callInventoryOpenEvent(thisPlayerMP, thisPlayerMP.openContainer, false);
+                        if (thisPlayerMP.openContainer == null)
+                        {
+                            thisPlayerMP.openContainer = thisPlayerMP.inventoryContainer;
+                            return false;
+                        }
+                    }
+                }
+                // MCPC+ end
             }
 
             if (par3ItemStack != null && !result)

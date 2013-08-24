@@ -159,11 +159,4 @@ public class ShapelessOreRecipe implements IRecipe
     public Recipe toBukkitRecipe() {
         return new CustomModRecipe(this);
     }
-
-    @Override
-    public List<ItemStack> getIngredients() {
-        throw new UnsupportedOperationException("getIngredients() not supported on net.minecraftforge.oredict.ShapelessOreRecipe");
-        // because the ingredients are not necessarily a list of ItemStacks; but can include alternatives via oredict string names
-    }
-    // MCPC+ end
 }

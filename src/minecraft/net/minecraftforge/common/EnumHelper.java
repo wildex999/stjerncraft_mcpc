@@ -27,6 +27,9 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.inventory.InventoryType;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.tileentity.TileEntity;
 // MCPC+ end
 
 public class EnumHelper
@@ -83,6 +86,45 @@ public class EnumHelper
 
 
         return bukkitType;
+    }
+
+    public static InventoryType addInventoryType(Class<? extends TileEntity> tileEntityClass, String id)
+    {
+        TileEntity te = null;
+        try
+        {
+            te = tileEntityClass.newInstance();
+        } 
+        catch (InstantiationException e) 
+        {
+            e.printStackTrace();
+        } 
+        catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+        if (te != null && te instanceof IInventory)
+        {
+            IInventory teInv = (IInventory)te;
+            int size = 0;
+            try 
+            {
+                size = teInv.getSizeInventory();
+            }
+            catch (Exception e) // EnderChests don't like this
+            {
+                // do nothing
+            }
+            catch (StackOverflowError e) // needed for extra bees since they use a dummy machine
+            {
+                // do nothing
+            }
+            if (size != 0)
+            {
+                return addEnum(org.bukkit.event.inventory.InventoryType.class, id, new Class[]{Integer.TYPE, String.class}, new Object[]{size, id});
+            }
+        }
+        return null;
     }
     // MCPC end
 

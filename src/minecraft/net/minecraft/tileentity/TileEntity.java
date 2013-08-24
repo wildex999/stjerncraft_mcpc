@@ -31,7 +31,7 @@ public class TileEntity
     /**
      * A HashMap storing the classes and mapping to the string names (reverse of nameToClassMap).
      */
-    private static Map classToNameMap = new HashMap();
+    public static Map classToNameMap = new HashMap(); // MCPC+ - private -> public
 
     /** The reference to the world. */
     public World worldObj;

@@ -106,11 +106,4 @@ public class ShapelessRecipes implements IRecipe
     {
         return this.recipeItems.size();
     }
-
-    // Spigot start
-    public java.util.List<ItemStack> getIngredients()
-    {
-        return java.util.Collections.unmodifiableList(recipeItems);
-    }
-    // Spigot end
 }

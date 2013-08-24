@@ -125,6 +125,7 @@ import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.InventoryView;
 // CraftBukkit end
+import org.bukkit.event.inventory.InventoryType; // MCPC+
 
 public class NetServerHandler extends NetHandler
 {
@@ -1690,13 +1691,12 @@ public class NetServerHandler extends NetHandler
             InventoryAction action = InventoryAction.UNKNOWN;
             ItemStack itemstack = null;
 
-            // MCPC+ start - allow vanilla to bypass (mod containers)
+            // MCPC+ start - some containers such as NEI's Creative Container does not have a view at this point so we need to create one
             if (inventory == null)
             {
-                itemstack = this.playerEntity.openContainer.slotClick(par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick, par1Packet102WindowClick.holdingShift, this.playerEntity);
+                inventory = new CraftInventoryView(this.playerEntity.getBukkitEntity(), MinecraftServer.getServer().server.createInventory(this.playerEntity.getBukkitEntity(), InventoryType.CHEST), this.playerEntity.openContainer);
+                this.playerEntity.openContainer.bukkitView = inventory;
             }
-            else
-            {
             // MCPC+ end
 
             if (par1Packet102WindowClick.inventorySlot == -1)
@@ -2087,7 +2087,6 @@ public class NetServerHandler extends NetHandler
                         return;
                 }
             }
-            } // MCPC+
 
             // CraftBukkit end
 

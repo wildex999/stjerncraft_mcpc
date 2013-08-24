@@ -222,11 +222,4 @@ public class ShapedRecipes implements IRecipe
         this.field_92101_f = true;
         return this;
     }
-
-    // Spigot start
-    public java.util.List<ItemStack> getIngredients()
-    {
-        return java.util.Arrays.asList(recipeItems);
-    }
-    // Spigot end
 }

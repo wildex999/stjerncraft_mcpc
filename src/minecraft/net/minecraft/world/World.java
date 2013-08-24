@@ -3916,6 +3916,14 @@ public abstract class World implements IBlockAccess
     public abstract Entity getEntityByID(int i);
 
     /**
+     * Accessor for world Loaded Entity List
+     */
+    public List getLoadedEntityList()
+    {
+        return this.loadedEntityList;
+    }
+
+    /**
      * marks the chunk that contains this tilentity as modified and then calls worldAccesses.doNothingWithTileEntity
      */
     public void updateTileEntityChunkAndDoNothing(int par1, int par2, int par3, TileEntity par4TileEntity)

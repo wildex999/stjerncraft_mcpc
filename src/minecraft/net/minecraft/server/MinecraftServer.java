@@ -75,6 +75,9 @@ import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 // CraftBukkit end
 // MCPC+ start
+import java.util.Map;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.EnumHelper;
 import za.co.mcportcentral.FMLLogJLineBreakProxy;
 // MCPC+ end
 
@@ -381,6 +384,15 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         this.setDifficultyForAllWorlds(this.getDifficulty());
         this.initialWorldChunkLoad();
         CraftBlock.dumpMaterials(); // MCPC+
+        // MCPC+ start - register TE's for inventory events
+        for (Object obj : TileEntity.classToNameMap.entrySet())
+        {
+            Map.Entry<Class<? extends TileEntity>, String> tileEntry = (Map.Entry<Class<? extends TileEntity>, String>)obj;
+            if (tileEntry.getKey() == null)
+                continue;
+            EnumHelper.addInventoryType(tileEntry.getKey(), tileEntry.getValue());
+        }
+        // MCPC+ end
     }
 
     protected void initialWorldChunkLoad()
