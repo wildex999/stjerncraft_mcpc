@@ -36,10 +36,16 @@ public class TileEntityHopper extends TileEntity implements Hopper
     /** The name that is displayed if the hopper was renamed */
     private String inventoryName;
     private int transferCooldown = -1;
+	
+	//MCPC+ start
+	private static int errorCooldown = 0; //Cooldown for the Hopper getOwner error
+	//MCPC+ end
 
     // CraftBukkit start
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     private int maxStack = MAX_STACK;
+	
+
 
     public ItemStack[] getContents()
     {
@@ -66,6 +72,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
         maxStack = size;
     }
     // CraftBukkit end
+
 
     public TileEntityHopper() {}
 
@@ -339,12 +346,21 @@ public class TileEntityHopper extends TileEntity implements Hopper
                     else
                     {
                         // MCPC+ start - support mod inventories, with no owners
-                        if (iinventory.getOwner() != null) {
-                            destinationInventory = iinventory.getOwner().getInventory();
-                        } else {
-                            // TODO: create a mod inventory for passing to the event, instead of null
-                            destinationInventory = null;
-                        }
+						try {
+							if (iinventory.getOwner() != null) {
+								destinationInventory = iinventory.getOwner().getInventory();
+							} else {
+								// TODO: create a mod inventory for passing to the event, instead of null
+								destinationInventory = null;
+							}
+						} catch(AbstractMethodError error) {
+							if(errorCooldown-- <= 0)
+							{
+								System.out.println("[WARNING]Hopper Error: getOwner target unimplemented @ (X:" + xCoord + " Y:" + yCoord + " Z:" + zCoord + ")");
+								errorCooldown = 300; //Print error once every minute only
+							}
+							destinationInventory = null;
+						}
                         // MCPC+ end
                     }
 
@@ -452,12 +468,21 @@ public class TileEntityHopper extends TileEntity implements Hopper
             else
             {
                 // MCPC+ start - support mod inventories, with no owners
-                if (par1IInventory.getOwner() != null) {
-                    sourceInventory = par1IInventory.getOwner().getInventory();
-                } else {
-                    // TODO: create a mod inventory for passing to the event, instead of null
-                    sourceInventory = null;
-                }
+				try {
+					if (par1IInventory.getOwner() != null) {
+						sourceInventory = par1IInventory.getOwner().getInventory();
+					} else {
+						// TODO: create a mod inventory for passing to the event, instead of null
+						sourceInventory = null;
+					}
+				} catch (AbstractMethodError error) {
+					if(errorCooldown-- <= 0)
+					{
+						System.out.println("[WARNING]Hopper Error: getOwner source unimplemented @ (X:" + par0Hopper.getXPos() + " Y:" + par0Hopper.getYPos() + " Z:" + par0Hopper.getZPos() + ")");
+						errorCooldown = 300; //Print error once every minute only
+					}
+					sourceInventory = null;
+				}
                 // MCPC+ end
             }
 
