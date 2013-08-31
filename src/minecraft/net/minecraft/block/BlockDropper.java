@@ -68,26 +68,31 @@ public class BlockDropper extends BlockDispenser
                     org.bukkit.inventory.Inventory destinationInventory;
                     InventoryMoveItemEvent event = null; // MCPC+
                     // MCPC+ start - vanilla compatibility
-                    if (iinventory.getOwner() != null)
-                    {
-                        // Have to special case large chests as they work oddly
-                        if (iinventory instanceof InventoryLargeChest)
-                        {
-                            destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) iinventory);
-                        }
-                        else
-                        {
-                            destinationInventory = iinventory.getOwner().getInventory();
-                        }
+					try {
+						if (iinventory.getOwner() != null)
+						{
+							// Have to special case large chests as they work oddly
+							if (iinventory instanceof InventoryLargeChest)
+							{
+								destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) iinventory);
+							}
+							else
+							{
+								destinationInventory = iinventory.getOwner().getInventory();
+							}
 
-                        event = new InventoryMoveItemEvent(tileentitydispenser.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
-                        par1World.getServer().getPluginManager().callEvent(event);
-    
-                        if (event.isCancelled())
-                        {
-                            return;
-                        }
-                    }
+							event = new InventoryMoveItemEvent(tileentitydispenser.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
+							par1World.getServer().getPluginManager().callEvent(event);
+		
+							if (event.isCancelled())
+							{
+								return;
+							}
+						}
+					} catch (AbstractMethodError error)
+					{
+						return ;
+					}
                     itemstack1 = TileEntityHopper.insertStack(iinventory, event != null ? CraftItemStack.asNMSCopy(event.getItem()) : itemstack.copy().splitStack(1), Facing.oppositeSide[i1]);
 
                     if (((event != null && event.getItem().equals(oitemstack) && itemstack1 == null)) || (event == null && itemstack1 == null))
