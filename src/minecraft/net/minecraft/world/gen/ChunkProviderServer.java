@@ -285,6 +285,14 @@ public class ChunkProviderServer implements IChunkProvider
 
                 if (chunk != null)
                 {
+                    if (org.bukkit.craftbukkit.command.DebugChunksCommand.debugChunks) { // MCPC+ start -- chunk debugging
+                        this.worldObj.getWorldLogAgent().logInfo("[" + MinecraftServer.currentTick + "] Loading chunk (" + chunk.xPosition + ", " + chunk.zPosition + ") in world '" + worldObj.getWorld().getName() + " Finding spawn point: " + this.worldObj.findingSpawnPoint);
+                        if (org.bukkit.craftbukkit.command.DebugChunksCommand.showStackTrace) {
+                            Throwable ex = new Throwable();
+                            ex.fillInStackTrace();
+                            ex.printStackTrace();
+                        }
+                    } // MCPC+ end
                     chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
 
                     if (this.currentChunkProvider != null)
@@ -464,6 +472,9 @@ public class ChunkProviderServer implements IChunkProvider
 
                 if (!event.isCancelled())
                 {
+                    if (org.bukkit.craftbukkit.command.DebugChunksCommand.debugChunks) { // MCPC+ start -- chunk debugging
+                        this.worldObj.getWorldLogAgent().logInfo("[" + MinecraftServer.currentTick + "] Unloading chunk (" + chunk.xPosition + ", " + chunk.zPosition + ") in world '" + worldObj.getWorld().getName() + "'");
+                    } // MCPC+ end
                     chunk.onChunkUnload();
                     this.safeSaveChunk(chunk);
                     this.safeSaveExtraChunkData(chunk);

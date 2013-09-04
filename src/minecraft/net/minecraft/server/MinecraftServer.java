@@ -1164,8 +1164,47 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             return arraylist;
         }
         */
-        return this.server.tabComplete(par1ICommandSender, par2Str);
+        //return this.server.tabComplete(par1ICommandSender, par2Str);
         // CraftBukkit end
+
+        // MCPC+ start -- allow vanilla and bukkit command completion
+        ArrayList arraylist = new ArrayList();
+
+        if (par2Str.startsWith("/")) {
+            par2Str = par2Str.substring(1);
+            boolean flag = !par2Str.contains(" ");
+            List list = this.commandManager.getPossibleCommands(par1ICommandSender, par2Str);
+
+            if (list != null) {
+                java.util.Iterator iterator = list.iterator();
+
+                while (iterator.hasNext()) {
+                    String s1 = (String) iterator.next();
+
+                    if (flag) {
+                        arraylist.add("/" + s1);
+                    } else {
+                        arraylist.add(s1);
+                    }
+                }
+            }
+        } else {
+            String[] astring = par2Str.split(" ", -1);
+            String s2 = astring[astring.length - 1];
+            String[] astring1 = this.serverConfigManager.getAllUsernames();
+            int i = astring1.length;
+
+            for (int j = 0; j < i; ++j) {
+                String s3 = astring1[j];
+
+                if (net.minecraft.command.CommandBase.doesStringStartWith(s2, s3)) {
+                    arraylist.add(s3);
+                }
+            }
+        }
+        arraylist.addAll(this.server.tabComplete(par1ICommandSender, par2Str)); // Add craftbukkit commands
+        return arraylist;
+        // MCPC+ end
     }
 
     /**

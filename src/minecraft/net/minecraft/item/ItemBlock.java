@@ -189,6 +189,28 @@ public class ItemBlock extends Item
         return Block.blocksList[this.blockID].getUnlocalizedName();
     }
 
+
+    // MCPC+ start -- helper method to determine if a block with this class should be skipped in placeBlockAt
+    private static java.util.HashMap<Class, Boolean> skipMap = new java.util.HashMap<Class, Boolean>();
+    private static boolean skipBlockPlace(Class cl) {
+        if (skipMap.containsKey(cl)) return skipMap.get(cl);
+        boolean shouldSkip = false;
+        if (cl.getName().startsWith("ic2"))  {
+            shouldSkip = true;
+        }
+        if (!shouldSkip) {
+            for(Class i : cl.getInterfaces()) {
+                if (i.getName().startsWith("ic2")) {
+                    shouldSkip = true;
+                    break;
+                }
+            }
+        }
+        skipMap.put(cl, shouldSkip);
+        return shouldSkip;
+    }
+    // MCPC+ end
+
     /**
      * Called to actually place the block, after the location is determined
      * and all permission checks have been made.
@@ -204,7 +226,7 @@ public class ItemBlock extends Item
            return false;
        }
 
-       if (world.getBlockId(x, y, z) == this.blockID || (!world.callingPlaceEvent && stack.getItem().getClass().getName().contains("ic2"))) { // MCPC+       {
+       if (world.getBlockId(x, y, z) == this.blockID || (!world.callingPlaceEvent && skipBlockPlace(stack.getItem().getClass()))) { // MCPC+ skip block place for IC2 blocks
            Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player, stack);
            Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
        }

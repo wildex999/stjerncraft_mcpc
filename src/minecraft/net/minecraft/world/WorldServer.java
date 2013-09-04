@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import gnu.trove.iterator.TLongShortIterator;
+import gnu.trove.set.hash.TIntHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockEventData;
@@ -29,6 +30,7 @@ import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.logging.ILogAgent;
 import net.minecraft.network.packet.Packet38EntityStatus;
 import net.minecraft.network.packet.Packet54PlayNoteBlock;
@@ -129,7 +131,8 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     /** Stores the recently processed (lighting) chunks */
     protected Set<ChunkCoordIntPair> doneChunks = new HashSet<ChunkCoordIntPair>();
     public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
-    
+
+    TIntHashSet saplingIdCache = new TIntHashSet(); //MCPC+ use oredict for sapling check
     // CraftBukkit start
     public final int dimension;
 
@@ -176,6 +179,9 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
         ((ServerScoreboard)this.worldScoreboard).func_96547_a(scoreboardsavedata);
         DimensionManager.setWorld(i, this);
+        for(ItemStack itemStack : net.minecraftforge.oredict.OreDictionary.getOres("treeSapling")) { // MCPC+ start -- use oredict for sapling check
+            saplingIdCache.add(itemStack.itemID);
+        } // MCPC+ end
     }
 
     // MCPC+ start - wrapper to get CB support
@@ -681,7 +687,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                                 this.growthOdds = 100;
                             }
 
-                            for (int c = 0; c < ((block.blockID == Block.sapling.blockID) ? 1 : getWorld().aggregateTicks); c++)
+                            for (int c = 0; c < ((saplingIdCache.contains(block.blockID) ? 1 : getWorld().aggregateTicks)); c++) // MCPC+ use ore dict for sapling check
                             {
                                 block.updateTick(this, k2 + k, i3 + extendedblockstorage.getYLocation(), l2 + l, this.rand);
                             }
