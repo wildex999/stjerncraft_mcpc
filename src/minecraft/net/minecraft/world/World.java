@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.BlockHalfSlab;
@@ -42,6 +43,7 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.server.ChunkSampler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
@@ -67,7 +69,6 @@ import net.minecraft.world.storage.WorldInfo;
 
 import com.google.common.collect.ImmutableSetMultimap;
 
-
 import net.minecraftforge.common.*;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -76,6 +77,7 @@ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraft.entity.EnumCreatureType;
 // CraftBukkit start
 import net.minecraft.entity.item.EntityXPOrb;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.Spigot; // Spigot
 import org.bukkit.craftbukkit.SpigotTimings; // Spigot
@@ -88,6 +90,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+
 import za.co.mcportcentral.entity.CraftFakePlayer;
 // CraftBukkit end
 import net.minecraft.nbt.NBTTagCompound; // MCPC+
@@ -2185,6 +2188,11 @@ public abstract class World implements IBlockAccess
             // CraftBukkit end
             lastChunk = chunk; // Spigot
 
+            //MCPC+ Start
+            if(ChunkSampler.sampling)
+            	ChunkSampler.tickedEntity(entity.worldObj, entity.chunkCoordX, entity.chunkCoordZ);
+            //MCPC+ End
+            
             try
             {
                 ++entity.ticksExisted;
@@ -2284,6 +2292,10 @@ public abstract class World implements IBlockAccess
                 try
                 {
                     SpigotTimings.tickEntityTimer.startTiming(); // Spigot
+                    //MCPC+ Start
+                    if(ChunkSampler.sampling)
+                    	ChunkSampler.tickedEntity(entity.worldObj, entity.chunkCoordX, entity.chunkCoordZ);
+                    //MCPC+ End
                     this.updateEntity(entity);
                     SpigotTimings.tickEntityTimer.stopTiming(); // Spigot
                 }
@@ -2358,6 +2370,11 @@ public abstract class World implements IBlockAccess
             {
                 try
                 {
+                	//MCPC+ Start
+                    if(ChunkSampler.sampling)
+                    	ChunkSampler.tickedTileEntity(tileentity.worldObj, tileentity.xCoord/ChunkSampler.chunkSizeX, tileentity.zCoord/ChunkSampler.chunkSizeZ);
+                    //MCPC+ End
+                	
                     tileentity.tickTimer.startTiming(); // Spigot
                     tileentity.updateEntity();
                     tileentity.tickTimer.stopTiming(); // Spigot

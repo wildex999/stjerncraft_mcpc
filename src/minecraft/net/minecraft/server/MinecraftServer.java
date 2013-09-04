@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.ArgsWrapper;
 import cpw.mods.fml.relauncher.FMLRelauncher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import net.minecraft.command.CommandChunkSampling;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.ServerCommandManager;
@@ -55,7 +58,6 @@ import net.minecraft.world.demo.DemoWorldServer;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
-
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
@@ -73,9 +75,11 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.world.WorldSaveEvent;
+
 // CraftBukkit end
 // MCPC+ start
 import java.util.Map;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.EnumHelper;
 import za.co.mcportcentral.FMLLogJLineBreakProxy;
@@ -304,6 +308,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         // MCPC+ start - register vanilla server commands
         ServerCommandManager vanillaCommandManager = (ServerCommandManager)this.getCommandManager();
         vanillaCommandManager.registerVanillaCommands();
+        
         // MCPC+ end
         this.convertMapIfNeeded(par1Str);
         this.setUserMessage("menu.loadingLevel");
@@ -588,6 +593,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 FMLCommonHandler.instance().handleServerStarted();
                 FMLCommonHandler.instance().onWorldLoadTick(this.worlds.toArray(new WorldServer[this.worlds.size()]));
 
+                server.getCommandMap().register("chunksampling2", new CommandChunkSampling()); //MCPC+ - Register ChunkSampling Command
+                
                 // Spigot start
                 for (long lastTick = 0L; this.serverRunning; this.serverIsRunning = true)
                 {
@@ -757,6 +764,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         {
             this.usageSnooper.addMemoryStatsToSnooper();
         }
+        
+        //MCPC+ Start
+        if(ChunkSampler.sampling)
+        	ChunkSampler.nextTick();
+        //MCPC+ End
 
         this.theProfiler.endSection();
         this.theProfiler.endSection();

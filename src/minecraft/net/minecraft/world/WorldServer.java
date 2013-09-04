@@ -38,6 +38,7 @@ import net.minecraft.network.packet.Packet71Weather;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.scoreboard.ScoreboardSaveData;
 import net.minecraft.scoreboard.ServerScoreboard;
+import net.minecraft.server.ChunkSampler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerManager;
 import net.minecraft.tileentity.TileEntity;
@@ -71,7 +72,6 @@ import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
 import net.minecraft.world.storage.ISaveHandler;
-
 import net.minecraftforge.common.ChestGenHooks;
 import static net.minecraftforge.common.ChestGenHooks.*;
 import net.minecraftforge.common.DimensionManager;
@@ -79,12 +79,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.WorldEvent;
 
+
 // CraftBukkit start
 import org.bukkit.WeatherType;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.util.LongHash;
 import org.bukkit.craftbukkit.util.LongObjectHashMap;
-
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
@@ -873,6 +873,10 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                     {
                         try
                         {
+                        	//MCPC+ Start
+                            if(ChunkSampler.sampling)
+                            	ChunkSampler.tickedBlock(this, nextticklistentry.xCoord/ChunkSampler.chunkSizeX, nextticklistentry.zCoord/ChunkSampler.chunkSizeZ);
+                            //MCPC+ End
                             Block.blocksList[k].updateTick(this, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, this.rand);
                         }
                         catch (Throwable throwable)
