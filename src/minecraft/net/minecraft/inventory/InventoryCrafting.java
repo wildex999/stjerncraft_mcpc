@@ -76,6 +76,10 @@ public class InventoryCrafting implements IInventory
 
     public InventoryCrafting(Container par1Container, int par2, int par3)
     {
+        if (par2 == 0 || par3 == 0) { // MCPC: Don't allow 0 sized crafting inventories
+            par2 = 3;
+            par3 = 3;
+        }
         int k = par2 * par3;
         this.stackList = new ItemStack[k];
         this.eventHandler = par1Container;
