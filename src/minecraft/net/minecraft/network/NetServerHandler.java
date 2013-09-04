@@ -1538,6 +1538,14 @@ public class NetServerHandler extends NetHandler
         WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
         Entity entity = worldserver.getEntityByID(par1Packet7UseEntity.targetEntity);
 
+         // Spigot Start
+         if ( entity == playerEntity )
+         {
+             kickPlayerFromServer( "Cannot interact with self!" );
+             return;
+         }
+         // Spigot End
+
         if (entity != null)
         {
             boolean flag = this.playerEntity.canEntityBeSeen(entity);

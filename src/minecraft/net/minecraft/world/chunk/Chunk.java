@@ -1080,6 +1080,15 @@ public class Chunk
         while (iterator.hasNext())
         {
             TileEntity tileentity = (TileEntity)iterator.next();
+            // Spigot Start
+            if ( tileentity instanceof net.minecraft.inventory.IInventory )
+            {
+               for ( org.bukkit.craftbukkit.entity.CraftHumanEntity h : new ArrayList<org.bukkit.craftbukkit.entity.CraftHumanEntity>( (List) ( (net.minecraft.inventory.IInventory) tileentity ).getViewers() ) )
+               {
+                   h.getHandle().closeScreen();
+               }
+            }
+            // Spigot End
             this.worldObj.markTileEntityForDespawn(tileentity);
         }
 
@@ -1092,6 +1101,15 @@ public class Chunk
             {
                 Entity entity = (Entity) iter.next();
 
+                // Spigot Start
+                if ( entity instanceof net.minecraft.inventory.IInventory )
+                {
+                    for ( org.bukkit.craftbukkit.entity.CraftHumanEntity h : new ArrayList<org.bukkit.craftbukkit.entity.CraftHumanEntity>( (List) ( (net.minecraft.inventory.IInventory) entity ).getViewers() ) )
+                    {
+                        h.getHandle().closeScreen();
+                    }
+                }
+                // Spigot End
                 // Do not pass along players, as doing so can get them stuck outside of time.
                 // (which for example disables inventory icon updates and prevents block breaking)
                 if (entity instanceof EntityPlayerMP)

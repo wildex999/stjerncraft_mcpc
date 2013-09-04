@@ -234,6 +234,12 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
      */
     public void travelToDimension(int par1)
     {
+        // Spigot Start
+        for ( HumanEntity human : new java.util.ArrayList<HumanEntity>( transaction ) )
+        {
+            human.closeInventory();
+        }
+        // Spigot End
         this.dropContentsWhenDead = false;
         super.travelToDimension(par1);
     }
