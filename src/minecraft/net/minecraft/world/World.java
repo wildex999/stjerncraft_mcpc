@@ -3367,6 +3367,16 @@ public abstract class World implements IBlockAccess
 
     protected void setActivePlayerChunksAndCheckLight()
     {
+        // MCPC+ start - add persistent chunks to be ticked for growth
+        activeChunkSet.clear();
+        activeChunkSet_CB.clear();
+        for(ChunkCoordIntPair chunk : getPersistentChunks().keySet()) {
+            this.activeChunkSet.add(chunk);
+            long key = chunkToKey(chunk.chunkXPos, chunk.chunkZPos);
+            activeChunkSet_CB.put(key, (short) 0);
+        }
+        // MCPC+ end
+
         // this.chunkTickList.clear(); // CraftBukkit - removed
         this.theProfiler.startSection("buildList");
         int i;
@@ -3380,7 +3390,7 @@ public abstract class World implements IBlockAccess
             return;
         }
 
-        if (false) // MCPC+ remove player entity check so chunk loaders work properly
+        if (playerEntities.size() == 0)
         {
             return;
         }
