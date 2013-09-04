@@ -80,7 +80,10 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
                 // Make sure this is a valid command
                 if (commandMap.getCommand(args[0]) == null)
                 {
-                    return 0;
+                    // MCPC+ start -- execute using the vanilla command manager if it isn't in the bukkit command map
+                    net.minecraft.command.ICommandManager icommandmanager = minecraftserver.getCommandManager();
+                    return icommandmanager.executeCommand(this, this.command);
+                    // MCPC+ end
                 }
 
                 // If the world has no players don't run
