@@ -17,7 +17,7 @@ public class BlockRedstoneTorch extends BlockTorch
     private boolean torchActive = false;
 
     /** Map of ArrayLists of RedstoneUpdateInfo. Key of map is World. */
-    private static Map redstoneUpdateInfoCache = new HashMap();
+    private static Map redstoneUpdateInfoCache = new java.util.WeakHashMap(); // Spigot
 
     private boolean checkForBurnout(World par1World, int par2, int par3, int par4, boolean par5)
     {

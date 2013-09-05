@@ -65,7 +65,7 @@ public class CraftFakePlayer extends CraftPlayer
             } else {
                 // Default to either the mod's fake player username, or class name if unspecified
                 if (modFakePlayer.username != null && !modFakePlayer.username.equals("")) {
-                    defaultName = "[" + modFakePlayer.username + "]";
+                    defaultName = modFakePlayer.username.startsWith("[") && modFakePlayer.username.endsWith("]") ? modFakePlayer.username : "[" + modFakePlayer.username + "]"; // MCPC+ remove double [[]] from fakeplayers (thanks Sirse)
                 } else {
                     defaultName = "[" + className + "]";
                 }

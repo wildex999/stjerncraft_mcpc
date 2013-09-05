@@ -4,6 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+
 public class ItemBlock extends Item
 {
     /** The block ID of the Block associated with this ItemBlock */
@@ -204,9 +206,11 @@ public class ItemBlock extends Item
            return false;
        }
 
-       if (world.getBlockId(x, y, z) == this.blockID || (!world.callingPlaceEvent && stack.getItem().getClass().getName().contains("ic2"))) { // MCPC+       {
+       if (world.getBlockId(x, y, z) == this.blockID) {
+           if (world.callingPlaceEvent) MinecraftForge.EVENT_BUS.pauseEvents = true; // MCPC+ -- don't let mods post events if simulating place block
            Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player, stack);
            Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
+           if (world.callingPlaceEvent) MinecraftForge.EVENT_BUS.pauseEvents = false; // MCPC+ -- re-enable let mods post events if simulating place block
        }
 
        return true;

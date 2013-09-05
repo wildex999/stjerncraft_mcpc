@@ -1078,6 +1078,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         {
             if (!par1StatBase.isIndependent)
             {
+                par2 = Math.min(par2, 1000); // MCPC+ limit the # of packets we send
                 while (par2 > 100)
                 {
                     this.playerNetServerHandler.sendPacketToPlayer(new Packet200Statistic(par1StatBase.statId, 100));

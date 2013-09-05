@@ -1252,12 +1252,9 @@ public class NetServerHandler extends NetHandler
             }
             else
             {
-                Player player = this.getPlayerB();
-                AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet());
-                this.server.getPluginManager().callEvent(event);
                 // MCPC+ start - call Forge event
                 String old = s;
-                s = "<" + this.playerEntity.getTranslatedEntityName() + "> " + s;                
+                s = "<" + this.playerEntity.getTranslatedEntityName() + "> " + s;
                 ServerChatEvent forgeEvent = new ServerChatEvent(this.playerEntity, old, s);
                 if (MinecraftForge.EVENT_BUS.post(forgeEvent))
                 {
@@ -1265,6 +1262,9 @@ public class NetServerHandler extends NetHandler
                 }
                 s = forgeEvent.line; // ignored :( TODO
                 // MCPC+ end
+                Player player = this.getPlayerB();
+                AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet());
+                this.server.getPluginManager().callEvent(event);
 
                 if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0)
                 {
@@ -1538,6 +1538,14 @@ public class NetServerHandler extends NetHandler
 
         WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
         Entity entity = worldserver.getEntityByID(par1Packet7UseEntity.targetEntity);
+
+         // Spigot Start
+         if ( entity == playerEntity )
+         {
+             kickPlayerFromServer( "Cannot interact with self!" );
+             return;
+         }
+         // Spigot End
 
         if (entity != null)
         {
