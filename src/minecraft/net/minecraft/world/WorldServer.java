@@ -132,7 +132,6 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     protected Set<ChunkCoordIntPair> doneChunks = new HashSet<ChunkCoordIntPair>();
     public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
 
-    TIntHashSet saplingIdCache = new TIntHashSet(); //MCPC+ use oredict for sapling check
     // CraftBukkit start
     public final int dimension;
 
@@ -179,9 +178,6 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
         ((ServerScoreboard)this.worldScoreboard).func_96547_a(scoreboardsavedata);
         DimensionManager.setWorld(i, this);
-        for(ItemStack itemStack : net.minecraftforge.oredict.OreDictionary.getOres("treeSapling")) { // MCPC+ start -- use oredict for sapling check
-            saplingIdCache.add(itemStack.itemID);
-        } // MCPC+ end
     }
 
     // MCPC+ start - wrapper to get CB support
@@ -687,8 +683,9 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                                 this.growthOdds = 100;
                             }
 
-                            for (int c = 0; c < ((saplingIdCache.contains(block.blockID) ? 1 : getWorld().aggregateTicks)); c++) // MCPC+ use ore dict for sapling check
+                            for (int c = 0; c < getWorld().aggregateTicks; c++)
                             {
+                                if (c > 0 && this.getBlockId(k2 + k, i3 + extendedblockstorage.getYLocation(), l2 + l) != block.blockID) break; // MCPC+ the block changed, so don't update it
                                 block.updateTick(this, k2 + k, i3 + extendedblockstorage.getYLocation(), l2 + l, this.rand);
                             }
 
