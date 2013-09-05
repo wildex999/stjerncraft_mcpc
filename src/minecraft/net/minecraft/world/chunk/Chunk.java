@@ -1081,12 +1081,12 @@ public class Chunk
         {
             TileEntity tileentity = (TileEntity)iterator.next();
             // Spigot Start
-            if ( tileentity instanceof net.minecraft.inventory.IInventory )
-            {
-               for ( org.bukkit.craftbukkit.entity.CraftHumanEntity h : new ArrayList<org.bukkit.craftbukkit.entity.CraftHumanEntity>( (List) ( (net.minecraft.inventory.IInventory) tileentity ).getViewers() ) )
-               {
-                   h.getHandle().closeScreen();
-               }
+            if ( tileentity instanceof net.minecraft.inventory.IInventory ) {
+                try {
+                    for ( org.bukkit.craftbukkit.entity.CraftHumanEntity h : new ArrayList<org.bukkit.craftbukkit.entity.CraftHumanEntity>( (List) ( (net.minecraft.inventory.IInventory) tileentity ).getViewers() ) ) {
+                        h.getHandle().closeScreen();
+                    }
+                } catch (Throwable t) { } // MCPC+ handle modded inventories w/o a wrapper
             }
             // Spigot End
             this.worldObj.markTileEntityForDespawn(tileentity);
@@ -1104,10 +1104,11 @@ public class Chunk
                 // Spigot Start
                 if ( entity instanceof net.minecraft.inventory.IInventory )
                 {
-                    for ( org.bukkit.craftbukkit.entity.CraftHumanEntity h : new ArrayList<org.bukkit.craftbukkit.entity.CraftHumanEntity>( (List) ( (net.minecraft.inventory.IInventory) entity ).getViewers() ) )
-                    {
-                        h.getHandle().closeScreen();
-                    }
+                    try {
+                        for ( org.bukkit.craftbukkit.entity.CraftHumanEntity h : new ArrayList<org.bukkit.craftbukkit.entity.CraftHumanEntity>( (List) ( (net.minecraft.inventory.IInventory) entity ).getViewers() ) ) {
+                            h.getHandle().closeScreen();
+                        }
+                    } catch (Throwable t) { } // MCPC+ handle modded inventories w/o a wrapper
                 }
                 // Spigot End
                 // Do not pass along players, as doing so can get them stuck outside of time.
