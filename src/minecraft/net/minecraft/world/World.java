@@ -2188,10 +2188,6 @@ public abstract class World implements IBlockAccess
             // CraftBukkit end
             lastChunk = chunk; // Spigot
 
-            //MCPC+ Start
-            if(ChunkSampler.sampling)
-            	ChunkSampler.tickedEntity(entity.worldObj, entity.chunkCoordX, entity.chunkCoordZ);
-            //MCPC+ End
             
             try
             {
@@ -2292,11 +2288,22 @@ public abstract class World implements IBlockAccess
                 try
                 {
                     SpigotTimings.tickEntityTimer.startTiming(); // Spigot
+                    
                     //MCPC+ Start
                     if(ChunkSampler.sampling)
+                    {
                     	ChunkSampler.tickedEntity(entity.worldObj, entity.chunkCoordX, entity.chunkCoordZ);
+                    	ChunkSampler.preSample();
+                    }
                     //MCPC+ End
+                    
                     this.updateEntity(entity);
+                    
+                    //MCPC+ Start
+                    if(ChunkSampler.sampling)
+                    	ChunkSampler.postSampleEntity(entity.worldObj, entity.chunkCoordX, entity.chunkCoordZ);
+                    //MCPC+ End
+                    
                     SpigotTimings.tickEntityTimer.stopTiming(); // Spigot
                 }
                 catch (Throwable throwable1)
@@ -2372,12 +2379,20 @@ public abstract class World implements IBlockAccess
                 {
                 	//MCPC+ Start
                     if(ChunkSampler.sampling)
-                    	ChunkSampler.tickedTileEntity(tileentity.worldObj, tileentity.xCoord/ChunkSampler.chunkSizeX, tileentity.zCoord/ChunkSampler.chunkSizeZ);
+                    {
+                    	ChunkSampler.tickedTileEntity(tileentity.worldObj, tileentity.xCoord >> 4, tileentity.zCoord >> 4);
+                    	ChunkSampler.preSample();
+                    }
                     //MCPC+ End
                 	
                     tileentity.tickTimer.startTiming(); // Spigot
                     tileentity.updateEntity();
                     tileentity.tickTimer.stopTiming(); // Spigot
+                    
+                    //MCPC+ Start
+                    if(ChunkSampler.sampling)
+                    	ChunkSampler.postSampleTileEntity(tileentity.worldObj, tileentity.xCoord >> 4, tileentity.zCoord >> 4);
+                    //MCPC+ End
                 }
                 catch (Throwable throwable2)
                 {

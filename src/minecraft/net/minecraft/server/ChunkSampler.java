@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import net.minecraft.server.ChunkSampler.ChunkSamples;
@@ -21,25 +24,40 @@ import net.minecraft.world.World;
  * Makes it possible to get a list of chunks sorted by the potential load they 
  * put on the server.
  * 
+ * 
+ * Description of sampling method:
+ * The initial idea was to have an external thread that checked the current item(NULL, Block, Entity, Tileentity) currently
+ * ticking. However, this would cause a lot of overhead since the main thread would have to store the position and world of the currently ticking item before and after
+ * each tick, and this would need to happen inside a lock.
+ * Then the question becomes, what has most overhead? nanotime or locking?
+ * 
+ * Instead we will use atomic Increment on the sampler(Timer thread) side, with getandset on reader(Main thread) side.
+ * So when the sampler will call Atomic increment 1000 times a second, and the main thread will getandset before and after 
+ * every item tick, to specify where to sample.
+ * 
  */
 
 public class ChunkSampler {
 	static HashMap<String, ChunkSamples> chunks = new HashMap<String, ChunkSamples>();
+	static Timer samplerThreadTimer = new Timer(true); //Create the timer thread as a daemon
+	static SamplerTask task; //Currently running task
+	public static int samplingInterval = 1; //Time in millisecond between time sampling
 	
-	public static final int chunkSizeX = 16;
-	public static final int chunkSizeZ = 16;
+	public static AtomicInteger atomicSamples = new AtomicInteger(); //Samples since last count
+	public static long totalSamples; //Total number of samples by Sampling thread
+	public static long freeSamples; //Samples that did not happen on any item(Free time)
 	
 	public static Date startTime, stopTime; //Date and time that sampling started and stopped
 	public static String startedBy; //Player who started sampling
 	public static boolean sampling = false;
 	
 	public enum SortObject {
-		BLOCK, ENTITY, TILEENTITY
+		BLOCK, ENTITY, TILEENTITY, TIME
 	};
-	public static SortObject sortObject = SortObject.ENTITY;
+	public static SortObject sortObject = SortObject.TIME;
 	
 	public enum SortType {
-		MIN, AVG, MAX
+		MIN, AVG, MAX, TIME
 	};
 	public static SortType sortType = SortType.AVG;
 	
@@ -52,8 +70,8 @@ public class ChunkSampler {
 	static Comparator<ChunkSamples> comparator = new Comparator<ChunkSamples>() {
 
         public int compare(ChunkSamples o1, ChunkSamples o2) {
-        	int o1count = getCountBySorting(o1);
-        	int o2count = getCountBySorting(o2);
+        	float o1count = getCountBySorting(o1);
+        	float o2count = getCountBySorting(o2);
         	
         	if(sortOrder == SortOrder.DESC)
         	{
@@ -69,7 +87,7 @@ public class ChunkSampler {
         	}
         }
         
-        private int getCountBySorting(ChunkSamples chunk)
+        private float getCountBySorting(ChunkSamples chunk)
         {
         	switch(sortObject)
         	{
@@ -79,9 +97,11 @@ public class ChunkSampler {
         		case MIN:
         			return chunk.minBlockCount;
         		case AVG:
-        			return (int)chunk.avgBlockCount;
+        			return chunk.avgBlockCount;
         		case MAX:
         			return chunk.maxBlockCount;
+        		case TIME:
+        			return (float)chunk.totalBlockSampleCount / (float)totalSamples;
         		}
         		break;
         	case ENTITY:
@@ -90,9 +110,11 @@ public class ChunkSampler {
         		case MIN:
         			return chunk.minEntityCount;
         		case AVG:
-        			return (int)chunk.avgEntityCount;
+        			return chunk.avgEntityCount;
         		case MAX:
         			return chunk.maxEntityCount;
+        		case TIME:
+        			return (float)chunk.totalEntitySampleCount / (float)totalSamples;
         		}
         		break;
         	case TILEENTITY:
@@ -101,11 +123,15 @@ public class ChunkSampler {
         		case MIN:
         			return chunk.minTileEntityCount;
         		case AVG:
-        			return (int)chunk.avgTileEntityCount;
+        			return chunk.avgTileEntityCount;
         		case MAX:
         			return chunk.maxTileEntityCount;
+        		case TIME:
+        			return (float)chunk.totalTileEntitySampleCount / (float)totalSamples;
         		}
         		break;
+        	case TIME:
+        		return (float)(chunk.totalBlockSampleCount + chunk.totalEntitySampleCount + chunk.totalTileEntitySampleCount) / (totalSamples);
         	}
         	return 0;
         }
@@ -125,6 +151,12 @@ public class ChunkSampler {
 		startedBy = username;
 		sampling = true;
 		
+		totalSamples = 0;
+		freeSamples = 0;
+		atomicSamples.set(0);
+		task = new SamplerTask();
+		samplerThreadTimer.scheduleAtFixedRate(task, samplingInterval, samplingInterval);
+		
 		return true;
 	}
 	
@@ -135,6 +167,10 @@ public class ChunkSampler {
 			return false;
 		stopTime = new Date();
 		sampling = false;
+		
+		//Stop the timer task
+		task.cancel();
+		
 		return true;
 	}
 	
@@ -163,6 +199,66 @@ public class ChunkSampler {
 			return;
 		ChunkSamples chunk = ChunkSampler.getOrCreateChunkSamples(world, chunkX, chunkZ);
 		chunk.currentTileEntityCount++;
+	}
+	
+	//Pre-Sample will sample before items, so any samples at this point are "Free" time.
+	public static void preSample()
+	{
+		if(!sampling)
+			return;
+		
+		//Get samples and reset
+		int samples = atomicSamples.getAndSet(0);
+		freeSamples += samples;
+		totalSamples += samples;
+	}
+	
+	//Post-Sample will sample after Blocks, so any samples at this point happened while the item was ticking
+	public static void postSampleBlock(World world, int chunkX, int chunkZ)
+	{
+		if(!sampling)
+			return;
+		
+		//Get samples and reset
+		int samples = atomicSamples.getAndSet(0);
+		
+		//Place the samples to the chunk and the item type
+		ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
+		
+		chunk.totalBlockSampleCount += samples;
+		totalSamples += samples;
+	}
+	
+	//Post-Sample will sample after Entities, so any samples at this point happened while the item was ticking
+	public static void postSampleEntity(World world, int chunkX, int chunkZ)
+	{
+		if(!sampling)
+			return;
+		
+		//Get samples and reset
+		int samples = atomicSamples.getAndSet(0);
+		
+		//Place the samples to the chunk and the item type
+		ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
+		
+		chunk.totalEntitySampleCount += samples;
+		totalSamples += samples;
+	}
+	
+	//Post-Sample will sample after TileEntity, so any samples at this point happened while the item was ticking
+	public static void postSampleTileEntity(World world, int chunkX, int chunkZ)
+	{
+		if(!sampling)
+			return;
+		
+		//Get samples and reset
+		int samples = atomicSamples.getAndSet(0);
+		
+		//Place the samples to the chunk and the item type
+		ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
+		
+		chunk.totalTileEntitySampleCount += samples;
+		totalSamples += samples;
 	}
 	
 	//Add time as a sampled time for this chunk
@@ -248,6 +344,7 @@ public class ChunkSampler {
 		public World world;
 		public int chunkX, chunkZ;
 		int currentBlockCount, currentEntityCount, currentTileEntityCount;
+		public long totalBlockSampleCount, totalEntitySampleCount, totalTileEntitySampleCount; //Total samples from sampling thread of the different types
 		public float avgBlockCount, avgEntityCount, avgTileEntityCount;
 		public int minBlockCount, maxBlockCount;
 		public int minEntityCount, maxEntityCount;
@@ -260,6 +357,8 @@ public class ChunkSampler {
 			this.chunkX = chunkX;
 			this.chunkZ = chunkZ;
 			
+			totalBlockSampleCount = totalEntitySampleCount = totalTileEntitySampleCount = 0;
+			
 			currentBlockCount = currentEntityCount = currentTileEntityCount = 0;
 			maxBlockCount = maxEntityCount = maxTileEntityCount = 0;
 			avgBlockCount = avgEntityCount = avgTileEntityCount = 0;
@@ -267,6 +366,16 @@ public class ChunkSampler {
 			
 			ticks = 0;
 		}
+	}
+	
+	private static class SamplerTask extends TimerTask {
+
+		@Override
+		public void run() {
+			//Increment the sampling counter
+			ChunkSampler.atomicSamples.getAndIncrement();
+		}
+		
 	}
 	
 }

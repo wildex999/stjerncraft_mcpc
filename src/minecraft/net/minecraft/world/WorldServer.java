@@ -875,9 +875,19 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                         {
                         	//MCPC+ Start
                             if(ChunkSampler.sampling)
-                            	ChunkSampler.tickedBlock(this, nextticklistentry.xCoord/ChunkSampler.chunkSizeX, nextticklistentry.zCoord/ChunkSampler.chunkSizeZ);
+                            {
+                            	ChunkSampler.tickedBlock(this, nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4);
+                            	ChunkSampler.preSample();
+                            }
                             //MCPC+ End
+                            
                             Block.blocksList[k].updateTick(this, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, this.rand);
+                            
+                            //MCPC+ Start
+                            if(ChunkSampler.sampling)
+                            	ChunkSampler.postSampleBlock(this, nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4);
+                            //MCPC+ End
+                            
                         }
                         catch (Throwable throwable)
                         {
