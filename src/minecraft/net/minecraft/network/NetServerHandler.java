@@ -1263,7 +1263,7 @@ public class NetServerHandler extends NetHandler
                 s = forgeEvent.line; // ignored :( TODO
                 // MCPC+ end
                 Player player = this.getPlayerB();
-                AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet());
+                AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, old, new LazyPlayerSet());
                 this.server.getPluginManager().callEvent(event);
 
                 if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0)
