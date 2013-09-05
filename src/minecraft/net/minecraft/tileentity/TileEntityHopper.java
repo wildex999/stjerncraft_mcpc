@@ -329,7 +329,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
                     ItemStack itemstack = this.getStackInSlot(i).copy();
                     // CraftBukkit start - Call event when pushing items into other inventories
                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(this.decrStackSize(i, 1));
-                    Inventory destinationInventory;
+                    Inventory destinationInventory = null;
 
                     // Have to special case large chests as they work oddly
                     if (iinventory instanceof InventoryLargeChest)
@@ -339,12 +339,14 @@ public class TileEntityHopper extends TileEntity implements Hopper
                     else
                     {
                         // MCPC+ start - support mod inventories, with no owners
-                        if (iinventory.getOwner() != null) {
-                            destinationInventory = iinventory.getOwner().getInventory();
-                        } else {
-                            // TODO: create a mod inventory for passing to the event, instead of null
-                            destinationInventory = null;
-                        }
+                        try {
+                            if (iinventory.getOwner() != null) {
+                                destinationInventory = iinventory.getOwner().getInventory();
+                            } else {
+                                // TODO: create a mod inventory for passing to the event, instead of null
+                                destinationInventory = null;
+                            }
+                        } catch (AbstractMethodError e) { } // Ignore modded inventories that don't support getOwner()
                         // MCPC+ end
                     }
 
