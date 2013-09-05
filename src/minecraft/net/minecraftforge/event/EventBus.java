@@ -17,6 +17,8 @@ public class EventBus
     private ConcurrentHashMap<Object, ArrayList<IEventListener>> listeners = new ConcurrentHashMap<Object, ArrayList<IEventListener>>();
     private final int busID = maxID++;
 
+    public boolean pauseEvents = false; // MCPC+ allow us to stop events from getting posted during simulation events
+
     public EventBus()
     {
         ListenerList.resize(busID + 1);
@@ -102,6 +104,7 @@ public class EventBus
     
     public boolean post(Event event)
     {
+        if (pauseEvents) return true; // MCPC+ allow us to stop events from getting posted during simulation events
         IEventListener[] listeners = event.getListenerList().getListeners(busID);
         for (IEventListener listener : listeners)
         {

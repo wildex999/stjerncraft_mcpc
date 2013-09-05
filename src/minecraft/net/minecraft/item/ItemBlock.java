@@ -4,6 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+
 public class ItemBlock extends Item
 {
     /** The block ID of the Block associated with this ItemBlock */
@@ -189,28 +191,6 @@ public class ItemBlock extends Item
         return Block.blocksList[this.blockID].getUnlocalizedName();
     }
 
-
-    // MCPC+ start -- helper method to determine if a block with this class should be skipped in placeBlockAt
-    private static java.util.HashMap<Class, Boolean> skipMap = new java.util.HashMap<Class, Boolean>();
-    private static boolean skipBlockPlace(Class cl) {
-        if (skipMap.containsKey(cl)) return skipMap.get(cl);
-        boolean shouldSkip = false;
-        if (cl.getName().startsWith("ic2"))  {
-            shouldSkip = true;
-        }
-        if (!shouldSkip) {
-            for(Class i : cl.getInterfaces()) {
-                if (i.getName().startsWith("ic2")) {
-                    shouldSkip = true;
-                    break;
-                }
-            }
-        }
-        skipMap.put(cl, shouldSkip);
-        return shouldSkip;
-    }
-    // MCPC+ end
-
     /**
      * Called to actually place the block, after the location is determined
      * and all permission checks have been made.
@@ -226,9 +206,11 @@ public class ItemBlock extends Item
            return false;
        }
 
-       if (world.getBlockId(x, y, z) == this.blockID || (!world.callingPlaceEvent && skipBlockPlace(stack.getItem().getClass()))) { // MCPC+ skip block place for IC2 blocks
+       if (world.getBlockId(x, y, z) == this.blockID) {
+           if (world.callingPlaceEvent) MinecraftForge.EVENT_BUS.pauseEvents = true; // MCPC+ -- don't let mods post events if simulating place block
            Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player, stack);
            Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
+           if (world.callingPlaceEvent) MinecraftForge.EVENT_BUS.pauseEvents = false; // MCPC+ -- re-enable let mods post events if simulating place block
        }
 
        return true;
