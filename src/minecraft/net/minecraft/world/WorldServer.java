@@ -885,7 +885,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                             
                             //MCPC+ Start
                             if(ChunkSampler.sampling)
-                            	ChunkSampler.postSampleBlock(this, nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4);
+                            	ChunkSampler.postSampleBlock(this, nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4, k);
                             //MCPC+ End
                             
                         }

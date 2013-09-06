@@ -2301,7 +2301,7 @@ public abstract class World implements IBlockAccess
                     
                     //MCPC+ Start
                     if(ChunkSampler.sampling)
-                    	ChunkSampler.postSampleEntity(entity.worldObj, entity.chunkCoordX, entity.chunkCoordZ);
+                    	ChunkSampler.postSampleEntity(entity.worldObj, entity.chunkCoordX, entity.chunkCoordZ, entity);
                     //MCPC+ End
                     
                     SpigotTimings.tickEntityTimer.stopTiming(); // Spigot
@@ -2391,7 +2391,7 @@ public abstract class World implements IBlockAccess
                     
                     //MCPC+ Start
                     if(ChunkSampler.sampling)
-                    	ChunkSampler.postSampleTileEntity(tileentity.worldObj, tileentity.xCoord >> 4, tileentity.zCoord >> 4);
+                    	ChunkSampler.postSampleTileEntity(tileentity.worldObj, tileentity.xCoord >> 4, tileentity.zCoord >> 4, tileentity);
                     //MCPC+ End
                 }
                 catch (Throwable throwable2)

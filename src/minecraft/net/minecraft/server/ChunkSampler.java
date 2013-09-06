@@ -8,12 +8,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.server.ChunkSampler.ChunkSamples;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 /*--ChunkSampler
@@ -42,6 +45,7 @@ public class ChunkSampler {
 	static Timer samplerThreadTimer = new Timer(true); //Create the timer thread as a daemon
 	static SamplerTask task; //Currently running task
 	public static int samplingInterval = 1; //Time in millisecond between time sampling
+	public static int detailItemCount = 5; //Number of items to print when printing chunk details
 	
 	public static AtomicInteger atomicSamples = new AtomicInteger(); //Samples since last count
 	public static long totalSamples; //Total number of samples by Sampling thread
@@ -214,7 +218,7 @@ public class ChunkSampler {
 	}
 	
 	//Post-Sample will sample after Blocks, so any samples at this point happened while the item was ticking
-	public static void postSampleBlock(World world, int chunkX, int chunkZ)
+	public static void postSampleBlock(World world, int chunkX, int chunkZ, int blockId)
 	{
 		if(!sampling)
 			return;
@@ -222,15 +226,19 @@ public class ChunkSampler {
 		//Get samples and reset
 		int samples = atomicSamples.getAndSet(0);
 		
-		//Place the samples to the chunk and the item type
-		ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
-		
-		chunk.totalBlockSampleCount += samples;
-		totalSamples += samples;
+		if(samples > 0)
+		{
+			//Place the samples to the chunk and the item type
+			ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
+			chunk.incrementItemSamples(chunk.blockItems, "BlockId " + blockId);
+			
+			chunk.totalBlockSampleCount += samples;
+			totalSamples += samples;
+		}
 	}
 	
 	//Post-Sample will sample after Entities, so any samples at this point happened while the item was ticking
-	public static void postSampleEntity(World world, int chunkX, int chunkZ)
+	public static void postSampleEntity(World world, int chunkX, int chunkZ, Entity entity)
 	{
 		if(!sampling)
 			return;
@@ -238,15 +246,19 @@ public class ChunkSampler {
 		//Get samples and reset
 		int samples = atomicSamples.getAndSet(0);
 		
-		//Place the samples to the chunk and the item type
-		ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
-		
-		chunk.totalEntitySampleCount += samples;
-		totalSamples += samples;
+		if(samples > 0)
+		{
+			//Place the samples to the chunk and the item type
+			ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
+			
+			chunk.totalEntitySampleCount += samples;
+			chunk.incrementItemSamples(chunk.entityItems, entity.getClass().getName());
+			totalSamples += samples;
+		}
 	}
 	
 	//Post-Sample will sample after TileEntity, so any samples at this point happened while the item was ticking
-	public static void postSampleTileEntity(World world, int chunkX, int chunkZ)
+	public static void postSampleTileEntity(World world, int chunkX, int chunkZ, TileEntity tileEntity)
 	{
 		if(!sampling)
 			return;
@@ -254,11 +266,16 @@ public class ChunkSampler {
 		//Get samples and reset
 		int samples = atomicSamples.getAndSet(0);
 		
-		//Place the samples to the chunk and the item type
-		ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
 		
-		chunk.totalTileEntitySampleCount += samples;
-		totalSamples += samples;
+		if(samples > 0)
+		{
+			//Place the samples to the chunk and the item type
+			ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
+			
+			chunk.totalTileEntitySampleCount += samples;
+			chunk.incrementItemSamples(chunk.tileEntityItems, tileEntity.getClass().getName());
+			totalSamples += samples;
+		}
 	}
 	
 	//Add time as a sampled time for this chunk
@@ -274,10 +291,10 @@ public class ChunkSampler {
 			return;
 		
 		//Clear current count, keeping only low, avg and max
-		Iterator it = chunks.entrySet().iterator();
+		Iterator<Entry<String, ChunkSamples>> it = chunks.entrySet().iterator();
 		while(it.hasNext())
 		{
-			ChunkSamples chunk = ((Map.Entry<String, ChunkSamples>)it.next()).getValue();
+			ChunkSamples chunk = it.next().getValue();
 			
 			//Calculate Running Average
 			float blockcount = (float)chunk.avgBlockCount * (float)chunk.ticks;
@@ -325,23 +342,32 @@ public class ChunkSampler {
 		return list;
 	}
 	
+	public static ChunkSamples getChunkSamples(int worlddim, int chunkX, int chunkZ)
+	{
+		String chunkstr = worlddim + ":" + chunkX + ":" + chunkZ;
+		return chunks.get(chunkstr);
+	}
+	
+	public static ChunkSamples createChunkSamples(int worlddim, int chunkX, int chunkZ)
+	{
+		String chunkstr = worlddim + ":" + chunkX + ":" + chunkZ;
+		ChunkSamples chunk = new ChunkSamples(worlddim, chunkX, chunkZ);
+		chunks.put(chunkstr, chunk);
+		return chunk;
+	}
+	
 	private static ChunkSamples getOrCreateChunkSamples(World world, int chunkX, int chunkZ)
 	{
-		String chunkstr = world.worldInfo.getDimension() + ":" + chunkX + ":" + chunkZ;
-		ChunkSamples chunk = chunks.get(chunkstr);
+		ChunkSamples chunk = getChunkSamples(world.worldInfo.getDimension(), chunkX, chunkZ);
 		
 		if(chunk == null)
-		{
-			//Create
-			chunk = new ChunkSampler.ChunkSamples(world, chunkX, chunkZ);
-			chunks.put(chunkstr, chunk);
-		}
+			return createChunkSamples(world.worldInfo.getDimension(), chunkX, chunkZ); 
 		
 		return chunk;
 	}
 	
 	public static class ChunkSamples {
-		public World world;
+		public int world;
 		public int chunkX, chunkZ;
 		int currentBlockCount, currentEntityCount, currentTileEntityCount;
 		public long totalBlockSampleCount, totalEntitySampleCount, totalTileEntitySampleCount; //Total samples from sampling thread of the different types
@@ -351,7 +377,9 @@ public class ChunkSampler {
 		public int minTileEntityCount, maxTileEntityCount;
 		int ticks; //Number of ticks entities in this chunk has been counted(Used to calculate avg)
 		
-		public ChunkSamples(World world, int chunkX, int chunkZ)
+		public HashMap<String, ItemSample> blockItems, entityItems, tileEntityItems; //List of item classes and their sample count, for detailed chunk list
+		
+		public ChunkSamples(int world, int chunkX, int chunkZ)
 		{
 			this.world = world;
 			this.chunkX = chunkX;
@@ -364,8 +392,49 @@ public class ChunkSampler {
 			avgBlockCount = avgEntityCount = avgTileEntityCount = 0;
 			minBlockCount = minEntityCount = minTileEntityCount = Integer.MAX_VALUE;
 			
+			
+			blockItems = new HashMap<String, ItemSample>();
+			entityItems = new HashMap<String, ItemSample>();
+			tileEntityItems = new HashMap<String, ItemSample>();
+			
 			ticks = 0;
 		}
+		
+		//Increment the sample count of item with given class name in map, creates if item doesn't exist
+		public void incrementItemSamples(HashMap<String,ItemSample> map, String className)
+		{
+			ItemSample itemSamples = map.get(className);
+			
+			if(itemSamples == null)
+			{
+				//Create sample
+				itemSamples = new ItemSample(className);
+				map.put(className, itemSamples);
+			}
+			itemSamples.samples++;
+		}
+		
+		static Comparator<ItemSample> itemcomparator = new Comparator<ItemSample>() {
+
+	        public int compare(ItemSample i1, ItemSample i2) {
+	        	if(i1.samples < i2.samples) return 1;
+	        	else if(i1.samples > i2.samples) return -1;
+	        	else return 0;
+	        }
+	        
+	    };
+		
+		//Get list of indexes sorted according to the hashmap
+		public List<ItemSample> getSortedItems(HashMap<String,ItemSample> map)
+		{
+			List<ItemSample> list = new ArrayList<ItemSample>(map.values());
+			
+			Collections.sort(list, itemcomparator);
+			
+			return list;
+		}
+		
+		
 	}
 	
 	private static class SamplerTask extends TimerTask {
@@ -376,6 +445,14 @@ public class ChunkSampler {
 			ChunkSampler.atomicSamples.getAndIncrement();
 		}
 		
+	}
+	
+	//Wrap the int in a class that we can pass by reference, we also include a String to allow us to return it easily in getSortedItems
+	public static class ItemSample {
+		public int samples;
+		public String className;
+		
+		public ItemSample(String name) { samples = 0; className=name; };
 	}
 	
 }

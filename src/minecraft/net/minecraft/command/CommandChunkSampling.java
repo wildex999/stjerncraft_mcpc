@@ -1,6 +1,7 @@
 package net.minecraft.command;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -17,20 +18,20 @@ import org.bukkit.util.StringUtil;
 import com.google.common.collect.ImmutableList;
 
 public class CommandChunkSampling extends VanillaCommand {
-	private static final List<String> CHUNKSAMPLING_COMMANDS = ImmutableList.of("start", "stop", "list", "sort");
+	private static final List<String> CHUNKSAMPLING_COMMANDS = ImmutableList.of("start", "stop", "list", "sort", "listchunk");
 	private static int itemsPerPage = 10;
 	private static int currentPage = 0;
 	
 	public CommandChunkSampling() {
         super("chunksampling");
         this.description = "Sample resources used by chunks and then list chunks sorted by resource usage.";
-        this.usageMessage = "/chunksampling <start, stop, list, listchunk, warnslow, sort>\n"
+        this.usageMessage = ChatColor.RED + "Usage: /chunksampling <start, stop, list, listchunk, warnslow, sort>\n"
         		+ "		Start - Start sampling\n"
         		+ "		Stop - Stop sampling\n"
-        		+ "		Sort [page] - Set the sorting method to use when listing\n"
-        		+ "		List - Return a sorted list of chunks placed into pages"
-        		+ "     ListChunk [detailed] - Show the chunk at the given coordinates, detailed will show the most ticket item of each type."
-        		+ "     WarnSlow - Print a warning when an item uses more than n% time";
+        		+ "		Sort - Set the sorting method to use when listing\n"
+        		+ "		List [page] - Return a sorted list of chunks placed into pages\n"
+        		+ "     ListChunk - Show the chunk at the given coordinates, detailed=true will show the most ticket item of each type.\n"
+        		+ "     WarnSlow - Print a warning when an item uses more than n% time\n";
         this.setPermission("mcpc.command.chunksampling");
     }
 	
@@ -39,16 +40,32 @@ public class CommandChunkSampling extends VanillaCommand {
         if (!testPermission(sender)) return true;
         
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+            sender.sendMessage(usageMessage.split("\n"));
             return false;
-        }
-        else if(args.length == 1 && args[0].equals("sort"))
-        {
-        	sender.sendMessage(ChatColor.RED + "Usage: " + "/chunksampling sort <block, entity, tileentity, time> [min, avg, max, time] [desc, asc]");
-        	return false;
         }
         
         String action = args[0];
+        
+        //Print Usage of different actions
+        if(args.length == 1)
+        {
+        	if(action.equalsIgnoreCase("sort"))
+        	{
+        		sender.sendMessage(ChatColor.RED + "Usage: " + "/chunksampling sort <block, entity, tileentity, time> [min, avg, max, time] [desc, asc]");
+        		return false;
+        	}
+        	else if(action.equalsIgnoreCase("listchunk"))
+        	{
+        		sender.sendMessage(ChatColor.RED + "Usage: " + "/chunksampling listchunk worlddim posx posz [detailed = true,false]");
+        		return false;
+        	}
+        	else if(action.equalsIgnoreCase("warnslow"))
+        	{
+        		sender.sendMessage(ChatColor.RED + "Usage: " + "/chunksampling warnslow <on, off> [percentage]");
+        		return false;
+        	}
+        }
+       
         
         if(action.equalsIgnoreCase("start"))
         {
@@ -98,21 +115,10 @@ public class CommandChunkSampling extends VanillaCommand {
         		}
         	}
         	
-        	
-        	
-        	/*
-        	 * World | Chunk XZ| min   |  avg   |  max  | Time
-        	 * ------------------------------------------             
-        	 * Blocks          |
-        	 * Entities        |
-        	 * TileEntities    |
-        	 * Chunk Time      |
-        	 */
-        	
         	sender.sendMessage("(Chunk Pos) | Min | Avg | Max");
         	List<ChunkSampler.ChunkSamples> list = ChunkSampler.getList();
         	
-        	if(currentPage*itemsPerPage >= list.size() || currentPage*itemsPerPage < 0)
+        	if(currentPage*itemsPerPage >= list.size() || currentPage*itemsPerPage < 0) //A very high value can loop into negative
         	{
         		sender.sendMessage("Page does not exist!");
         		return false;
@@ -127,14 +133,9 @@ public class CommandChunkSampling extends VanillaCommand {
         	for(; i>=currentPage*itemsPerPage; i--)
         	{
         		ChunkSampler.ChunkSamples chunk = list.get(i);
-        		float totalChunkSamples = chunk.totalBlockSampleCount + chunk.totalEntitySampleCount + chunk.totalTileEntitySampleCount;
-        		//Print top info
-        		sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.DARK_GREEN + chunk.world.getWorldInfo().getWorldName() + ChatColor.GOLD + " - " + ChatColor.DARK_GREEN + ((chunk.chunkX*16)+8) + " : " + ((chunk.chunkZ*16)+8) + ChatColor.GOLD + "] | Min | Avg | Max | Time");
-        		sender.sendMessage(ChatColor.YELLOW + "Blocks     | " + ChatColor.GREEN + chunk.minBlockCount + ChatColor.GOLD + " | " + ChatColor.GREEN + chunk.avgBlockCount + ChatColor.GOLD +  " | " + ChatColor.GREEN + chunk.maxBlockCount + ChatColor.GOLD + " | " + ChatColor.GREEN + (((float)chunk.totalBlockSampleCount/(float)ChunkSampler.totalSamples)*100) + "%");
-        		sender.sendMessage(ChatColor.GOLD + "Entity     | " + ChatColor.DARK_GREEN + chunk.minEntityCount + ChatColor.GOLD + " | " + ChatColor.DARK_GREEN + chunk.avgEntityCount + ChatColor.GOLD +  " | " + ChatColor.DARK_GREEN + chunk.maxEntityCount + ChatColor.GOLD + " | " + ChatColor.DARK_GREEN + (((float)chunk.totalEntitySampleCount/(float)ChunkSampler.totalSamples)*100) + "%");
-        		sender.sendMessage(ChatColor.YELLOW + "TileEntity | " + ChatColor.GREEN + chunk.minTileEntityCount + ChatColor.GOLD + " | " + ChatColor.GREEN + chunk.avgTileEntityCount + ChatColor.GOLD +  " | " + ChatColor.GREEN + chunk.maxTileEntityCount + ChatColor.GOLD + " | " + ChatColor.GREEN + (((float)chunk.totalTileEntitySampleCount/(float)ChunkSampler.totalSamples)*100) + "%");
-        		sender.sendMessage(ChatColor.GOLD + "Chunk Time | " + ChatColor.DARK_GREEN + ((totalChunkSamples / (float)ChunkSampler.totalSamples)*100) + "%");
-        		sender.sendMessage(ChatColor.GOLD + "--------------------------------------------------");
+        		
+        		//Print chunk info(Don't include details(class names) of items using the time)
+        		printChunk(sender, chunk, false);
         	}
         	sender.sendMessage(ChatColor.WHITE + "Page " + ChatColor.RED + (currentPage+1) + ChatColor.WHITE + " of " + ChatColor.RED + ((list.size()/itemsPerPage)+1));
         	sender.sendMessage(ChatColor.WHITE + "Unused time: " + ChatColor.RED + (((float)ChunkSampler.freeSamples / (float)ChunkSampler.totalSamples)*100) + "%" + ChatColor.WHITE + " ( " + ChunkSampler.freeSamples + " of " + ChunkSampler.totalSamples + " )" );
@@ -198,6 +199,46 @@ public class CommandChunkSampling extends VanillaCommand {
         	currentPage = 0;
         	sender.sendMessage("ChunkSampling Sorting set! Write /chunksampling list to get a sorted list");
         }
+        else if(action.equalsIgnoreCase("listchunk"))
+        {
+        	if(args.length < 4)
+        	{
+        		sender.sendMessage(ChatColor.RED + "Missing argument, needs at least 3 arguments(world dimension, posx, posz)");
+        		return false;
+        	}
+        	
+        	int worlddim;
+        	int posx, posz;
+        	
+        	try
+        	{
+        		//Convert from string to int
+        		worlddim = Integer.parseInt(args[1]);
+        		posx = Integer.parseInt(args[2]);
+        		posz = Integer.parseInt(args[3]);
+        		
+        	} catch (NumberFormatException error)
+    		{
+    			sender.sendMessage(ChatColor.RED + "The first 3 arguments for listchunk needs to be numbers!");
+    			return false;
+    		}
+        	
+        	//Get chunk
+        	ChunkSampler.ChunkSamples chunk = ChunkSampler.getChunkSamples(worlddim, posx >> 4, posz >> 4);
+        	
+        	if(chunk == null)
+        	{
+        		sender.sendMessage(ChatColor.RED + "No data exists for this chunk!");
+        		return true; //Technically the command succeeded
+        	}
+        	
+        	printChunk(sender, chunk, true);
+        }
+        else if(action.equalsIgnoreCase("warnslow"))
+        {
+        	sender.sendMessage("Warn Slow is not yet implemented!");
+        	return false;
+        }
         else
         {
 	        sender.sendMessage(ChatColor.RED + "Unknown Argument 1");
@@ -205,6 +246,44 @@ public class CommandChunkSampling extends VanillaCommand {
         }
         
         return true;
+	}
+	
+	//Print the given chunk and send it to the command sender
+	private void printChunk(CommandSender sender, ChunkSampler.ChunkSamples chunk, boolean detailed)
+	{
+		float totalChunkSamples = chunk.totalBlockSampleCount + chunk.totalEntitySampleCount + chunk.totalTileEntitySampleCount;
+		
+		sender.sendMessage(ChatColor.GOLD + "[ World " + ChatColor.DARK_GREEN + chunk.world + ChatColor.GOLD + " | " + ChatColor.DARK_GREEN + ((chunk.chunkX*16)+8) + " : " + ((chunk.chunkZ*16)+8) + ChatColor.GOLD + "] | Min | Avg | Max | Time");
+		sender.sendMessage(ChatColor.YELLOW + "Blocks     | " + ChatColor.GREEN + chunk.minBlockCount + ChatColor.GOLD + " | " + ChatColor.GREEN + chunk.avgBlockCount + ChatColor.GOLD +  " | " + ChatColor.GREEN + chunk.maxBlockCount + ChatColor.GOLD + " | " + ChatColor.GREEN + (((float)chunk.totalBlockSampleCount/(float)ChunkSampler.totalSamples)*100) + "%");
+		if(detailed)
+			printItems(sender, chunk, chunk.blockItems);
+		sender.sendMessage(ChatColor.GOLD + "Entity     | " + ChatColor.DARK_GREEN + chunk.minEntityCount + ChatColor.GOLD + " | " + ChatColor.DARK_GREEN + chunk.avgEntityCount + ChatColor.GOLD +  " | " + ChatColor.DARK_GREEN + chunk.maxEntityCount + ChatColor.GOLD + " | " + ChatColor.DARK_GREEN + (((float)chunk.totalEntitySampleCount/(float)ChunkSampler.totalSamples)*100) + "%");
+		if(detailed)
+			printItems(sender, chunk, chunk.entityItems);
+		sender.sendMessage(ChatColor.YELLOW + "TileEntity | " + ChatColor.GREEN + chunk.minTileEntityCount + ChatColor.GOLD + " | " + ChatColor.GREEN + chunk.avgTileEntityCount + ChatColor.GOLD +  " | " + ChatColor.GREEN + chunk.maxTileEntityCount + ChatColor.GOLD + " | " + ChatColor.GREEN + (((float)chunk.totalTileEntitySampleCount/(float)ChunkSampler.totalSamples)*100) + "%");
+		if(detailed)
+			printItems(sender, chunk, chunk.tileEntityItems);
+		sender.sendMessage(ChatColor.GOLD + "Chunk Time | " + ChatColor.DARK_GREEN + ((totalChunkSamples / (float)ChunkSampler.totalSamples)*100) + "%");
+		sender.sendMessage(ChatColor.GOLD + "--------------------------------------------------");
+	}
+	
+	private void printItems(CommandSender sender, ChunkSampler.ChunkSamples chunk, HashMap<String, ChunkSampler.ItemSample> map)
+	{
+		String itemPre = ChatColor.WHITE + "    >";
+		List<ChunkSampler.ItemSample> items = chunk.getSortedItems(map);
+		for(int i=0; i<ChunkSampler.detailItemCount; i++)
+		{
+			if(i>=items.size())
+			{
+				sender.sendMessage(itemPre + ChatColor.AQUA + "No more data");
+				break;
+			}
+			ChunkSampler.ItemSample item = items.get(i);
+			int subindx = item.className.lastIndexOf(".");
+			if(subindx < 0)
+				subindx = 0;
+			sender.sendMessage(itemPre + ChatColor.AQUA + item.className.substring(subindx) + ChatColor.WHITE + "(" + (((float)item.samples / (float)(chunk.totalBlockSampleCount + chunk.totalEntitySampleCount + chunk.totalTileEntitySampleCount))*100) +"%)");
+		}
 	}
 	
     @Override
