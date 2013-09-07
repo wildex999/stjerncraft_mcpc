@@ -1168,7 +1168,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         // CraftBukkit end
 
         // MCPC+ start -- allow vanilla and bukkit command completion
-        ArrayList arraylist = new ArrayList();
+        java.util.HashSet arraylist = new java.util.HashSet(); // use a set here to avoid duplicates
 
         if (par2Str.startsWith("/")) {
             par2Str = par2Str.substring(1);
@@ -1203,7 +1203,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             }
         }
         arraylist.addAll(this.server.tabComplete(par1ICommandSender, par2Str)); // Add craftbukkit commands
-        return arraylist;
+        return new ArrayList(arraylist);
         // MCPC+ end
     }
 
