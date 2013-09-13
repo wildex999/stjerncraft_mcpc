@@ -3,6 +3,7 @@ package net.minecraft.item;
 // CraftBukkit start
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +25,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.IInventory;
+
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.event.inventory.InventoryType;
@@ -543,6 +545,14 @@ public class ItemInWorldManager
 
         // CraftBukkit start - Interact
         boolean result = false;
+        
+        //Check for null(But allow it to kick player for now)
+        if(par1EntityPlayer == null)
+        	System.out.println("ItemInWorld: PLAYER IS NULL");
+        else if(par1EntityPlayer.getHeldItem()==null)
+        	System.out.println("ItemInWorld: HELD ITEM IS NULL");
+        else if(par1EntityPlayer.getHeldItem().getItem() == null)
+        	System.out.println("IteminWorld: HELD ITEM ITEM IS NULL(HeldItem: " + par1EntityPlayer.getHeldItem().itemID + ")");
 
         if (i1 > 0)
         {

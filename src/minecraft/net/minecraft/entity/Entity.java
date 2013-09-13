@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.StepSound;
@@ -43,6 +44,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+
 // CraftBukkit start
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -67,6 +69,7 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.plugin.PluginManager;
+
 // CraftBukkit end
 // MCPC+ start
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -369,6 +372,13 @@ public abstract class Entity
      */
     public void setDead()
     {
+        //System.out.println("Removing Entity: " + par1Entity.getClass().getName());
+        String className = this.getClass().getName();
+        if(className.equals("vswe.stevescarts.Carts.MinecartModular"))
+        {
+        	System.out.println("Removing Minecart with stack(SETDEAD):");
+        	Thread.currentThread().dumpStack();
+        }
         this.isDead = true;
     }
 

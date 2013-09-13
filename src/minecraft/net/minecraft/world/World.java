@@ -1881,7 +1881,7 @@ public abstract class World implements IBlockAccess
         {
             par1Entity.mountEntity((Entity)null);
         }
-
+        
         par1Entity.setDead();
 
         if (par1Entity instanceof EntityPlayer)
@@ -2332,6 +2332,15 @@ public abstract class World implements IBlockAccess
                 j = entity.chunkCoordX;
                 k = entity.chunkCoordZ;
 
+                //System.out.println("Removing Entity: " + par1Entity.getClass().getName());
+                String className = entity.getClass().getName();
+                if(className.equals("vswe.stevescarts.Carts.MinecartModular") || className.contains("thaumcraft.common.entities.golems."))
+                {
+                	System.out.println("className: " + className);
+                	Thread.currentThread().dumpStack();
+                }
+                
+                
                 if (entity.addedToChunk && this.chunkExists(j, k))
                 {
                     this.getChunkFromChunkCoords(j, k).removeEntity(entity);
