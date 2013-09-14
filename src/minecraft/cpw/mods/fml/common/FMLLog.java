@@ -15,17 +15,33 @@ package cpw.mods.fml.common;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import w999.baseprotect.IWorldInteract;
+import net.minecraft.world.World;
+
 public class FMLLog
 {
     private static cpw.mods.fml.relauncher.FMLRelaunchLog coreLog = cpw.mods.fml.relauncher.FMLRelaunchLog.log;
 
     public static void log(String logChannel, Level level, String format, Object... data)
     {
+    	//TODO: If turned on, print the current object in each world when logging(To find sources of problems)
         coreLog.log(logChannel, level, format, data);
     }
 
     public static void log(Level level, String format, Object... data)
     {
+    	if(level.equals(Level.SEVERE))
+    	{
+    		IWorldInteract item = World.currentTickItem;
+    		if(item == null)
+    		{
+    			format = " (NULLITEM) " + format;
+    		}
+    		else
+    		{
+    			format = " (" + World.currentTickItem.getClass().getName() + " [X: " + item.getX() + " Y: " + item.getY() + " Z: " + item.getZ() +"]) " + format;
+    		}
+    	}
         coreLog.log(level, format, data);
     }
 

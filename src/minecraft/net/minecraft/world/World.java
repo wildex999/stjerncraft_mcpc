@@ -91,6 +91,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
+import w999.baseprotect.IWorldInteract;
 import za.co.mcportcentral.entity.CraftFakePlayer;
 // CraftBukkit end
 import net.minecraft.nbt.NBTTagCompound; // MCPC+
@@ -106,6 +107,8 @@ public abstract class World implements IBlockAccess
     public static double MAX_ENTITY_RADIUS = 2.0D;
 
     public final MapStorage perWorldStorage;
+    
+    public static IWorldInteract currentTickItem; //MCPC+ - Current ticking item(Block, Entity, tileentity) TODO:Make NOT static
 
     /**
      * boolean; if true updates scheduled by scheduleBlockUpdate happen immediately
@@ -2297,7 +2300,11 @@ public abstract class World implements IBlockAccess
                     }
                     //MCPC+ End
                     
+                    currentTickItem = entity; //MCPC+
+                    
                     this.updateEntity(entity);
+                    
+                    currentTickItem = null; //MCPC+
                     
                     //MCPC+ Start
                     if(ChunkSampler.sampling)
@@ -2394,9 +2401,13 @@ public abstract class World implements IBlockAccess
                     }
                     //MCPC+ End
                 	
+                    currentTickItem = tileentity; //MCPC+
+                    
                     tileentity.tickTimer.startTiming(); // Spigot
                     tileentity.updateEntity();
                     tileentity.tickTimer.stopTiming(); // Spigot
+                    
+                    currentTickItem = null; //MCPC+
                     
                     //MCPC+ Start
                     if(ChunkSampler.sampling)

@@ -3,6 +3,7 @@ package net.minecraft.tileentity;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -17,11 +18,14 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.common.FakePlayer;
 
 import org.spigotmc.CustomTimingsHandler; // Spigot
 import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 
-public class TileEntity
+import w999.baseprotect.IWorldInteract;
+
+public class TileEntity implements IWorldInteract
 {
     /**
      * A HashMap storing string names of classes mapping to the actual java.lang.Class type.
@@ -400,4 +404,37 @@ public class TileEntity
         }
         return bb;
     }
+
+	@Override
+	public boolean setItemOwner(FakePlayer owner) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean setItemOwner(String player) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public FakePlayer getItemOwner() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long getX() {
+		return this.xCoord;
+	}
+
+	@Override
+	public long getY() {
+		return this.yCoord;
+	}
+
+	@Override
+	public long getZ() {
+		return this.zCoord;
+	}
 }

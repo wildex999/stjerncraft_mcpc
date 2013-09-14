@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
@@ -45,6 +46,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 
+
+
+
 // CraftBukkit start
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -70,17 +74,19 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.plugin.PluginManager;
 
+import w999.baseprotect.IWorldInteract;
 // CraftBukkit end
 // MCPC+ start
 import cpw.mods.fml.common.registry.EntityRegistry;
 import net.minecraft.world.Teleporter;
 import net.minecraftforge.common.EnumHelper;
+import net.minecraftforge.common.FakePlayer;
 // MCPC+ end
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 
-public abstract class Entity
+public abstract class Entity implements IWorldInteract
 {
     // CraftBukkit start
     private static final int CURRENT_LEVEL = 2;
@@ -376,6 +382,7 @@ public abstract class Entity
         String className = this.getClass().getName();
         if(className.equals("vswe.stevescarts.Carts.MinecartModular"))
         {
+        	FMLLog.log(Level.SEVERE, "Test 123", new Object());
         	System.out.println("Removing Minecart with stack(SETDEAD):");
         	Thread.currentThread().dumpStack();
         }
@@ -2873,4 +2880,37 @@ public abstract class Entity
     {
         return this.extendedProperties.get(identifier);
     }
+    
+    @Override
+	public boolean setItemOwner(FakePlayer owner) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean setItemOwner(String player) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public FakePlayer getItemOwner() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long getX() {
+		return (long)this.posX;
+	}
+
+	@Override
+	public long getY() {
+		return (long)this.posY;
+	}
+
+	@Override
+	public long getZ() {
+		return (long)this.posZ;
+	}
 }

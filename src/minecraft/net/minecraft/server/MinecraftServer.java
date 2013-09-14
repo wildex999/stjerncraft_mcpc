@@ -594,6 +594,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 FMLCommonHandler.instance().onWorldLoadTick(this.worlds.toArray(new WorldServer[this.worlds.size()]));
 
                 server.getCommandMap().register("chunksampling2", new CommandChunkSampling()); //MCPC+ - Register ChunkSampling Command
+                //MCPC+ - Initialize BaseProtect
                 
                 // Spigot start
                 for (long lastTick = 0L; this.serverRunning; this.serverIsRunning = true)
