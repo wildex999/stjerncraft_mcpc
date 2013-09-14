@@ -548,11 +548,7 @@ public class ItemInWorldManager
         
         //Check for null(But allow it to kick player for now)
         if(par1EntityPlayer == null)
-        	System.out.println("ItemInWorld: PLAYER IS NULL");
-        else if(par1EntityPlayer.getHeldItem()==null)
-        	System.out.println("ItemInWorld: HELD ITEM IS NULL");
-        else if(par1EntityPlayer.getHeldItem().getItem() == null)
-        	System.out.println("IteminWorld: HELD ITEM ITEM IS NULL(HeldItem: " + par1EntityPlayer.getHeldItem().itemID + ")");
+        	System.out.println("ItemInWorld: PLAYER IS NULL(X: " + par4 + " Y: " + par5 + " Z: " + par6 + ")");
 
         if (i1 > 0)
         {
@@ -585,10 +581,10 @@ public class ItemInWorldManager
                     boolean bottom = (par2World.getBlockMetadata(par4, par5, par6) & 8) == 0;
                     ((EntityPlayerMP) par1EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5 + (bottom ? 1 : -1), par6, par2World));
                 }
-
+                
                 result = (event.useItemInHand() != org.bukkit.event.Event.Result.ALLOW);
             }
-            else if (!par1EntityPlayer.isSneaking() || par3ItemStack == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6))
+            else if (!par1EntityPlayer.isSneaking() || par3ItemStack == null || (par1EntityPlayer.getHeldItem() != null && par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6)))
             {
                 result = Block.blocksList[i1].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
                 // MCPC+ start - if bukkitView is null, create one. Required for Ender Chests since they do not use NetworkRegistry.openRemoteGUI
