@@ -169,6 +169,10 @@ public abstract class Container
 
     public Slot getSlot(int par1)
     {
+    	//MCPC+ start - Put a out of bounds check here. Seems to randomly kick players due to either lag or a bug on client side.
+    	if(par1 >= this.inventorySlots.size() || par1 < 0)
+    		return null;
+    	//MCPC+ End
         return (Slot)this.inventorySlots.get(par1);
     }
 
