@@ -27,6 +27,7 @@ public class LogAgent implements ILogAgent
     private final String loggerName;
     private final String loggerPrefix;
     public static Logger global = Logger.getLogger(""); // CraftBukkit
+    private static final String LOG_CONFIG_PREFIX = "mcpc.loglevels."; // MCPC+
 
     public LogAgent(String par1Str, String par2Str, String par3Str)
     {
@@ -54,36 +55,38 @@ public class LogAgent implements ILogAgent
         }
 
         LogFormatter logformatter = new LogFormatter(this, (LogAgentINNER1)null);
-        // CraftBukkit start
+        //MCPC+ start - use Forge's async console handler
         MinecraftServer server = MinecraftServer.getServer();
-        ConsoleHandler consolehandler = new org.bukkit.craftbukkit.util.TerminalConsoleHandler(server.reader);
-        // CraftBukkit end
-        consolehandler.setFormatter(logformatter);
+        ConsoleHandler wrappedHandler = new org.bukkit.craftbukkit.util.TerminalConsoleHandler(server.reader);
+        wrappedHandler.setFilter(new java.util.logging.Filter() {
+            @Override
+            public boolean isLoggable(LogRecord record) {
+                if (org.bukkit.craftbukkit.Main.configuration == null) return true;
+                String logName = record.getLoggerName().replace('.', '-');
+                if (!org.bukkit.craftbukkit.Main.configuration.isString(LOG_CONFIG_PREFIX + logName)) {
+                    org.bukkit.craftbukkit.Main.configuration.set(LOG_CONFIG_PREFIX + logName, "INFO");
+                    try {
+                        org.bukkit.craftbukkit.Main.configuration.save(org.bukkit.craftbukkit.Main.configFile);
+                    } catch (java.io.IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                String modLogLevel = org.bukkit.craftbukkit.Main.configuration.getString(LOG_CONFIG_PREFIX + logName);
+                Level logLevel = Level.parse(modLogLevel);
+                return record.getLevel().intValue() >= logLevel.intValue();
+            }
+        });
+        FMLRelaunchLog.ConsoleLogThread.wrappedHandler = wrappedHandler;
+        Handler consolehandler = new FMLRelaunchLog.ConsoleLogWrapper();
+        wrappedHandler.setFormatter(new org.bukkit.craftbukkit.util.ShortConsoleLogFormatter(server));
         this.serverLogger.addHandler(consolehandler);
+        // MCPC+ end
 
         // CraftBukkit start
         for (java.util.logging.Handler handler : global.getHandlers())
         {
             global.removeHandler(handler);
         }
-
-        // MCPC+ start
-        if (!FMLRelaunchLog.useOnlyThisLogger)
-        {
-            consolehandler.setFormatter(new org.bukkit.craftbukkit.util.ShortConsoleLogFormatter(server));
-        }
-        else
-        {
-            consolehandler.setFormatter(new Formatter()
-            {
-                @Override
-                public String format(final LogRecord record)
-                {
-                    return MessageFormat.format(record.getMessage(), record.getParameters()).concat("\n");
-                }
-            });
-        }
-        // MCPC+ end
         global.addHandler(consolehandler);
         // CraftBukkit end
 

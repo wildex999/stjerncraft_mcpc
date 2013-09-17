@@ -32,7 +32,7 @@ public class FMLRelaunchLog
 {
 
     public static boolean useOnlyThisLogger = false; // MCPC+ - FML logger vs. CB logger
-    private static class ConsoleLogWrapper extends Handler
+    public static class ConsoleLogWrapper extends Handler
     {
         @Override
         public void publish(LogRecord record)
@@ -64,9 +64,9 @@ public class FMLRelaunchLog
         }
 
     }
-    private static class ConsoleLogThread implements Runnable
+    public static class ConsoleLogThread implements Runnable
     {
-        static ConsoleHandler wrappedHandler = new ConsoleHandler();
+        public static ConsoleHandler wrappedHandler = new ConsoleHandler();
         static LinkedBlockingQueue<LogRecord> recordQueue = new LinkedBlockingQueue<LogRecord>();
         @Override
         public void run()

@@ -67,7 +67,7 @@ public final class FMLLogFormatter extends Formatter // MCPC+ - public for Minec
         {
             msg.append("[] ");
         }
-        msg.append(record.getMessage());
+        msg.append(formatMessage(record));//record.getMessage());
         msg.append(LINE_SEPARATOR);
         Throwable thr = record.getThrown();
 
