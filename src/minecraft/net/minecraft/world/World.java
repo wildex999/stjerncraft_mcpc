@@ -3374,6 +3374,9 @@ public abstract class World implements IBlockAccess
             this.activeChunkSet.add(chunk);
             long key = chunkToKey(chunk.chunkXPos, chunk.chunkZPos);
             activeChunkSet_CB.put(key, (short) 0);
+            if (!this.chunkExists(chunk.chunkXPos, chunk.chunkZPos)) {
+                ((WorldServer)this).theChunkProviderServer.loadChunk(chunk.chunkXPos, chunk.chunkZPos);
+            }
         }
         // MCPC+ end
 
@@ -3390,10 +3393,10 @@ public abstract class World implements IBlockAccess
             return;
         }
 
-        if (playerEntities.size() == 0)
+        /*if (playerEntities.size() == 0) // MCPC+ tick chunks even if no players are logged in
         {
             return;
-        }
+        }*/
 
         // Keep chunks with growth inside of the optimal chunk range
         int chunksPerPlayer = Math.min(200, Math.max(1, (int)(((optimalChunks - playerEntities.size()) / (double) playerEntities.size()) + 0.5)));

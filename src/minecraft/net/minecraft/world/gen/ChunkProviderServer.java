@@ -61,6 +61,7 @@ public class ChunkProviderServer implements IChunkProvider
      * if this is false, the defaultEmptyChunk will be returned by the provider
      */
     public boolean loadChunkOnProvideRequest = FMLCommonHandler.instance().getMinecraftServerInstance().server.getLoadChunkOnRequest(); // MCPC+ - if true, allows mods to force load chunks. to disable, set load-chunk-on-request in bukkit.yml to false
+    public int initialTick; // MCPC+ counter to keep track of when this loader was created
     public LongObjectHashMap<Chunk> loadedChunkHashMap = new LongObjectHashMap<Chunk>();
     public List loadedChunks = new ArrayList(); // MCPC+  vanilla compatibility
     public WorldServer worldObj;
@@ -68,6 +69,7 @@ public class ChunkProviderServer implements IChunkProvider
 
     public ChunkProviderServer(WorldServer par1WorldServer, IChunkLoader par2IChunkLoader, IChunkProvider par3IChunkProvider)
     {
+        this.initialTick = MinecraftServer.currentTick; // MCPC+ keep track of when the loader was created
         this.defaultEmptyChunk = new EmptyChunk(par1WorldServer, 0, 0);
         this.worldObj = par1WorldServer;
         this.currentChunkLoader = par2IChunkLoader;
@@ -88,6 +90,7 @@ public class ChunkProviderServer implements IChunkProvider
      */
     public void unloadChunksIfNotNearSpawn(int par1, int par2)
     {
+        if (this.worldObj.getPersistentChunks().containsKey(new ChunkCoordIntPair(par1, par2))) return; // MCPC+ don't unload persistent chunks (keeps from saving chunks that don't need it yet)
         if (this.worldObj.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId))
         {
             ChunkCoordinates chunkcoordinates = this.worldObj.getSpawnPoint();
@@ -248,7 +251,7 @@ public class ChunkProviderServer implements IChunkProvider
     {
         // CraftBukkit start
         Chunk chunk = (Chunk) this.loadedChunkHashMap.get(LongHash.toLong(par1, par2));
-        chunk = chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(par1, par2)) : chunk;
+        chunk = chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest && !MinecraftServer.callingForgeTick && (MinecraftServer.currentTick - initialTick > 100) ? this.defaultEmptyChunk : this.loadChunk(par1, par2)) : chunk; //MCPC+ handle forge server tick events and load the chunk within 5 seconds of the world being loaded (for chunk loaders)
 
         if (chunk == this.defaultEmptyChunk)
         {

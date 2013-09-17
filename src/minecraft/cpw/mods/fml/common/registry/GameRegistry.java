@@ -173,10 +173,13 @@ public class GameRegistry
         long zSeed = fmlRandom.nextLong() >> 2 + 1L;
         fmlRandom.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ worldSeed);
 
+        boolean before = ((net.minecraft.world.WorldServer)world).theChunkProviderServer.loadChunkOnProvideRequest; // MCPC+ store value
+        ((net.minecraft.world.WorldServer)world).theChunkProviderServer.loadChunkOnProvideRequest = true; // MCPC+ load chunks on provide requests
         for (IWorldGenerator generator : worldGenerators)
         {
             generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
         }
+        ((net.minecraft.world.WorldServer)world).theChunkProviderServer.loadChunkOnProvideRequest = before; // MCPC+ reset
     }
 
     /**

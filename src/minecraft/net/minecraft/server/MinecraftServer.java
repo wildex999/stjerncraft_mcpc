@@ -204,7 +204,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     public static double currentTPS = 0;
     private static long catchupTime = 0;
     // Spigot end
-
+    public static boolean callingForgeTick = false; // MCPC+ handle loadOnRequest during forge tick events
     // MCPC+ start - vanilla compatibility
     public MinecraftServer(File par1File)
     {
@@ -415,7 +415,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
             // CraftBukkit end
             ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
-
+            boolean before = worldserver.theChunkProviderServer.loadChunkOnProvideRequest; // MCPC+ remember previous value
+            worldserver.theChunkProviderServer.loadChunkOnProvideRequest = true; // MCPC+ force chunks to load
             for (int k = -short1; k <= short1 && this.isServerRunning(); k += 16)
             {
                 for (int l = -short1; l <= short1 && this.isServerRunning(); l += 16)
@@ -438,6 +439,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                     worldserver.theChunkProviderServer.loadChunk(chunkcoordinates.posX + j >> 4, chunkcoordinates.posZ + k >> 4);
                 }
             }
+            worldserver.theChunkProviderServer.loadChunkOnProvideRequest = before; // MCPC+ force chunks to load
         }
 
         this.clearCurrentTask();
@@ -714,7 +716,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         FMLCommonHandler.instance().rescheduleTicks(Side.SERVER); // Forge
         long i = System.nanoTime();
         AxisAlignedBB.getAABBPool().cleanPool();
+        callingForgeTick = true; // MCPC+ start - handle loadOnProviderRequests during forge tick event
         FMLCommonHandler.instance().onPreServerTick(); // Forge
+        callingForgeTick = false; // MCPC+ end
         ++this.tickCounter;
 
         if (this.startProfiling)
@@ -760,7 +764,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         this.theProfiler.endSection();
         this.theProfiler.endSection();
+        callingForgeTick = true; // MCPC+ start - handle loadOnProviderRequests during forge tick event
         FMLCommonHandler.instance().onPostServerTick();
+        callingForgeTick = false; // MCPC+ end
     }
 
     public void updateTimeLightAndEntities()
