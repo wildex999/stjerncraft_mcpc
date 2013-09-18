@@ -33,6 +33,19 @@ public class FMLLog
     	if(level.equals(Level.SEVERE))
     	{
     		IWorldInteract item = World.currentTickItem;
+    		
+    		//TODO: Remove this apply a proper fix!!!
+    		//For now, ignore any SEVERE message from TileController, du to spam when part of network is in unloading chunks(Can safely be ignored)
+    		try {
+				if(Class.forName("appeng.me.tile.TileController").isInstance(item))
+				{
+					return;
+				}
+			} catch (ClassNotFoundException e) {
+				//Do nothing if TileController doesn't exists
+				//SEVERE log's should be rather rare anyway!
+			}
+    		
     		if(item == null)
     		{
     			format = " (NULLITEM) " + format;
