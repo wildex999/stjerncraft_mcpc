@@ -209,6 +209,7 @@ public class LogAgent implements ILogAgent
 
     public void logSevereException(String par1Str, Throwable par2Throwable)
     {
+    	System.out.println("EXCEPTION LogAgent");
         this.serverLogger.log(Level.SEVERE, par1Str, par2Throwable);
     }
 

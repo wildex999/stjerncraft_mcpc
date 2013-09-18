@@ -82,7 +82,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         dedicatedservercommandthread.start();
         // CraftBukkit start
         System.setOut(new PrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.INFO), true));
-        System.setErr(new PrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.SEVERE), true));
+        System.setErr(new TempPrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.SEVERE), true));
         // CraftBukkit end
         this.getLogAgent().logInfo("Starting minecraft server version 1.5.2");
 
