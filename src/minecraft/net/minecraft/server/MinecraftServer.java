@@ -76,12 +76,14 @@ import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
+
 // CraftBukkit end
 // MCPC+ start
 import java.util.Map;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.EnumHelper;
+import w999.baseprotect.BaseProtect;
 import za.co.mcportcentral.FMLLogJLineBreakProxy;
 // MCPC+ end
 
@@ -208,6 +210,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     public static double currentTPS = 0;
     private static long catchupTime = 0;
     // Spigot end
+    
+    private BaseProtect baseProtect;//MCPC+ - Base Protect
 
     // MCPC+ start - vanilla compatibility
     public MinecraftServer(File par1File)
@@ -594,7 +598,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 FMLCommonHandler.instance().onWorldLoadTick(this.worlds.toArray(new WorldServer[this.worlds.size()]));
 
                 server.getCommandMap().register("chunksampling2", new CommandChunkSampling()); //MCPC+ - Register ChunkSampling Command
-                //MCPC+ - Initialize BaseProtect
+                baseProtect = new BaseProtect(server); //MCPC+ - Initialize BaseProtect
+                
                 
                 // Spigot start
                 for (long lastTick = 0L; this.serverRunning; this.serverIsRunning = true)

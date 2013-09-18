@@ -18,12 +18,12 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import net.minecraftforge.common.FakePlayer;
 
 import org.spigotmc.CustomTimingsHandler; // Spigot
 import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 
 import w999.baseprotect.IWorldInteract;
+import w999.baseprotect.PlayerData;
 
 public class TileEntity implements IWorldInteract
 {
@@ -406,19 +406,13 @@ public class TileEntity implements IWorldInteract
     }
 
 	@Override
-	public boolean setItemOwner(FakePlayer owner) {
+	public boolean setItemOwner(PlayerData owner) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean setItemOwner(String player) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public FakePlayer getItemOwner() {
+	public PlayerData getItemOwner() {
 		// TODO Auto-generated method stub
 		return null;
 	}

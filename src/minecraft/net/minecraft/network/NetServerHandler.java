@@ -217,6 +217,9 @@ public class NetServerHandler extends NetHandler
      */
     public void networkTick()
     {
+    	//MCPC+ - BaseProtect, every packet should be handled with the player as current entity
+    	if(playerEntity != null) playerEntity.worldObj.currentTickItem = playerEntity; 
+    	
         this.field_72584_h = false;
         ++this.currentTicks;
         this.mcServer.theProfiler.startSection("packetflow");
@@ -245,6 +248,9 @@ public class NetServerHandler extends NetHandler
         {
             --this.creativeItemCreationSpamThresholdTally;
         }
+        
+        //MCPC+ - BaseProtect, set current entity to null(World/Nature)
+        if(playerEntity != null) playerEntity.worldObj.currentTickItem = null;
 
         this.mcServer.theProfiler.endStartSection("playerTick");
         this.mcServer.theProfiler.endSection();

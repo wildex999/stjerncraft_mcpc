@@ -75,12 +75,12 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.plugin.PluginManager;
 
 import w999.baseprotect.IWorldInteract;
+import w999.baseprotect.PlayerData;
 // CraftBukkit end
 // MCPC+ start
 import cpw.mods.fml.common.registry.EntityRegistry;
 import net.minecraft.world.Teleporter;
 import net.minecraftforge.common.EnumHelper;
-import net.minecraftforge.common.FakePlayer;
 // MCPC+ end
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
@@ -382,7 +382,6 @@ public abstract class Entity implements IWorldInteract
         String className = this.getClass().getName();
         if(className.equals("vswe.stevescarts.Carts.MinecartModular"))
         {
-        	FMLLog.log(Level.SEVERE, "Test 123", new Object());
         	System.out.println("Removing Minecart with stack(SETDEAD):");
         	Thread.currentThread().dumpStack();
         }
@@ -2882,19 +2881,13 @@ public abstract class Entity implements IWorldInteract
     }
     
     @Override
-	public boolean setItemOwner(FakePlayer owner) {
+	public boolean setItemOwner(PlayerData owner) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean setItemOwner(String player) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public FakePlayer getItemOwner() {
+	public PlayerData getItemOwner() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -88,11 +88,13 @@ public class CraftFakePlayer extends CraftPlayer
     /**
      * Get a fake player with a given username
      */
-    public static EntityPlayerMP get(World world, String username, boolean doLogin)
+    public static EntityPlayerMP get(World world, String username, boolean doLogin, boolean doJoin)
     {
-        if (!fakePlayers.containsKey(username))
+    	EntityPlayerMP fakePlayer = fakePlayers.get(username);
+    	
+        if (fakePlayer == null)
         {
-            EntityPlayerMP fakePlayer = new EntityPlayerMP(FMLCommonHandler.instance().getMinecraftServerInstance(), world,
+            fakePlayer = new EntityPlayerMP(FMLCommonHandler.instance().getMinecraftServerInstance(), world,
                     username, new ItemInWorldManager(world));
 
             if (doLogin)
@@ -103,15 +105,23 @@ public class CraftFakePlayer extends CraftPlayer
                 {
                     System.err.println("[FakePlayer] Warning: Login event was disallowed for "+username+". Ignoring, but this may cause confused plugins.");
                 }
-
-                PlayerJoinEvent pje = new PlayerJoinEvent(fakePlayer.getBukkitEntity(), "");
-                world.getServer().getPluginManager().callEvent(pje);
+                
+                if(doJoin)
+                {
+	                PlayerJoinEvent pje = new PlayerJoinEvent(fakePlayer.getBukkitEntity(), "");
+	                world.getServer().getPluginManager().callEvent(pje);
+                }
             }
 
             fakePlayers.put(username, fakePlayer);
         }
 
-        return fakePlayers.get(username);
+        return fakePlayer;
+    }
+    
+    public static EntityPlayerMP get(World world, String username, boolean doLogin)
+    {
+    	return get(world, username, doLogin, true);
     }
 
     public static EntityPlayerMP get(World world)
