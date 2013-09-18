@@ -358,7 +358,7 @@ public abstract class Container
                 }
                 else if (par3 == 1)
                 {
-                    if (par1 < 0)
+                    if (par1 < 0 || par1 >= inventorySlots.size())
                     {
                         return null;
                     }
@@ -383,7 +383,7 @@ public abstract class Container
                 }
                 else
                 {
-                    if (par1 < 0)
+                    if (par1 < 0  || par1 >= inventorySlots.size())
                     {
                         return null;
                     }
