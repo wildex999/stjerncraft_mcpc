@@ -248,7 +248,6 @@ public class NetServerHandler extends NetHandler
         {
             --this.creativeItemCreationSpamThresholdTally;
         }
-        
         //MCPC+ - BaseProtect, set current entity to null(World/Nature)
         if(playerEntity != null) playerEntity.worldObj.currentTickItem = null;
 

@@ -29,6 +29,7 @@ public class BaseProtect extends JavaPlugin {
 		
 		//Register event handlers
 		Bukkit.getPluginManager().registerEvents(new PlayerEventHandler(), Bukkit.getPluginManager().getPlugins()[0]);
+		Bukkit.getPluginManager().registerEvents(new PlayerJoinEventHandler(), Bukkit.getPluginManager().getPlugins()[0]);
 	}
 	
 	@Override

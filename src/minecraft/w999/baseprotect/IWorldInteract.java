@@ -9,7 +9,7 @@ public interface IWorldInteract {
 	public boolean setItemOwner(PlayerData player);
 	
 	//Get the owner for this World Interactor
-	PlayerData getItemOwner();
+	public PlayerData getItemOwner();
 	
 	//Position
 	long getX();

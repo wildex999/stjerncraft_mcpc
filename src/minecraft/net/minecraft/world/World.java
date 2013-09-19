@@ -1837,6 +1837,15 @@ public abstract class World implements IBlockAccess
                 return false;
             }
 
+            //MCPC+ start - BaseProtect, Any new entity created will inherit the same owner as the current one
+            IWorldInteract entityParent = this.currentTickItem;
+            if(entityParent != null)
+            {
+            	System.out.println("Parent: " + entityParent);
+            	entity.setItemOwner(entityParent.getItemOwner());
+            }
+            //MCPC+ End
+            
             this.getChunkFromChunkCoords(i, j).addEntity(entity);
             this.loadedEntityList.add(entity);
             this.obtainEntitySkin(entity);

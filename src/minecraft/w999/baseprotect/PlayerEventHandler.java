@@ -15,11 +15,14 @@ public class PlayerEventHandler implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST) //Right clicking with inspect should skip the rest
 	public void onPlayerInspectEntity(PlayerInteractEntityEvent event)
 	{
-		Entity entity = ((CraftEntity)event.getRightClicked()).getHandle();
-		if(entity instanceof Entity)
-			System.out.println("IS OF ENTITY");
-		else
-			System.out.println("IS NOT OF ENTITY");
+		Entity entity = null;
+		try {
+			entity = ((CraftEntity)event.getRightClicked()).getHandle();
+		}
+		catch (Exception e)
+		{
+			System.err.println("BASEPROTECT Error casting player in inspect!");
+		}
 		if(inspect(event.getPlayer(), entity))
 			event.setCancelled(true);
 	}

@@ -21,6 +21,7 @@ public class PlayerData {
 		//Uses world 0(Main world) TODO: Make this changeable? (Afraid the player will exist in a world that unloads)
 		fakePlayer = CraftFakePlayer.get(DimensionManager.getWorld(0), username, true, false);
 		//TODO: Do some testing on the player(Is the player banned? Does the player actually exist? etc.)
+		
 		return true;
 	}
 	

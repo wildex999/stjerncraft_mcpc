@@ -282,6 +282,9 @@ public abstract class Entity implements IWorldInteract
     public final boolean defaultActivationState;
     public long activatedTick = 0;
     // Spigot end
+    
+    //MCPC+ - BaseProtect, the owner for this entity
+    PlayerData entityOwner;
             
     /** Forge: Used to store custom data for each entity. */
     private NBTTagCompound customEntityData;
@@ -2882,14 +2885,13 @@ public abstract class Entity implements IWorldInteract
     
     @Override
 	public boolean setItemOwner(PlayerData owner) {
-		// TODO Auto-generated method stub
-		return false;
+    	entityOwner = owner;
+		return true;
 	}
 
 	@Override
 	public PlayerData getItemOwner() {
-		// TODO Auto-generated method stub
-		return null;
+		return entityOwner;
 	}
 
 	@Override
