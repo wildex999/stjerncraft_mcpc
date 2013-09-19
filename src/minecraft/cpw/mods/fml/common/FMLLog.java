@@ -25,15 +25,28 @@ public class FMLLog
     public static void log(String logChannel, Level level, String format, Object... data)
     {
     	//TODO: If turned on, print the current object in each world when logging(To find sources of problems)
+    	IWorldInteract item = World.currentTickItem;
+		if(item == null)
+		{
+			format = " (NULLITEM) " + format;
+		}
+		else
+		{
+			String className = World.currentTickItem.getClass().getName();
+			int last = className.lastIndexOf(".");
+			if(last != -1)
+				className = className.substring(last);
+			
+			format = " (" + className + " [X: " + item.getX() + " Y: " + item.getY() + " Z: " + item.getZ() +"]) " + format;
+		}
         coreLog.log(logChannel, level, format, data);
     }
 
     public static void log(Level level, String format, Object... data)
     {
+    	IWorldInteract item = World.currentTickItem;
     	if(level.equals(Level.SEVERE))
     	{
-    		IWorldInteract item = World.currentTickItem;
-    		
     		//TODO: Remove this apply a proper fix!!!
     		//For now, ignore any SEVERE message from TileController, du to spam when part of network is in unloading chunks(Can safely be ignored)
     		try {
@@ -45,16 +58,22 @@ public class FMLLog
 				//Do nothing if TileController doesn't exists
 				//SEVERE log's should be rather rare anyway!
 			}
-    		
-    		if(item == null)
-    		{
-    			format = " (NULLITEM) " + format;
-    		}
-    		else
-    		{
-    			format = " (" + World.currentTickItem.getClass().getName() + " [X: " + item.getX() + " Y: " + item.getY() + " Z: " + item.getZ() +"]) " + format;
-    		}
     	}
+    	
+		if(item == null)
+		{
+			format = " (NULLITEM) " + format;
+		}
+		else
+		{
+			String className = World.currentTickItem.getClass().getName();
+			int last = className.lastIndexOf(".");
+			if(last != -1)
+				className = className.substring(last);
+			
+			format = " (" + className + " [X: " + item.getX() + " Y: " + item.getY() + " Z: " + item.getZ() +"]) " + format;
+		}
+    	
         coreLog.log(level, format, data);
     }
 
@@ -75,6 +94,11 @@ public class FMLLog
 
     public static void warning(String format, Object... data)
     {
+    	if(format.contains("API ERROR: ic2.")) //MCPC+ - Filter out IC2 net spamming
+    	{
+    		System.out.println("Filtered IC2 Warning");
+    		return;
+    	}
         log(Level.WARNING, format, data);
     }
 

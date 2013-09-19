@@ -3,6 +3,7 @@ package net.minecraft.server.dedicated;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import w999.baseprotect.IWorldInteract;
 import net.minecraft.world.World;
 
 //TEMP LOGGER TO FILTER OUT THE EXCEPTION FROM APPLIED ENERGISTICS CONTROLLER
@@ -29,5 +30,27 @@ public class TempPrintStream extends PrintStream {
 		}
 		//Print anything else
 		super.println(obj);
+	}
+	
+	//TEMP: Print Item and location
+	@Override
+	public void println(String str)
+	{
+		IWorldInteract item = World.currentTickItem;
+		String format = str;
+		if(item == null)
+		{
+			format = " (NULLITEM) " + format;
+		}
+		else
+		{
+			String className = World.currentTickItem.getClass().getName();
+			int last = className.lastIndexOf(".");
+			if(last != -1)
+				className = className.substring(last);
+			
+			format = " (" + className + " [X: " + item.getX() + " Y: " + item.getY() + " Z: " + item.getZ() +"]) " + format;
+		}
+		super.println(format);
 	}
 }
