@@ -210,8 +210,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     public static double currentTPS = 0;
     private static long catchupTime = 0;
     // Spigot end
-    
-    private BaseProtect baseProtect;//MCPC+ - Base Protect
 
     // MCPC+ start - vanilla compatibility
     public MinecraftServer(File par1File)
@@ -598,9 +596,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                 FMLCommonHandler.instance().onWorldLoadTick(this.worlds.toArray(new WorldServer[this.worlds.size()]));
 
                 server.getCommandMap().register("chunksampling2", new CommandChunkSampling()); //MCPC+ - Register ChunkSampling Command
-                baseProtect = new BaseProtect(server); //MCPC+ - Initialize BaseProtect
-                
-                
+                new BaseProtect(server); //MCPC+ - Initialize BaseProtect(Must be done before world loads)
+               
                 // Spigot start
                 for (long lastTick = 0L; this.serverRunning; this.serverIsRunning = true)
                 {

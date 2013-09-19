@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,7 +17,8 @@ public class BaseProtect extends JavaPlugin {
 	private List<Class> entities = new ArrayList<Class>(); //List of Entities to check
 	private List<Class> tileEntities = new ArrayList<Class>(); //List of TileEntities to check
 	
-	private HashMap<String, PlayerData> commandPlayers = new HashMap<String, PlayerData>(); //Data for players using commands
+	//players need to be accessed before BaseProtect can be initialized, therefore it's static
+	private static HashMap<String, PlayerData> players = new HashMap<String, PlayerData>(); //Data for players
 	
 	
 	public BaseProtect(CraftServer server)
@@ -75,15 +78,37 @@ public class BaseProtect extends JavaPlugin {
 		
 	}
 	
-	public PlayerData getPlayerData(String player)
+	public static PlayerData getPlayerData(String player)
 	{
-		PlayerData playerData = commandPlayers.get(player);
+		PlayerData playerData = players.get(player);
 		if(playerData == null)
 		{
 			//No player data exist for this player, so we create it
 			playerData = new PlayerData(player);
-			commandPlayers.put(player, playerData);
+			players.put(player, playerData);
 		}
 		return playerData;
+	}
+	
+	public static boolean WriteOwnerNBT(IWorldInteract item, NBTTagCompound nbt)
+	{
+        PlayerData owner = item.getItemOwner();
+        if(owner != null && owner.getPlayer() != null)
+        {
+        	nbt.setString("BPOwner", owner.getPlayer().username);
+        	//System.out.println("Wrote Owner(" + owner + ") for: " + item);
+        }
+        return true;
+	}
+	
+	public static boolean ReadOwnerNBT(IWorldInteract item, NBTTagCompound nbt)
+	{
+        String owner = nbt.getString("BPOwner");
+        if(!owner.isEmpty())
+        {
+        		item.setItemOwner(BaseProtect.getPlayerData(owner));
+        		//System.out.println("Read owner(" + owner + ") for: " + item);
+        }
+		return true;
 	}
 }

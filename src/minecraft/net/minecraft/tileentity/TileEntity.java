@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import org.spigotmc.CustomTimingsHandler; // Spigot
 import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 
+import w999.baseprotect.BaseProtect;
 import w999.baseprotect.IWorldInteract;
 import w999.baseprotect.PlayerData;
 
@@ -103,6 +104,11 @@ public class TileEntity implements IWorldInteract
         this.xCoord = par1NBTTagCompound.getInteger("x");
         this.yCoord = par1NBTTagCompound.getInteger("y");
         this.zCoord = par1NBTTagCompound.getInteger("z");
+        
+        //MCPC+ Begin - BaseProtect, Read owner if it exists
+        if(!BaseProtect.ReadOwnerNBT(this, par1NBTTagCompound))
+        	System.err.println("Failed to set TileEntity owner for " + this);
+        //MCPC+ end
     }
 
     /**
@@ -122,6 +128,10 @@ public class TileEntity implements IWorldInteract
             par1NBTTagCompound.setInteger("x", this.xCoord);
             par1NBTTagCompound.setInteger("y", this.yCoord);
             par1NBTTagCompound.setInteger("z", this.zCoord);
+            
+            //MCPC+ - BaseProtect, Write username of owner if set
+            BaseProtect.WriteOwnerNBT(this, par1NBTTagCompound);
+            
         }
     }
 

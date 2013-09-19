@@ -48,8 +48,11 @@ public class PlayerEventHandler implements Listener {
 			return;
 		}
 		//Set Owner(Itself)
-		player.getHandle().setItemOwner(new PlayerData(event.getPlayer().getName()));
-		System.out.println("SET PLAYER ON JOIN");
+		BaseProtect bp = BaseProtect.instance;
+		if(bp != null)
+			player.getHandle().setItemOwner(bp.getPlayerData(event.getPlayer().getName()));
+    	else
+    		System.err.println("Failed to set Player owner due to BaseProtect not being initialized!");
 		
 	}
 	

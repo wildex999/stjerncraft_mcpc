@@ -1841,7 +1841,7 @@ public abstract class World implements IBlockAccess
             IWorldInteract entityParent = this.currentTickItem;
             if(entityParent != null)
             {
-            	System.out.println(entity.getClass().getName() + " Parent: " + entityParent);
+            	System.out.println(entity.getClass().getName() + " Parent: " + entityParent + "(" + entityParent.getItemOwner() + ")");
             	entity.setItemOwner(entityParent.getItemOwner());
             }
             //MCPC+ End
@@ -3120,7 +3120,7 @@ public abstract class World implements IBlockAccess
         IWorldInteract entityParent = this.currentTickItem;
         if(entityParent != null)
         {
-        	System.out.println(par4TileEntity.getClass().getName() + " TileParent: " + entityParent);
+        	System.out.println(par4TileEntity.getClass().getName() + " TileParent: " + entityParent + "(" + entityParent.getItemOwner() + ")");
         	par4TileEntity.setItemOwner(entityParent.getItemOwner());
         }
         //MCPC+ end

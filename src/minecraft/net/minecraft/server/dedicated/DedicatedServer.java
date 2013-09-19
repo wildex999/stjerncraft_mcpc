@@ -3,6 +3,7 @@ package net.minecraft.server.dedicated;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
+
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.ServerCommand;
 import net.minecraft.crash.CrashReport;
@@ -34,6 +36,7 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.chunk.storage.AnvilSaveConverter;
 
+
 // CraftBukkit start
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -41,6 +44,8 @@ import java.util.logging.Level;
 import org.bukkit.craftbukkit.LoggerOutputStream;
 import org.bukkit.event.server.ServerCommandEvent;
 // CraftBukkit end
+
+import w999.baseprotect.BaseProtect;
 
 public class DedicatedServer extends MinecraftServer implements IServer
 {
@@ -81,7 +86,7 @@ public class DedicatedServer extends MinecraftServer implements IServer
         dedicatedservercommandthread.setDaemon(true);
         dedicatedservercommandthread.start();
         // CraftBukkit start
-        System.setOut(new PrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.INFO), true));
+        System.setOut(new TempPrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.INFO), true));
         System.setErr(new TempPrintStream(new LoggerOutputStream(this.getLogAgent().getServerLogger(), Level.SEVERE), true));
         // CraftBukkit end
         this.getLogAgent().logInfo("Starting minecraft server version 1.5.2");

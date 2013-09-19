@@ -54,6 +54,10 @@ public class CommandBaseProtect extends VanillaCommand {
 		{
 			sender.sendMessage(ChatColor.RED + "Help not yet implemented!");
 			return false;
+		} else if(action.equalsIgnoreCase("crash"))
+		{
+			while(true) {} //Crash server 
+			//TODO: REMOVE!!!!!
 		}
 		
 

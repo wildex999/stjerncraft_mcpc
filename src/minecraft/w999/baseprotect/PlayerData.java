@@ -34,4 +34,13 @@ public class PlayerData {
 	{
 		setPlayer(username);
 	}
+	
+	@Override
+	public String toString()
+	{
+		if(fakePlayer != null)
+			return fakePlayer.username;
+		else
+			return "Null";
+	}
 }

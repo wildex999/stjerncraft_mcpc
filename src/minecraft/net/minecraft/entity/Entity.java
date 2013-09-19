@@ -49,6 +49,8 @@ import net.minecraft.world.WorldServer;
 
 
 
+
+
 // CraftBukkit start
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -74,6 +76,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.plugin.PluginManager;
 
+import w999.baseprotect.BaseProtect;
 import w999.baseprotect.IWorldInteract;
 import w999.baseprotect.PlayerData;
 // CraftBukkit end
@@ -1682,8 +1685,11 @@ public abstract class Entity implements IWorldInteract
                     t.printStackTrace();
                 }
             }
-
+            
             this.writeEntityToNBT(par1NBTTagCompound);
+            
+            //MCPC+ - BaseProtect, Write username of owner if exists
+            BaseProtect.WriteOwnerNBT(this, par1NBTTagCompound);
 
             if (this.ridingEntity != null)
             {
@@ -1764,6 +1770,11 @@ public abstract class Entity implements IWorldInteract
                     t.printStackTrace();
                 }
             }
+            
+            //MCPC+ Begin - BaseProtect, load Entity owner if set
+            if(!BaseProtect.ReadOwnerNBT(this, par1NBTTagCompound))
+            	System.err.println("Failed to set Entity owner for " + this);
+            //MCPC+ End
 
             //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly
             if (par1NBTTagCompound.hasKey("PersistentIDMSB") && par1NBTTagCompound.hasKey("PersistentIDLSB"))
