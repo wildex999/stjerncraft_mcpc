@@ -50,6 +50,9 @@ public class TileEntity implements IWorldInteract
     public int zCoord;
     protected boolean tileEntityInvalid;
     public int blockMetadata = -1;
+    
+    //MCPC+ - BaseProtect, Owner of TileEntity
+    PlayerData tileOwner;
 
     /** the Block type that this TileEntity is contained within */
     public Block blockType;
@@ -407,14 +410,13 @@ public class TileEntity implements IWorldInteract
 
 	@Override
 	public boolean setItemOwner(PlayerData owner) {
-		// TODO Auto-generated method stub
-		return false;
+		tileOwner = owner;
+		return true;
 	}
 
 	@Override
 	public PlayerData getItemOwner() {
-		// TODO Auto-generated method stub
-		return null;
+		return tileOwner;
 	}
 
 	@Override

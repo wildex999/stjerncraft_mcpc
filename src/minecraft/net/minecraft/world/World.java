@@ -1837,11 +1837,11 @@ public abstract class World implements IBlockAccess
                 return false;
             }
 
-            //MCPC+ start - BaseProtect, Any new entity created will inherit the same owner as the current one
+            //MCPC+ start - BaseProtect, Any new entity created will inherit the same owner as the currently ticking item
             IWorldInteract entityParent = this.currentTickItem;
             if(entityParent != null)
             {
-            	System.out.println("Parent: " + entityParent);
+            	System.out.println(entity.getClass().getName() + " Parent: " + entityParent);
             	entity.setItemOwner(entityParent.getItemOwner());
             }
             //MCPC+ End
@@ -3115,6 +3115,15 @@ public abstract class World implements IBlockAccess
         {
             return;
         }
+        
+        //MCPC+ start - BaseProtect, Inherit owner from currently ticking item
+        IWorldInteract entityParent = this.currentTickItem;
+        if(entityParent != null)
+        {
+        	System.out.println(par4TileEntity.getClass().getName() + " TileParent: " + entityParent);
+        	par4TileEntity.setItemOwner(entityParent.getItemOwner());
+        }
+        //MCPC+ end
 
         if (par4TileEntity.canUpdate())
         {
