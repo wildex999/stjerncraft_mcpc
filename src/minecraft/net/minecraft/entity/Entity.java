@@ -51,6 +51,8 @@ import net.minecraft.world.WorldServer;
 
 
 
+
+
 // CraftBukkit start
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -77,8 +79,10 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.plugin.PluginManager;
 
 import w999.baseprotect.BaseProtect;
+import w999.baseprotect.BaseProtect.InteractorType;
 import w999.baseprotect.IWorldInteract;
 import w999.baseprotect.PlayerData;
+import w999.baseprotect.IWorldInteract.Relevant;
 // CraftBukkit end
 // MCPC+ start
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -288,6 +292,8 @@ public abstract class Entity implements IWorldInteract
     
     //MCPC+ - BaseProtect, the owner for this entity
     PlayerData entityOwner;
+    //MCPC+ - BaseProtect, relevant cache
+	private Relevant relevantCache;
             
     /** Forge: Used to store custom data for each entity. */
     private NBTTagCompound customEntityData;
@@ -2918,5 +2924,27 @@ public abstract class Entity implements IWorldInteract
 	@Override
 	public long getZ() {
 		return (long)this.posZ;
+	}
+	
+	@Override
+	public InteractorType getInteractorType()
+	{
+		return InteractorType.Entity;
+	}
+	
+	@Override
+	public int getId()
+	{
+		return entityId;
+	}
+	
+	@Override
+	public Relevant getRelevantCache() {
+		return relevantCache;
+	}
+	
+	@Override
+	public void setRelevantCache(Relevant relevant) {
+		relevantCache = relevant;
 	}
 }

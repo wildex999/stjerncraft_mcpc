@@ -23,8 +23,10 @@ import org.spigotmc.CustomTimingsHandler; // Spigot
 import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 
 import w999.baseprotect.BaseProtect;
+import w999.baseprotect.BaseProtect.InteractorType;
 import w999.baseprotect.IWorldInteract;
 import w999.baseprotect.PlayerData;
+import w999.baseprotect.IWorldInteract.Relevant;
 
 public class TileEntity implements IWorldInteract
 {
@@ -54,11 +56,14 @@ public class TileEntity implements IWorldInteract
     
     //MCPC+ - BaseProtect, Owner of TileEntity
     PlayerData tileOwner;
+    //MCPC+ - BaseProtect, Relevant Cache
+    private Relevant relevantCache;
 
     /** the Block type that this TileEntity is contained within */
     public Block blockType;
 
     public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getTileEntityTimings(this); // Spigot
+
     /**
      * Adds a new two-way mapping between the class and its string name in both hashmaps.
      */
@@ -442,5 +447,28 @@ public class TileEntity implements IWorldInteract
 	@Override
 	public long getZ() {
 		return this.zCoord;
+	}
+
+	@Override
+	public InteractorType getInteractorType() {
+		return InteractorType.TileEntity;
+	}
+
+	@Override
+	public int getId() {
+		if(blockType != null)
+			return blockType.blockID;
+		else
+			return -1;
+	}
+
+	@Override
+	public Relevant getRelevantCache() {
+		return relevantCache;
+	}
+	
+	@Override
+	public void setRelevantCache(Relevant relevant) {
+		relevantCache = relevant;
 	}
 }

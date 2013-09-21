@@ -4,6 +4,9 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -79,19 +82,26 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityXPOrb;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.Spigot; // Spigot
 import org.bukkit.craftbukkit.SpigotTimings; // Spigot
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
+import w999.baseprotect.BaseProtect;
 import w999.baseprotect.IWorldInteract;
+import w999.baseprotect.PlayerData;
 import za.co.mcportcentral.entity.CraftFakePlayer;
 // CraftBukkit end
 import net.minecraft.nbt.NBTTagCompound; // MCPC+
@@ -109,7 +119,7 @@ public abstract class World implements IBlockAccess
     public final MapStorage perWorldStorage;
     
     public static IWorldInteract currentTickItem; //MCPC+ - Current ticking item(Block, Entity, tileentity) TODO:Make NOT static
-
+    public static Player mcFakePlayer; //Cache of [MineCraft] fake player
     /**
      * boolean; if true updates scheduled by scheduleBlockUpdate happen immediately
      */
@@ -753,13 +763,66 @@ public abstract class World implements IBlockAccess
             }
             else
             {
+            	
                 Chunk chunk = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+                
+                IWorldInteract currentInteractor = World.currentTickItem;
+                
                 int k1 = 0;
-
-                if ((par6 & 1) != 0)
+                if ((par6 & 1) != 0 || currentInteractor != null)
                 {
                     k1 = chunk.getBlockID(par1 & 15, par2, par3 & 15);
                 }
+                
+                //MCPC+ start, BaseProtect, send out event and skip set if cancelled
+                if(currentInteractor != null)
+                {
+	                //First, We don't need to check for build permission if we got anything other than Bedrock on k1 since getBlockID will check
+	                //If we got bedrock, if the interactor is a player we will allow it to continue(Players in creative can break bedrock)
+                	if(k1 == Block.bedrock.blockID && !(currentInteractor instanceof EntityPlayerMP)) 
+                		return false;
+                	
+                	//Are we interested in this interactor?
+                	BaseProtect bp = BaseProtect.instance; //TODO: Store on world
+                	if(bp.isRelevant(currentInteractor))
+                	{
+	                	//Get owner
+	                	PlayerData playerData = currentInteractor.getItemOwner();
+	                	Player player = null;
+	                	if(playerData != null)
+	                		player = playerData.getBukkitPlayer();
+	                	if(player == null) //If no owner, set Minecraft as owner
+	                	{
+	                		if(mcFakePlayer == null)
+	                			mcFakePlayer = (Player) FakePlayerFactory.getMinecraft(this).getBukkitEntity();
+	                		player = mcFakePlayer;
+	                	}
+		                
+		                //Then, tell ClaimHandler to skip the next event
+	                	BaseProtect.claimIgnoreEvents(true);
+	                	
+		                //Send events for other plugins(Logging) if we're allowed to build
+		                if(par4 == 0) //Set to Air(Break)
+		                {
+		                	//New Break event
+		                	BlockBreakEvent event = new BlockBreakEvent(getWorld().getBlockAt(par1, par2, par3), player);
+		                	getServer().getPluginManager().callEvent(event);
+		                	if(event.isCancelled())
+		                		return false;
+		                }
+		                else //Set to anything else(Place)
+		                {
+		                	//TODO: For now it seems everything is forced to send an event anyway
+		                	//New Place event
+		                	//BlockPlaceEvent event = new BlockPlaceEvent(getWorld().getBlockAt(par1, par2, par3), player);
+		                }
+                	}
+	                
+	                //Reset ignore(TODO: What happens if there is an exception between set and unset ignore?)
+	                BaseProtect.claimIgnoreEvents(false);
+                	
+                }
+                //MCPC+ end
 
                 boolean flag = chunk.setBlockIDWithMetadata(par1 & 15, par2, par3 & 15, par4, par5);
                 this.theProfiler.startSection("checkLight");
@@ -1841,7 +1904,7 @@ public abstract class World implements IBlockAccess
             IWorldInteract entityParent = this.currentTickItem;
             if(entityParent != null)
             {
-            	System.out.println(entity.getClass().getName() + " Parent: " + entityParent + "(" + entityParent.getItemOwner() + ")");
+            	//System.out.println(entity.getClass().getName() + " Parent: " + entityParent + "(" + entityParent.getItemOwner() + ")");
             	entity.setItemOwner(entityParent.getItemOwner());
             }
             //MCPC+ End
@@ -3120,7 +3183,7 @@ public abstract class World implements IBlockAccess
         IWorldInteract entityParent = this.currentTickItem;
         if(entityParent != null)
         {
-        	System.out.println(par4TileEntity.getClass().getName() + " TileParent: " + entityParent + "(" + entityParent.getItemOwner() + ")");
+        	//System.out.println(par4TileEntity.getClass().getName() + " TileParent: " + entityParent + "(" + entityParent.getItemOwner() + ")");
         	par4TileEntity.setItemOwner(entityParent.getItemOwner());
         }
         //MCPC+ end

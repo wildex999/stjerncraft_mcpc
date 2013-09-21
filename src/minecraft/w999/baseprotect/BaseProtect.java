@@ -5,77 +5,169 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 public class BaseProtect extends JavaPlugin {
 	public static BaseProtect instance;
+	private static IClaimManager claimManager;
 	
 	private List<Class> entities = new ArrayList<Class>(); //List of Entities to check
 	private List<Class> tileEntities = new ArrayList<Class>(); //List of TileEntities to check
+	private List<Integer> items = new ArrayList<Integer>(); //List of item(Used by Player) to check
+	
+	private int age; //Current age(= number of reloads)
 	
 	//players need to be accessed before BaseProtect can be initialized, therefore it's static
 	private static HashMap<String, PlayerData> players = new HashMap<String, PlayerData>(); //Data for players
+	
+	public enum InteractorType{
+		Entity,
+		TileEntity,
+		PlayerItem
+	}
 	
 	
 	public BaseProtect(CraftServer server)
 	{
 		instance = this;
 		
-		//Check if Grief Prevention exists
-		
 		//Register command handler
 		server.getCommandMap().register("baseprotect2", new CommandBaseProtect());
 		
 		//Register event handlers
+		//TODO: Don't depend on other plugins
 		Bukkit.getPluginManager().registerEvents(new PlayerEventHandler(), Bukkit.getPluginManager().getPlugins()[0]);
+		
+		//Temp: Add some Interactors to watch(TODO: Make it load from config)
+		addInteractor("ic2.core.item.tool.EntityMiningLaser", InteractorType.Entity);
+		addInteractor("mods.railcraft.common.carts.EntityTunnelBore", InteractorType.Entity);
+		addInteractor("vswe.stevescarts.Carts.MinecartModular", InteractorType.Entity);
+		
+		addInteractor("dan200.turtle.shared.TileEntityTurtle", InteractorType.TileEntity);
+		addInteractor("dan200.turtle.shared.TileEntityTurtleExpanded", InteractorType.TileEntity);
 	}
 	
-	@Override
-	public void onEnable()
+	//Get Class from string, verify it's has IWorldInteracte(instanceof IWorldInteract) and store it in the list of entities
+	public boolean addInteractor(String interactor, InteractorType type)
+	{
+		//Find class from name
+		Class cl = null;
+		try {
+			cl = Class.forName(interactor);
+		} catch (ClassNotFoundException e) {
+			System.err.println("Could Find Class for " + interactor + ".");
+			return false;
+		}
+		
+		//Check InteractorType
+		switch(type)
+		{
+		case Entity:
+			entities.add(cl);
+			break;
+		case TileEntity:
+			tileEntities.add(cl);
+			break;
+			default:
+				return false;
+		}
+		
+		age++; //Changes have been done, increase the age
+		
+		System.out.println("BaseProtect, Added Interactor: " + interactor);
+		
+		return true;
+	}
+	
+	public void removeInteractor(String interactor, InteractorType type)
+	{
+		age++;
+		//TODO
+	}
+	
+	//Add itemId of player item to check for
+	public void addPlayerItem(int id)
 	{
 		
 	}
 	
-	//get Class from string, verify it's has IBlockInteracte(instanceof IBlockInteract) and store it in the list of entities
-	public void addInteractor(String entity)
+	//This will reload the Player data(Reload fakeplayer permissions)
+	public static void reloadPlayerData()
 	{
-		
+		//Go through PlayerData's and recreate the fakePlayer from scratch(TODO: Find a way to clear existing ones from fakePlayer list)
+		//TODO: Test if sending join for fakePlayer after real player logs in will keep their permissions in sync(Give same permission object to both?)
 	}
 	
-	//Check if entity has build permission in target Grief Prevention claim
-	public void claimBuildCheck()
+	//Check if entity has build(Place/break) permission in target claim
+	public boolean claimCanBuild(IWorldInteract interactor, Location loc)
 	{
+		if(claimManager == null)
+			return true; //No claim manager = anything allowed
 		
+		//Is the interactor relevant to us?
+		if(!isRelevant(interactor))
+			return true; //Always return true if not
+		
+		return claimManager.claimCanBuild(interactor, loc);
 	}
 	
-	public void claimInteractCheck()
+	public boolean claimCanInteract(IWorldInteract interactor, Location loc)
 	{
+		if(claimManager == null)
+			return true; //No claim manager = anything allowed
 		
+		//Is the interactor relevant to us?
+		if(!isRelevant(interactor))
+			return true;
+		
+		return claimManager.claimCanInteract(interactor, loc);
 	}
 	
-	public void claimContainerCheck()
+	public boolean claimCanContainer(IWorldInteract interactor, Location loc)
 	{
+		if(claimManager == null)
+			return true; //No claim manager = anything allowed
 		
+		//Is the interactor relevant to us?
+		if(!isRelevant(interactor))
+			return true;
+		
+		return claimManager.claimCanContainer(interactor, loc);
 	}
 	
-	//Emit a full Block Break event(For any plugin)
-	public void emitBreakEvent()
+	//Emit a full Block Break event(For any plugin), return true is not cancelled
+	public boolean emitBreakEvent()
 	{
-		
+		return false;
 	}
 	
-	public void emitInteractEvent()
+	public boolean emitPlaceEvent()
 	{
-		
+		return false;
 	}
 	
-	public void emitContainerEvent()
+	public boolean emitInteractEvent()
 	{
-		
+		return false;
+	}
+	
+	public boolean emitContainerEvent()
+	{
+		return false;
+	}
+	
+	//Set's the claim manager(USually a bukkit plugin, who loads before BP, so we set this static)
+	public static boolean setClaimManager(IClaimManager manager)
+	{
+		claimManager = manager;
+		return true;
 	}
 	
 	public static PlayerData getPlayerData(String player)
@@ -110,5 +202,76 @@ public class BaseProtect extends JavaPlugin {
         		//System.out.println("Read owner(" + owner + ") for: " + item);
         }
 		return true;
+	}
+	
+	//Check if interactor is relevant, update cache if changed
+	public boolean isRelevant(IWorldInteract interactor)
+	{
+		IWorldInteract.Relevant relevant = interactor.getRelevantCache();
+		
+		if(relevant == null)
+		{
+			relevant = new IWorldInteract.Relevant();
+			interactor.setRelevantCache(relevant);
+		}
+		
+		//Update cached if needed
+		if(relevant.age != age)
+		{
+			//Check list and Update cache
+			List list = null;
+			switch(interactor.getInteractorType()) //We use multiple lists to avoid searching one large list
+			{
+			case Entity:
+				list = entities;
+				break;
+			case TileEntity:
+				list = tileEntities;
+				break;
+			case PlayerItem:
+				list = items;
+				break;
+			}
+			
+			if(list == null)
+			{
+				System.err.println("BaseProtect: Interactor not of any known type!");
+				return false;
+			}
+			
+			if(list.contains(interactor.getClass()))
+				relevant.relevant = true;
+			else
+				relevant.relevant = false;
+			
+			//Make sure we don't do this test again unless a reload has been done.
+			relevant.age = age;
+		}
+		
+		return relevant.relevant;
+	}
+	
+	//Return the owner of the currently ticking interactor
+	//TODO: Make it require a world for when multiple worlds run at once.
+	public static Player getCurrentOwner()
+	{
+		IWorldInteract item = World.currentTickItem;
+		if(item == null)
+			return null;
+		
+		PlayerData owner = item.getItemOwner();
+		if(owner == null)
+			return null;
+		
+		Player player = owner.getBukkitPlayer();
+		return player;
+		
+	}
+	
+	//Whether or not the claim manager should ingore events
+	public static void claimIgnoreEvents(boolean skip)
+	{
+		if(claimManager != null)
+			claimManager.setSkipEvent(skip);
 	}
 }

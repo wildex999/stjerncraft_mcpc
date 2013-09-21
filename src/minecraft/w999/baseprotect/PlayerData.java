@@ -1,10 +1,9 @@
 package w999.baseprotect;
 
-import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import za.co.mcportcentral.entity.CraftFakePlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 //Stores some data for the players, including their fake player
@@ -28,6 +27,14 @@ public class PlayerData {
 	public EntityPlayerMP getPlayer()
 	{
 		return fakePlayer;
+	}
+	
+	public Player getBukkitPlayer()
+	{
+		if(fakePlayer != null)
+			return fakePlayer.getBukkitEntity();
+		
+		return null;
 	}
 	
 	public PlayerData(String username)

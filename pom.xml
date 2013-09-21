@@ -444,7 +444,7 @@
                 </execution>
                 <execution>
                     <id>srgnames-api</id>
-                    <phase>package</phase>
+                    <phase>packagefull</phase>
                     <goals>
                         <goal>remap</goal>
                     </goals>
@@ -464,7 +464,7 @@
                 <!-- 1.5.1 compatibility reobfuscation -->
                 <execution>
                     <id>reobfuscate-151compat</id>
-                    <phase>package</phase>
+                    <phase>packagefull</phase>
                     <goals>
                         <goal>remap</goal>
                     </goals>

@@ -30,7 +30,10 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 
 import org.bukkit.Bukkit; // CraftBukkit
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
+
+import w999.baseprotect.BaseProtect;
 
 public class Chunk
 {
@@ -612,6 +615,17 @@ public class Chunk
         }
         else
         {
+            //MCPC+ Start - BaseProtect, check if block is inside claim, and if the current Interactor has permission to Break blocks in this claim.
+            BaseProtect bp = BaseProtect.instance;
+            if(bp != null && worldObj.currentTickItem != null)
+            {
+                if(!bp.claimCanBuild(worldObj.currentTickItem, new Location(worldObj.getWorld(), par1 + (16*this.xPosition), par2, par3 + (16*this.zPosition))))
+                {
+                	return Block.bedrock.blockID; //Return bedrock
+                }
+            }
+            //MCPC+ End
+        	
             ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
             return extendedblockstorage != null ? extendedblockstorage.getExtBlockID(par1, par2 & 15, par3) : 0;
         }
