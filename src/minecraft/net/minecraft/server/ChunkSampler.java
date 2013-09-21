@@ -230,7 +230,7 @@ public class ChunkSampler {
 		{
 			//Place the samples to the chunk and the item type
 			ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
-			chunk.incrementItemSamples(chunk.blockItems, "BlockId " + blockId);
+			chunk.incrementItemSamples(chunk.blockItems, "BlockId " + blockId, samples);
 			
 			chunk.totalBlockSampleCount += samples;
 			totalSamples += samples;
@@ -252,7 +252,7 @@ public class ChunkSampler {
 			ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
 			
 			chunk.totalEntitySampleCount += samples;
-			chunk.incrementItemSamples(chunk.entityItems, entity.getClass().getName());
+			chunk.incrementItemSamples(chunk.entityItems, entity.getClass().getName(), samples);
 			totalSamples += samples;
 		}
 	}
@@ -273,7 +273,7 @@ public class ChunkSampler {
 			ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
 			
 			chunk.totalTileEntitySampleCount += samples;
-			chunk.incrementItemSamples(chunk.tileEntityItems, tileEntity.getClass().getName());
+			chunk.incrementItemSamples(chunk.tileEntityItems, tileEntity.getClass().getName(), samples);
 			totalSamples += samples;
 		}
 	}
@@ -401,7 +401,7 @@ public class ChunkSampler {
 		}
 		
 		//Increment the sample count of item with given class name in map, creates if item doesn't exist
-		public void incrementItemSamples(HashMap<String,ItemSample> map, String className)
+		public void incrementItemSamples(HashMap<String,ItemSample> map, String className, int samples)
 		{
 			ItemSample itemSamples = map.get(className);
 			
@@ -411,7 +411,7 @@ public class ChunkSampler {
 				itemSamples = new ItemSample(className);
 				map.put(className, itemSamples);
 			}
-			itemSamples.samples++;
+			itemSamples.samples+=samples;
 		}
 		
 		static Comparator<ItemSample> itemcomparator = new Comparator<ItemSample>() {
