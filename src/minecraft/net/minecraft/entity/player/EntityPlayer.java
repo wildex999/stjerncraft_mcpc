@@ -65,6 +65,7 @@ import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 
+
 // CraftBukkit start
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
@@ -80,6 +81,8 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 // CraftBukkit end
 
+
+import w999.baseprotect.BaseProtect;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 import net.minecraftforge.common.MinecraftForge;
@@ -274,9 +277,17 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
     public void onUpdate()
     {
         FMLCommonHandler.instance().onPlayerPreTick(this);
+ 
         if (this.itemInUse != null)
         {
             ItemStack itemstack = this.inventory.getCurrentItem();
+            Item currentItem = itemstack.getItem();
+            //Set item as current
+            if(currentItem != null)
+            {
+	            currentItem.setItemOwner(BaseProtect.getPlayerData(username));
+	            World.currentTickItem = currentItem;
+            }
 
             if (itemstack == this.itemInUse)
             {
@@ -295,6 +306,8 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
             {
                 this.clearItemInUse();
             }
+            
+            World.currentTickItem = this;
         }
 
         if (this.xpCooldown > 0)

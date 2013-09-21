@@ -48,7 +48,7 @@ public class BlockPlaceEvent extends BlockEvent implements Cancellable {
 		
 		
 		if(realPlayer == null)
-			this.player = player;
+			this.player = thePlayer;
 		else
 			this.player = realPlayer;
         

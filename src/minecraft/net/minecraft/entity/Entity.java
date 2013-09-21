@@ -2933,12 +2933,6 @@ public abstract class Entity implements IWorldInteract
 	}
 	
 	@Override
-	public int getId()
-	{
-		return entityId;
-	}
-	
-	@Override
 	public Relevant getRelevantCache() {
 		return relevantCache;
 	}

@@ -77,13 +77,16 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.command.ICommandSender;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+
+
+
 // CraftBukkit start
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutionException;
@@ -96,7 +99,6 @@ import org.bukkit.craftbukkit.util.LazyPlayerSet;
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -126,6 +128,8 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.InventoryView;
 // CraftBukkit end
 import org.bukkit.event.inventory.InventoryType; // MCPC+
+
+import w999.baseprotect.BaseProtect;
 
 public class NetServerHandler extends NetHandler
 {
@@ -852,7 +856,17 @@ public class NetServerHandler extends NetHandler
 
             if (event.useItemInHand() != org.bukkit.event.Event.Result.DENY && forgeEvent.useItem != net.minecraftforge.event.Event.Result.DENY)
             {
-                this.playerEntity.theItemInWorldManager.tryUseItem(this.playerEntity, this.playerEntity.worldObj, itemstack);
+            	if(itemstack != null)
+            	{
+            		Item currentItem = itemstack.getItem();
+            		if(currentItem != null)
+            		{
+	            		currentItem.setItemOwner(BaseProtect.getPlayerData(playerEntity.username));
+	    	            World.currentTickItem = currentItem;
+            		}
+            	}
+            	this.playerEntity.theItemInWorldManager.tryUseItem(this.playerEntity, this.playerEntity.worldObj, itemstack);
+            	World.currentTickItem = playerEntity;
             }
             // MCPC+ end
 
@@ -876,8 +890,18 @@ public class NetServerHandler extends NetHandler
             {
                 return;
             }
-
+            
+        	if(itemstack != null)
+        	{
+        		Item currentItem = itemstack.getItem();
+        		if(currentItem != null)
+        		{
+	        		currentItem.setItemOwner(BaseProtect.getPlayerData(playerEntity.username));
+		            World.currentTickItem = currentItem;
+        		}
+        	}
             this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
+            World.currentTickItem = playerEntity;
             // CraftBukkit end
             flag = true;
         }

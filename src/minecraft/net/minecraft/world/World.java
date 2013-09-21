@@ -808,7 +808,10 @@ public abstract class World implements IBlockAccess
 		                	BlockBreakEvent event = new BlockBreakEvent(getWorld().getBlockAt(par1, par2, par3), player);
 		                	getServer().getPluginManager().callEvent(event);
 		                	if(event.isCancelled())
+		                	{
+		                		BaseProtect.claimIgnoreEvents(false);
 		                		return false;
+		                	}
 		                }
 		                else //Set to anything else(Place)
 		                {
@@ -3122,6 +3125,11 @@ public abstract class World implements IBlockAccess
             TileEntity tileentity = null;
             int l;
             TileEntity tileentity1;
+            
+            
+            //MCPC+ start - BaseProtect, see if current interactor is allowed to see tileentity
+            if(!Chunk.canSeeBlock(this, par1, par2, par3))
+            	return null;
 
             if (this.scanningTileEntities)
             {

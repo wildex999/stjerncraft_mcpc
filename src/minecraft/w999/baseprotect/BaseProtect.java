@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -20,7 +21,7 @@ public class BaseProtect extends JavaPlugin {
 	
 	private List<Class> entities = new ArrayList<Class>(); //List of Entities to check
 	private List<Class> tileEntities = new ArrayList<Class>(); //List of TileEntities to check
-	private List<Integer> items = new ArrayList<Integer>(); //List of item(Used by Player) to check
+	private List<Class> items = new ArrayList<Class>(); //List of item(Used by Player) to check
 	
 	private int age; //Current age(= number of reloads)
 	
@@ -52,6 +53,15 @@ public class BaseProtect extends JavaPlugin {
 		
 		addInteractor("dan200.turtle.shared.TileEntityTurtle", InteractorType.TileEntity);
 		addInteractor("dan200.turtle.shared.TileEntityTurtleExpanded", InteractorType.TileEntity);
+		addInteractor("buildcraft.builders.TileFiller", InteractorType.TileEntity);
+		
+		addInteractor("bluedart.item.tool.ItemForceWrench", InteractorType.PlayerItem);
+		addInteractor("bluedart.item.ItemTileBox", InteractorType.PlayerItem);
+		addInteractor("gravisuite.ItemVajra", InteractorType.PlayerItem);
+		addInteractor("thaumcraft.common.items.wands.ItemWandExcavation", InteractorType.PlayerItem);
+		addInteractor("thaumcraft.common.items.wands.ItemWandFrost", InteractorType.PlayerItem);
+		addInteractor("sdfsdfds", InteractorType.PlayerItem);
+		
 	}
 	
 	//Get Class from string, verify it's has IWorldInteracte(instanceof IWorldInteract) and store it in the list of entities
@@ -75,6 +85,9 @@ public class BaseProtect extends JavaPlugin {
 		case TileEntity:
 			tileEntities.add(cl);
 			break;
+		case PlayerItem:
+			items.add(cl);
+			break;
 			default:
 				return false;
 		}
@@ -90,12 +103,6 @@ public class BaseProtect extends JavaPlugin {
 	{
 		age++;
 		//TODO
-	}
-	
-	//Add itemId of player item to check for
-	public void addPlayerItem(int id)
-	{
-		
 	}
 	
 	//This will reload the Player data(Reload fakeplayer permissions)
@@ -114,7 +121,7 @@ public class BaseProtect extends JavaPlugin {
 		//Is the interactor relevant to us?
 		if(!isRelevant(interactor))
 			return true; //Always return true if not
-		
+
 		return claimManager.claimCanBuild(interactor, loc);
 	}
 	

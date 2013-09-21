@@ -1,6 +1,7 @@
 package net.minecraft.item;
 
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentDurability;

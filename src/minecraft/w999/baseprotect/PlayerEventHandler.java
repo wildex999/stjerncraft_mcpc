@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 
 public class PlayerEventHandler implements Listener {
 	
@@ -35,12 +36,12 @@ public class PlayerEventHandler implements Listener {
 	}
 	
 	//On player join we set the player as it's own owner and registers the fake player if it doesn't already exist
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST) //We need to apply permissions, so do this event AFTER everything else
 	public void onPlayerJoin(PlayerJoinEvent event)
 	{
-		CraftEntity player;
+		CraftPlayer player;
 		try {
-			player = (CraftEntity) event.getPlayer();
+			player = (CraftPlayer)event.getPlayer();
 		}
 		catch(Exception e)
 		{
@@ -49,11 +50,14 @@ public class PlayerEventHandler implements Listener {
 		}
 		//Set Owner(Itself)
 		BaseProtect bp = BaseProtect.instance;
+		PlayerData fakePlayer = bp.getPlayerData(event.getPlayer().getName());
 		if(bp != null)
-			player.getHandle().setItemOwner(bp.getPlayerData(event.getPlayer().getName()));
+			player.getHandle().setItemOwner(fakePlayer);
     	else
     		System.err.println("Failed to set Player owner due to BaseProtect not being initialized!");
 		
+		//Get permissions from player and apply the to fakePlayer
+		((CraftPlayer)fakePlayer.getBukkitPlayer()).perm = player.perm;
 	}
 	
 	//On player interact with a block, check if it's a tile entity, and if so get owner

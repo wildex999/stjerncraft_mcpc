@@ -15,6 +15,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -604,6 +605,23 @@ public class Chunk
         return (block == null ? 0 : block.getLightOpacity(worldObj, x, par2, z));
     }
 
+    
+    /**
+     * MCPC+ - BaseProtect, Return if current interactor is allowed to see the block
+     */
+    public static boolean canSeeBlock(World worldObj, int x, int y, int z)
+    {
+        //MCPC+ Start - BaseProtect, check if block is inside claim, and if the current Interactor has permission to Break blocks in this claim.
+        BaseProtect bp = BaseProtect.instance;
+        if(bp != null && worldObj.currentTickItem != null)
+        {
+            if(!bp.claimCanBuild(worldObj.currentTickItem, new Location(worldObj.getWorld(), x , y, z)))
+            	return false;
+        }
+        
+        return true;
+    }
+    
     /**
      * Return the ID of a block in the chunk.
      */
@@ -615,16 +633,9 @@ public class Chunk
         }
         else
         {
-            //MCPC+ Start - BaseProtect, check if block is inside claim, and if the current Interactor has permission to Break blocks in this claim.
-            BaseProtect bp = BaseProtect.instance;
-            if(bp != null && worldObj.currentTickItem != null)
-            {
-                if(!bp.claimCanBuild(worldObj.currentTickItem, new Location(worldObj.getWorld(), par1 + (16*this.xPosition), par2, par3 + (16*this.zPosition))))
-                {
-                	return Block.bedrock.blockID; //Return bedrock
-                }
-            }
-            //MCPC+ End
+        	
+            if(!canSeeBlock(worldObj, par1 + (16*this.xPosition), par2, par3 + (16*this.zPosition)))
+            	return Block.bedrock.blockID; //Return bedrock
         	
             ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
             return extendedblockstorage != null ? extendedblockstorage.getExtBlockID(par1, par2 & 15, par3) : 0;
@@ -642,6 +653,9 @@ public class Chunk
         }
         else
         {
+            if(!canSeeBlock(worldObj, par1 + (16*this.xPosition), par2, par3 + (16*this.zPosition)))
+            	return 0;
+        	
             ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
             return extendedblockstorage != null ? extendedblockstorage.getExtBlockMetadata(par1, par2 & 15, par3) : 0;
         }

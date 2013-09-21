@@ -1,5 +1,7 @@
 package w999.baseprotect;
 
+import org.bukkit.inventory.ItemStack;
+
 import w999.baseprotect.BaseProtect.InteractorType;
 import w999.baseprotect.IWorldInteract.Relevant;
 
@@ -28,9 +30,6 @@ public interface IWorldInteract {
 	
 	//Interactor type
 	InteractorType getInteractorType();
-	
-	//Id(Returns -1 if not applicable)
-	int getId();
 	
 	//(Cache)Is Releveant
 	//BaseProtect will take care of setting, getting and updating.

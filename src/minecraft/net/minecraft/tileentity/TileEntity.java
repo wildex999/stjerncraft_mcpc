@@ -455,14 +455,6 @@ public class TileEntity implements IWorldInteract
 	}
 
 	@Override
-	public int getId() {
-		if(blockType != null)
-			return blockType.blockID;
-		else
-			return -1;
-	}
-
-	@Override
 	public Relevant getRelevantCache() {
 		return relevantCache;
 	}
