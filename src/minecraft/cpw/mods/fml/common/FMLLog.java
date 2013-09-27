@@ -51,9 +51,7 @@ public class FMLLog
     		//For now, ignore any SEVERE message from TileController, du to spam when part of network is in unloading chunks(Can safely be ignored)
     		try {
 				if(Class.forName("appeng.me.tile.TileController").isInstance(item))
-				{
 					return;
-				}
 			} catch (ClassNotFoundException e) {
 				//Do nothing if TileController doesn't exists
 				//SEVERE log's should be rather rare anyway!
@@ -99,7 +97,7 @@ public class FMLLog
     		System.out.println("Filtered IC2 Warning");
     		return;
     	}
-        log(Level.WARNING, format, data);
+        log(Level.WARNING, "CATCH " + format, data);
     }
 
     public static void info(String format, Object... data)
