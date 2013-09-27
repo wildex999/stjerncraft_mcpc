@@ -1,6 +1,8 @@
 package w999.baseprotect;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.NetServerHandler;
 import net.minecraft.tileentity.TileEntity;
 
 import org.bukkit.ChatColor;
@@ -72,7 +74,7 @@ public class PlayerEventHandler implements Listener {
 		
 		BaseProtect baseProtect = BaseProtect.instance;
 		if(!baseProtect.getPlayerData(player.getName()).inspect)
-			return; //Quit if inspeciton isn't enabled(Allow us to skip the TileEntity lookup if not needed)
+			return; //Quit if inspection isn't enabled(Allow us to skip the Entity/TileEntity lookup if not needed)
 		
 		CraftWorld world;
 		try {
@@ -104,7 +106,12 @@ public class PlayerEventHandler implements Listener {
 		if(interactor.getItemOwner() == null || interactor.getItemOwner().getPlayer() == null)
 			player.sendMessage(ChatColor.GOLD + "Clicked Interactor " + interactor.getClass().getName() + " with no owner");
 		else
-			player.sendMessage(ChatColor.GOLD + "Clicked Interactor " + interactor.getClass().getName() + " with owner " + interactor.getItemOwner().getPlayer().username);
+		{
+			EntityPlayerMP fakePlayer = interactor.getItemOwner().getPlayer();
+			player.sendMessage(ChatColor.GOLD + "Clicked Interactor " + interactor.getClass().getName() + " with owner " + fakePlayer.username);
+			//Debug: Print some info about the fake player
+			player.sendMessage("Owner has the position X:" + fakePlayer.posX + " Y:" + fakePlayer.posY + " Z:" + fakePlayer.posZ);
+		}
 		
 		return true;
 	}
