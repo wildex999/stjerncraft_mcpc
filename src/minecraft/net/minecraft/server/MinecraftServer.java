@@ -210,7 +210,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     public static double currentTPS = 0;
     private static long catchupTime = 0;
     // Spigot end
-
+    public static boolean callingForgeTick = false; // MCPC+ handle loadOnRequest during forge tick events
     // MCPC+ start - vanilla compatibility
     public MinecraftServer(File par1File)
     {
@@ -422,7 +422,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
             // CraftBukkit end
             ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
-
+            boolean before = worldserver.theChunkProviderServer.loadChunkOnProvideRequest; // MCPC+ remember previous value
+            worldserver.theChunkProviderServer.loadChunkOnProvideRequest = true; // MCPC+ force chunks to load
             for (int k = -short1; k <= short1 && this.isServerRunning(); k += 16)
             {
                 for (int l = -short1; l <= short1 && this.isServerRunning(); l += 16)
@@ -445,6 +446,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                     worldserver.theChunkProviderServer.loadChunk(chunkcoordinates.posX + j >> 4, chunkcoordinates.posZ + k >> 4);
                 }
             }
+            worldserver.theChunkProviderServer.loadChunkOnProvideRequest = before; // MCPC+ force chunks to load
         }
 
         this.clearCurrentTask();
@@ -724,7 +726,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         FMLCommonHandler.instance().rescheduleTicks(Side.SERVER); // Forge
         long i = System.nanoTime();
         AxisAlignedBB.getAABBPool().cleanPool();
+        callingForgeTick = true; // MCPC+ start - handle loadOnProviderRequests during forge tick event
         FMLCommonHandler.instance().onPreServerTick(); // Forge
+        callingForgeTick = false; // MCPC+ end
         ++this.tickCounter;
 
         if (this.startProfiling)
@@ -775,7 +779,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         this.theProfiler.endSection();
         this.theProfiler.endSection();
+        callingForgeTick = true; // MCPC+ start - handle loadOnProviderRequests during forge tick event
         FMLCommonHandler.instance().onPostServerTick();
+        callingForgeTick = false; // MCPC+ end
     }
 
     public void updateTimeLightAndEntities()
@@ -1179,8 +1185,47 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             return arraylist;
         }
         */
-        return this.server.tabComplete(par1ICommandSender, par2Str);
+        //return this.server.tabComplete(par1ICommandSender, par2Str);
         // CraftBukkit end
+
+        // MCPC+ start -- allow vanilla and bukkit command completion
+        java.util.HashSet arraylist = new java.util.HashSet(); // use a set here to avoid duplicates
+
+        if (par2Str.startsWith("/")) {
+            par2Str = par2Str.substring(1);
+            boolean flag = !par2Str.contains(" ");
+            List list = this.commandManager.getPossibleCommands(par1ICommandSender, par2Str);
+
+            if (list != null) {
+                java.util.Iterator iterator = list.iterator();
+
+                while (iterator.hasNext()) {
+                    String s1 = (String) iterator.next();
+
+                    if (flag) {
+                        arraylist.add("/" + s1);
+                    } else {
+                        arraylist.add(s1);
+                    }
+                }
+            }
+        } else {
+            String[] astring = par2Str.split(" ", -1);
+            String s2 = astring[astring.length - 1];
+            String[] astring1 = this.serverConfigManager.getAllUsernames();
+            int i = astring1.length;
+
+            for (int j = 0; j < i; ++j) {
+                String s3 = astring1[j];
+
+                if (net.minecraft.command.CommandBase.doesStringStartWith(s2, s3)) {
+                    arraylist.add(s3);
+                }
+            }
+        }
+        arraylist.addAll(this.server.tabComplete(par1ICommandSender, par2Str)); // Add craftbukkit commands
+        return new ArrayList(arraylist);
+        // MCPC+ end
     }
 
     /**

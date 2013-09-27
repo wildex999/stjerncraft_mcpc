@@ -3508,6 +3508,19 @@ public abstract class World implements IBlockAccess
 
     protected void setActivePlayerChunksAndCheckLight()
     {
+        // MCPC+ start - add persistent chunks to be ticked for growth
+        activeChunkSet.clear();
+        activeChunkSet_CB.clear();
+        for(ChunkCoordIntPair chunk : getPersistentChunks().keySet()) {
+            this.activeChunkSet.add(chunk);
+            long key = chunkToKey(chunk.chunkXPos, chunk.chunkZPos);
+            activeChunkSet_CB.put(key, (short) 0);
+            if (!this.chunkExists(chunk.chunkXPos, chunk.chunkZPos)) {
+                ((WorldServer)this).theChunkProviderServer.loadChunk(chunk.chunkXPos, chunk.chunkZPos);
+            }
+        }
+        // MCPC+ end
+
         // this.chunkTickList.clear(); // CraftBukkit - removed
         this.theProfiler.startSection("buildList");
         int i;
@@ -3521,10 +3534,10 @@ public abstract class World implements IBlockAccess
             return;
         }
 
-        if (false) // MCPC+ remove player entity check so chunk loaders work properly
+        /*if (playerEntities.size() == 0) // MCPC+ tick chunks even if no players are logged in
         {
             return;
-        }
+        }*/
 
         // Keep chunks with growth inside of the optimal chunk range
         int chunksPerPlayer = Math.min(200, Math.max(1, (int)(((optimalChunks - playerEntities.size()) / (double) playerEntities.size()) + 0.5)));

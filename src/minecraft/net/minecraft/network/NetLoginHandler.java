@@ -53,6 +53,8 @@ public class NetLoginHandler extends NetHandler
     /** Secret AES key obtained from the client's Packet252SharedKey */
     private SecretKey sharedKey = null;
     public String hostname = ""; // CraftBukkit - add field
+    /** Regex rule for filtering client's usernames */
+    private static final java.util.regex.Pattern validName = java.util.regex.Pattern.compile("^[a-zA-Z0-9_-]{2,16}$"); // Spigot use Regex for filtering usernames
 
     public NetLoginHandler(MinecraftServer par1MinecraftServer, Socket par2Socket, String par3Str) throws java.io.IOException   // CraftBukkit - throws IOException
     {
@@ -106,12 +108,13 @@ public class NetLoginHandler extends NetHandler
 
     public void handleClientProtocol(Packet2ClientProtocol par1Packet2ClientProtocol)
     {
+        if (this.clientUsername != null) { this.raiseErrorAndDisconnect("Quit repeating yourself."); return; } // Spigot - Thanks Dinnerbone!
         // CraftBukkit start
         this.hostname = par1Packet2ClientProtocol.serverHost == null ? "" : par1Packet2ClientProtocol.serverHost + ':' + par1Packet2ClientProtocol.serverPort;
         // CraftBukkit end
         this.clientUsername = par1Packet2ClientProtocol.getUsername();
 
-        if (!this.clientUsername.equals(StringUtils.stripControlCodes(this.clientUsername)))
+        if (!this.clientUsername.equals(StringUtils.stripControlCodes(this.clientUsername)) || !validName.matcher(this.clientUsername).matches()) // Spigot use regex for usernames
         {
             this.raiseErrorAndDisconnect("Invalid username!");
         }

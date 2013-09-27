@@ -37,6 +37,7 @@ public class Spigot {
         if (configuration.getBoolean("settings.tps-command", true)) { // MCPC+ - config option to allow mods to replace command
             commandMap.register("bukkit", new org.bukkit.craftbukkit.command.TicksPerSecondCommand("tps"));
         }
+        commandMap.register("bukkit", new org.bukkit.craftbukkit.command.DebugChunksCommand("debugchunks"));
 
         if (configuration.getBoolean("settings.restart-command", true)) { // MCPC+ - config option to allow mods to replace command
             commandMap.register("restart", new RestartCommand("restart"));

@@ -736,10 +736,8 @@ public abstract class ServerConfigurationManager
         par1EntityPlayerMP.dimension = par2;
         WorldServer worldserver1 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
         // MCPC+ start - handle chunk requests for mods that call this method directly such as Twilight Forest.
-        if (!worldserver1.getServer().getLoadChunkOnRequest())
-        {
-            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = true;
-        }
+        boolean before = worldserver1.theChunkProviderServer.loadChunkOnProvideRequest;
+        worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = true;
         // MCPC+ end
         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, worldserver1.getWorldInfo().getTerrainType(), worldserver1.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
         worldserver.removePlayerEntityDangerously(par1EntityPlayerMP);
@@ -760,10 +758,7 @@ public abstract class ServerConfigurationManager
 
         GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
         // MCPC+ start - handle chunk requests for mods that call this method directly such as Twilight Forest.
-        if (!worldserver1.getServer().getLoadChunkOnRequest())
-        {
-            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = false;
-        }
+        worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = before;
         // MCPC+ end
     }
 
@@ -839,19 +834,10 @@ public abstract class ServerConfigurationManager
 
         exitWorld = ((CraftWorld) exit.getWorld()).getHandle();
         Vector velocity = entityplayermp.getBukkitEntity().getVelocity();
-        // MCPC+ start - if we are force allowing all chunk requests, avoid access to loadChunkOnProvideRequest
-        if (exitWorld.getServer().getLoadChunkOnRequest())
-        {
-            exitWorld.getDefaultTeleporter().adjustExit(entityplayermp, exit, velocity);
-        }
-        else 
-        {
-            boolean before = exitWorld.theChunkProviderServer.loadChunkOnProvideRequest;
-            exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = true;
-            exitWorld.getDefaultTeleporter().adjustExit(entityplayermp, exit, velocity); // Should be getTravelAgent
-            exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = before;
-        }
-        // MCPC+ end
+        boolean before = exitWorld.theChunkProviderServer.loadChunkOnProvideRequest;
+        exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = true;
+        exitWorld.getDefaultTeleporter().adjustExit(entityplayermp, exit, velocity); // Should be getTravelAgent
+        exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = before;
         this.moveToWorld(entityplayermp, exitWorld.provider.dimensionId, true, exit, false); // Vanilla doesn't check for suffocation when handling portals, so neither should we
 
         if (entityplayermp.motionX != velocity.getX() || entityplayermp.motionY != velocity.getY() || entityplayermp.motionZ != velocity.getZ())

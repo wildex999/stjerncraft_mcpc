@@ -2673,19 +2673,10 @@ public abstract class Entity implements IWorldInteract
             this.worldObj.theProfiler.startSection("reposition");
             // CraftBukkit start - Ensure chunks are loaded in case TravelAgent is not used which would initially cause chunks to load during find/create
             // minecraftserver.getPlayerList().a(this, j, worldserver, worldserver1);
-            // MCPC+ start - if we are force allowing all chunk requests, avoid access to loadChunkOnProvideRequest
-            if (worldserver1.getServer().getLoadChunkOnRequest())
-            {
-                worldserver1.getMinecraftServer().getConfigurationManager().repositionEntity(this, exit, portal);
-            }
-            else 
-            {
-                boolean before = worldserver1.theChunkProviderServer.loadChunkOnProvideRequest;
-                worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = true;
-                worldserver1.getMinecraftServer().getConfigurationManager().repositionEntity(this, exit, portal);
-                worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = before;
-            }
-            // MCPC+ end
+            boolean before = worldserver1.theChunkProviderServer.loadChunkOnProvideRequest;  // MCPC+ start - load chunks on provide request
+            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = true;
+            worldserver1.getMinecraftServer().getConfigurationManager().repositionEntity(this, exit, portal);
+            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = before; // MCPC+ end
             // CraftBukkit end
             this.worldObj.theProfiler.endStartSection("reloading");
             Entity entity = EntityList.createEntityByName(EntityList.getEntityString(this), worldserver1);

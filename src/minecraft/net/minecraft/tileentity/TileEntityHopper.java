@@ -44,8 +44,6 @@ public class TileEntityHopper extends TileEntity implements Hopper
     // CraftBukkit start
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     private int maxStack = MAX_STACK;
-	
-
 
     public ItemStack[] getContents()
     {
@@ -72,7 +70,6 @@ public class TileEntityHopper extends TileEntity implements Hopper
         maxStack = size;
     }
     // CraftBukkit end
-
 
     public TileEntityHopper() {}
 
@@ -336,7 +333,7 @@ public class TileEntityHopper extends TileEntity implements Hopper
                     ItemStack itemstack = this.getStackInSlot(i).copy();
                     // CraftBukkit start - Call event when pushing items into other inventories
                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(this.decrStackSize(i, 1));
-                    Inventory destinationInventory;
+                    Inventory destinationInventory = null;
 
                     // Have to special case large chests as they work oddly
                     if (iinventory instanceof InventoryLargeChest)

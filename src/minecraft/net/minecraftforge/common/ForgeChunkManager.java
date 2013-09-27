@@ -99,7 +99,6 @@ public class ForgeChunkManager
     private static int dormantChunkCacheSize;
 
     private static Set<String> warnedMods = Sets.newHashSet();
-    private static boolean isForceLoadingChunk = false; // MCPC+ - prevents forceChunk from getting stuck in loop
     /**
      * All mods requiring chunkloading need to implement this to handle the
      * re-registration of chunk tickets at world loading time
@@ -409,12 +408,6 @@ public class ForgeChunkManager
 
         if (chunkLoaderData.exists() && chunkLoaderData.isFile())
         {
-            // MCPC+ start
-            if (!worldServer.getServer().getLoadChunkOnRequest())
-            {
-                worldServer.theChunkProviderServer.loadChunkOnProvideRequest = true;
-            }
-            // MCPC+ end
             ArrayListMultimap<String, Ticket> loadedTickets = ArrayListMultimap.<String, Ticket>create();
             Map<String,ListMultimap<String,Ticket>> playerLoadedTickets = Maps.newHashMap();
             NBTTagCompound forcedChunkData;
@@ -541,12 +534,6 @@ public class ForgeChunkManager
                 ForgeChunkManager.tickets.get(world).putAll("Forge", tickets.values());
                 loadingCallback.ticketsLoaded(ImmutableList.copyOf(tickets.values()), world);
             }
-            // MCPC+ start
-            if (!worldServer.getServer().getLoadChunkOnRequest())
-            {
-                worldServer.theChunkProviderServer.loadChunkOnProvideRequest = false;
-            }
-            // MCPC+ end
         }
     }
 
@@ -733,7 +720,7 @@ public class ForgeChunkManager
      */
     public static void forceChunk(Ticket ticket, ChunkCoordIntPair chunk)
     {
-        if (ticket == null || chunk == null || isForceLoadingChunk) // MCPC+ - if we are already force loading a chunk, ignore
+        if (ticket == null || chunk == null)
         {
             return;
         }
@@ -746,14 +733,6 @@ public class ForgeChunkManager
             FMLLog.severe("The mod %s attempted to force load a chunk with an invalid ticket. This is not permitted.", ticket.modId);
             return;
         }
-        // MCPC+ start - load forced chunk if it has not already been loaded
-        if (!getPersistentChunksFor(ticket.world).containsKey(chunk) && !ticket.world.getChunkProvider().chunkExists(chunk.chunkXPos, chunk.chunkZPos))
-        {
-            isForceLoadingChunk = true;
-            Chunk loadedChunk = ticket.world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
-            isForceLoadingChunk = false;
-        }
-        // MCPC+ end
         ticket.requestedChunks.add(chunk);
         MinecraftForge.EVENT_BUS.post(new ForceChunkEvent(ticket, chunk));
 

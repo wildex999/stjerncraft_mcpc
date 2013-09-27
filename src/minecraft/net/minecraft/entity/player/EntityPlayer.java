@@ -1127,7 +1127,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
                         this.alertWolves((EntityLiving)entity, false);
                     }
 
-                    this.addStat(StatList.damageTakenStat, par2);
+                    this.addStat(StatList.damageTakenStat, Math.min(par2, getHealth())); // MCPC+ limit the stat for damage taken to player's health
                     return super.attackEntityFrom(par1DamageSource, par2);
                 }
             }

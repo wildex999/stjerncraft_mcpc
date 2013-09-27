@@ -88,45 +88,24 @@ public class EnumHelper
         return bukkitType;
     }
 
+    // MCPC+ start -- add  modded inventory types
     public static InventoryType addInventoryType(Class<? extends TileEntity> tileEntityClass, String id)
     {
-        TileEntity te = null;
-        try
-        {
-            te = tileEntityClass.newInstance();
-        } 
-        catch (InstantiationException e) 
-        {
-            e.printStackTrace();
-        } 
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-        if (te != null && te instanceof IInventory)
-        {
+        if (!IInventory.class.isAssignableFrom(tileEntityClass)) return null;
+
+        try {
+            Constructor<? extends TileEntity> ctor = tileEntityClass.getConstructor(); // Use a constructor here so instantiation throws a checked exception
+            TileEntity te = ctor.newInstance();
             IInventory teInv = (IInventory)te;
-            int size = 0;
-            try 
-            {
-                size = teInv.getSizeInventory();
-            }
-            catch (Exception e) // EnderChests don't like this
-            {
-                // do nothing
-            }
-            catch (StackOverflowError e) // needed for extra bees since they use a dummy machine
-            {
-                // do nothing
-            }
-            if (size != 0)
-            {
-                return addEnum(org.bukkit.event.inventory.InventoryType.class, id, new Class[]{Integer.TYPE, String.class}, new Object[]{size, id});
-            }
+            int size = teInv.getSizeInventory();
+            return addEnum(org.bukkit.event.inventory.InventoryType.class, id, new Class[]{Integer.TYPE, String.class}, new Object[]{size, id});
+        } catch (Throwable e) {
+            net.minecraft.server.MinecraftServer.logger.log(java.util.logging.Level.FINE, "Could not create inventory type " + tileEntityClass.getName() + " Exception: " + e.toString());
+            net.minecraft.server.MinecraftServer.logger.info("Could not determine default inventory size for type " + tileEntityClass.getName() + " using size of 9");
+            return addEnum(org.bukkit.event.inventory.InventoryType.class, id, new Class[]{Integer.TYPE, String.class}, new Object[]{9, id});
         }
-        return null;
     }
-    // MCPC end
+    // MCPC+ end
 
     public static EnumAction addAction(String name)
     {
