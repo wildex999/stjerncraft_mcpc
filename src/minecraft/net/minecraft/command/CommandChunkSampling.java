@@ -217,15 +217,19 @@ public class CommandChunkSampling extends VanillaCommand {
         		worlddim = 0; //Default to the main world
         		
         		if(args.length == 4)
+        		{
         			worlddim = Integer.parseInt(args[1]);
+        			posx = Integer.parseInt(args[2]);
+        			posz = Integer.parseInt(args[3]);
+        		}
         		else
         		{
         			//Get the senders current dimension
         			if(sender instanceof EntityPlayerMP)
         				worlddim = ((EntityPlayerMP)sender).worldObj.getWorldInfo().getDimension();
+        			posx = Integer.parseInt(args[1]);
+        			posz = Integer.parseInt(args[2]);
         		}
-        		posx = Integer.parseInt(args[2]);
-        		posz = Integer.parseInt(args[3]);
         		
         	} catch (NumberFormatException error)
     		{
