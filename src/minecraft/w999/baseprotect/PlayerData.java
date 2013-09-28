@@ -1,5 +1,7 @@
 package w999.baseprotect;
 
+import org.bukkit.GameMode;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import za.co.mcportcentral.entity.CraftFakePlayer;
@@ -19,6 +21,10 @@ public class PlayerData {
 		//Return a player if it exists, create if it doesn't(And login, but don't join. This will give it the right permissions)
 		//Uses world 0(Main world) TODO: Make this changeable? (Afraid the player will exist in a world that unloads)
 		fakePlayer = CraftFakePlayer.get(DimensionManager.getWorld(0), username, true, false);
+		
+		//Certain plugins require gamemode to be set, so we set it to survival(TODO: Make it follow the real player?)
+		fakePlayer.getBukkitEntity().getHandle().theItemInWorldManager.setGameType(net.minecraft.world.EnumGameType.getByID(GameMode.SURVIVAL.getValue()));
+		
 		//TODO: Do some testing on the player(Is the player banned? Does the player actually exist? etc.)
 		
 		return true;

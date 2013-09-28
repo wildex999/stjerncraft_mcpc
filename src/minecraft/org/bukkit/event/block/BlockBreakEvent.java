@@ -40,7 +40,7 @@ public class BlockBreakEvent extends BlockExpEvent implements Cancellable {
 		//BaseProtect, Attempt to get the real fakePlayer for the current item
 		//TODO: Any better way that does not involve doing a lookup? Cache?
 		IWorldInteract interactor = World.currentTickItem;
-		if(interactor != null)
+		if(interactor != null && ((player != null && player.getName().startsWith("[")) || player == null))
 		{
 			PlayerData playerData = interactor.getItemOwner();
 			if(playerData != null)
@@ -51,6 +51,7 @@ public class BlockBreakEvent extends BlockExpEvent implements Cancellable {
 			this.player = player;
 		else
 			this.player = realPlayer;
+
     }
 
     /**
