@@ -686,7 +686,20 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                             for (int c = 0; c < getWorld().aggregateTicks; c++)
                             {
                                 if (c > 0 && this.getBlockId(k2 + k, i3 + extendedblockstorage.getYLocation(), l2 + l) != block.blockID) break; // MCPC+ the block changed, so don't update it
+                            	//MCPC+ Start
+                                if(ChunkSampler.sampling)
+                                {
+                                	ChunkSampler.tickedBlock(this, chunkX, chunkZ);
+                                	ChunkSampler.preSample();
+                                }
+                                //MCPC+ End
+                                
                                 block.updateTick(this, k2 + k, i3 + extendedblockstorage.getYLocation(), l2 + l, this.rand);
+                                
+                                //MCPC+ Start
+                                if(ChunkSampler.sampling)
+                                	ChunkSampler.postSampleBlock(this, chunkX, chunkZ, block.blockID);
+                                //MCPC+ End
                             }
 
                             // Spigot end

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.ChunkSampler;
 import net.minecraft.server.ChunkSampler.ChunkSamples;
 
@@ -201,9 +202,9 @@ public class CommandChunkSampling extends VanillaCommand {
         }
         else if(action.equalsIgnoreCase("listchunk"))
         {
-        	if(args.length < 4)
+        	if(args.length < 3)
         	{
-        		sender.sendMessage(ChatColor.RED + "Missing argument, needs at least 3 arguments(world dimension, posx, posz)");
+        		sender.sendMessage(ChatColor.RED + "Missing argument, needs at least 2 arguments(posx, posz) or 3(world id, posx, posz)");
         		return false;
         	}
         	
@@ -213,13 +214,22 @@ public class CommandChunkSampling extends VanillaCommand {
         	try
         	{
         		//Convert from string to int
-        		worlddim = Integer.parseInt(args[1]);
+        		worlddim = 0; //Default to the main world
+        		
+        		if(args.length == 4)
+        			worlddim = Integer.parseInt(args[1]);
+        		else
+        		{
+        			//Get the senders current dimension
+        			if(sender instanceof EntityPlayerMP)
+        				worlddim = ((EntityPlayerMP)sender).worldObj.getWorldInfo().getDimension();
+        		}
         		posx = Integer.parseInt(args[2]);
         		posz = Integer.parseInt(args[3]);
         		
         	} catch (NumberFormatException error)
     		{
-    			sender.sendMessage(ChatColor.RED + "The first 3 arguments for listchunk needs to be numbers!");
+    			sender.sendMessage(ChatColor.RED + "The arguments for listchunk needs to be numbers!");
     			return false;
     		}
         	
