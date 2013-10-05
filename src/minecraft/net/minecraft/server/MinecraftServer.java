@@ -814,6 +814,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         int i;
 
+        
         Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
         for (int x = 0; x < ids.length; x++)
         {
@@ -836,28 +837,28 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             this.theProfiler.startSection("tick");
             FMLCommonHandler.instance().onPreWorldTick(worldserver);
             CrashReport crashreport;
-
-            try
-            {
-                worldserver.tick();
-            }
-            catch (Throwable throwable)
-            {
-                crashreport = CrashReport.makeCrashReport(throwable, "Exception ticking world");
-                worldserver.addWorldInfoToCrashReport(crashreport);
-                throw new ReportedException(crashreport);
-            }
-
-            try
-            {
-                worldserver.updateEntities();
-            }
-            catch (Throwable throwable1)
-            {
-                crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world entities");
-                worldserver.addWorldInfoToCrashReport(crashreport);
-                throw new ReportedException(crashreport);
-            }
+	        try
+	        {
+	            worldserver.tick();
+	        }
+	        catch (Throwable throwable)
+	        {
+	            crashreport = CrashReport.makeCrashReport(throwable, "Exception ticking world");
+	            worldserver.addWorldInfoToCrashReport(crashreport);
+	            throw new ReportedException(crashreport);
+	        }
+	        	
+	        try
+	        {
+	            worldserver.updateEntities();
+	        }
+	        catch (Throwable throwable1)
+	        {
+	            crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world entities");
+	            worldserver.addWorldInfoToCrashReport(crashreport);
+	            throw new ReportedException(crashreport);
+	        }
+            
 
             FMLCommonHandler.instance().onPostWorldTick(worldserver);
             this.theProfiler.endSection();

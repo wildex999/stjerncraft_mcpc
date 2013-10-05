@@ -36,6 +36,7 @@ public class TempPrintStream extends PrintStream {
 	@Override
 	public void println(String str)
 	{
+		//WARNING, NOT THREAD SAFE. World.currentTickItem can be set to null in another thread AFTER null check. 
 		IWorldInteract item = World.currentTickItem;
 		String format = str;
 		if(item == null)
@@ -44,7 +45,7 @@ public class TempPrintStream extends PrintStream {
 		}
 		else
 		{
-			String className = World.currentTickItem.getClass().getName();
+			String className = item.getClass().getName(); //Try to avoid thread conflict
 			int last = className.lastIndexOf(".");
 			if(last != -1)
 				className = className.substring(last);
