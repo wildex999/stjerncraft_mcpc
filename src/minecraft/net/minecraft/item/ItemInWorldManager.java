@@ -584,7 +584,9 @@ public class ItemInWorldManager
                 
                 result = (event.useItemInHand() != org.bukkit.event.Event.Result.ALLOW);
             }
-            else if (!par1EntityPlayer.isSneaking() || par3ItemStack == null || (par1EntityPlayer.getHeldItem() != null && par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6)))
+            else if (!par1EntityPlayer.isSneaking() || par3ItemStack == null ||
+                    (par1EntityPlayer.getHeldItem() != null &&  // MCPC+ - check null held item, fixes Dartcraft force wrench crash
+                            par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6)))
             {
                 result = Block.blocksList[i1].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
                 // MCPC+ start - if bukkitView is null, create one. Required for Ender Chests since they do not use NetworkRegistry.openRemoteGUI
