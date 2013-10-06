@@ -371,6 +371,11 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         {
             this.skylightSubtracted = j;
         }
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("preWorldServerTick");
+    	//MCPC+ End
 
         this.worldInfo.incrementTotalWorldTime(this.worldInfo.getWorldTotalTime() + 1L);
         this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
@@ -410,6 +415,11 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
             this.getWorld().processChunkGC(); // CraftBukkit
             timings.doChunkGC.stopTiming(); // Spigot
         }
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("postWorldServerTick");
+    	//MCPC+ End
     }
 
     /**
@@ -540,6 +550,11 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         int j = 0;
         // CraftBukkit start
         // Iterator iterator = this.chunkTickList.iterator();
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("preTickBlocksAndAmbiance");
+    	//MCPC+ End
 
         // Spigot start
         for (TLongShortIterator iter = activeChunkSet_CB.iterator(); iter.hasNext();)
@@ -646,6 +661,11 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                     }
                 }
             }
+            
+            //MCPC+ Start
+        	if(ChunkSampler.sampling)
+        		ChunkSampler.preSample("preTickRandom");
+        	//MCPC+ End
 
             this.theProfiler.endStartSection("tickTiles");
             ExtendedBlockStorage[] aextendedblockstorage = chunk.getBlockStorageArray();
@@ -690,7 +710,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                                 if(ChunkSampler.sampling)
                                 {
                                 	ChunkSampler.tickedBlock(this, chunkX, chunkZ);
-                                	ChunkSampler.preSample();
+                                	ChunkSampler.preSample("preTickRandomBlock");
                                 }
                                 //MCPC+ End
                                 
@@ -869,6 +889,11 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                 this.pendingTickEntries.add(nextticklistentry);
                 // Spigot end
             }
+            
+            //MCPC+ Start
+        	if(ChunkSampler.sampling)
+        		ChunkSampler.preSample("preTickUpdates");
+        	//MCPC+ End
 
             this.theProfiler.endSection();
             this.theProfiler.startSection("ticking");
@@ -893,7 +918,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                             if(ChunkSampler.sampling)
                             {
                             	ChunkSampler.tickedBlock(this, nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4);
-                            	ChunkSampler.preSample();
+                            	ChunkSampler.preSample("preTickBlock");
                             }
                             //MCPC+ End
                             
@@ -928,6 +953,10 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                 else
                 {
                     this.scheduleBlockUpdate(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, nextticklistentry.blockID, 0);
+                    //MCPC+ Start
+                	if(ChunkSampler.sampling)
+                		ChunkSampler.preSample("scheduleBlockUpdate");
+                	//MCPC+ End
                 }
             }
 

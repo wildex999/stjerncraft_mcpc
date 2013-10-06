@@ -9,11 +9,15 @@ import java.util.Map;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.ChunkSampler;
 import net.minecraft.server.ChunkSampler.ChunkSamples;
+import net.minecraft.server.ChunkSampler.ItemSample;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.VanillaCommand;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import com.google.common.collect.ImmutableList;
@@ -32,7 +36,8 @@ public class CommandChunkSampling extends VanillaCommand {
         		+ "		Sort - Set the sorting method to use when listing\n"
         		+ "		List [page] - Return a sorted list of chunks placed into pages\n"
         		+ "     ListChunk - Show the chunk at the given coordinates, detailed=true will show the most ticket item of each type.\n"
-        		+ "     WarnSlow - Print a warning when an item uses more than n% time\n";
+        		+ "     WarnSlow - Print a warning when an item uses more than n% time\n"
+        		+ "     ListOther - Print a list of all other sampled time usage";
         this.setPermission("mcpc.command.chunksampling");
     }
 	
@@ -53,11 +58,6 @@ public class CommandChunkSampling extends VanillaCommand {
         	if(action.equalsIgnoreCase("sort"))
         	{
         		sender.sendMessage(ChatColor.RED + "Usage: " + "/chunksampling sort <block, entity, tileentity, time> [min, avg, max, time] [desc, asc]");
-        		return false;
-        	}
-        	else if(action.equalsIgnoreCase("listchunk"))
-        	{
-        		sender.sendMessage(ChatColor.RED + "Usage: " + "/chunksampling listchunk worlddim posx posz [detailed = true,false]");
         		return false;
         	}
         	else if(action.equalsIgnoreCase("warnslow"))
@@ -202,11 +202,11 @@ public class CommandChunkSampling extends VanillaCommand {
         }
         else if(action.equalsIgnoreCase("listchunk"))
         {
-        	if(args.length < 3)
+        	/*if(args.length < 1)
         	{
         		sender.sendMessage(ChatColor.RED + "Missing argument, needs at least 2 arguments(posx, posz) or 3(world id, posx, posz)");
         		return false;
-        	}
+        	}*/
         	
         	int worlddim;
         	int posx, posz;
@@ -222,13 +222,34 @@ public class CommandChunkSampling extends VanillaCommand {
         			posx = Integer.parseInt(args[2]);
         			posz = Integer.parseInt(args[3]);
         		}
-        		else
+        		else if(args.length == 3)
         		{
         			//Get the senders current dimension
-        			if(sender instanceof EntityPlayerMP)
-        				worlddim = ((EntityPlayerMP)sender).worldObj.getWorldInfo().getDimension();
+        			if(sender instanceof Player)
+        				worlddim = ((Player)sender).getWorld().getEnvironment().getId();
+        			else
+        			{
+        				sender.sendMessage("Not a player, require dimension");
+        				return false;
+        			}
         			posx = Integer.parseInt(args[1]);
         			posz = Integer.parseInt(args[2]);
+        		}
+        		else
+        		{
+        			//Get the senders current dimension, and position
+        			if(sender instanceof Player)
+        			{
+        				Player pl = (Player)sender;
+        				worlddim = pl.getWorld().getEnvironment().getId();
+        				posx = (int) pl.getLocation().getX();
+        				posz = (int) pl.getLocation().getZ();
+        			}
+        			else
+        			{
+        				sender.sendMessage("Not a player, require coordinates and dimension!");
+        				return false;
+        			}
         		}
         		
         	} catch (NumberFormatException error)
@@ -252,6 +273,28 @@ public class CommandChunkSampling extends VanillaCommand {
         {
         	sender.sendMessage("Warn Slow is not yet implemented!");
         	return false;
+        }
+        else if(action.equalsIgnoreCase("listother"))
+        {
+        	sender.sendMessage("Other Time usage:");
+        	List<ItemSample> samples = ChunkSampler.getCustomSamples();
+        	int total = 0;
+        	for(ItemSample sample : samples)
+        	{
+        		sender.sendMessage(ChatColor.RED + "[" + ChatColor.WHITE + sample.className + ChatColor.RED + "] " + ChatColor.WHITE + (((float)sample.samples / (float)ChunkSampler.totalSamples) * 100) + "%");
+        		total += sample.samples;
+        	}
+        	if(samples.size() == 0)
+        	{
+        		sender.sendMessage("Got nothing");
+        		return true;
+        	}
+        	
+        	sender.sendMessage("Total:" + ((float)total / (float)ChunkSampler.totalSamples) * 100 + "%");
+        	sender.sendMessage("Free: " + ((float)ChunkSampler.freeSamples / (float)ChunkSampler.totalSamples) * 100 + "%");
+        	sender.sendMessage("Unknown: " + (1-((float)(total+ChunkSampler.freeSamples) / (float)ChunkSampler.totalSamples)) * 100 + "%");
+        	
+        	return true;
         }
         else
         {

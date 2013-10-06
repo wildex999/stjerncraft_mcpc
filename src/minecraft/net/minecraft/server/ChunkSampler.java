@@ -41,7 +41,8 @@ import net.minecraft.world.World;
  */
 
 public class ChunkSampler {
-	static HashMap<String, ChunkSamples> chunks = new HashMap<String, ChunkSamples>();
+	static HashMap<String, ChunkSamples> chunks = new HashMap<String, ChunkSamples>(); //Samples for chunks
+	static HashMap<String, ItemSample> customSamples = new HashMap<String, ItemSample>(); //Custom named samples
 	static Timer samplerThreadTimer = new Timer(true); //Create the timer thread as a daemon
 	static SamplerTask task; //Currently running task
 	public static int samplingInterval = 1; //Time in millisecond between time sampling
@@ -149,6 +150,7 @@ public class ChunkSampler {
 			return false;
 		
 		chunks.clear();
+		customSamples.clear();
 		
 		startTime = new Date();
 		stopTime = null;
@@ -217,6 +219,48 @@ public class ChunkSampler {
 		totalSamples += samples;
 	}
 	
+	//Pre-sample, put samples at a custom "item"
+	public static void preSample(String customName)
+	{
+		if(!sampling)
+			return; 
+		
+		if(customName == null || customName.equals(""))
+		{
+			preSample(); //Mark it as free time
+			return;
+		}
+		//Get samples and reset
+		int samples = atomicSamples.getAndSet(0);
+		totalSamples += samples;
+		
+		//Get the custom sample and add the samples(Create if doesn't exist)
+		ItemSample sample = getCustomSample(customName, true);
+		sample.samples += samples;
+	}
+	
+	//Return a list of custom samplers
+	public static List<ItemSample> getCustomSamples()
+	{
+		return ChunkSamples.getSortedItems(customSamples);
+	}
+	
+	//Returns a Custom Sample with the given name, if create = true it will create it if it doesn't exist
+	public static ItemSample getCustomSample(String name, boolean create)
+	{
+		ItemSample sample = customSamples.get(name);
+		if(sample == null)
+		{
+			if(create)
+			{
+				sample = new ItemSample(name);
+				customSamples.put(name, sample);
+			}
+		}
+		
+		return sample;
+	}
+	
 	//Post-Sample will sample after Blocks, so any samples at this point happened while the item was ticking
 	public static void postSampleBlock(World world, int chunkX, int chunkZ, int blockId)
 	{
@@ -231,6 +275,9 @@ public class ChunkSampler {
 			//Place the samples to the chunk and the item type
 			ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
 			chunk.incrementItemSamples(chunk.blockItems, "BlockId " + blockId, samples);
+			
+			//Add to Item sampled
+			getCustomSample("ItemSampled", true).samples += samples;
 			
 			chunk.totalBlockSampleCount += samples;
 			totalSamples += samples;
@@ -250,6 +297,9 @@ public class ChunkSampler {
 		{
 			//Place the samples to the chunk and the item type
 			ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
+			
+			//Add to Item sampled
+			getCustomSample("ItemSampled", true).samples += samples;
 			
 			chunk.totalEntitySampleCount += samples;
 			chunk.incrementItemSamples(chunk.entityItems, entity.getClass().getName(), samples);
@@ -271,6 +321,9 @@ public class ChunkSampler {
 		{
 			//Place the samples to the chunk and the item type
 			ChunkSamples chunk = getOrCreateChunkSamples(world, chunkX, chunkZ);
+			
+			//Add to Item sampled
+			getCustomSample("ItemSampled", true).samples += samples;
 			
 			chunk.totalTileEntitySampleCount += samples;
 			chunk.incrementItemSamples(chunk.tileEntityItems, tileEntity.getClass().getName(), samples);
@@ -425,7 +478,7 @@ public class ChunkSampler {
 	    };
 		
 		//Get list of indexes sorted according to the hashmap
-		public List<ItemSample> getSortedItems(HashMap<String,ItemSample> map)
+		public static List<ItemSample> getSortedItems(HashMap<String,ItemSample> map)
 		{
 			List<ItemSample> list = new ArrayList<ItemSample>(map.values());
 			

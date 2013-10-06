@@ -92,12 +92,7 @@ public class FMLLog
 
     public static void warning(String format, Object... data)
     {
-    	if(format.contains("API ERROR: ic2.")) //MCPC+ - Filter out IC2 net spamming
-    	{
-    		System.out.println("Filtered IC2 Warning");
-    		return;
-    	}
-        log(Level.WARNING, "CATCH " + format, data);
+        log(Level.WARNING, format, data);
     }
 
     public static void info(String format, Object... data)

@@ -2302,6 +2302,11 @@ public abstract class World implements IBlockAccess
                 this.weatherEffects.remove(i--);
             }
         }
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("WeatherTick");
+    	//MCPC+ End
 
         lastChunk = Long.MIN_VALUE; // Spigot
         this.theProfiler.endStartSection("remove");
@@ -2330,6 +2335,11 @@ public abstract class World implements IBlockAccess
         this.theProfiler.endStartSection("regular");
         org.bukkit.craftbukkit.Spigot.activateEntities(this); // Spigot
         timings.entityTick.startTiming(); // Spigot
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("UnloadEntities");
+    	//MCPC+ End
 
         for (i = 0; i < this.loadedEntityList.size(); ++i)
         {
@@ -2370,8 +2380,8 @@ public abstract class World implements IBlockAccess
                     //MCPC+ Start
                     if(ChunkSampler.sampling)
                     {
+                    	ChunkSampler.preSample("preEntityTick");
                     	ChunkSampler.tickedEntity(entity.worldObj, entity.chunkCoordX, entity.chunkCoordZ);
-                    	ChunkSampler.preSample();
                     }
                     //MCPC+ End
                     
@@ -2433,6 +2443,11 @@ public abstract class World implements IBlockAccess
             }
 
             this.theProfiler.endSection();
+            
+            //MCPC+ Start
+        	if(ChunkSampler.sampling)
+        		ChunkSampler.preSample("PostEntityTick");
+        	//MCPC+ End
         }
 
         timings.entityTick.stopTiming(); // Spigot
@@ -2462,6 +2477,11 @@ public abstract class World implements IBlockAccess
                 continue;
             }
 
+            //MCPC+ Start
+        	if(ChunkSampler.sampling)
+        		ChunkSampler.preSample("tileEntityChunkUnloadCheck");
+        	//MCPC+ End
+            
             // CraftBukkit end
 
             if (!tileentity.isInvalid() && tileentity.func_70309_m() && this.blockExists(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord))
@@ -2472,7 +2492,7 @@ public abstract class World implements IBlockAccess
                     if(ChunkSampler.sampling)
                     {
                     	ChunkSampler.tickedTileEntity(tileentity.worldObj, tileentity.xCoord >> 4, tileentity.zCoord >> 4);
-                    	ChunkSampler.preSample();
+                    	ChunkSampler.preSample("preTileEntityTick");
                     }
                     //MCPC+ End
                 	
@@ -2522,6 +2542,12 @@ public abstract class World implements IBlockAccess
                     }
                 }
             }
+            
+            //MCPC+ Start
+        	if(ChunkSampler.sampling)
+        		ChunkSampler.preSample("postTileEntityTick");
+        	//MCPC+ End
+            
         }
 
         timings.tileEntityTick.stopTiming(); // Spigot
@@ -2536,6 +2562,11 @@ public abstract class World implements IBlockAccess
             this.loadedTileEntityList.removeAll(this.entityRemoval);
             this.entityRemoval.clear();
         }
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("TileEntityCleanup");
+    	//MCPC+ End
 
         this.scanningTileEntities = false;
 
@@ -2576,6 +2607,11 @@ public abstract class World implements IBlockAccess
 
             this.addedTileEntityList.clear();
         }
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("addedTileEntityList");
+    	//MCPC+ End
 
         timings.tileEntityPending.stopTiming(); // Spigot
         this.theProfiler.endSection();

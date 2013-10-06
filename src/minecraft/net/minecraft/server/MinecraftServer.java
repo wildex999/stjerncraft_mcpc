@@ -723,6 +723,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
      */
     public void tick() throws MinecraftException   // CraftBukkit - added throws // MCPC+ - protected -> public for Forge
     {
+    	//MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample();
+    	//MCPC+ End
+    	
         FMLCommonHandler.instance().rescheduleTicks(Side.SERVER); // Forge
         long i = System.nanoTime();
         AxisAlignedBB.getAABBPool().cleanPool();
@@ -737,9 +742,19 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             this.theProfiler.profilingEnabled = true;
             this.theProfiler.clearProfiling();
         }
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("PreTick");
+    	//MCPC+ End
 
         this.theProfiler.startSection("root");
         this.updateTimeLightAndEntities();
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("PostTick");
+    	//MCPC+ End
 
         if ((this.autosavePeriod > 0) && ((this.tickCounter % this.autosavePeriod) == 0))   // CraftBukkit
         {
@@ -771,17 +786,20 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         {
             this.usageSnooper.addMemoryStatsToSnooper();
         }
-        
-        //MCPC+ Start
-        if(ChunkSampler.sampling)
-        	ChunkSampler.nextTick();
-        //MCPC+ End
 
         this.theProfiler.endSection();
         this.theProfiler.endSection();
         callingForgeTick = true; // MCPC+ start - handle loadOnProviderRequests during forge tick event
         FMLCommonHandler.instance().onPostServerTick();
         callingForgeTick = false; // MCPC+ end
+        
+        //MCPC+ Start
+        if(ChunkSampler.sampling)
+        {
+        	ChunkSampler.preSample("endTick");
+        	ChunkSampler.nextTick();
+        }
+        //MCPC+ End
     }
 
     public void updateTimeLightAndEntities()
@@ -813,6 +831,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         }
 
         int i;
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("preUpdateTimeLightAndEntities");
+    	//MCPC+ End
 
         
         Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
@@ -836,6 +859,13 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             // CraftBukkit end */
             this.theProfiler.startSection("tick");
             FMLCommonHandler.instance().onPreWorldTick(worldserver);
+            
+            //MCPC+ Start
+        	if(ChunkSampler.sampling)
+        		ChunkSampler.preSample("onPreWorldTick");
+        	//MCPC+ End
+            
+            
             CrashReport crashreport;
 	        try
 	        {
@@ -863,11 +893,23 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             FMLCommonHandler.instance().onPostWorldTick(worldserver);
             this.theProfiler.endSection();
             this.theProfiler.startSection("tracker");
+            
+            
+            //MCPC+ Start
+        	if(ChunkSampler.sampling)
+        		ChunkSampler.preSample("onPostWorldtick");
+        	//MCPC+ End
+            
             worldserver.timings.tracker.startTiming(); // Spigot
             worldserver.getEntityTracker().updateTrackedEntities();
             worldserver.timings.tracker.stopTiming(); // Spigot
             this.theProfiler.endSection();
             this.theProfiler.endSection();
+            
+            //MCPC+ Start
+        	if(ChunkSampler.sampling)
+        		ChunkSampler.preSample("updateTrackedEntities");
+        	//MCPC+ End
 
             // Forge start
             ((long[]) this.worldTickTimes.get(id))[this.tickCounter % 100] = System.nanoTime() - j;
@@ -894,6 +936,12 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         SpigotTimings.tickablesTimer.stopTiming(); // Spigot
         this.theProfiler.endSection();
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("postUpdateTimeLightAndEntities");
+    	//MCPC+ End
+        
     }
 
     public boolean getAllowNether()
