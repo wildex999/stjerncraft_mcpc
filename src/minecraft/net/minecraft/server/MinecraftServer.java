@@ -814,11 +814,21 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         {
             processQueue.remove().run();
         }
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("queuedTasks");
+    	//MCPC+ End
 
         SpigotTimings.schedulerTimer.stopTiming(); // Spigot
         SpigotTimings.chunkIOTickTimer.startTiming(); // Spigot
         org.bukkit.craftbukkit.chunkio.ChunkIOExecutor.tick();
         SpigotTimings.chunkIOTickTimer.stopTiming(); // Spigot
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("chunkIO");
+    	//MCPC+ End
 
         // Send time updates to everyone, it will get the right time from the world the player is in.
         if (this.tickCounter % 20 == 0)
@@ -917,10 +927,22 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         this.theProfiler.endStartSection("dim_unloading");
         DimensionManager.unloadWorlds(this.worldTickTimes);
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("unloadWorlds");
+    	//MCPC+ End
+        
         // Forge end
         this.theProfiler.endStartSection("connection");
         SpigotTimings.connectionTimer.startTiming(); // Spigot
         this.getNetworkThread().networkTick();
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("networkTick");
+    	//MCPC+ End
+        
         SpigotTimings.connectionTimer.stopTiming(); // Spigot
         this.theProfiler.endStartSection("players");
         SpigotTimings.playerListTimer.startTiming(); // Spigot
