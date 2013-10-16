@@ -60,6 +60,9 @@ public class BaseProtect extends JavaPlugin {
 		addInteractor("gravisuite.ItemVajra", InteractorType.PlayerItem);
 		addInteractor("thaumcraft.common.items.wands.ItemWandExcavation", InteractorType.PlayerItem);
 		addInteractor("thaumcraft.common.items.wands.ItemWandFrost", InteractorType.PlayerItem);
+		//Destruction Pickaxe?
+		addInteractor("extrautils.item.ItemBuildersWand", InteractorType.PlayerItem);
+		addInteractor("com.pahimar.ee3.item.ItemMiniumStone", InteractorType.PlayerItem);
 		
 	}
 	
