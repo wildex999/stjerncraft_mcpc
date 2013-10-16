@@ -2274,6 +2274,22 @@ public abstract class World implements IBlockAccess
             }
             catch (Throwable throwable)
             {
+            	//Print currently ticking item(AND POSITION) when crashing
+            	IWorldInteract item = currentTickItem;
+        		if(item == null)
+        		{
+        			System.out.println("ITEM WHEN CRASH: NULL");
+        		}
+        		else
+        		{
+        			String className = item.getClass().getName();
+        			int last = className.lastIndexOf(".");
+        			if(last != -1)
+        				className = className.substring(last);
+        			
+        			System.out.println("ITEM WHEN CRASH: (" + className + " [X: " + item.getX() + " Y: " + item.getY() + " Z: " + item.getZ() +"]) ");
+        		}
+        		
                 crashreport = CrashReport.makeCrashReport(throwable, "Ticking entity");
                 crashreportcategory = crashreport.makeCategory("Entity being ticked");
 
@@ -2511,6 +2527,22 @@ public abstract class World implements IBlockAccess
                 }
                 catch (Throwable throwable2)
                 {
+                	//Print currently ticking item(AND POSITION) when crashing
+                	IWorldInteract item = currentTickItem;
+            		if(item == null)
+            		{
+            			System.out.println("ITEM WHEN CRASH: NULL");
+            		}
+            		else
+            		{
+            			String className = item.getClass().getName();
+            			int last = className.lastIndexOf(".");
+            			if(last != -1)
+            				className = className.substring(last);
+            			
+            			System.out.println("ITEM WHEN CRASH: (" + className + " [X: " + item.getX() + " Y: " + item.getY() + " Z: " + item.getZ() +"]) ");
+            		}
+                	
                     tileentity.tickTimer.stopTiming(); // Spigot
                     crashreport = CrashReport.makeCrashReport(throwable2, "Ticking tile entity");
                     crashreportcategory = crashreport.makeCategory("Tile entity being ticked");
@@ -2523,7 +2555,9 @@ public abstract class World implements IBlockAccess
                     }
                     else
                     {
-                        throw new ReportedException(crashreport);
+                    	//TODO: Allow this again
+                        //throw new ReportedException(crashreport);
+                    	System.out.println("NOT shutting down server due to TileEntity error");
                     }
                 }
             }
