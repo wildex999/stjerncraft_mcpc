@@ -580,7 +580,9 @@ public abstract class ServerConfigurationManager
      */
     public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
     {
-        return this.moveToWorld(par1EntityPlayerMP, par2, par3, null, true);
+        EntityPlayerMP entityplayer = this.moveToWorld(par1EntityPlayerMP, par2, par3, null, true);
+        GameRegistry.onPlayerRespawn(entityplayer); // Forge
+        return entityplayer;
     }
 
     public EntityPlayerMP moveToWorld(EntityPlayerMP entityplayermp, int i, boolean flag, Location location, boolean avoidSuffocation)
@@ -717,11 +719,10 @@ public abstract class ServerConfigurationManager
         {
             PlayerChangedWorldEvent event = new PlayerChangedWorldEvent((Player) entityplayermp1.getBukkitEntity(), fromWorld);
             Bukkit.getServer().getPluginManager().callEvent(event);
+            GameRegistry.onPlayerChangedDimension(entityplayermp1);
         }
-
         // CraftBukkit end
-        GameRegistry.onPlayerRespawn(entityplayermp1); // Forge
-        return entityplayermp1;
+         return entityplayermp1;
     }
 
     public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
