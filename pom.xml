@@ -37,6 +37,10 @@
 </pluginRepositories>
 <repositories>
     <repository>
+        <id>mcpc-mvn-repo-releases</id>
+        <url>http://github.com/MinecraftPortCentral/mcpc-mvn-repo/raw/master/releases</url>
+    </repository>
+    <repository>
         <id>repobo-snap</id>
         <url>http://repo.bukkit.org/content/groups/public</url>
     </repository>
