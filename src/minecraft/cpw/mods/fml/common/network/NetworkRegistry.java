@@ -239,6 +239,12 @@ public class NetworkRegistry
 
     void handleCustomPacket(Packet250CustomPayload packet, INetworkManager network, NetHandler handler)
     {
+    	//MCPC+ Start, set player who sent the packet as current ticking item
+    	EntityPlayer player = handler.getPlayer();
+    	if(player != null && player.worldObj != null)
+    		player.worldObj.currentTickItem = player; 
+    	//MCPC+ End
+    	
         if ("REGISTER".equals(packet.channel))
         {
             handleRegistrationPacket(packet, (Player)handler.getPlayer());
@@ -254,6 +260,13 @@ public class NetworkRegistry
             handlePacket(packet, network, (Player)handler.getPlayer());
             handler.handleVanilla250Packet(packet);  // MCPC+ send it back for CB dispatch
         }
+        
+        //MCPC+ Start
+    	if(player != null && player.worldObj != null)
+    		player.worldObj.currentTickItem = player;
+    	//MCPC+ End
+        
+        
     }
 
 
@@ -262,7 +275,21 @@ public class NetworkRegistry
         String channel = packet.channel;
         for (IPacketHandler handler : Iterables.concat(universalPacketHandlers.get(channel), player instanceof EntityPlayerMP ? serverPacketHandlers.get(channel) : clientPacketHandlers.get(channel)))
         {
+        	//MCPC+ Start, Special check for EE3 Minium Stone, as it's done client side with an event to do the actual change(This is an hack really, TODO make this better)
+        	w999.baseprotect.IWorldInteract prevItem = World.currentTickItem; //The player owning the packet should be set as current item at this point
+        	if(handler.getClass() == w999.baseprotect.BaseProtect.ee3PacketHandler)
+        	{
+        		w999.baseprotect.TempWorldInteractor tempInt = w999.baseprotect.BaseProtect.tempInteractor;
+        		tempInt.setItemOwner(prevItem.getItemOwner()); 
+        		World.currentTickItem = tempInt;
+        	}
+        	//MCPC+ End
+        		
             handler.onPacketData(network, packet, player);
+            
+            //MCPC+ Start, return ticking item to previous
+            World.currentTickItem = prevItem;
+            //MCPC+ End
         }
     }
 

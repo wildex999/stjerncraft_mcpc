@@ -28,6 +28,10 @@ public class BaseProtect extends JavaPlugin {
 	//players need to be accessed before BaseProtect can be initialized, therefore it's static
 	private static HashMap<String, PlayerData> players = new HashMap<String, PlayerData>(); //Data for players
 	
+	//Special cases
+	public static TempWorldInteractor tempInteractor = new TempWorldInteractor();
+	public static Class ee3PacketHandler = null;
+	
 	public enum InteractorType{
 		Entity,
 		TileEntity,
@@ -62,7 +66,20 @@ public class BaseProtect extends JavaPlugin {
 		addInteractor("thaumcraft.common.items.wands.ItemWandFrost", InteractorType.PlayerItem);
 		//Destruction Pickaxe?
 		addInteractor("extrautils.item.ItemBuildersWand", InteractorType.PlayerItem);
-		addInteractor("com.pahimar.ee3.item.ItemMiniumStone", InteractorType.PlayerItem);
+		//addInteractor("com.pahimar.ee3.item.ItemMiniumStone", InteractorType.PlayerItem); //EE3 Special case
+		addInteractor("thaumcraft.common.items.ItemPortableHole", InteractorType.PlayerItem);
+		
+		addInteractor("w999.baseprotect.TempWorldInteractor", InteractorType.Entity); //Used for special cases where we don't have an item to set as current
+		
+		//Register special event classes
+		try {
+			ee3PacketHandler = Class.forName("com.pahimar.ee3.network.PacketHandler");
+		} catch (ClassNotFoundException e)
+		{
+			System.err.println("Unable to register EE3 Packet Handler class, not found. EE3 Minium stone will NOT respect claims!");
+		}
+		
+		System.out.println("BaseProtect Initialized!");
 		
 	}
 	
