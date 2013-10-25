@@ -14,7 +14,9 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
+import w999.baseprotect.PlayerData;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.ChunkSampler.ChunkSamples;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -43,6 +45,8 @@ import net.minecraft.world.World;
 public class ChunkSampler {
 	static HashMap<String, ChunkSamples> chunks = new HashMap<String, ChunkSamples>(); //Samples for chunks
 	static HashMap<String, ItemSample> customSamples = new HashMap<String, ItemSample>(); //Custom named samples
+	static HashMap<String, PlayerSamples> players = new HashMap<String, PlayerSamples>(); //Player samples
+	
 	static Timer samplerThreadTimer = new Timer(true); //Create the timer thread as a daemon
 	static SamplerTask task; //Currently running task
 	public static int samplingInterval = 1; //Time in millisecond between time sampling
@@ -51,6 +55,7 @@ public class ChunkSampler {
 	public static AtomicInteger atomicSamples = new AtomicInteger(); //Samples since last count
 	public static long totalSamples; //Total number of samples by Sampling thread
 	public static long freeSamples; //Samples that did not happen on any item(Free time)
+	private static long ticks; //Number of ticks the sammpling has been running
 	
 	public static Date startTime, stopTime; //Date and time that sampling started and stopped
 	public static String startedBy; //Player who started sampling
@@ -151,6 +156,7 @@ public class ChunkSampler {
 		
 		chunks.clear();
 		customSamples.clear();
+		players.clear();
 		
 		startTime = new Date();
 		stopTime = null;
@@ -159,6 +165,7 @@ public class ChunkSampler {
 		
 		totalSamples = 0;
 		freeSamples = 0;
+		ticks = 0;
 		atomicSamples.set(0);
 		task = new SamplerTask();
 		samplerThreadTimer.scheduleAtFixedRate(task, samplingInterval, samplingInterval);
@@ -304,6 +311,15 @@ public class ChunkSampler {
 			chunk.totalEntitySampleCount += samples;
 			chunk.incrementItemSamples(chunk.entityItems, entity.getClass().getName(), samples);
 			totalSamples += samples;
+			
+			//Check if owner by a player, and add to it's samples count
+			PlayerData owner = entity.getItemOwner();
+			if(owner != null)
+			{
+				EntityPlayerMP player = owner.getPlayer();
+				if(player != null)
+					addPlayerSamples(player.username, chunk, samples);
+			}
 		}
 	}
 	
@@ -328,6 +344,15 @@ public class ChunkSampler {
 			chunk.totalTileEntitySampleCount += samples;
 			chunk.incrementItemSamples(chunk.tileEntityItems, tileEntity.getClass().getName(), samples);
 			totalSamples += samples;
+			
+			//Check if owner by a player, and add to it's samples count
+			PlayerData owner = tileEntity.getItemOwner();
+			if(owner != null)
+			{
+				EntityPlayerMP player = owner.getPlayer();
+				if(player != null)
+					addPlayerSamples(player.username, chunk, samples);
+			}
 		}
 	}
 	
@@ -382,11 +407,26 @@ public class ChunkSampler {
 			chunk.currentEntityCount = 0;
 			chunk.currentTileEntityCount = 0;
 		}
+		
+		//Automaticly turn off chunk sampling if it has been running for 10 minutes(~12000 ticks at 20 tps)
+		if(++ticks >= 12000)
+			stopSampling();
 	}
 	
-	public static List<ChunkSamples> getList()
+	public static List<ChunkSamples> getList(String player)
 	{
-		List<ChunkSamples> list = new ArrayList<ChunkSamples>(chunks.values());
+		//Check if we are to return every chunk or only those for specific player
+		List<ChunkSamples> list = null;
+		if(player.length() == 0)
+			list = new ArrayList<ChunkSamples>(chunks.values());
+		else
+		{
+			PlayerSamples playerSamples = players.get(player);
+			if(playerSamples == null)
+				return null;
+			
+			list = new ArrayList<ChunkSamples>(playerSamples.chunks.values());
+		}
 		
 		//Sort
 		Collections.sort(list, comparator);
@@ -419,6 +459,41 @@ public class ChunkSampler {
 		return chunk;
 	}
 	
+	private static PlayerSamples getOrCreatePlayerSamples(String player)
+	{
+		PlayerSamples playersamples = players.get(player);
+		
+		if(playersamples == null)
+		{
+			playersamples = new PlayerSamples(player);
+			players.put(player, playersamples);
+		}
+		
+		return playersamples;
+	}
+	
+	private static void addPlayerSamples(String player, ChunkSamples chunk, long samples)
+	{
+		if(player.isEmpty())
+			return ;
+		
+		//Get or create PlayerSamples
+		PlayerSamples playersamples = getOrCreatePlayerSamples(player);
+		
+		//Check if chunk exists, add if it doesn't
+		if(chunk != null)
+		{
+			ChunkSamples chunksampler = playersamples.chunks.get(chunk);
+			if(chunksampler == null)
+				playersamples.chunks.put(chunk, chunk);
+		}
+		
+		//Add samples
+		playersamples.samplesCount += samples;
+		
+	}
+	
+	//Contain samples for a single chunk
 	public static class ChunkSamples {
 		public int world;
 		public int chunkX, chunkZ;
@@ -467,6 +542,7 @@ public class ChunkSampler {
 			itemSamples.samples+=samples;
 		}
 		
+		//Item comparator
 		static Comparator<ItemSample> itemcomparator = new Comparator<ItemSample>() {
 
 	        public int compare(ItemSample i1, ItemSample i2) {
@@ -487,6 +563,40 @@ public class ChunkSampler {
 			return list;
 		}
 		
+		
+	}
+	
+	//Contains samples for sampled for a player
+	public static class PlayerSamples {
+		public HashMap<ChunkSamples, ChunkSamples> chunks = new HashMap<ChunkSamples, ChunkSamples>();
+		public long samplesCount = 0; //Number of total samples for this player
+		public String username;
+		
+		PlayerSamples(String name) 
+		{
+			username = name;
+		}
+		
+		//Player comparator
+		static Comparator<PlayerSamples> playercomparator = new Comparator<PlayerSamples>() {
+			
+	        public int compare(PlayerSamples i1, PlayerSamples i2) {
+	        	if(i1.samplesCount < i2.samplesCount) return 1;
+	        	else if(i1.samplesCount > i2.samplesCount) return -1;
+	        	else return 0;
+	        }
+	        
+		};
+		
+		//Get list of players sorted by the time used
+		public static List<PlayerSamples> getSortedPlayers()
+		{
+			List<PlayerSamples> list = new ArrayList<PlayerSamples>(players.values());
+			
+			Collections.sort(list, playercomparator);
+			
+			return list;
+		}
 		
 	}
 	

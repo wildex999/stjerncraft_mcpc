@@ -1,19 +1,25 @@
 package net.minecraft.command;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.ChunkSampler;
 import net.minecraft.server.ChunkSampler.ChunkSamples;
 import net.minecraft.server.ChunkSampler.ItemSample;
+import net.minecraft.server.ChunkSampler.PlayerSamples;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.VanillaCommand;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -35,8 +41,10 @@ public class CommandChunkSampling extends VanillaCommand {
         		+ "		Stop - Stop sampling\n"
         		+ "		Sort - Set the sorting method to use when listing\n"
         		+ "		List [page] - Return a sorted list of chunks placed into pages\n"
-        		+ "     ListChunk - Show the chunk at the given coordinates, detailed=true will show the most ticket item of each type.\n"
-        		+ "     WarnSlow - Print a warning when an item uses more than n% time\n"
+        		+ "     ListChunk [world] [x] [z] - Show the chunk at the given coordinates, detailed=true will show the most ticket item of each type.\n"
+        		//+ "     WarnSlow - Print a warning when an item uses more than n% time\n"
+        		+ "     Players - Print a list of players sorted by time usage"
+        		+ "     ListPlayer playername - List all chunks where player has used time"
         		+ "     ListOther - Print a list of all other sampled time usage";
         this.setPermission("mcpc.command.chunksampling");
     }
@@ -65,6 +73,11 @@ public class CommandChunkSampling extends VanillaCommand {
         		sender.sendMessage(ChatColor.RED + "Usage: " + "/chunksampling warnslow <on, off> [percentage]");
         		return false;
         	}
+        	else if(action.equalsIgnoreCase("listplayer"))
+        	{
+        		sender.sendMessage(ChatColor.RED + "Usage: " + "/chunksampling listplayer playername [page]");
+        		return false;
+        	}
         }
        
         
@@ -91,8 +104,94 @@ public class CommandChunkSampling extends VanillaCommand {
         	ChunkSampler.stopSampling();
         	sender.sendMessage(ChatColor.GREEN + "Chunk Sampling stopped!");
         }
-        else if(action.equalsIgnoreCase("list"))
+        else if(action.equalsIgnoreCase("list") || action.equalsIgnoreCase("listplayer"))
         {
+        	if(ChunkSampler.sampling)
+        	{
+        		sender.sendMessage(ChatColor.RED + "Stop sampling before listing sampled data!");
+        		return false;
+        	}
+        	
+        	String player = "";
+        	
+        	if(action.equalsIgnoreCase("listplayer"))
+        	{
+        		player = args[1];
+        		if(args.length == 3)
+        		{
+	        		//Page supplied
+	        		try {
+	        			currentPage = Integer.parseInt(args[2]);
+	                	if(currentPage <= 0)
+	                	{
+	                		sender.sendMessage(ChatColor.RED + "First page is 1!");
+	                		return false;
+	                	}
+	                	currentPage -= 1; //(Index starts at 0)
+	        		} catch (NumberFormatException error)
+	        		{
+	        			sender.sendMessage(ChatColor.RED + "Page Argument is not a number, ignoring!");
+	        		}
+        		}
+        	}
+        	else
+        	{
+	        	if(args.length == 2)
+	        	{
+	        		//Page supplied
+	        		try {
+	        			currentPage = Integer.parseInt(args[1]);
+	                	if(currentPage <= 0)
+	                	{
+	                		sender.sendMessage(ChatColor.RED + "First page is 1!");
+	                		return false;
+	                	}
+	                	currentPage -= 1; //(Index starts at 0)
+	        		} catch (NumberFormatException error)
+	        		{
+	        			sender.sendMessage(ChatColor.RED + "Page Argument is not a number, ignoring!");
+	        		}
+	        	}
+        	}
+        	
+        	sender.sendMessage("(Chunk Pos) | Min Count | Avg | Max | Time % of chunk time");
+        	
+        	List<ChunkSampler.ChunkSamples> list = ChunkSampler.getList(player);
+        	
+        	if(list == null)
+        	{
+        		sender.sendMessage("No chunks to show!");
+        		return true;
+        	}
+        	
+        	if(currentPage*itemsPerPage >= list.size() || currentPage*itemsPerPage < 0) //A very high value can loop into negative
+        	{
+        		sender.sendMessage("Page does not exist!");
+        		return false;
+        	}
+        	
+        	//We want the bottom of chat to show the first of the items on the page, so we have to reverse part of the list
+        	int i=(currentPage*itemsPerPage)+itemsPerPage-1;
+        	if(i>=list.size())
+        		i = list.size()-1;
+        	
+        	for(; i>=currentPage*itemsPerPage; i--)
+        	{
+        		ChunkSampler.ChunkSamples chunk = list.get(i);
+        		
+        		//Print chunk info(Don't include details(class names) of items using the time)
+        		printChunk(sender, chunk, false);
+        	}
+        	sender.sendMessage(ChatColor.WHITE + "Page " + ChatColor.RED + (currentPage+1) + ChatColor.WHITE + " of " + ChatColor.RED + ((list.size()/itemsPerPage)+1));
+        	sender.sendMessage(ChatColor.WHITE + "Unused time: " + ChatColor.RED + (((float)ChunkSampler.freeSamples / (float)ChunkSampler.totalSamples)*100) + "%" );
+        	sender.sendMessage(ChatColor.WHITE + "Sampled from " + ChatColor.RED + 
+        				ChunkSampler.startTime + ChatColor.WHITE + " to " + ChatColor.RED + ChunkSampler.stopTime + ChatColor.WHITE +  " by " + ChatColor.BLUE + ChunkSampler.startedBy);
+        }
+        else if(action.equalsIgnoreCase("players"))
+        {
+        	//Get offline player got check last login time, isBanned etc.
+        	//List players sorted by time used and paged like list.
+        	//TODO: This is a copy paste mostly from list, make a common function instead
         	if(ChunkSampler.sampling)
         	{
         		sender.sendMessage(ChatColor.RED + "Stop sampling before listing sampled data!");
@@ -116,15 +215,19 @@ public class CommandChunkSampling extends VanillaCommand {
         		}
         	}
         	
-        	sender.sendMessage("(Chunk Pos) | Min | Avg | Max");
-        	List<ChunkSampler.ChunkSamples> list = ChunkSampler.getList();
+        	sender.sendMessage("Time % | Player name");
+        	List<PlayerSamples> list = PlayerSamples.getSortedPlayers();
+        	
+        	//Count total time for players
+        	float samples = 0;
+        	for(int p = 0; p<list.size(); p++)
+        		samples += list.get(p).samplesCount;
         	
         	if(currentPage*itemsPerPage >= list.size() || currentPage*itemsPerPage < 0) //A very high value can loop into negative
         	{
         		sender.sendMessage("Page does not exist!");
         		return false;
         	}
-        	
         	
         	//We want the bottom of chat to show the first of the items on the page, so we have to reverse part of the list
         	int i=(currentPage*itemsPerPage)+itemsPerPage-1;
@@ -133,13 +236,16 @@ public class CommandChunkSampling extends VanillaCommand {
         	
         	for(; i>=currentPage*itemsPerPage; i--)
         	{
-        		ChunkSampler.ChunkSamples chunk = list.get(i);
+        		PlayerSamples player = list.get(i);
         		
-        		//Print chunk info(Don't include details(class names) of items using the time)
-        		printChunk(sender, chunk, false);
+        		//Print player info
+        		printPlayer(sender, player);
         	}
+        	
+        	//Print more info
         	sender.sendMessage(ChatColor.WHITE + "Page " + ChatColor.RED + (currentPage+1) + ChatColor.WHITE + " of " + ChatColor.RED + ((list.size()/itemsPerPage)+1));
-        	sender.sendMessage(ChatColor.WHITE + "Unused time: " + ChatColor.RED + (((float)ChunkSampler.freeSamples / (float)ChunkSampler.totalSamples)*100) + "%" + ChatColor.WHITE + " ( " + ChunkSampler.freeSamples + " of " + ChunkSampler.totalSamples + " )" );
+        	sender.sendMessage(ChatColor.WHITE + "Time used by players: " + ChatColor.RED + (((float)samples / (float)ChunkSampler.totalSamples)*100) + "%");
+        	sender.sendMessage(ChatColor.WHITE + "Total Unused time: " + ChatColor.RED + (((float)ChunkSampler.freeSamples / (float)ChunkSampler.totalSamples)*100) + "%" );
         	sender.sendMessage(ChatColor.WHITE + "Sampled from " + ChatColor.RED + 
         				ChunkSampler.startTime + ChatColor.WHITE + " to " + ChatColor.RED + ChunkSampler.stopTime + ChatColor.WHITE +  " by " + ChatColor.BLUE + ChunkSampler.startedBy);
         }
@@ -322,6 +428,34 @@ public class CommandChunkSampling extends VanillaCommand {
 			printItems(sender, chunk, chunk.tileEntityItems);
 		sender.sendMessage(ChatColor.GOLD + "Chunk Time | " + ChatColor.DARK_GREEN + ((totalChunkSamples / (float)ChunkSampler.totalSamples)*100) + "%");
 		sender.sendMessage(ChatColor.GOLD + "--------------------------------------------------");
+	}
+	
+	//Print info about player and time used
+	private void printPlayer(CommandSender sender, PlayerSamples player)
+	{
+		long totalSamples = ChunkSampler.totalSamples;
+		OfflinePlayer offlinePlayer = org.bukkit.Bukkit.getServer().getOfflinePlayer(player.username);
+
+		sender.sendMessage(ChatColor.RED + "" + ((player.samplesCount / (float)totalSamples)*100) + "%" + ChatColor.GOLD + " | " + ChatColor.GREEN + player.username);
+		if(offlinePlayer == null)
+		{
+			sender.sendMessage(ChatColor.RED + "Internal Error while getting more info on player, report to Admin");
+			return;
+		}
+		Date date = new Date();
+		long lastPlayed = date.getTime() - offlinePlayer.getLastPlayed();
+		String dateFormatted = String.format("%d day, %d hour, %d min and %d sec ago", 
+				TimeUnit.MILLISECONDS.toDays(lastPlayed),
+				TimeUnit.MILLISECONDS.toHours(lastPlayed) % 24,
+			    TimeUnit.MILLISECONDS.toMinutes(lastPlayed) % 60,
+			    TimeUnit.MILLISECONDS.toSeconds(lastPlayed) % 60
+			);
+		sender.sendMessage(ChatColor.YELLOW + "----Last Online: " + ChatColor.WHITE + dateFormatted);
+		if(offlinePlayer.isBanned())
+			sender.sendMessage(ChatColor.YELLOW + "----Banned: " + ChatColor.RED + " YES");
+		else
+			sender.sendMessage(ChatColor.YELLOW + "----Banned: " + ChatColor.GREEN + "No");
+		sender.sendMessage("--------------------");
 	}
 	
 	private void printItems(CommandSender sender, ChunkSampler.ChunkSamples chunk, HashMap<String, ChunkSampler.ItemSample> map)
