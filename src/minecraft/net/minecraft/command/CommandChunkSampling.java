@@ -164,6 +164,15 @@ public class CommandChunkSampling extends VanillaCommand {
         		return true;
         	}
         	
+        	//Count total time for players
+        	float samples = 0;
+        	for(int c = 0; c<list.size(); c++)
+        	{
+        		ChunkSamples chunk = list.get(c);
+        		float totalChunkSamples = chunk.totalBlockSampleCount + chunk.totalEntitySampleCount + chunk.totalTileEntitySampleCount;
+        		samples += totalChunkSamples;
+        	}
+        	
         	if(currentPage*itemsPerPage >= list.size() || currentPage*itemsPerPage < 0) //A very high value can loop into negative
         	{
         		sender.sendMessage("Page does not exist!");
@@ -183,7 +192,8 @@ public class CommandChunkSampling extends VanillaCommand {
         		printChunk(sender, chunk, false);
         	}
         	sender.sendMessage(ChatColor.WHITE + "Page " + ChatColor.RED + (currentPage+1) + ChatColor.WHITE + " of " + ChatColor.RED + ((list.size()/itemsPerPage)+1));
-        	sender.sendMessage(ChatColor.WHITE + "Unused time: " + ChatColor.RED + (((float)ChunkSampler.freeSamples / (float)ChunkSampler.totalSamples)*100) + "%" );
+        	sender.sendMessage(ChatColor.WHITE + "Time used by chunks: " + ChatColor.RED + (((float)samples / (float)ChunkSampler.totalSamples)*100) + "%");
+        	sender.sendMessage(ChatColor.WHITE + "Free time: " + ChatColor.RED + (((float)ChunkSampler.freeSamples / (float)ChunkSampler.totalSamples)*100) + "%" );
         	sender.sendMessage(ChatColor.WHITE + "Sampled from " + ChatColor.RED + 
         				ChunkSampler.startTime + ChatColor.WHITE + " to " + ChatColor.RED + ChunkSampler.stopTime + ChatColor.WHITE +  " by " + ChatColor.BLUE + ChunkSampler.startedBy);
         }
@@ -245,7 +255,7 @@ public class CommandChunkSampling extends VanillaCommand {
         	//Print more info
         	sender.sendMessage(ChatColor.WHITE + "Page " + ChatColor.RED + (currentPage+1) + ChatColor.WHITE + " of " + ChatColor.RED + ((list.size()/itemsPerPage)+1));
         	sender.sendMessage(ChatColor.WHITE + "Time used by players: " + ChatColor.RED + (((float)samples / (float)ChunkSampler.totalSamples)*100) + "%");
-        	sender.sendMessage(ChatColor.WHITE + "Total Unused time: " + ChatColor.RED + (((float)ChunkSampler.freeSamples / (float)ChunkSampler.totalSamples)*100) + "%" );
+        	sender.sendMessage(ChatColor.WHITE + "Total Free time: " + ChatColor.RED + (((float)ChunkSampler.freeSamples / (float)ChunkSampler.totalSamples)*100) + "%" );
         	sender.sendMessage(ChatColor.WHITE + "Sampled from " + ChatColor.RED + 
         				ChunkSampler.startTime + ChatColor.WHITE + " to " + ChatColor.RED + ChunkSampler.stopTime + ChatColor.WHITE +  " by " + ChatColor.BLUE + ChunkSampler.startedBy);
         }
@@ -442,15 +452,25 @@ public class CommandChunkSampling extends VanillaCommand {
 			sender.sendMessage(ChatColor.RED + "Internal Error while getting more info on player, report to Admin");
 			return;
 		}
-		Date date = new Date();
-		long lastPlayed = date.getTime() - offlinePlayer.getLastPlayed();
-		String dateFormatted = String.format("%d day, %d hour, %d min and %d sec ago", 
-				TimeUnit.MILLISECONDS.toDays(lastPlayed),
-				TimeUnit.MILLISECONDS.toHours(lastPlayed) % 24,
-			    TimeUnit.MILLISECONDS.toMinutes(lastPlayed) % 60,
-			    TimeUnit.MILLISECONDS.toSeconds(lastPlayed) % 60
-			);
-		sender.sendMessage(ChatColor.YELLOW + "----Last Online: " + ChatColor.WHITE + dateFormatted);
+		
+		
+		if(!offlinePlayer.isOnline())
+		{
+			Date date = new Date();
+			long lastPlayed = date.getTime() - offlinePlayer.getLastPlayed();
+			String dateFormatted = String.format("%d day, %d hour, %d min and %d sec ago", 
+					TimeUnit.MILLISECONDS.toDays(lastPlayed),
+					TimeUnit.MILLISECONDS.toHours(lastPlayed) % 24,
+				    TimeUnit.MILLISECONDS.toMinutes(lastPlayed) % 60,
+				    TimeUnit.MILLISECONDS.toSeconds(lastPlayed) % 60
+				);
+			sender.sendMessage(ChatColor.YELLOW + "----Last Online: " + ChatColor.WHITE + dateFormatted);
+		}
+		else
+		{
+			sender.sendMessage(ChatColor.YELLOW + "----Last Online: " + ChatColor.GREEN + "Now");
+		}
+		
 		if(offlinePlayer.isBanned())
 			sender.sendMessage(ChatColor.YELLOW + "----Banned: " + ChatColor.RED + " YES");
 		else
