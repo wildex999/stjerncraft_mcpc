@@ -637,6 +637,20 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         }
         catch (Throwable throwable)
         {
+        	w999.baseprotect.IWorldInteract current = World.currentTickItem;
+        	if(current != null)
+        	{
+        		System.err.println("CRASH, item: " + current.getClass().getName() + " (X: " + current.getX() + " Y: " + current.getY() + " Z: " + current.getZ() + " )");
+        		w999.baseprotect.PlayerData player = current.getItemOwner();
+        		
+        		if(player != null)
+        		{
+        			System.err.println("Owner: " + player.getPlayer());
+        		}
+        	}
+        	else
+        		System.err.println("Crashed with NULL item");
+        	
             if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
             {
                 return;
