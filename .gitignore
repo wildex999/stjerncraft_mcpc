@@ -47,3 +47,6 @@
 
 # Classes copied from MCP, with no MCPC+ modifications
 # Important: remove file from this list if adding a new base edit
+.externalToolBuilders/New_Builder.launch
+.externalToolBuilders/org.eclipse.jdt.core.javabuilder.launch
+.externalToolBuilders/org.eclipse.m2e.core.maven2Builder.launch
