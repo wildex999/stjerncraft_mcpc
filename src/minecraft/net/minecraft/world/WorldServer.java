@@ -939,6 +939,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                             try
                             {
                                 l = this.getBlockMetadata(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
+                                this.setBlockToAir(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
                             }
                             catch (Throwable throwable1)
                             {
@@ -946,6 +947,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                             }
 
                             CrashReportCategory.func_85068_a(crashreportcategory, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, k, l);
+                            //System.err.println("CRASH: " + crashreport);
                             throw new ReportedException(crashreport);
                         }
                     }

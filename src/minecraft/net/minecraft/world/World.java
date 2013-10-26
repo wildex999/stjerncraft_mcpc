@@ -2309,6 +2309,8 @@ public abstract class World implements IBlockAccess
                 }
                 else
                 {
+                	//Remove entity in hope of a clean restart
+                	removeEntity(entity);
                     throw new ReportedException(crashreport);
                 }
             }
@@ -2555,9 +2557,10 @@ public abstract class World implements IBlockAccess
                     }
                     else
                     {
-                    	//TODO: Allow this again
-                        //throw new ReportedException(crashreport);
-                    	System.out.println("NOT shutting down server due to TileEntity error");
+                    	//Remove the crashing block, hopefully allowing a clean restart
+                        tileentity.invalidate();
+                        setBlockToAir(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
+                        throw new ReportedException(crashreport);
                     }
                 }
             }
