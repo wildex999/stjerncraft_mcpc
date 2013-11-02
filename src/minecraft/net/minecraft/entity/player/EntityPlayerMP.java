@@ -188,7 +188,11 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
         par4ItemInWorldManager.thisPlayerMP = this;
         this.theItemInWorldManager = par4ItemInWorldManager;
         this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
-        ChunkCoordinates chunkcoordinates = par2World.provider.getRandomizedSpawnPoint();
+        //ChunkCoordinates chunkcoordinates = par2World.provider.getRandomizedSpawnPoint();
+        //Tempfix for crash due to BaseProtect
+        
+        ChunkCoordinates chunkcoordinates = new ChunkCoordinates(this.worldObj.getSpawnPoint());
+        
         int i = chunkcoordinates.posX;
         int j = chunkcoordinates.posZ;
         int k = chunkcoordinates.posY;
