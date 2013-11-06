@@ -69,7 +69,7 @@ public class CraftEventFactory {
         net.minecraft.util.ChunkCoordinates chunkcoordinates = worldServer.getSpawnPoint();
 
         int distanceFromSpawn = Math.max(Math.abs(x - chunkcoordinates.posX), Math.abs(z - chunkcoordinates.posZ));
-        return distanceFromSpawn >= spawnSize;
+        return distanceFromSpawn > spawnSize;
     }
 
     public static <T extends Event> T callEvent(T event) {

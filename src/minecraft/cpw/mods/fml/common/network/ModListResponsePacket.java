@@ -37,10 +37,6 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
-// MCPC+ start
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.CraftServer;
-// MCPC+ end
 
 public class ModListResponsePacket extends FMLPacket
 {
@@ -128,9 +124,9 @@ public class ModListResponsePacket extends FMLPacket
         {
             pkt.data = FMLPacket.makePacket(MOD_MISSING, missingClientMods, versionIncorrectMods);
             // MCPC+ start - disable unneeded console spam
-            if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
-            Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
-            FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
+            if (za.co.mcportcentral.MCPCConfig.connectionLogging) {
+                Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
+                FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
             }
             // MCPC+ end
             // Mark this as bad
@@ -142,9 +138,9 @@ public class ModListResponsePacket extends FMLPacket
         {
             pkt.data = FMLPacket.makePacket(MOD_IDENTIFIERS, netHandler);
             // MCPC+ start - disable unneeded console spam
-            if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
-            Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
-            FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
+            if (za.co.mcportcentral.MCPCConfig.connectionLogging) {
+                Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
+                FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
             }
             // MCPC+ end
             pkt.length = pkt.data.length;

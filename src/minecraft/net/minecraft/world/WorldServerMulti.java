@@ -18,8 +18,6 @@ public class WorldServerMulti extends WorldServer
         // this.worldData = new SecondaryWorldData(worldserver.getWorldData()); // CraftBukkit - use unique worlddata
     }
 
-    // protected void a() {} // CraftBukkit - save world data!
-
     // MCPC+ start - vanilla compatibility
     public WorldServerMulti(MinecraftServer minecraftserver, ISaveHandler isavehandler, String s, int i, WorldSettings worldsettings, WorldServer worldserver, Profiler profiler, ILogAgent ilogagent) {
         super(minecraftserver, isavehandler, s, i, ilogagent, worldsettings, profiler);
@@ -31,6 +29,14 @@ public class WorldServerMulti extends WorldServer
     /**
      * Saves the chunks to disk.
      */
-    // MCPC+ - disable this so level.dat is created correctly in newly created worlds
-    //protected void saveLevel() throws MinecraftException {}
+    // MCPC+ start - we handle all saving including perWorldStorage in WorldServer.saveLevel. This needs to be disabled since we follow
+    // bukkit's world saving methods by using a seperate save handler for each world. Each world folder needs to generate a corresponding 
+    // level.dat for plugins that require it such as MultiWorld.
+    /*
+    protected void saveLevel() throws MinecraftException
+    {
+        this.perWorldStorage.saveAllData();
+    }
+    */
+    // MCPC+ end
 }

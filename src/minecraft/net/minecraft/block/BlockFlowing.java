@@ -4,11 +4,8 @@ import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 // CraftBukkit start
-import org.bukkit.Bukkit;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.block.BlockFromToEvent;
 // CraftBukkit end
 
@@ -104,7 +101,7 @@ public class BlockFlowing extends BlockFluid
             }
 
             // MCPC+ start - allow disabling infinite water sources
-            if(((CraftServer)(Bukkit.getServer())).getInfiniteWaterSource())
+            if(za.co.mcportcentral.MCPCConfig.infiniteWaterSource)
             {
                 if (this.numAdjacentSources >= 2 && this.blockMaterial == Material.water)
                 {
@@ -133,7 +130,7 @@ public class BlockFlowing extends BlockFluid
                     this.updateFlow(par1World, par2, par3, par4);
                 }
                 // MCPC+ start - allow lava decaying at a 'natural' rate - see https://mojang.atlassian.net/browse/MC-4631 Lava decay fails to schedule block update
-                else if (((CraftServer)(Bukkit.getServer())).getFlowingLavaDecay())
+                else if (za.co.mcportcentral.MCPCConfig.flowingLavaDecay)
                 {
                     // Ensure that even if the flow decay was skipped, it will retry at the material's natural flow period.
                     par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));

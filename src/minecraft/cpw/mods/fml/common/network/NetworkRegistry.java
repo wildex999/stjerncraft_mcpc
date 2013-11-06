@@ -46,9 +46,6 @@ import cpw.mods.fml.relauncher.Side;
 // MCPC+ start
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 // MCPC+ end
 /**
@@ -292,7 +289,7 @@ public class NetworkRegistry
 
             for (String channel : channels.split("\0"))
             {
-                if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
+                if (za.co.mcportcentral.MCPCConfig.connectionLogging) {
                     System.out.println("adding plugin channel " + channel);
                 }
                 player.addChannel(channel);

@@ -2,12 +2,11 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling.TreeGenerator;
 import net.minecraft.world.World;
 
 import org.bukkit.BlockChangeDelegate; // CraftBukkit
 
-public class WorldGenShrub extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
+public class WorldGenShrub extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
 {
     private int field_76527_a;
     private int field_76526_b;
@@ -29,10 +28,16 @@ public class WorldGenShrub extends WorldGenerator implements TreeGenerator   // 
         // CraftBukkit end
         int l;
 
-        for (boolean flag = false; ((l = par1World.getTypeId(par3, par4, par5)) == 0 || l == Block.leaves.blockID) && par4 > 0; --par4)
+        Block block = null;
+        do 
         {
-            ;
-        }
+            block = Block.blocksList[par1World.getTypeId(par3,  par4, par5)];
+            if (block != null && !block.isAirBlock(par1World, par3, par4, par5) && !block.isLeaves(par1World, par3, par4, par5))
+            {
+                break;
+            }
+            par4--;
+        } while (par4 > 0);
 
         int i1 = par1World.getTypeId(par3, par4, par5);
 
@@ -54,7 +59,10 @@ public class WorldGenShrub extends WorldGenerator implements TreeGenerator   // 
                     {
                         int l2 = k2 - par5;
 
-                        if ((Math.abs(j2) != l1 || Math.abs(l2) != l1 || par2Random.nextInt(2) != 0) && !Block.opaqueCubeLookup[par1World.getTypeId(i2, j1, k2)])
+                        block = Block.blocksList[par1World.getTypeId(i2, j1, k2)];
+
+                        if ((Math.abs(j2) != l1 || Math.abs(l2) != l1 || par2Random.nextInt(2) != 0) && 
+                            (block == null || block.canBeReplacedByLeaves(par1World, i2, j1, k2)))
                         {
                             this.setTypeAndData(par1World, i2, j1, k2, Block.leaves.blockID, this.field_76527_a);
                         }

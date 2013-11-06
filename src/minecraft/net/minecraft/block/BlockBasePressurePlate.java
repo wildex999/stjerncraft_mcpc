@@ -196,7 +196,9 @@ public abstract class BlockBasePressurePlate extends Block
     }
 
     /**
-     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
+     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
+     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
+     * metadata
      */
     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
     {

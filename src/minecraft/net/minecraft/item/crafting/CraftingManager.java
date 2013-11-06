@@ -168,10 +168,6 @@ public class CraftingManager
     // CraftBukkit - default -> public
     public ShapedRecipes addRecipe(ItemStack par1ItemStack, Object ... par2ArrayOfObj)
     {
-        // MCPC+ check if item is banned and if so disable recipe
-        if (GameRegistry.isItemBanned(par1ItemStack))
-            return null;
-        // MCPC+ end
         String s = "";
         int i = 0;
         int j = 0;
@@ -247,10 +243,6 @@ public class CraftingManager
     // CraftBukkit - default -> public
     public void addShapelessRecipe(ItemStack par1ItemStack, Object ... par2ArrayOfObj)
     {
-        // MCPC+ check if item is banned and if so disable recipe
-        if (GameRegistry.isItemBanned(par1ItemStack))
-            return;
-        // MCPC+ end
         ArrayList arraylist = new ArrayList();
         Object[] aobject1 = par2ArrayOfObj;
         int i = par2ArrayOfObj.length;
@@ -359,6 +351,7 @@ public class CraftingManager
                 // MCPC+ end
             }
 
+            par1InventoryCrafting.currentRecipe = null; // CraftBukkit - Clear recipe when no recipe is found
             return null;
         }
     }

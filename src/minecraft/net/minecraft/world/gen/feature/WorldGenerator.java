@@ -23,7 +23,7 @@ public abstract class WorldGenerator
         this.doBlockNotify = par1;
     }
 
-    public abstract boolean generate(World world, Random random, int i, int j, int k);
+    public abstract boolean generate(World par1World, Random par2Random, int par3, int par4, int par5);
 
     /**
      * Rescales the generator settings, only used in WorldGenBigTree
@@ -41,6 +41,7 @@ public abstract class WorldGenerator
     {
         if (this.doBlockNotify)
         {
+            // CraftBukkit - BlockChangeDelegate doesn't have the 6th parameter
             world.setTypeIdAndData(i, j, k, l, i1);
         }
         else

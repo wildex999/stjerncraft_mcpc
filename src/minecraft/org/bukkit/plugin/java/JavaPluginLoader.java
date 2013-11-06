@@ -1,6 +1,19 @@
 package org.bukkit.plugin.java;
 
-import java.io.*;
+// MCPC+ start
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import net.md_5.specialsource.InheritanceMap;
+import net.md_5.specialsource.JarMapping;
+import net.md_5.specialsource.transformer.MavenShade;
+// MCPC+ end
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,20 +30,12 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import net.md_5.specialsource.InheritanceMap;
-import net.md_5.specialsource.JarMapping;
-import net.md_5.specialsource.transformer.MavenShade;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.Warning;
 import org.bukkit.Warning.WarningState;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
@@ -64,29 +69,12 @@ public class JavaPluginLoader implements PluginLoader {
         server = instance;
     }
 
-    private static boolean warnedLegacy = false; // MCPC+
-
     public Plugin loadPlugin(File file) throws InvalidPluginException {
         Validate.notNull(file, "File cannot be null");
 
         if (!file.exists()) {
             throw new InvalidPluginException(new FileNotFoundException(file.getPath() + " does not exist"));
         }
-
-        // MCPC+ start - file-based plugin remapper using SrgTools ApplySrg
-
-        YamlConfiguration configuration = ((CraftServer)Bukkit.getServer()).configuration;
-        String pluginBaseName = file.getName().substring(0, file.getName().indexOf("."));
-
-        if ((configuration.getBoolean("mcpc.plugin-settings.default.remap-plugin-file", false) || configuration.getBoolean("mcpc.plugin-settings."+pluginBaseName+".remap-plugin-file", false)) && !warnedLegacy) {
-            server.getLogger().warning("Legacy remap-plugin-file SrgTools file-based remapper no longer included but bukkit.yml remap-plugin-file is true; ignoring. "+
-                "If needed, the old tool can be found at https://github.com/MinecraftPortCentral/MCPC-Plus/tree/5210aa0c613f3a1bdccaadc8af9f1b253e871da3/plugins - "+
-                "but please try the new SpecialSource-based in-memory remapper enabled with custom-class-loader (on by default since MCPC+ build 27+) and report "+
-                "any problems to http://www.mcportcentral.co.za/.");
-            warnedLegacy = true;
-        }
-
-        // MCPC+ end
 
         PluginDescriptionFile description;
         try {
@@ -431,7 +419,7 @@ public class JavaPluginLoader implements PluginLoader {
                 Set<String> names = loader.getClasses();
 
                 for (String name : names) {
-                    removeClass(name);
+                        removeClass(name);
                 }
             }
         }

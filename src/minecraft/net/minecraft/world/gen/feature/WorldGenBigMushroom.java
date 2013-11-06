@@ -2,17 +2,16 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling.TreeGenerator;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 // CraftBukkit start
+import net.minecraft.item.ItemStack;
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.block.BlockState;
 import org.bukkit.material.MaterialData;
 // CraftBukkit end
 
-public class WorldGenBigMushroom extends WorldGenerator implements TreeGenerator   // CraftBukkit - add interface
+public class WorldGenBigMushroom extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit - add interface
 {
     /** The mushroom type. 0 for brown, 1 for red. */
     private int mushroomType = -1;
@@ -76,7 +75,9 @@ public class WorldGenBigMushroom extends WorldGenerator implements TreeGenerator
                         {
                             i2 = world.getTypeId(k1, j1, l1);
 
-                            if (i2 != 0 && i2 != Block.leaves.blockID)
+                            Block block = Block.blocksList[i2];
+                            
+                            if (block != null && !block.isAirBlock(world, k1, j1, l1) && !block.isLeaves(world, k1, j1, l1))
                             {
                                 flag = false;
                             }
@@ -216,7 +217,9 @@ public class WorldGenBigMushroom extends WorldGenerator implements TreeGenerator
                                     l2 = 0;
                                 }
 
-                                if ((l2 != 0 || j >= j + i1 - 1) && !Block.opaqueCubeLookup[world.getTypeId(i2, k1, k2)])
+                                Block block = Block.blocksList[world.getTypeId(i2, k1, k2)];
+
+                                if ((l2 != 0 || j >= j + i1 - 1) && (block == null || block.canBeReplacedByLeaves(world, i2, k1, k2)))
                                 {
                                     // CraftBukkit start
                                     if (event == null)
@@ -241,7 +244,8 @@ public class WorldGenBigMushroom extends WorldGenerator implements TreeGenerator
                     {
                         l1 = world.getTypeId(i, j + k1, k);
 
-                        if (!Block.opaqueCubeLookup[l1])
+                        Block block = Block.blocksList[l1];
+                        if (block == null || block.canBeReplacedByLeaves(world, i, j + k1, k))
                         {
                             // CraftBukkit start
                             if (event == null)

@@ -34,29 +34,32 @@
             <enabled>true</enabled>
         </snapshots>
     </pluginRepository>
+        <pluginRepository>
+            <id>bukkit-plugins</id>
+            <url>http://repo.bukkit.org/content/groups/public</url>
+        </pluginRepository>
 </pluginRepositories>
 <repositories>
     <repository>
-        <id>mcpc-mvn-repo-releases</id>
-        <url>http://github.com/MinecraftPortCentral/mcpc-mvn-repo/raw/master/releases</url>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
     </repository>
     <repository>
-        <id>repobo-snap</id>
-        <url>http://repo.bukkit.org/content/groups/public</url>
-    </repository>
-    <repository>
-        <id>md_5-snapshots</id>
-        <url>http://repo.md-5.net/content/repositories/snapshots/</url>
-    </repository>
-    <repository>
-        <id>sonatype-nexus-snapshots</id>
-        <name>Sonatype Nexus Snapshots</name>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>md_5-snapshots</id>
+            <url>http://repo.md-5.net/content/groups/public</url>
         <releases>
-            <enabled>false</enabled>
+                <enabled>true</enabled>
         </releases>
         <snapshots>
-            <enabled>true</enabled>
+                <enabled>false</enabled>
         </snapshots>
     </repository>
 </repositories>
@@ -93,11 +96,12 @@
         <version>14.0-rc3</version>
         <type>jar</type>
     </dependency>
-    <dependency>
-        <groupId>org.ow2.asm</groupId>
-        <artifactId>asm-all</artifactId>
-        <version>4.1</version>
-    </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-all</artifactId>
+            <version>4.1</version>
+            <scope>provided</scope>
+        </dependency>
     <dependency>
         <groupId>net.sourceforge.argo</groupId>
         <artifactId>argo</artifactId>
@@ -124,6 +128,13 @@
         <type>jar</type>
         <scope>compile</scope>
     </dependency>
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>specialsource-maven-plugin</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
     <!-- CraftBukkit -->
     <dependency>
         <groupId>za.co.mcportcentral</groupId>
@@ -212,6 +223,26 @@
     <!-- Replaces standard src/main/java directory -->
     <sourceDirectory>${basedir}/src/minecraft/</sourceDirectory>
     <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>get-special-dependencies</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>get</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>net.md-5</groupId>
+                            <artifactId>specialsource-maven-plugin</artifactId>
+                            <version>1.1-SNAPSHOT</version>
+                            <repositoryId>sonatype-nexus-snapshots</repositoryId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>        
         <!-- Get git description -->
         <plugin>
             <groupId>com.lukegb.mojo</groupId>
@@ -234,7 +265,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.0</version>
+                <version>3.1</version>
             <configuration>
                 <source>1.6</source>
                 <target>1.6</target>
@@ -246,11 +277,12 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
-            <version>2.1</version>
+                <version>2.4</version>
             <configuration>
                 <classesDirectory>${basedir}/target/classes</classesDirectory>
                 <archive>
                     <manifestEntries>
+                         <Class-Path> lib/asm-all-4.1.jar</Class-Path>     
                         <Main-Class>org.bukkit.craftbukkit.Main</Main-Class>
                         <Implementation-Title>MCPC Plus</Implementation-Title>
                         <Implementation-Version>${describe}</Implementation-Version>
@@ -267,7 +299,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
-            <version>2.0</version>
+                <version>2.1</version>
             <executions>
                 <execution>
                     <phase>package</phase>
@@ -334,6 +366,7 @@
                 <transformers>
                     <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                         <manifestEntries>
+                            <Class-Path> lib/asm-all-4.1.jar</Class-Path> 
                             <Main-Class>org.bukkit.craftbukkit.Main</Main-Class>
                             <Implementation-Title>MCPC Plus</Implementation-Title>
                             <Implementation-Version>${describe}</Implementation-Version>
@@ -347,53 +380,6 @@
                 </transformers>
             </configuration>
         </plugin>
-        <plugin>
-          <groupId>com.googlecode.maven-download-plugin</groupId>
-          <artifactId>maven-download-plugin</artifactId>
-          <version>1.1.0</version>
-          <executions>
-            <execution>
-            <id>download-specialsource</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>wget</goal>
-            </goals>
-         <configuration>
-           <url>http://ci.md-5.net/job/SpecialSource/68/artifact/target/SpecialSource-1.6-SNAPSHOT-shaded.jar</url>
-           <outputFileName>SpecialSource-1.6-SNAPSHOT-shaded.jar</outputFileName>
-           <!-- default target location, just to demonstrate the parameter -->
-           <targetDirectory>${project.build.directory}</targetDirectory>
-        </configuration>
-       </execution>
-      </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2.1</version>
-        <executions>
-          <execution>
-          <id>install-specialsource</id>
-          <phase>initialize</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-        <configuration>
-          <executable>mvn</executable>
-          <!-- optional -->
-          <workingDirectory>${project.build.directory}</workingDirectory>
-          <arguments>
-            <argument>install:install-file</argument>
-            <argument>-Dfile=${project.build.directory}/SpecialSource-1.6-SNAPSHOT-shaded.jar</argument>
-            <argument>-DartifactId=SpecialSource</argument>
-            <argument>-DgroupId=net.md-5</argument>
-            <argument>-Dversion=1.6-SNAPSHOT</argument>
-            <argument>-Dpackaging=jar</argument>
-          </arguments>
-        </configuration>
-         </execution>
-        </executions>
-      </plugin>
         <plugin>
             <groupId>net.md-5</groupId>
             <artifactId>specialsource-maven-plugin</artifactId>
@@ -527,19 +513,6 @@
                                     <versionRange>[1.1-SNAPSHOT,)</versionRange>
                                     <goals>
                                         <goal>install-remapped-file</goal>
-                                    </goals>
-                                </pluginExecutionFilter>
-                                <action>
-                                    <ignore/>
-                                </action>
-                            </pluginExecution>
-                            <pluginExecution>
-                                <pluginExecutionFilter>
-                                <groupId>com.googlecode.maven-download-plugin</groupId>
-                                <artifactId>maven-download-plugin</artifactId>
-                                <versionRange>[1.1.0,)</versionRange>
-                                    <goals>
-                                        <goal>wget</goal>
                                     </goals>
                                 </pluginExecutionFilter>
                                 <action>

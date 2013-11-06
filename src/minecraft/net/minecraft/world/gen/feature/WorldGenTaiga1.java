@@ -2,12 +2,11 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling.TreeGenerator;
 import net.minecraft.world.World;
 
 import org.bukkit.BlockChangeDelegate; // CraftBukkit
 
-public class WorldGenTaiga1 extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
+public class WorldGenTaiga1 extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
 {
     public WorldGenTaiga1() {}
 
@@ -55,7 +54,9 @@ public class WorldGenTaiga1 extends WorldGenerator implements TreeGenerator   //
                         {
                             k2 = par1World.getTypeId(i2, l1, j2);
 
-                            if (k2 != 0 && k2 != Block.leaves.blockID)
+                            Block block = Block.blocksList[k2];
+
+                            if (k2 != 0 && (block == null || !block.isLeaves(par1World, i2, l1, j2)))
                             {
                                 flag = false;
                             }
@@ -91,7 +92,10 @@ public class WorldGenTaiga1 extends WorldGenerator implements TreeGenerator   //
                             {
                                 int j3 = i3 - par5;
 
-                                if ((Math.abs(k2) != l2 || Math.abs(j3) != l2 || l2 <= 0) && !Block.opaqueCubeLookup[par1World.getTypeId(j2, i2, i3)])
+                                Block block = Block.blocksList[par1World.getTypeId(j2, i2, i3)];
+
+                                if ((Math.abs(k2) != l2 || Math.abs(j3) != l2 || l2 <= 0) && 
+                                    (block == null || block.canBeReplacedByLeaves(par1World, j2, i2, i3)))
                                 {
                                     this.setTypeAndData(par1World, j2, i2, i3, Block.leaves.blockID, 1);
                                 }
@@ -112,7 +116,9 @@ public class WorldGenTaiga1 extends WorldGenerator implements TreeGenerator   //
                     {
                         j2 = par1World.getTypeId(par3, par4 + i2, par5);
 
-                        if (j2 == 0 || j2 == Block.leaves.blockID)
+                        Block block = Block.blocksList[j2];
+
+                        if (j2 == 0 || block == null || block.isLeaves(par1World, par3, par4 + i2, par5))
                         {
                             this.setTypeAndData(par1World, par3, par4 + i2, par5, Block.wood.blockID, 1);
                         }

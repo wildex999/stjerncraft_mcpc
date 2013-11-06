@@ -2,13 +2,14 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling.TreeGenerator;
+import net.minecraft.block.BlockSapling;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 import org.bukkit.BlockChangeDelegate; // CraftBukkit
 
-public class WorldGenBigTree extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
+public class WorldGenBigTree extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
 {
     /**
      * Contains three sets of two values that provide complimentary indices for a given 'major' index - 1 and 2 for 0, 0
@@ -166,8 +167,11 @@ public class WorldGenBigTree extends WorldGenerator implements TreeGenerator   /
                 {
                     aint1[b2] = aint[b2] + k1;
                     int l1 = this.worldObj.getTypeId(aint1[0], aint1[1], aint1[2]);
+                    Block block = Block.blocksList[l1];
 
-                    if (l1 != 0 && l1 != Block.leaves.blockID)
+                    if (block != null &&
+                       !block.isAirBlock(worldObj, aint1[0], aint1[1], aint1[2]) &&
+                       !block.isLeaves(worldObj, aint1[0], aint1[1], aint1[2]))
                     {
                         ++k1;
                     }
@@ -424,8 +428,12 @@ public class WorldGenBigTree extends WorldGenerator implements TreeGenerator   /
                 aint3[b2] = MathHelper.floor_double((double)par1ArrayOfInteger[b2] + (double)i * d0);
                 aint3[b3] = MathHelper.floor_double((double)par1ArrayOfInteger[b3] + (double)i * d1);
                 int k = this.worldObj.getTypeId(aint3[0], aint3[1], aint3[2]);
+                Block block = Block.blocksList[k];
 
-                if ((k != 0 && k != Block.leaves.blockID) || aint3[1] >= 256)   // CraftBukkit - fix trees wrapping around
+                if ((block != null &&
+                   !block.isAirBlock(worldObj, aint3[0], aint3[1], aint3[2]) && 
+                   !block.isLeaves(worldObj, aint3[0], aint3[1], aint3[2]))
+                   || aint3[1] >= 256)   // CraftBukkit - fix trees wrapping around
                 {
                     break;
                 }
@@ -445,7 +453,9 @@ public class WorldGenBigTree extends WorldGenerator implements TreeGenerator   /
         int[] aint1 = new int[] {this.basePos[0], this.basePos[1] + this.heightLimit - 1, this.basePos[2]};
         int i = this.worldObj.getTypeId(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
 
-        if (i != 2 && i != 3)
+        Block soil = Block.blocksList[i];
+        boolean isValidSoil = (soil != null && soil.canSustainPlant(worldObj, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Block.sapling));
+        if (!isValidSoil)
         {
             return false;
         }

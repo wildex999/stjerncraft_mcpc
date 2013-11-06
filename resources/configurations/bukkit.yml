@@ -45,51 +45,6 @@ settings:
       - 127.0.0.1
     texture-resolution: 16
     metrics-enable: true
-mcpc:
-    connection-logging: false
-    dump-materials: false
-    world-leak-debug: false
-    infinite-water-source: true
-    flowing-lava-decay: false
-    load-chunk-on-request: true
-    warn-place-no-tile-entity: false
-    banned-item-IDs: []
-    enable-banned-items: false
-    player-speed-max:
-        land: -1
-    fake-players:
-      com/eloraam/redpower/machine/EntityPlayerFake:
-        username: '[RedPower]'
-        do-login: false
-      dan200/turtle/shared/TurtlePlayer:
-        username: '[ComputerCraft]'
-        do-login: false
-    plugin-settings:
-        default:
-            debug: false
-            custom-class-loader: true
-            use-guava10: true
-            remap-nms-v1_5_R3: true
-            remap-nms-v1_5_R2: true
-            remap-nms-v1_5_R1: true
-            remap-nms-v1_4_R1: true
-            remap-nms-v1_4_6: true
-            remap-obc-v1_5_R3: false
-            remap-obc-v1_5_R2: false
-            remap-obc-v1_5_R1: true
-            remap-obc-v1_4_R1: false
-            remap-obc-v1_4_6: false
-            remap-obc-pre: false
-            remap-nms-pre: 'false'
-            global-inheritance: true
-            plugin-inheritance: true
-            remap-reflect-field: true
-            remap-reflect-class: true
-            remap-allow-future: false
-    bukkit-to-forge-mappings:
-        world_nether : dim-1
-        world_the_end : dim1
-        world_twilightforest : dim7
 world-settings:
     default:
         growth-chunks-per-tick: 650

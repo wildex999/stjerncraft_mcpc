@@ -33,18 +33,14 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
-
 // MCPC+ start
-import java.io.IOException;
-import java.util.ArrayList;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.Main;
 import net.minecraft.entity.player.EntityPlayerMP;
 // MCPC+ end
 
@@ -79,79 +75,19 @@ public class GameRegistry
     private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
     private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
     private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
-    private static org.bukkit.configuration.file.YamlConfiguration configuration = Main.configuration; // MCPC+
-    private static Map<Integer, List<BannedItem>> bannedItemsCache = new HashMap();
-    /**
-     * Register a world generator - something that inserts new block types into the world
-     *
-     * @param generator
-     */
-    static 
-    {
-        // init banned items
-        if (configuration.getBoolean("mcpc.enable-banned-items"))
-        {
-            for (String bannedData : configuration.getStringList("mcpc.banned-item-IDs")) {
-                int seperator = bannedData.indexOf(':');
-                if (seperator > 0 && (bannedData.length() - 1) > seperator)
-                {
-                    int id = Integer.parseInt(bannedData.substring(0, seperator));
-                    int meta = Integer.parseInt(bannedData.substring(seperator + 1, bannedData.length()));
-                    if (bannedItemsCache.containsKey(id))
-                    {
-                        bannedItemsCache.get(id).add(new BannedItem(id, meta));
-                    }
-                    else
-                    {
-                        List bannedItems = new ArrayList();
-                        bannedItems.add(new BannedItem(id, meta));
-                        bannedItemsCache.put(id, bannedItems);
-                    }
-                    FMLLog.info("Banning" + " item ID " +id);
-                }
-                else
-                {
-                    int id = Integer.parseInt(bannedData);
-                    if (bannedItemsCache.containsKey(id))
-                    {
-                        bannedItemsCache.get(id).add(new BannedItem(id, -1));
-                    }
-                    else
-                    {
-                        List bannedItems = new ArrayList();
-                        bannedItems.add(new BannedItem(id, -1));
-                        bannedItemsCache.put(id, bannedItems);
-                    }
-                    FMLLog.info("Banning" + " item ID " +id);
-                }
-            }
-        }
-    }
+    // MCPC+ start
+    private static Map<String, Boolean> configWorldGenCache = new HashMap<String, Boolean>();
+    private static Map<String, String> worldGenMap = new HashMap<String, String>();
+    // MCPC+ end
 
     public static void registerWorldGenerator(IWorldGenerator generator)
     {
-        // MCPC+ start - add config options to enable/disable mod world generators
+        // MCPC+ start - mod id's are not available during generateWorld so we must capture them here
         String modId = Loader.instance().activeModContainer().getModId();
         modId = modId.replaceAll("[^A-Za-z0-9]", ""); // remove all non-digits/alphanumeric
         modId.replace(" ", "_");
-        String generatorName = modId + "-" + generator.getClass().getSimpleName();
-        if (!configuration.isBoolean("world-settings.default.worldgen-" + generatorName))
-                configuration.set("world-settings.default.worldgen-" + generatorName, true);
-        boolean generatorEnabled = configuration.getBoolean("world-settings.default.worldgen-" + generatorName);
-        try {
-            configuration.save((File) Main.configFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (!generatorEnabled)
-        {
-            FMLLog.info(Loader.instance().activeModContainer().getModId() + " world generator " + generator + " is DISABLED. Skipping registration.");
-        }
-        else 
-        {
-            FMLLog.info(Loader.instance().activeModContainer().getModId() + " registered world generator " + generator);
-            worldGenerators.add(generator);
-        }
+        worldGenerators.add(generator);
+        worldGenMap.put(generator.getClass().getName(), modId);
         // MCPC+ end
     }
 
@@ -171,15 +107,30 @@ public class GameRegistry
         Random fmlRandom = new Random(worldSeed);
         long xSeed = fmlRandom.nextLong() >> 2 + 1L;
         long zSeed = fmlRandom.nextLong() >> 2 + 1L;
-        fmlRandom.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ worldSeed);
+        long chunkSeed = (xSeed * chunkX + zSeed * chunkZ) ^ worldSeed;
 
         boolean before = ((net.minecraft.world.WorldServer)world).theChunkProviderServer.loadChunkOnProvideRequest; // MCPC+ store value
         ((net.minecraft.world.WorldServer)world).theChunkProviderServer.loadChunkOnProvideRequest = true; // MCPC+ load chunks on provide requests
         for (IWorldGenerator generator : worldGenerators)
         {
-            generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
+        // MCPC+ start
+            if (!configWorldGenCache.containsKey(generator.getClass().getName()))
+            {
+                String modId = worldGenMap.get(generator.getClass().getName());
+                String generatorName = "";
+                generatorName = modId + "-" + generator.getClass().getSimpleName();
+                boolean generatorEnabled = world.mcpcConfig.getBoolean("worldgen-" + generatorName, true);
+                configWorldGenCache.put(generator.getClass().getName(), generatorEnabled);
+            }
+            if (configWorldGenCache.get(generator.getClass().getName()))
+            {
+                fmlRandom.setSeed(chunkSeed);
+                generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
+            }
         }
-        ((net.minecraft.world.WorldServer)world).theChunkProviderServer.loadChunkOnProvideRequest = before; // MCPC+ reset
+        world.mcpcConfig.save();
+        ((net.minecraft.world.WorldServer)world).theChunkProviderServer.loadChunkOnProvideRequest = before; // reset
+        // MCPC+ end
     }
 
     /**
@@ -339,12 +290,11 @@ public class GameRegistry
             org.bukkit.Material.setMaterialName(item.itemID, materialName);
         }
     }
+    // MCPC+ end
 
-    // Check to see if the item ID is banned before registering it
     public static void addRecipe(ItemStack output, Object... params)
     {
-        if (output != null && !isItemBanned(output))
-            addShapedRecipe(output, params);
+        addShapedRecipe(output, params);
     }
 
     public static IRecipe addShapedRecipe(ItemStack output, Object... params)
@@ -354,8 +304,7 @@ public class GameRegistry
 
     public static void addShapelessRecipe(ItemStack output, Object... params)
     {
-        if (output != null && !isItemBanned(output))
-            CraftingManager.getInstance().addShapelessRecipe(output, params);
+        CraftingManager.getInstance().addShapelessRecipe(output, params);
     }
 
     public static void addRecipe(IRecipe recipe)
@@ -365,29 +314,8 @@ public class GameRegistry
 
     public static void addSmelting(int input, ItemStack output, float xp)
     {
-        if (!isItemBanned(output))
-            FurnaceRecipes.smelting().addSmelting(input, output, xp);
+        FurnaceRecipes.smelting().addSmelting(input, output, xp);
     }
-
-    public static boolean isItemBanned(ItemStack itemstack) {
-        if (configuration.getBoolean("mcpc.enable-banned-items") && itemstack != null)
-        {
-            if (bannedItemsCache.containsKey(itemstack.itemID))
-            {
-                List<BannedItem> bannedItems = bannedItemsCache.get(itemstack.itemID);
-                for (int i = 0; i < bannedItems.size(); i++)
-                {
-                    BannedItem block = bannedItems.get(i);
-                    if (block.blockID == itemstack.itemID && (block.meta == itemstack.getItemDamage() || block.meta == -1))
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    // MCPC+ end
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
     {
@@ -480,31 +408,60 @@ public class GameRegistry
 
 	public static void onPlayerLogin(EntityPlayer player)
 	{
-		for(IPlayerTracker tracker : playerTrackers)
-			tracker.onPlayerLogin(player);
+        for (IPlayerTracker tracker : playerTrackers)
+            try
+            {
+                tracker.onPlayerLogin(player);
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerLogin event with player tracker %s", tracker.getClass().getName());
+            }
 	}
 
 	public static void onPlayerLogout(EntityPlayer player)
 	{
-		for(IPlayerTracker tracker : playerTrackers)
-			tracker.onPlayerLogout(player);
+        for (IPlayerTracker tracker : playerTrackers)
+            try
+            {
+                tracker.onPlayerLogout(player);
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerLogout event with player tracker %s", tracker.getClass().getName());
+            }
 	}
 
 	public static void onPlayerChangedDimension(EntityPlayer player)
 	{
-		for(IPlayerTracker tracker : playerTrackers)
-			tracker.onPlayerChangedDimension(player);
-        // MCPC+ start - update compassTarget to new world when changing dimensions or it will leave a reference to the last world object causing a memory leak
-        // This is required for mods that implement their own dimension transfer methods which bypass ServerConfigurationManager
-        EntityPlayerMP playermp = (EntityPlayerMP)player;
-        playermp.compassTarget = new Location(playermp.worldObj.getWorld(), playermp.posX, playermp.posY, playermp.posZ);
-        // MCPC+ end
+        for (IPlayerTracker tracker : playerTrackers)
+            try
+            {
+                tracker.onPlayerChangedDimension(player);
+                // MCPC+ start - update compassTarget to new world when changing dimensions or it will leave a reference to the last world object causing a memory leak
+                // This is required for mods that implement their own dimension transfer methods which bypass ServerConfigurationManager
+                EntityPlayerMP playermp = (EntityPlayerMP)player;
+                playermp.compassTarget = new Location(playermp.worldObj.getWorld(), playermp.posX, playermp.posY, playermp.posZ);
+                // MCPC+ end
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerChangedDimension event with player tracker %s", tracker.getClass()
+                        .getName());
+            }
 	}
 
 	public static void onPlayerRespawn(EntityPlayer player)
 	{
-		for(IPlayerTracker tracker : playerTrackers)
-			tracker.onPlayerRespawn(player);
+        for (IPlayerTracker tracker : playerTrackers)
+            try
+            {
+                tracker.onPlayerRespawn(player);
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerRespawn event with player tracker %s", tracker.getClass().getName());
+            }
 	}
 
 
@@ -538,8 +495,7 @@ public class GameRegistry
 	 */
 	public static void registerCustomItemStack(String name, ItemStack itemStack)
 	{
-	    if (!isItemBanned(itemStack)) // MCPC+ - check if item is banned
-	        GameData.registerCustomItemStack(name, itemStack);
+	    GameData.registerCustomItemStack(name, itemStack);
 	}
 	/**
 	 * Lookup an itemstack based on mod and name. It will create "default" itemstacks from blocks and items if no
