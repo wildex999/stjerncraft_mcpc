@@ -278,7 +278,7 @@ public class CommandChunkSampling extends VanillaCommand {
         		ChunkSampler.sortObject = ChunkSampler.SortObject.TIME;
         	else
         	{
-        		sender.sendMessage(ChatColor.RED + "Invalid Argument 1 sent to /chunksampling sort! Must be one of [block, entity, tileentity, time]!");
+        		sender.sendMessage(ChatColor.RED + "Invalid Argument 1 sent to /chunksampling sort! Must be one of [block, entity, tileentity, time]! We got " + args[1]);
         		return false;
         	}
         	
@@ -295,7 +295,7 @@ public class CommandChunkSampling extends VanillaCommand {
 	        		ChunkSampler.sortType = ChunkSampler.SortType.TIME;
 	        	else
 	        	{
-	        		sender.sendMessage(ChatColor.RED + "Invalid Argument 2 sent to /chunksampling sort! Must be one of [min, avg, max, time]!");
+	        		sender.sendMessage(ChatColor.RED + "Invalid Argument 2 sent to /chunksampling sort! Must be one of [min, avg, max, time]! We got " + args[2]);
 	        		return false;
 	        	}  
         	}
@@ -309,7 +309,7 @@ public class CommandChunkSampling extends VanillaCommand {
         			ChunkSampler.sortOrder = ChunkSampler.SortOrder.DESC;
         		else
         		{
-        			sender.sendMessage(ChatColor.RED + "Invalid Argument 3 sent to /chunksampling sort! Must be one of [asc, desc]!");
+        			sender.sendMessage(ChatColor.RED + "Invalid Argument 3 sent to /chunksampling sort! Must be one of [asc, desc]! We got " + args[3]);
             		return false;
         		}
         	}
