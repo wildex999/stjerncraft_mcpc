@@ -96,12 +96,14 @@ import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 import w999.baseprotect.BaseProtect;
 import w999.baseprotect.IWorldInteract;
 import w999.baseprotect.PlayerData;
+import w999.thatlag.TimeWatch;
 import za.co.mcportcentral.entity.CraftFakePlayer;
 // CraftBukkit end
 import net.minecraft.nbt.NBTTagCompound; // MCPC+
@@ -187,6 +189,12 @@ public abstract class World implements IBlockAccess
      * holds information about a world (size on disk, time, spawn point, seed, ...)
      */
     public WorldInfo worldInfo; // CraftBukkit - protected -> public
+    
+    /** ThatLag, Stored iterator positions and othe status variables */
+    private Iterator tileEntityIterator;
+    private Iterator entityIterator;
+    private long maxTileEntityCount = 0; //Number of TileEntities to update per tick
+    private long maxEntityCount = 0;
 
     /** Boolean that is set to true when trying to find a spawn point */
     public boolean findingSpawnPoint;
@@ -2441,15 +2449,6 @@ public abstract class World implements IBlockAccess
             {
                 j = entity.chunkCoordX;
                 k = entity.chunkCoordZ;
-
-                //System.out.println("Removing Entity: " + par1Entity.getClass().getName());
-                String className = entity.getClass().getName();
-                if(className.equals("vswe.stevescarts.Carts.MinecartModular") || className.contains("thaumcraft.common.entities.golems."))
-                {
-                	System.out.println("className: " + className);
-                	Thread.currentThread().dumpStack();
-                }
-                
                 
                 if (entity.addedToChunk && this.chunkExists(j, k))
                 {
@@ -2474,6 +2473,36 @@ public abstract class World implements IBlockAccess
         this.scanningTileEntities = true;
         Iterator iterator = this.loadedTileEntityList.iterator();
 
+        //ThatLag, Calculate how many tileentities to update
+        if(TimeWatch.getTickTime()<=1.0)
+        {
+        	//If current average is above 20 TPS, let it update everything
+        	maxTileEntityCount = loadedTileEntityList.size();
+        }
+        else
+        {
+        	//Need to limit TileEntity count
+        	//We assume each update use an equal amount of time
+        	//Limit to 30% of the 50ms tick(15ms)
+        	
+        	double timePerTE = (50*TimeWatch.getTileEntityTime()) / ((double)loadedTileEntityList.size());
+        	maxTileEntityCount = (long)(15/timePerTE);
+        	
+        	//Don't wrap around, limit it
+        	if(maxTileEntityCount > loadedTileEntityList.size())
+        		maxTileEntityCount = loadedTileEntityList.size();
+        	else if(maxTileEntityCount < 0)
+        		maxTileEntityCount = 1; //Do at least one
+        }
+        
+        if(worldInfo.getDimension() == 0)
+        {
+        	System.out.println("Tick time: " + TimeWatch.getTickTime());
+        	System.out.println("(" + this.worldInfo.getDimension() + ") Tile Entity Time: " + TimeWatch.getTileEntityTime() + " | Max now: " + maxTileEntityCount + " | Size: " + loadedTileEntityList.size());
+        }
+        //ThatLag, Time Tile Entities
+        if(worldInfo.getDimension() == 0)
+        	TimeWatch.timeStart(TimeWatch.TimeType.TileEntity);
         while (iterator.hasNext())
         {
             TileEntity tileentity = (TileEntity)iterator.next();
@@ -2586,6 +2615,10 @@ public abstract class World implements IBlockAccess
         	//MCPC+ End
             
         }
+        
+        //ThatLag, Time Tile Entities
+        if(worldInfo.getDimension() == 0)
+        	TimeWatch.timeEnd(TimeWatch.TimeType.TileEntity);
 
         timings.tileEntityTick.stopTiming(); // Spigot
         timings.tileEntityPending.startTiming(); // Spigot
@@ -2608,7 +2641,7 @@ public abstract class World implements IBlockAccess
         this.scanningTileEntities = false;
 
         this.theProfiler.endStartSection("pendingTileEntities");
-
+        
         if (!this.addedTileEntityList.isEmpty())
         {
             for (int l = 0; l < this.addedTileEntityList.size(); ++l)

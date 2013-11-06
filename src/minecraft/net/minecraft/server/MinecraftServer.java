@@ -84,6 +84,7 @@ import java.util.Map;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.EnumHelper;
 import w999.baseprotect.BaseProtect;
+import w999.thatlag.TimeWatch;
 import za.co.mcportcentral.FMLLogJLineBreakProxy;
 // MCPC+ end
 
@@ -742,6 +743,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     		ChunkSampler.preSample();
     	//MCPC+ End
     	
+    	//ThatLag, time a tick
+    	TimeWatch.timeStart(TimeWatch.TimeType.Tick);
+    	
         FMLCommonHandler.instance().rescheduleTicks(Side.SERVER); // Forge
         long i = System.nanoTime();
         AxisAlignedBB.getAABBPool().cleanPool();
@@ -806,6 +810,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         callingForgeTick = true; // MCPC+ start - handle loadOnProviderRequests during forge tick event
         FMLCommonHandler.instance().onPostServerTick();
         callingForgeTick = false; // MCPC+ end
+        
+        //ThatLag, time a tick
+        TimeWatch.timeEnd(TimeWatch.TimeType.Tick);
         
         //MCPC+ Start
         if(ChunkSampler.sampling)
