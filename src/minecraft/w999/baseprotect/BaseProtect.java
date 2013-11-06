@@ -31,6 +31,9 @@ public class BaseProtect extends JavaPlugin {
 	//Special cases
 	public static TempWorldInteractor tempInteractor = new TempWorldInteractor();
 	public static Class ee3PacketHandler = null;
+	public static Class stevescart = null;
+	public static Class thaumgolem = null;
+	
 	
 	public enum InteractorType{
 		Entity,
@@ -74,9 +77,11 @@ public class BaseProtect extends JavaPlugin {
 		//Register special event classes
 		try {
 			ee3PacketHandler = Class.forName("com.pahimar.ee3.network.PacketHandler");
+			stevescart = Class.forName("vswe.stevescarts.Carts.MinecartModular");
+			thaumgolem = Class.forName("thaumcraft.common.entities.golems.EntityGolemBase");
 		} catch (ClassNotFoundException e)
 		{
-			System.err.println("Unable to register EE3 Packet Handler class, not found. EE3 Minium stone will NOT respect claims!");
+			System.err.println("BASEPROTECT ERROR: Unable to register all special case classes, Claims might NOT be fully respected!");
 		}
 		
 		System.out.println("BaseProtect Initialized!");

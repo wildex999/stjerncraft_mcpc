@@ -67,19 +67,26 @@ import org.spigotmc.CustomTimingsHandler; // Spigot
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
+import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.plugin.PluginManager;
 
 import w999.baseprotect.BaseProtect;
 import w999.baseprotect.BaseProtect.InteractorType;
+import w999.baseprotect.DummyEntity;
 import w999.baseprotect.IWorldInteract;
 import w999.baseprotect.PlayerData;
 import w999.baseprotect.IWorldInteract.Relevant;
@@ -390,13 +397,30 @@ public abstract class Entity implements IWorldInteract
      */
     public void setDead()
     {
-        //System.out.println("Removing Entity: " + par1Entity.getClass().getName());
         String className = this.getClass().getName();
-        if(className.equals("vswe.stevescarts.Carts.MinecartModular"))
+        
+        if(this.getClass() == BaseProtect.stevescart | BaseProtect.thaumgolem.isInstance(this))
         {
-        	System.out.println("Removing Minecart with stack(SETDEAD):");
-        	Thread.currentThread().dumpStack();
+        	w999.baseprotect.IWorldInteract item = World.currentTickItem;
+        	//Only allow a player to kill them directly
+        	if(!(item instanceof EntityPlayerMP))
+        		return;
+        	
+        	CraftEntity bukkitEntity = this.getBukkitEntity();
+        	System.out.println("Last golem damager: " + bukkitEntity.getLastDamageCause());
+        	
+        	//Create dummy Living Entity
+        	DummyEntity dummy = new DummyEntity(this.worldObj);
+        	CraftLivingEntity living = (CraftLivingEntity) dummy.getBukkitEntity();
+        	living.setCustomName("TestName");
+        	
+        	
+        	//Post Entity Death Event
+        	bukkitEntity.setLastDamageCause(new EntityDamageEvent(bukkitEntity, DamageCause.ENTITY_ATTACK, 1));
+        	EntityDeathEvent event = new EntityDeathEvent(living, null);
+        	//Bukkit.getServer().getPluginManager().callEvent(event);
         }
+        
         this.isDead = true;
     }
 
