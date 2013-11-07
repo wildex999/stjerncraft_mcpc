@@ -2,12 +2,13 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling.TreeGenerator;
+import net.minecraft.block.BlockSapling;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 import org.bukkit.BlockChangeDelegate; // CraftBukkit
 
-public class WorldGenForest extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
+public class WorldGenForest extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
 {
     public WorldGenForest(boolean par1)
     {
@@ -55,7 +56,11 @@ public class WorldGenForest extends WorldGenerator implements TreeGenerator   //
                         {
                             l1 = par1World.getTypeId(j1, i1, k1);
 
-                            if (l1 != 0 && l1 != Block.leaves.blockID)
+                            Block block = Block.blocksList[l1];
+
+                            if (block != null &&
+                               !block.isAirBlock(par1World, j1, i1, k1) &&
+                               !block.isLeaves(par1World, j1, i1, k1))
                             {
                                 flag = false;
                             }
@@ -75,10 +80,13 @@ public class WorldGenForest extends WorldGenerator implements TreeGenerator   //
             else
             {
                 i1 = par1World.getTypeId(par3, par4 - 1, par5);
+                // MCPC+ start - refactor forge patch to work with CB patch
+                Block soil = Block.blocksList[i1];
+                boolean isValidSoil = soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling);
 
-                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 256 - l - 1)
+                if (isValidSoil && par4 < 256 - l - 1)
                 {
-                    this.setType(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
+                    soil.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
                     int i2;
 
                     for (i2 = par4 - 3 + l; i2 <= par4 + l; ++i2)
@@ -97,8 +105,9 @@ public class WorldGenForest extends WorldGenerator implements TreeGenerator   //
                                 if (Math.abs(j2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0)
                                 {
                                     int i3 = par1World.getTypeId(l1, i2, k2);
+                                    Block block = Block.blocksList[i3];
 
-                                    if (i3 == 0 || i3 == Block.leaves.blockID)
+                                    if (block == null || block.canBeReplacedByLeaves(par1World, l1, i2, k2))
                                     {
                                         this.setTypeAndData(par1World, l1, i2, k2, Block.leaves.blockID, 2);
                                     }
@@ -111,7 +120,11 @@ public class WorldGenForest extends WorldGenerator implements TreeGenerator   //
                     {
                         j1 = par1World.getTypeId(par3, par4 + i2, par5);
 
-                        if (j1 == 0 || j1 == Block.leaves.blockID)
+                        Block block = Block.blocksList[j1];
+
+                        if (block == null || 
+                            block.isAirBlock(par1World, par3, par4 + i2, par5) || 
+                            block.isLeaves(par1World, par3, par4 + i2, par5))
                         {
                             this.setTypeAndData(par1World, par3, par4 + i2, par5, Block.wood.blockID, 2);
                         }

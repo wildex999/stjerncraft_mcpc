@@ -615,9 +615,9 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         this.inventory.decrementAnimations();
         this.prevCameraYaw = this.cameraYaw;
         // MCPC+ start - check if landMovementFactor has passed our player-speed-max limit
-        if (MinecraftServer.getServer().server.getLandMovementMax() > 0 && this.landMovementFactor > MinecraftServer.getServer().server.getLandMovementMax())
+        if (za.co.mcportcentral.MCPCConfig.getDouble("mcpc.player-speed-max.land", -1) > 0 && this.landMovementFactor > za.co.mcportcentral.MCPCConfig.getDouble("mcpc.player-speed-max.land", -1))
         {
-            this.landMovementFactor = (float)MinecraftServer.getServer().server.getLandMovementMax();
+            this.landMovementFactor = (float)za.co.mcportcentral.MCPCConfig.getDouble("mcpc.player-speed-max.land", -1);
         }
         // MCPC+ end
         super.onLivingUpdate();
@@ -1306,7 +1306,7 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
     public boolean interactWith(Entity par1Entity)
     {
-        if (MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(this, par1Entity)) || GameRegistry.isItemBanned(this.inventory.getCurrentItem())) // MCPC+ - check if item is banned
+        if (MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(this, par1Entity)))
         {
             return false;
         }

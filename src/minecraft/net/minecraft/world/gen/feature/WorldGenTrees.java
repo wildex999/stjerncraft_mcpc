@@ -2,13 +2,15 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling.TreeGenerator;
+import net.minecraft.block.BlockSapling;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 import org.bukkit.BlockChangeDelegate; // CraftBukkit
 
-public class WorldGenTrees extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
+public class WorldGenTrees extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
 {
     /** The minimum height of a generated tree. */
     private final int minTreeHeight;
@@ -77,7 +79,14 @@ public class WorldGenTrees extends WorldGenerator implements TreeGenerator   // 
                         {
                             k1 = par1World.getTypeId(l1, i1, j1);
 
-                            if (k1 != 0 && k1 != Block.leaves.blockID && k1 != Block.grass.blockID && k1 != Block.dirt.blockID && k1 != Block.wood.blockID)
+                            Block block = Block.blocksList[k1];
+                            if (block == null && k1 != 0) MinecraftServer.getServer().logInfo("Could not find block matching id: " + k1 + " during tree generation");
+                            if (!par1World.isEmpty(l1, i1, j1) &&
+                                block != null &&
+                                !block.isLeaves(par1World, l1, i1, j1) &&
+                                 k1 != Block.grass.blockID &&
+                                 k1 != Block.dirt.blockID &&
+                                !block.isWood(par1World, l1, i1, j1))
                             {
                                 flag = false;
                             }
@@ -97,10 +106,12 @@ public class WorldGenTrees extends WorldGenerator implements TreeGenerator   // 
             else
             {
                 i1 = par1World.getTypeId(par3, par4 - 1, par5);
+                Block soil = Block.blocksList[i1];
+                boolean isSoil = (soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling));
 
-                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 256 - l - 1)
+                if (isSoil && par4 < 256 - l - 1)
                 {
-                    this.setType(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
+                    soil.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
                     b0 = 3;
                     byte b1 = 0;
                     int i2;
@@ -123,8 +134,9 @@ public class WorldGenTrees extends WorldGenerator implements TreeGenerator   // 
                                 if (Math.abs(k2) != i2 || Math.abs(i3) != i2 || par2Random.nextInt(2) != 0 && k1 != 0)
                                 {
                                     int j3 = par1World.getTypeId(j2, j1, l2);
+                                    Block block = Block.blocksList[j3];
 
-                                    if (j3 == 0 || j3 == Block.leaves.blockID)
+                                    if (block == null || block.canBeReplacedByLeaves(par1World, j2, j1, l2))
                                     {
                                         this.setTypeAndData(par1World, j2, j1, l2, Block.leaves.blockID, this.metaLeaves);
                                     }
@@ -137,7 +149,9 @@ public class WorldGenTrees extends WorldGenerator implements TreeGenerator   // 
                     {
                         k1 = par1World.getTypeId(par3, par4 + j1, par5);
 
-                        if (k1 == 0 || k1 == Block.leaves.blockID)
+                        Block block = Block.blocksList[k1];
+
+                        if (block == null || block.isAirBlock(par1World, par3, par4 + j1, par5) || block.isLeaves(par1World, par3, par4 + j1, par5))
                         {
                             this.setTypeAndData(par1World, par3, par4 + j1, par5, Block.wood.blockID, this.metaWood);
 
@@ -177,24 +191,25 @@ public class WorldGenTrees extends WorldGenerator implements TreeGenerator   // 
                             {
                                 for (k2 = par5 - i2; k2 <= par5 + i2; ++k2)
                                 {
-                                    if (par1World.getTypeId(j2, j1, k2) == Block.leaves.blockID)
+                                    Block block = Block.blocksList[par1World.getTypeId(j2, j1, k2)];
+                                    if (block != null && block.isLeaves(par1World, j2, j1, k2))
                                     {
-                                        if (par2Random.nextInt(4) == 0 && par1World.getTypeId(j2 - 1, j1, k2) == 0)
+                                        if (par2Random.nextInt(4) == 0 && par1World.isEmpty(j2 - 1, j1, k2))
                                         {
                                             this.growVines(par1World, j2 - 1, j1, k2, 8);
                                         }
 
-                                        if (par2Random.nextInt(4) == 0 && par1World.getTypeId(j2 + 1, j1, k2) == 0)
+                                        if (par2Random.nextInt(4) == 0 && par1World.isEmpty(j2 + 1, j1, k2))
                                         {
                                             this.growVines(par1World, j2 + 1, j1, k2, 2);
                                         }
 
-                                        if (par2Random.nextInt(4) == 0 && par1World.getTypeId(j2, j1, k2 - 1) == 0)
+                                        if (par2Random.nextInt(4) == 0 && par1World.isEmpty(j2, j1, k2 - 1))
                                         {
                                             this.growVines(par1World, j2, j1, k2 - 1, 1);
                                         }
 
-                                        if (par2Random.nextInt(4) == 0 && par1World.getTypeId(j2, j1, k2 + 1) == 0)
+                                        if (par2Random.nextInt(4) == 0 && par1World.isEmpty(j2, j1, k2 + 1))
                                         {
                                             this.growVines(par1World, j2, j1, k2 + 1, 4);
                                         }
@@ -247,7 +262,7 @@ public class WorldGenTrees extends WorldGenerator implements TreeGenerator   // 
         {
             --par3;
 
-            if (par1World.getTypeId(par2, par3, par4) != 0 || i1 <= 0)
+            if (!par1World.isEmpty(par2, par3, par4) || i1 <= 0)
             {
                 return;
             }

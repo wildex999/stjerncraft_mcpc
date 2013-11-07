@@ -1,28 +1,34 @@
 package org.bukkit.plugin.java;
 
+// MCPC+ start
 import net.md_5.specialsource.provider.ClassLoaderProvider;
 import net.md_5.specialsource.transformer.MavenShade;
 import org.bouncycastle.util.io.Streams;
 import net.md_5.specialsource.*;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.CraftServer;
+import net.md_5.specialsource.repo.*;
 import org.bukkit.plugin.PluginDescriptionFile;
-
 import java.io.*;
 import java.net.JarURLConnection;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.CodeSigner;
 import java.security.CodeSource;
-import java.util.*;
-import java.util.concurrent.*; // MCPC+ - Threadsafe classloading
+import java.util.concurrent.*;
+import za.co.mcportcentral.MCPCConfig;
+// MCPC+ end
+
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+
+import org.apache.commons.lang.Validate;
+import org.bukkit.plugin.AuthorNagException;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  */
 public class PluginClassLoader extends URLClassLoader {
-    private String nbtTest = "cd";
     private final JavaPluginLoader loader;
     private final ConcurrentMap<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>(); // MCPC+ - Threadsafe classloading
     // MCPC+ start
@@ -52,6 +58,7 @@ public class PluginClassLoader extends URLClassLoader {
 
     public PluginClassLoader(final JavaPluginLoader loader, final URL[] urls, final ClassLoader parent, PluginDescriptionFile pluginDescriptionFile) { // MCPC+ - add PluginDescriptionFile
         super(urls, parent);
+        Validate.notNull(loader, "Loader cannot be null");
 
         this.loader = loader;
 
@@ -60,49 +67,48 @@ public class PluginClassLoader extends URLClassLoader {
         String pluginName = pluginDescriptionFile.getName();
 
         // configure default remapper settings
-        YamlConfiguration config = ((CraftServer)Bukkit.getServer()).configuration;
-        boolean useCustomClassLoader = config.getBoolean("mcpc.plugin-settings.default.custom-class-loader", true);
-        debug = config.getBoolean("mcpc.plugin-settings.default.debug", false);
-        boolean useGuava10 = config.getBoolean("mcpc.plugin-settings.default.use-guava10", true);
-        boolean remapNMS152 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_5_R3", true);
-        boolean remapNMS151 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_5_R2", true);
-        boolean remapNMS150 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_5_R1", true);
-        boolean remapNMS147 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_R1", true);
-        boolean remapNMS146 = config.getBoolean("mcpc.plugin-settings.default.remap-nms-v1_4_6", true);
-        String remapNMSPre = config.getString("mcpc.plugin-settings.default.remap-nms-pre", "false");
-        boolean remapOBC152 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_5_R3", false);
-        boolean remapOBC151 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_5_R2", false);
-        boolean remapOBC150 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_5_R1", true);
-        boolean remapOBC147 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_4_R1", false);
-        boolean remapOBC146 = config.getBoolean("mcpc.plugin-settings.default.remap-obc-v1_4_6", false);
-        boolean remapOBCPre = config.getBoolean("mcpc.plugin-settings.default.remap-obc-pre", false);
-        boolean globalInherit = config.getBoolean("mcpc.plugin-settings.default.global-inheritance", true);
-        boolean pluginInherit = config.getBoolean("mcpc.plugin-settings.default.plugin-inheritance", true);
-        boolean reflectFields = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-field", true);
-        boolean reflectClass = config.getBoolean("mcpc.plugin-settings.default.remap-reflect-class", true);
-        boolean allowFuture = config.getBoolean("mcpc.plugin-settings.default.remap-allow-future", false);
+        boolean useCustomClassLoader = MCPCConfig.getBoolean("plugin-settings.default.custom-class-loader", true);
+        debug = MCPCConfig.getBoolean("plugin-settings.default.debug", false);
+        boolean useGuava10 = MCPCConfig.getBoolean("plugin-settings.default.use-guava10", true);
+        boolean remapNMS152 = MCPCConfig.getBoolean("plugin-settings.default.remap-nms-v1_5_R3", true);
+        boolean remapNMS151 = MCPCConfig.getBoolean("plugin-settings.default.remap-nms-v1_5_R2", true);
+        boolean remapNMS150 = MCPCConfig.getBoolean("plugin-settings.default.remap-nms-v1_5_R1", true);
+        boolean remapNMS147 = MCPCConfig.getBoolean("plugin-settings.default.remap-nms-v1_4_R1", true);
+        boolean remapNMS146 = MCPCConfig.getBoolean("plugin-settings.default.remap-nms-v1_4_6", true);
+        String remapNMSPre = MCPCConfig.getString("plugin-settings.default.remap-nms-pre", "false");
+        boolean remapOBC152 = MCPCConfig.getBoolean("plugin-settings.default.remap-obc-v1_5_R3", false);
+        boolean remapOBC151 = MCPCConfig.getBoolean("plugin-settings.default.remap-obc-v1_5_R2", false);
+        boolean remapOBC150 = MCPCConfig.getBoolean("plugin-settings.default.remap-obc-v1_5_R1", true);
+        boolean remapOBC147 = MCPCConfig.getBoolean("plugin-settings.default.remap-obc-v1_4_R1", false);
+        boolean remapOBC146 = MCPCConfig.getBoolean("plugin-settings.default.remap-obc-v1_4_6", false);
+        boolean remapOBCPre = MCPCConfig.getBoolean("plugin-settings.default.remap-obc-pre", false);
+        boolean globalInherit = MCPCConfig.getBoolean("plugin-settings.default.global-inheritance", true);
+        boolean pluginInherit = MCPCConfig.getBoolean("plugin-settings.default.plugin-inheritance", true);
+        boolean reflectFields = MCPCConfig.getBoolean("plugin-settings.default.remap-reflect-field", true);
+        boolean reflectClass = MCPCConfig.getBoolean("plugin-settings.default.remap-reflect-class", true);
+        boolean allowFuture = MCPCConfig.getBoolean("plugin-settings.default.remap-allow-future", false);
 
         // plugin-specific overrides
-        useCustomClassLoader = config.getBoolean("mcpc.plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader);
-        debug = config.getBoolean("mcpc.plugin-settings."+pluginName+".debug", debug);
-        useGuava10 = config.getBoolean("mcpc.plugin-settings."+pluginName+".use-guava10", useGuava10);
-        remapNMS152 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_5_R3", remapNMS152);
-        remapNMS151 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_5_R2", remapNMS151);
-        remapNMS150 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_5_R1", remapNMS150);
-        remapNMS147 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_R1", remapNMS147);
-        remapNMS146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-nms-v1_4_6", remapNMS146);
-        remapNMSPre = config.getString("mcpc.plugin-settings."+pluginName+".remap-nms-pre", remapNMSPre);
-        remapOBC152 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_5_R3", remapOBC152);
-        remapOBC151 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_5_R2", remapOBC151);
-        remapOBC150 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_5_R1", remapOBC150);
-        remapOBC147 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_4_R1", remapOBC147);
-        remapOBC146 = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-v1_4_6", remapOBC146);
-        remapOBCPre = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-obc-pre", remapOBCPre);
-        globalInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".global-inheritance", globalInherit);
-        pluginInherit = config.getBoolean("mcpc.plugin-settings."+pluginName+".plugin-inheritance", pluginInherit);
-        reflectFields = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-reflect-field", reflectFields);
-        reflectClass = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-reflect-class", reflectClass);
-        allowFuture = config.getBoolean("mcpc.plugin-settings."+pluginName+".remap-allow-future", allowFuture);
+        useCustomClassLoader = MCPCConfig.getBoolean("plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader, false);
+        debug = MCPCConfig.getBoolean("plugin-settings."+pluginName+".debug", debug, false);
+        useGuava10 = MCPCConfig.getBoolean("plugin-settings."+pluginName+".use-guava10", useGuava10, false);
+        remapNMS152 = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_5_R3", remapNMS152, false);
+        remapNMS151 = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_5_R2", remapNMS151, false);
+        remapNMS150 = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_5_R1", remapNMS150, false);
+        remapNMS147 = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_4_R1", remapNMS147, false);
+        remapNMS146 = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_4_6", remapNMS146, false);
+        remapNMSPre = MCPCConfig.getString("plugin-settings."+pluginName+".remap-nms-pre", remapNMSPre, false);
+        remapOBC152 = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_5_R3", remapOBC152, false);
+        remapOBC151 = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_5_R2", remapOBC151, false);
+        remapOBC150 = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_5_R1", remapOBC150, false);
+        remapOBC147 = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_4_R1", remapOBC147, false);
+        remapOBC146 = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_4_6", remapOBC146, false);
+        remapOBCPre = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-pre", remapOBCPre, false);
+        globalInherit = MCPCConfig.getBoolean("plugin-settings."+pluginName+".global-inheritance", globalInherit, false);
+        pluginInherit = MCPCConfig.getBoolean("plugin-settings."+pluginName+".plugin-inheritance", pluginInherit, false);
+        reflectFields = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-field", reflectFields, false);
+        reflectClass = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-class", reflectClass, false);
+        allowFuture = MCPCConfig.getBoolean("plugin-settings."+pluginName+".remap-allow-future", allowFuture, false);
 
         if (!allowFuture) {
             if (cpw.mods.fml.relauncher.FMLInjectionData.obf151()) {
@@ -357,7 +363,7 @@ public class PluginClassLoader extends URLClassLoader {
                     }
 
                     if (result != null) {
-                        loader.setClass(name, result);
+                            loader.setClass(name, result);
                     }
                 }
 
@@ -372,8 +378,8 @@ public class PluginClassLoader extends URLClassLoader {
         }
         // MCPC+ end
 
-        return result;
-    }
+            return result;
+        }
 
     public Set<String> getClasses() {
         return classes.keySet();
@@ -404,7 +410,7 @@ public class PluginClassLoader extends URLClassLoader {
                     }
 
                     // Remap the classes
-                    byte[] remappedBytecode = remapper.remapClassFile(bytecode);
+                    byte[] remappedBytecode = remapper.remapClassFile(bytecode, RuntimeRepo.getInstance());
 
                     if (debug) {
                         File file = new File("remapped-plugin-classes/"+name+".class");

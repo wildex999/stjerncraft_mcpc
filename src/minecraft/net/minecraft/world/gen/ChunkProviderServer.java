@@ -60,7 +60,7 @@ public class ChunkProviderServer implements IChunkProvider
     /**
      * if this is false, the defaultEmptyChunk will be returned by the provider
      */
-    public boolean loadChunkOnProvideRequest = FMLCommonHandler.instance().getMinecraftServerInstance().server.getLoadChunkOnRequest(); // MCPC+ - if true, allows mods to force load chunks. to disable, set load-chunk-on-request in bukkit.yml to false
+    public boolean loadChunkOnProvideRequest = za.co.mcportcentral.MCPCConfig.loadChunkOnRequest; // MCPC+ - if true, allows mods to force load chunks. to disable, set load-chunk-on-request in mcpc.yml to false
     public int initialTick; // MCPC+ counter to keep track of when this loader was created
     public LongObjectHashMap<Chunk> loadedChunkHashMap = new LongObjectHashMap<Chunk>();
     public List loadedChunks = new ArrayList(); // MCPC+  vanilla compatibility

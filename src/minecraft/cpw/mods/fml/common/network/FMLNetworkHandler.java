@@ -49,10 +49,6 @@ import cpw.mods.fml.common.network.FMLPacket.Type;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
-// MCPC+ start
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.CraftServer;
-// MCPC+ end
 
 public class FMLNetworkHandler
 {
@@ -132,7 +128,7 @@ public class FMLNetworkHandler
             {
                 // No FML on the client
                 FMLLog.fine("Connection from %s rejected - no FML packet received from client", userName);
-                netLoginHandler.completeConnection(((CraftServer) Bukkit.getServer()).configuration.getString("settings.fml-missing-message", "You do not have FML installed, you cannot connect to this server")); // MCPC+
+                netLoginHandler.completeConnection(za.co.mcportcentral.MCPCConfig.getString("settings.fml-missing-message", "You do not have FML installed, you cannot connect to this server")); // MCPC+
                 return;
             }
             else
@@ -173,15 +169,15 @@ public class FMLNetworkHandler
             loginStates.remove(netLoginHandler);
             break;
         case MISSING_MODS_OR_VERSIONS:
-            netLoginHandler.completeConnection(((CraftServer) Bukkit.getServer()).configuration.getString("settings.fml-missing-mods-message", "The server requires mods that are absent or out of date on your client")); // MCPC+
+            netLoginHandler.completeConnection(za.co.mcportcentral.MCPCConfig.getString("settings.fml-missing-mods-message", "The server requires mods that are absent or out of date on your client")); // MCPC+
             loginStates.remove(netLoginHandler);
             break;
         case FML_OUT_OF_DATE:
-            netLoginHandler.completeConnection(((CraftServer) Bukkit.getServer()).configuration.getString("settings.fml-outdated-message", "Your client is not running a new enough version of FML to connect to this server")); // MCPC+
+            netLoginHandler.completeConnection(za.co.mcportcentral.MCPCConfig.getString("settings.fml-outdated-message", "Your client is not running a new enough version of FML to connect to this server")); // MCPC+
             loginStates.remove(netLoginHandler);
             break;
         default:
-            netLoginHandler.completeConnection(((CraftServer) Bukkit.getServer()).configuration.getString("settings.fml-other-error-message", "There was a problem during FML negotiation")); // MCPC+
+            netLoginHandler.completeConnection(za.co.mcportcentral.MCPCConfig.getString("settings.fml-other-error-message", "There was a problem during FML negotiation")); // MCPC+
             loginStates.remove(netLoginHandler);
             break;
         }

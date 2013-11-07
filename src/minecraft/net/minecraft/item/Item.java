@@ -267,7 +267,7 @@ public class Item implements ItemProxy, IWorldInteract // MCPC+ - marker interfa
         
         GameData.newItemAdded(this);
 
-        org.bukkit.Material.addMaterial(this.itemID); // MCPC+ - many mods do not register items through GameRegistry so to be safe we need to add materials here
+        org.bukkit.Material.addMaterial(this.itemID, false); // MCPC+ - many mods do not register items through GameRegistry so to be safe we need to add materials here
     }
 
     public Item setMaxStackSize(int par1)

@@ -346,8 +346,10 @@ public class Block implements BlockProxy // MCPC+ - marker interface
             lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
             canBlockGrass[par1] = !par2Material.getCanBlockGrass();
         }
-        org.bukkit.Material.addMaterial(this.blockID); // MCPC+ - many mods do not register blocks through GameRegistry so to be safe we need to add materials here
+        // MCPC+ start
+        org.bukkit.Material.addMaterial(this.blockID, true); // MCPC+ - many mods do not register blocks through GameRegistry so to be safe we need to add materials here
         this.isForgeBlock = (this.getClass().getName().length() > 3 && !this.getClass().getName().startsWith("net.minecraft.block")) ? true : false; // MCPC+
+        // MCPC+ end
     }
 
     /**
@@ -2260,4 +2262,56 @@ public class Block implements BlockProxy // MCPC+ - marker interface
         }
         return false;
     }
+
+    //MCPC+ Start - Bukkit Compat
+    public boolean canBeReplacedByLeaves(org.bukkit.BlockChangeDelegate world, int x, int y, int z)
+    {
+        World forgeWorld = world instanceof World ? (World)world : null;
+        try {
+            return canBeReplacedByLeaves(forgeWorld, x, y, z);
+        } catch (Throwable t) { }
+        return !Block.opaqueCubeLookup[this.blockID];
+    }
+    public boolean isLeaves(org.bukkit.BlockChangeDelegate world, int x, int y, int z)
+    {
+        World forgeWorld = world instanceof World ? (World)world : null;
+        try {
+            return isLeaves(forgeWorld, x, y, z);
+        } catch (Throwable t) { }
+        return world.getTypeId(x, y, z) == Block.leaves.blockID;
+    }
+    public boolean isWood(org.bukkit.BlockChangeDelegate world, int x, int y, int z)
+    {
+        World forgeWorld = world instanceof World ? (World)world : null;
+        try {
+            return isWood(forgeWorld, x, y, z);
+        } catch (Throwable t) { }
+        return world.getTypeId(x, y, z) == Block.wood.blockID;
+    }
+    public boolean isAirBlock(org.bukkit.BlockChangeDelegate world, int x, int y, int z)
+    {
+        World forgeWorld = world instanceof World ? (World)world : null;
+        try {
+            return isAirBlock(forgeWorld, x, y, z);
+        } catch (Throwable t) { }
+        return world.getTypeId(x, y, z) == 0;
+    }
+    public boolean canSustainPlant(org.bukkit.BlockChangeDelegate world, int x, int y, int z, ForgeDirection direction, IPlantable plant){
+        World forgeWorld = world instanceof World ? (World)world : null;
+        try {
+            return canSustainPlant(forgeWorld, x, y, z, direction, plant);
+        } catch (Throwable t) { }
+        int i1 = world.getTypeId(x,y,z);
+        return i1 == Block.grass.blockID || i1 == Block.dirt.blockID;
+    }
+    public void onPlantGrow(org.bukkit.BlockChangeDelegate world, int x, int y, int z, int sourceX, int sourceY, int sourceZ)
+    {
+        World forgeWorld = world instanceof World ? (World)world : null;
+        try {
+            onPlantGrow(forgeWorld, x, y, z, sourceX, sourceY, sourceZ);
+            return;
+        } catch (Throwable t) { }
+        world.setTypeId(x, y, z, Block.dirt.blockID);
+    }
+    //MCPC+ end
 }

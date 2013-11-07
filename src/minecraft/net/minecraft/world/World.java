@@ -99,14 +99,18 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+// CraftBukkit end
 
+// MCPC+ start
 import w999.baseprotect.BaseProtect;
 import w999.baseprotect.IWorldInteract;
 import w999.baseprotect.PlayerData;
 import w999.thatlag.TimeWatch;
+
+import net.minecraft.nbt.NBTTagCompound;
+import za.co.mcportcentral.MCPCWorldConfig;
 import za.co.mcportcentral.entity.CraftFakePlayer;
-// CraftBukkit end
-import net.minecraft.nbt.NBTTagCompound; // MCPC+
+// MCPC+ end
 
 
 public abstract class World implements IBlockAccess
@@ -321,6 +325,7 @@ public abstract class World implements IBlockAccess
     int lastZAccessed = Integer.MIN_VALUE;
     final Object chunkLock = new Object();
     private byte chunkTickRadius; // Spigot
+    public final za.co.mcportcentral.MCPCWorldConfig mcpcConfig; // MCPC+
 
     public final SpigotTimings.WorldTimingsHandler timings; // Spigot
 
@@ -337,6 +342,7 @@ public abstract class World implements IBlockAccess
     // Changed signature
     public World(ISaveHandler idatamanager, String s, WorldSettings worldsettings, WorldProvider worldprovider, Profiler profiler, ILogAgent ilogagent, ChunkGenerator gen, org.bukkit.World.Environment env)
     {
+        this.mcpcConfig = new za.co.mcportcentral.MCPCWorldConfig( s ); // MCPC+;
         this.generator = gen;
         this.worldInfo = idatamanager.loadWorldInfo(); // Spigot
         this.world = new CraftWorld((WorldServer) this, gen, env);
@@ -460,6 +466,7 @@ public abstract class World implements IBlockAccess
     
     public World(ISaveHandler par1ISaveHandler, String par2Str, WorldSettings par3WorldSettings, WorldProvider par4WorldProvider, Profiler par5Profiler, ILogAgent par6ILogAgent)
     {
+        this.mcpcConfig = new za.co.mcportcentral.MCPCWorldConfig( par2Str ); // MCPC+
         this.world = null; // CraftWorld not used
         this.ambientTickCountdown = this.rand.nextInt(12000);
         this.lightUpdateBlockList = new int[32768];
@@ -478,7 +485,7 @@ public abstract class World implements IBlockAccess
             this.mapStorage = new MapStorage(par1ISaveHandler);
         }
         // MCPC+ end
-        this.worldLogAgent = par6ILogAgent;        
+        this.worldLogAgent = par6ILogAgent;
         this.worldInfo = par1ISaveHandler.loadWorldInfo();
 
         if (par4WorldProvider != null)

@@ -2,13 +2,12 @@ package net.minecraft.world.gen.feature;
 
 import java.util.Random;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling.TreeGenerator;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
 import org.bukkit.BlockChangeDelegate; // CraftBukkit
 
-public class WorldGenSwamp extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
+public class WorldGenSwamp extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
 {
     public WorldGenSwamp() {}
 
@@ -59,7 +58,7 @@ public class WorldGenSwamp extends WorldGenerator implements TreeGenerator   // 
                         {
                             l1 = par1World.getTypeId(j1, i1, k1);
 
-                            if (l1 != 0 && l1 != Block.leaves.blockID)
+                            if (l1 != 0 && (Block.blocksList[l1] != null && !Block.blocksList[l1].isLeaves(par1World, j1, i1, k1)))
                             {
                                 if (l1 != Block.waterStill.blockID && l1 != Block.waterMoving.blockID)
                                 {
@@ -106,7 +105,10 @@ public class WorldGenSwamp extends WorldGenerator implements TreeGenerator   // 
                             {
                                 int l2 = k2 - par5;
 
-                                if ((Math.abs(i2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && !Block.opaqueCubeLookup[par1World.getTypeId(l1, j2, k2)])
+                                Block block = Block.blocksList[par1World.getTypeId(l1, j2, k2)];
+
+                                if ((Math.abs(i2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && 
+                                    (block == null || block.canBeReplacedByLeaves(par1World, l1, j2, k2)))
                                 {
                                     this.setType(par1World, l1, j2, k2, Block.leaves.blockID);
                                 }
@@ -118,7 +120,9 @@ public class WorldGenSwamp extends WorldGenerator implements TreeGenerator   // 
                     {
                         j1 = par1World.getTypeId(par3, par4 + j2, par5);
 
-                        if (j1 == 0 || j1 == Block.leaves.blockID || j1 == Block.waterMoving.blockID || j1 == Block.waterStill.blockID)
+                        Block block = Block.blocksList[j1];
+
+                        if (j1 == 0 || (block != null && block.isLeaves(par1World, par3, par4 + j2, par5)) || j1 == Block.waterMoving.blockID || j1 == Block.waterStill.blockID)
                         {
                             this.setType(par1World, par3, par4 + j2, par5, Block.wood.blockID);
                         }
@@ -133,26 +137,27 @@ public class WorldGenSwamp extends WorldGenerator implements TreeGenerator   // 
                         {
                             for (i2 = par5 - k1; i2 <= par5 + k1; ++i2)
                             {
-                                if (par1World.getTypeId(l1, j2, i2) == Block.leaves.blockID)
+                                Block block = Block.blocksList[par1World.getTypeId(l1, j2, i2)];
+                                if (block != null && block.isLeaves(par1World, l1, j2, i2))
                                 {
                                     if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1 - 1, j2, i2) == 0)
                                     {
-                                        this.b(par1World, l1 - 1, j2, i2, 8);
+                                        this.generateVines(par1World, l1 - 1, j2, i2, 8);
                                     }
 
                                     if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1 + 1, j2, i2) == 0)
                                     {
-                                        this.b(par1World, l1 + 1, j2, i2, 2);
+                                        this.generateVines(par1World, l1 + 1, j2, i2, 2);
                                     }
 
                                     if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1, j2, i2 - 1) == 0)
                                     {
-                                        this.b(par1World, l1, j2, i2 - 1, 1);
+                                        this.generateVines(par1World, l1, j2, i2 - 1, 1);
                                     }
 
                                     if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1, j2, i2 + 1) == 0)
                                     {
-                                        this.b(par1World, l1, j2, i2 + 1, 4);
+                                        this.generateVines(par1World, l1, j2, i2 + 1, 4);
                                     }
                                 }
                             }
@@ -173,22 +178,24 @@ public class WorldGenSwamp extends WorldGenerator implements TreeGenerator   // 
         }
     }
 
-    // CraftBukkit - change signature
-    private void b(BlockChangeDelegate world, int i, int j, int k, int l)
+    /**
+     * Generates vines at the given position until it hits a block.
+     */
+    private void generateVines(BlockChangeDelegate par1World, int par2, int par3, int par4, int par5)
     {
-        this.setTypeAndData(world, i, j, k, Block.vine.blockID, l);
+        this.setTypeAndData(par1World, par2, par3, par4, Block.vine.blockID, par5);
         int i1 = 4;
 
         while (true)
         {
-            --j;
+            --par3;
 
-            if (world.getTypeId(i, j, k) != 0 || i1 <= 0)
+            if (par1World.getTypeId(par2, par3, par4) != 0 || i1 <= 0)
             {
                 return;
             }
 
-            this.setTypeAndData(world, i, j, k, Block.vine.blockID, l);
+            this.setTypeAndData(par1World, par2, par3, par4, Block.vine.blockID, par5);
             --i1;
         }
     }
