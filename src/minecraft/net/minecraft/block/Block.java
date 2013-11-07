@@ -347,7 +347,7 @@ public class Block implements BlockProxy // MCPC+ - marker interface
             canBlockGrass[par1] = !par2Material.getCanBlockGrass();
         }
         // MCPC+ start
-        org.bukkit.Material.addMaterial(this.blockID); // MCPC+ - many mods do not register blocks through GameRegistry so to be safe we need to add materials here
+        org.bukkit.Material.addMaterial(this.blockID, true); // MCPC+ - many mods do not register blocks through GameRegistry so to be safe we need to add materials here
         this.isForgeBlock = (this.getClass().getName().length() > 3 && !this.getClass().getName().startsWith("net.minecraft.block")) ? true : false; // MCPC+
         // MCPC+ end
     }

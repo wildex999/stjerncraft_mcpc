@@ -280,14 +280,14 @@ public class GameRegistry
             if (modId == null)
                modId = Loader.instance().activeModContainer().getModId();
             String materialName = modId + "_" + name;
-            org.bukkit.Material.setMaterialName(item.itemID, materialName);
+            org.bukkit.Material.setMaterialName(item.itemID, materialName, false);
         }
         else 
         {
             if (modId == null)
                 modId = Loader.instance().activeModContainer().getModId();
             String materialName = modId + "_" + String.valueOf(item.itemID);
-            org.bukkit.Material.setMaterialName(item.itemID, materialName);
+            org.bukkit.Material.setMaterialName(item.itemID, materialName, false);
         }
     }
     // MCPC+ end
