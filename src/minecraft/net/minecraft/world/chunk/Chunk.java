@@ -35,7 +35,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 
 import w999.baseprotect.BaseProtect;
-import w999.baseprotect.IWorldInteract;
+import w999.baseprotect.WorldInteract;
 
 public class Chunk
 {
@@ -43,6 +43,13 @@ public class Chunk
      * Determines if the chunk is lit or not at a light value greater than 0.
      */
     public static boolean isLit;
+    
+    
+    /**
+     * MCPC+, BaseProtect
+     * Temp Location used with canSeeBlock to avoid creating a new object every time
+     */
+    private static Location tempLoc = new Location(null, 0, 0, 0);
 
     /**
      * Used to store block IDs, block MSBs, Sky-light maps, Block-light maps, and metadata. Each entry corresponds to a
@@ -612,11 +619,17 @@ public class Chunk
      */
     public static boolean canSeeBlock(World worldObj, int x, int y, int z)
     {
-        //MCPC+ Start - BaseProtect, check if block is inside claim, and if the current Interactor has permission to Break blocks in this claim.
+    	if(worldObj.currentTickItem == null)
+    		return true;
+    	
         BaseProtect bp = BaseProtect.instance;
-        if(bp != null && worldObj.currentTickItem != null)
+        if(bp != null)
         {
-            if(!bp.claimCanBuild(worldObj.currentTickItem, new Location(worldObj.getWorld(), x , y, z)))
+        	tempLoc.setWorld(worldObj.getWorld());
+        	tempLoc.setX(x);
+        	tempLoc.setY(y);
+        	tempLoc.setZ(z);
+            if(!bp.claimCanBuild(worldObj.currentTickItem, tempLoc))
             	return false;
         }
         
@@ -1192,7 +1205,7 @@ public class Chunk
                 Entity entity1 = (Entity)list1.get(l);
                 
                 //MCPC+ start, BaseProtect, ignore Entities if they are marked as relevant, and owners don't match
-                IWorldInteract currentItem = worldObj.currentTickItem;
+                WorldInteract currentItem = worldObj.currentTickItem;
                 if(currentItem != null)
                 {
                 	if(BaseProtect.instance.isRelevant(entity1) && entity1.getItemOwner() == currentItem.getItemOwner())
@@ -1257,7 +1270,7 @@ public class Chunk
                 Entity entity = (Entity)list1.get(l);
                 
                 //MCPC+ start, BaseProtect, ignore Entities if they are marked as relevant, and owners don't match
-                IWorldInteract currentItem = worldObj.currentTickItem;
+                WorldInteract currentItem = worldObj.currentTickItem;
                 if(currentItem != null)
                 {
                 	if(BaseProtect.instance.isRelevant(entity) && entity.getItemOwner() == currentItem.getItemOwner())

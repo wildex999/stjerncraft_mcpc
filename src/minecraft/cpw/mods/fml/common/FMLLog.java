@@ -15,7 +15,7 @@ package cpw.mods.fml.common;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import w999.baseprotect.IWorldInteract;
+import w999.baseprotect.WorldInteract;
 import net.minecraft.world.World;
 
 public class FMLLog
@@ -25,7 +25,7 @@ public class FMLLog
     public static void log(String logChannel, Level level, String format, Object... data)
     {
     	//TODO: If turned on, print the current object in each world when logging(To find sources of problems)
-    	IWorldInteract item = World.currentTickItem;
+    	WorldInteract item = World.currentTickItem;
 		if(item == null)
 		{
 			format = " (NULLITEM) " + format;
@@ -44,7 +44,7 @@ public class FMLLog
 
     public static void log(Level level, String format, Object... data)
     {
-    	IWorldInteract item = World.currentTickItem;
+    	WorldInteract item = World.currentTickItem;
     	if(level.equals(Level.SEVERE))
     	{
     		//TODO: Remove this apply a proper fix!!!

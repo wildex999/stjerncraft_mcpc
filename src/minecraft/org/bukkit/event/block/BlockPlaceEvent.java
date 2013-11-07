@@ -9,7 +9,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
-import w999.baseprotect.IWorldInteract;
+import w999.baseprotect.WorldInteract;
 import w999.baseprotect.PlayerData;
 
 /**
@@ -38,7 +38,7 @@ public class BlockPlaceEvent extends BlockEvent implements Cancellable {
         
 		//BaseProtect, Attempt to get the real fakePlayer for the current item
 		//TODO: Any better way that does not involve doing a lookup? Cache?
-		IWorldInteract interactor = World.currentTickItem;
+		WorldInteract interactor = World.currentTickItem;
 		if(interactor != null && ((player != null && player.getName().startsWith("[")) || player == null))
 		{
 			PlayerData playerData = interactor.getItemOwner();

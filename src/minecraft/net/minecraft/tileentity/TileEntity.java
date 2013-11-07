@@ -6,7 +6,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
@@ -24,11 +23,9 @@ import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 
 import w999.baseprotect.BaseProtect;
 import w999.baseprotect.BaseProtect.InteractorType;
-import w999.baseprotect.IWorldInteract;
-import w999.baseprotect.PlayerData;
-import w999.baseprotect.IWorldInteract.Relevant;
+import w999.baseprotect.WorldInteract;
 
-public class TileEntity implements IWorldInteract
+public class TileEntity extends WorldInteract
 {
     /**
      * A HashMap storing string names of classes mapping to the actual java.lang.Class type.
@@ -53,11 +50,6 @@ public class TileEntity implements IWorldInteract
     public int zCoord;
     protected boolean tileEntityInvalid;
     public int blockMetadata = -1;
-    
-    //MCPC+ - BaseProtect, Owner of TileEntity
-    PlayerData tileOwner;
-    //MCPC+ - BaseProtect, Relevant Cache
-    private Relevant relevantCache;
 
     /** the Block type that this TileEntity is contained within */
     public Block blockType;
@@ -423,44 +415,26 @@ public class TileEntity implements IWorldInteract
         return bb;
     }
 
-	@Override
-	public boolean setItemOwner(PlayerData owner) {
-		tileOwner = owner;
-		return true;
-	}
-
-	@Override
-	public PlayerData getItemOwner() {
-		return tileOwner;
-	}
-
-	@Override
+    //MCPC+ start, BaseProtect IWorldInteract
+    @Override
 	public long getX() {
 		return this.xCoord;
 	}
-
-	@Override
+    
+    @Override
 	public long getY() {
 		return this.yCoord;
 	}
 
-	@Override
+    @Override
 	public long getZ() {
 		return this.zCoord;
 	}
 
-	@Override
+    @Override
 	public InteractorType getInteractorType() {
 		return InteractorType.TileEntity;
 	}
-
-	@Override
-	public Relevant getRelevantCache() {
-		return relevantCache;
-	}
+	//MCPC+ end
 	
-	@Override
-	public void setRelevantCache(Relevant relevant) {
-		relevantCache = relevant;
-	}
 }

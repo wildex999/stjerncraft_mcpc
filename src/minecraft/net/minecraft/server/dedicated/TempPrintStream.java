@@ -3,7 +3,7 @@ package net.minecraft.server.dedicated;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import w999.baseprotect.IWorldInteract;
+import w999.baseprotect.WorldInteract;
 import net.minecraft.world.World;
 
 //TEMP LOGGER TO FILTER OUT THE EXCEPTION FROM APPLIED ENERGISTICS CONTROLLER
@@ -37,7 +37,7 @@ public class TempPrintStream extends PrintStream {
 	public void println(String str)
 	{
 		//WARNING, NOT THREAD SAFE. World.currentTickItem can be set to null in another thread AFTER null check. 
-		IWorldInteract item = World.currentTickItem;
+		WorldInteract item = World.currentTickItem;
 		String format = str;
 		if(item == null)
 		{

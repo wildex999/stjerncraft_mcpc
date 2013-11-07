@@ -137,7 +137,7 @@ public class BaseProtect extends JavaPlugin {
 	}
 	
 	//Check if entity has build(Place/break) permission in target claim
-	public boolean claimCanBuild(IWorldInteract interactor, Location loc)
+	public boolean claimCanBuild(WorldInteract interactor, Location loc)
 	{
 		if(claimManager == null)
 			return true; //No claim manager = anything allowed
@@ -149,7 +149,7 @@ public class BaseProtect extends JavaPlugin {
 		return claimManager.claimCanBuild(interactor, loc);
 	}
 	
-	public boolean claimCanInteract(IWorldInteract interactor, Location loc)
+	public boolean claimCanInteract(WorldInteract interactor, Location loc)
 	{
 		if(claimManager == null)
 			return true; //No claim manager = anything allowed
@@ -161,7 +161,7 @@ public class BaseProtect extends JavaPlugin {
 		return claimManager.claimCanInteract(interactor, loc);
 	}
 	
-	public boolean claimCanContainer(IWorldInteract interactor, Location loc)
+	public boolean claimCanContainer(WorldInteract interactor, Location loc)
 	{
 		if(claimManager == null)
 			return true; //No claim manager = anything allowed
@@ -213,7 +213,7 @@ public class BaseProtect extends JavaPlugin {
 		return playerData;
 	}
 	
-	public static boolean WriteOwnerNBT(IWorldInteract item, NBTTagCompound nbt)
+	public static boolean WriteOwnerNBT(WorldInteract item, NBTTagCompound nbt)
 	{
         PlayerData owner = item.getItemOwner();
         if(owner != null && owner.getPlayer() != null)
@@ -224,7 +224,7 @@ public class BaseProtect extends JavaPlugin {
         return true;
 	}
 	
-	public static boolean ReadOwnerNBT(IWorldInteract item, NBTTagCompound nbt)
+	public static boolean ReadOwnerNBT(WorldInteract item, NBTTagCompound nbt)
 	{
         String owner = nbt.getString("BPOwner");
         if(!owner.isEmpty())
@@ -236,17 +236,17 @@ public class BaseProtect extends JavaPlugin {
 	}
 	
 	//Check if interactor is relevant, update cache if changed
-	public boolean isRelevant(IWorldInteract interactor)
+	public boolean isRelevant(WorldInteract interactor)
 	{
-		IWorldInteract.Relevant relevant = interactor.getRelevantCache();
+		Relevant relevant = interactor.getRelevantCache();
 		
 		if(relevant == null)
 		{
-			relevant = new IWorldInteract.Relevant();
+			relevant = new Relevant();
 			interactor.setRelevantCache(relevant);
 		}
 		
-		//Update cached if needed
+		//Update cache if needed
 		if(relevant.age != age)
 		{
 			//Check list and Update cache
@@ -286,7 +286,7 @@ public class BaseProtect extends JavaPlugin {
 	//TODO: Make it require a world for when multiple worlds run at once.
 	public static Player getCurrentOwner()
 	{
-		IWorldInteract item = World.currentTickItem;
+		WorldInteract item = World.currentTickItem;
 		if(item == null)
 			return null;
 		

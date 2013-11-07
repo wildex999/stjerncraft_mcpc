@@ -52,6 +52,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilSaveConverter;
 import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 import net.minecraft.world.demo.DemoWorldServer;
@@ -75,6 +76,7 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.world.WorldSaveEvent;
+
 
 
 // CraftBukkit end
@@ -626,6 +628,9 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
                     SpigotTimings.serverTickTimer.stopTiming(); // Spigot
                     org.bukkit.CustomTimingsHandler.tick(); // Spigot
                     org.spigotmc.WatchdogThread.tick();
+                    
+                    //System.out.println("HitCount : " + World.hitCount);
+                    //System.out.println("MissCount: " + World.missCount);
                 }
 
                 // Spigot end
@@ -638,7 +643,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         }
         catch (Throwable throwable)
         {
-        	w999.baseprotect.IWorldInteract current = World.currentTickItem;
+        	w999.baseprotect.WorldInteract current = World.currentTickItem;
         	if(current != null)
         	{
         		System.err.println("CRASH, item: " + current.getClass().getName() + " (X: " + current.getX() + " Y: " + current.getY() + " Z: " + current.getZ() + " )");

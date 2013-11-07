@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.logging.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
@@ -53,13 +51,13 @@ import net.minecraft.world.WorldServer;
 
 
 
+
 // CraftBukkit start
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.TravelAgent;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Vehicle;
@@ -67,17 +65,14 @@ import org.spigotmc.CustomTimingsHandler; // Spigot
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
-import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -87,20 +82,14 @@ import org.bukkit.plugin.PluginManager;
 import w999.baseprotect.BaseProtect;
 import w999.baseprotect.BaseProtect.InteractorType;
 import w999.baseprotect.DummyEntity;
-import w999.baseprotect.IWorldInteract;
-import w999.baseprotect.PlayerData;
-import w999.baseprotect.IWorldInteract.Relevant;
-// CraftBukkit end
-// MCPC+ start
-import cpw.mods.fml.common.registry.EntityRegistry;
+import w999.baseprotect.WorldInteract;
 import net.minecraft.world.Teleporter;
-import net.minecraftforge.common.EnumHelper;
 // MCPC+ end
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 
-public abstract class Entity implements IWorldInteract
+public abstract class Entity extends WorldInteract
 {
     // CraftBukkit start
     private static final int CURRENT_LEVEL = 2;
@@ -296,11 +285,6 @@ public abstract class Entity implements IWorldInteract
     public final boolean defaultActivationState;
     public long activatedTick = 0;
     // Spigot end
-    
-    //MCPC+ - BaseProtect, the owner for this entity
-    PlayerData entityOwner;
-    //MCPC+ - BaseProtect, relevant cache
-	private Relevant relevantCache;
             
     /** Forge: Used to store custom data for each entity. */
     private NBTTagCompound customEntityData;
@@ -401,7 +385,7 @@ public abstract class Entity implements IWorldInteract
         
         if(this.getClass() == BaseProtect.stevescart | BaseProtect.thaumgolem.isInstance(this))
         {
-        	w999.baseprotect.IWorldInteract item = World.currentTickItem;
+        	w999.baseprotect.WorldInteract item = World.currentTickItem;
         	//Only allow a player to kill them directly
         	if(!(item instanceof EntityPlayerMP))
         		return;
@@ -2914,46 +2898,27 @@ public abstract class Entity implements IWorldInteract
     {
         return this.extendedProperties.get(identifier);
     }
-    
+
+    //MCPC+ start, BaseProtect IWorldInteract
     @Override
-	public boolean setItemOwner(PlayerData owner) {
-    	entityOwner = owner;
-		return true;
-	}
-
-	@Override
-	public PlayerData getItemOwner() {
-		return entityOwner;
-	}
-
-	@Override
 	public long getX() {
 		return (long)this.posX;
 	}
-
-	@Override
+    
+    @Override
 	public long getY() {
 		return (long)this.posY;
 	}
-
-	@Override
+    
+    @Override
 	public long getZ() {
 		return (long)this.posZ;
 	}
-	
-	@Override
+    
+    @Override
 	public InteractorType getInteractorType()
 	{
 		return InteractorType.Entity;
 	}
-	
-	@Override
-	public Relevant getRelevantCache() {
-		return relevantCache;
-	}
-	
-	@Override
-	public void setRelevantCache(Relevant relevant) {
-		relevantCache = relevant;
-	}
+	//MCPC+ End
 }

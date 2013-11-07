@@ -52,7 +52,7 @@ public class TimeWatch {
 		switch(type)
 		{
 		case Tick:
-			//Get the start time, used to calculate how long it rand when timeEnd is called.
+			//Get the start time, used to calculate how long it ran when timeEnd is called.
 			tickStartTime = System.nanoTime();
 			break;
 		case Entity:
@@ -60,6 +60,17 @@ public class TimeWatch {
 			break;
 		case TileEntity:
 			tileEntityStartTime = System.nanoTime();
+			break;
+		}
+	}
+	
+	//Pause the timing
+	public static void timePause(TimeType type)
+	{
+		switch(type)
+		{
+		case Tick:
+			//Store the current time used
 			break;
 		}
 	}

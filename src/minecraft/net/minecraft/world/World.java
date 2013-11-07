@@ -103,7 +103,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 
 // MCPC+ start
 import w999.baseprotect.BaseProtect;
-import w999.baseprotect.IWorldInteract;
+import w999.baseprotect.WorldInteract;
 import w999.baseprotect.PlayerData;
 import w999.thatlag.TimeWatch;
 
@@ -124,7 +124,7 @@ public abstract class World implements IBlockAccess
 
     public final MapStorage perWorldStorage;
     
-    public static IWorldInteract currentTickItem; //MCPC+ - Current ticking item(Block, Entity, tileentity) TODO:Make NOT static
+    public static WorldInteract currentTickItem; //MCPC+ - Current ticking item(Block, Entity, tileentity) TODO:Make NOT static
     public static Player mcFakePlayer; //Cache of [MineCraft] fake player
     /**
      * boolean; if true updates scheduled by scheduleBlockUpdate happen immediately
@@ -607,15 +607,19 @@ public abstract class World implements IBlockAccess
     /**
      * Returns the block ID at coords x,y,z
      */
+    private int prevX = 0;
+    private int prevZ = 0;
+    private Chunk prevChunk = null;
+    
     public int getBlockId(int par1, int par2, int par3)
     {
+    	//Quick out(Avoid the other if's and method invocation)
+    	if(par1 == prevX && par3 == prevZ)
+    		return prevChunk.getBlockID(par1 & 15, par2, par3 & 15);
+    	
         if (par1 >= -30000000 && par3 >= -30000000 && par1 < 30000000 && par3 < 30000000)
         {
-            if (par2 < 0)
-            {
-                return 0;
-            }
-            else if (par2 >= 256)
+            if (par2 < 0 || par2 >= 256)
             {
                 return 0;
             }
@@ -626,6 +630,9 @@ public abstract class World implements IBlockAccess
                 try
                 {
                     chunk = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+                    prevX = par1;
+                    prevZ = par3;
+                    prevChunk = chunk;
                     return chunk.getBlockID(par1 & 15, par2, par3 & 15);
                 }
                 catch (Throwable throwable)
@@ -781,7 +788,7 @@ public abstract class World implements IBlockAccess
             	
                 Chunk chunk = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
                 
-                IWorldInteract currentInteractor = World.currentTickItem;
+                WorldInteract currentInteractor = World.currentTickItem;
                 
                 int k1 = 0;
                 if ((par6 & 1) != 0 || currentInteractor != null)
@@ -1919,7 +1926,7 @@ public abstract class World implements IBlockAccess
             }
 
             //MCPC+ start - BaseProtect, Any new entity created will inherit the same owner as the currently ticking item
-            IWorldInteract entityParent = this.currentTickItem;
+            WorldInteract entityParent = this.currentTickItem;
             if(entityParent != null)
             {
             	//System.out.println(entity.getClass().getName() + " Parent: " + entityParent + "(" + entityParent.getItemOwner() + ")");
@@ -2290,7 +2297,7 @@ public abstract class World implements IBlockAccess
             catch (Throwable throwable)
             {
             	//Print currently ticking item(AND POSITION) when crashing
-            	IWorldInteract item = currentTickItem;
+            	WorldInteract item = currentTickItem;
         		if(item == null)
         		{
         			System.out.println("ITEM WHEN CRASH: NULL");
@@ -2566,7 +2573,7 @@ public abstract class World implements IBlockAccess
                 catch (Throwable throwable2)
                 {
                 	//Print currently ticking item(AND POSITION) when crashing
-                	IWorldInteract item = currentTickItem;
+                	WorldInteract item = currentTickItem;
             		if(item == null)
             		{
             			System.out.println("ITEM WHEN CRASH: NULL");
@@ -3301,7 +3308,7 @@ public abstract class World implements IBlockAccess
         }
         
         //MCPC+ start - BaseProtect, Inherit owner from currently ticking item
-        IWorldInteract entityParent = this.currentTickItem;
+        WorldInteract entityParent = this.currentTickItem;
         if(entityParent != null)
         {
         	//System.out.println(par4TileEntity.getClass().getName() + " TileParent: " + entityParent + "(" + entityParent.getItemOwner() + ")");

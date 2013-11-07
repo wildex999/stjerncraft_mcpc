@@ -4,25 +4,12 @@ import w999.baseprotect.BaseProtect.InteractorType;
 
 //A Temp World Interactor used to handle special cases
 
-public class TempWorldInteractor implements IWorldInteract {
-
-	Relevant relevant = null;
-	PlayerData owner = null;
+public class TempWorldInteractor extends WorldInteract {
 	
 	TempWorldInteractor()
 	{
 	}
-	
-	@Override
-	public boolean setItemOwner(PlayerData player) {
-		owner = player;
-		return true;
-	}
 
-	@Override
-	public PlayerData getItemOwner() {
-		return owner;
-	}
 
 	@Override
 	public long getX() {
@@ -42,16 +29,6 @@ public class TempWorldInteractor implements IWorldInteract {
 	@Override
 	public InteractorType getInteractorType() {
 		return InteractorType.Entity;
-	}
-
-	@Override
-	public Relevant getRelevantCache() {
-		return relevant;
-	}
-
-	@Override
-	public void setRelevantCache(Relevant relevant) {
-		this.relevant = relevant;
 	}
 
 }

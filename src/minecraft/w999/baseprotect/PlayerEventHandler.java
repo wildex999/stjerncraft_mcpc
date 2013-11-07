@@ -96,7 +96,7 @@ public class PlayerEventHandler implements Listener {
 	
 	//If the given player is in inspect mode, inspect the given interactor
 	//Returns true if inspecting
-	private boolean inspect(Player player, IWorldInteract interactor, boolean doCheck)
+	private boolean inspect(Player player, WorldInteract interactor, boolean doCheck)
 	{
 		BaseProtect baseProtect = BaseProtect.instance;
 		if(doCheck && !baseProtect.getPlayerData(player.getName()).inspect)

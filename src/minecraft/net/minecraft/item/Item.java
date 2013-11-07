@@ -2,16 +2,11 @@ package net.minecraft.item;
 
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.ItemProxy;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
-import java.util.List;
 import java.util.Random;
 
 import w999.baseprotect.BaseProtect.InteractorType;
-import w999.baseprotect.IWorldInteract;
-import w999.baseprotect.PlayerData;
-import w999.baseprotect.IWorldInteract.Relevant;
+import w999.baseprotect.WorldInteract;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -36,7 +31,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.IArmorTextureProvider;
 
-public class Item implements ItemProxy, IWorldInteract // MCPC+ - marker interface
+public class Item extends WorldInteract implements ItemProxy // MCPC+ - marker interface
 {
     private CreativeTabs tabToDisplayOn = null;
 
@@ -247,12 +242,6 @@ public class Item implements ItemProxy, IWorldInteract // MCPC+ - marker interfa
     
     /** FORGE: To disable repair recipes. */
     protected boolean canRepair = true;
-    
-    //MCPC+ - BaseProtect, Player set as owner(Used during claim checks)
-	private PlayerData itemOwner;
-
-	//MCPC+ - BaseProtect, Cache for relevancy check
-	private Relevant relevantCache;
 
     public Item(int par1)
     {
@@ -1108,44 +1097,25 @@ public class Item implements ItemProxy, IWorldInteract // MCPC+ - marker interfa
         return canHarvestBlock(par1Block);  
     }
     
+    //MCPC+ start, BaseProtect IWorldInteract
     @Override
-	public boolean setItemOwner(PlayerData player) {
-		itemOwner = player;
-		return true;
-	}
-
-	@Override
-	public PlayerData getItemOwner() {
-		return itemOwner;
-	}
-
-	@Override
 	public long getX() {
 		return 0;
 	}
 
-	@Override
+    @Override
 	public long getY() {
 		return 0;
 	}
 
-	@Override
+    @Override
 	public long getZ() {
 		return 0;
 	}
 
-	@Override
+    @Override
 	public InteractorType getInteractorType() {
 		return InteractorType.PlayerItem;
 	}
-
-	@Override
-	public Relevant getRelevantCache() {
-		return relevantCache;
-	}
-
-	@Override
-	public void setRelevantCache(Relevant relevant) {
-		relevantCache = relevant;
-	}
+	//MCPC+ end
 }

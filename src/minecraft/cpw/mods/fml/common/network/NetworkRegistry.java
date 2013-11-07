@@ -273,7 +273,7 @@ public class NetworkRegistry
         for (IPacketHandler handler : Iterables.concat(universalPacketHandlers.get(channel), player instanceof EntityPlayerMP ? serverPacketHandlers.get(channel) : clientPacketHandlers.get(channel)))
         {
         	//MCPC+ Start, Special check for EE3 Minium Stone, as it's done client side with an event to do the actual change(This is an hack really, TODO make this better)
-        	w999.baseprotect.IWorldInteract prevItem = World.currentTickItem; //The player owning the packet should be set as current item at this point
+        	w999.baseprotect.WorldInteract prevItem = World.currentTickItem; //The player owning the packet should be set as current item at this point
         	if(handler.getClass() == w999.baseprotect.BaseProtect.ee3PacketHandler)
         	{
         		w999.baseprotect.TempWorldInteractor tempInt = w999.baseprotect.BaseProtect.tempInteractor;
