@@ -35,6 +35,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 
 import w999.baseprotect.BaseProtect;
+import w999.baseprotect.IWorldInteract;
 
 public class Chunk
 {
@@ -1189,6 +1190,15 @@ public class Chunk
             for (int l = 0; l < list1.size(); ++l)
             {
                 Entity entity1 = (Entity)list1.get(l);
+                
+                //MCPC+ start, BaseProtect, ignore Entities if they are marked as relevant, and owners don't match
+                IWorldInteract currentItem = worldObj.currentTickItem;
+                if(currentItem != null)
+                {
+                	if(BaseProtect.instance.isRelevant(entity1) && entity1.getItemOwner() == currentItem.getItemOwner())
+                		continue;
+                }
+                //MCPC+ End
 
                 if (entity1 != par1Entity && entity1.boundingBox.intersectsWith(par2AxisAlignedBB) && (par4IEntitySelector == null || par4IEntitySelector.isEntityApplicable(entity1)))
                 {
@@ -1245,6 +1255,15 @@ public class Chunk
             for (int l = 0; l < list1.size(); ++l)
             {
                 Entity entity = (Entity)list1.get(l);
+                
+                //MCPC+ start, BaseProtect, ignore Entities if they are marked as relevant, and owners don't match
+                IWorldInteract currentItem = worldObj.currentTickItem;
+                if(currentItem != null)
+                {
+                	if(BaseProtect.instance.isRelevant(entity) && entity.getItemOwner() == currentItem.getItemOwner())
+                		continue;
+                }
+                //MCPC+ End
 
                 if (par1Class.isAssignableFrom(entity.getClass()) && entity.boundingBox.intersectsWith(par2AxisAlignedBB) && (par4IEntitySelector == null || par4IEntitySelector.isEntityApplicable(entity)))
                 {
