@@ -2504,8 +2504,8 @@ public abstract class World implements IBlockAccess
         
         if(worldInfo.getDimension() == 0)
         {
-        	System.out.println("Tick time: " + TimeWatch.getTickTime());
-        	System.out.println("(" + this.worldInfo.getDimension() + ") Tile Entity Time: " + TimeWatch.getTileEntityTime() + " | Max now: " + maxTileEntityCount + " | Size: " + loadedTileEntityList.size());
+        	//System.out.println("Tick time: " + TimeWatch.getTickTime());
+        	//System.out.println("(" + this.worldInfo.getDimension() + ") Tile Entity Time: " + TimeWatch.getTileEntityTime() + " | Max now: " + maxTileEntityCount + " | Size: " + loadedTileEntityList.size());
         }
         //ThatLag, Time Tile Entities
         if(worldInfo.getDimension() == 0)
