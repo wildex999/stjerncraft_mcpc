@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -101,12 +102,12 @@ import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 // CraftBukkit end
 
+
 // MCPC+ start
 import w999.baseprotect.BaseProtect;
 import w999.baseprotect.WorldInteract;
 import w999.baseprotect.PlayerData;
 import w999.thatlag.TimeWatch;
-
 import net.minecraft.nbt.NBTTagCompound;
 import za.co.mcportcentral.MCPCWorldConfig;
 import za.co.mcportcentral.entity.CraftFakePlayer;
@@ -194,11 +195,13 @@ public abstract class World implements IBlockAccess
      */
     public WorldInfo worldInfo; // CraftBukkit - protected -> public
     
-    /** ThatLag, Stored iterator positions and othe status variables */
-    private Iterator tileEntityIterator;
-    private Iterator entityIterator;
-    private long maxTileEntityCount = 0; //Number of TileEntities to update per tick
-    private long maxEntityCount = 0;
+    /** ThatLag, Current position, and max to tick */
+    private int currentTileEntityIndex = 0;
+    private int currentEntityIndex = 0;
+    private int remainingTileEntityCount = 0; //How many left to update this tick
+    private int remainingEntityCount = 0;
+    private int maxTileEntityCount = 0; //Number of TileEntities to update per tick
+    private int maxEntityCount = 0;
 
     /** Boolean that is set to true when trying to find a spawn point */
     public boolean findingSpawnPoint;
@@ -2485,8 +2488,42 @@ public abstract class World implements IBlockAccess
         this.theProfiler.endStartSection("tileEntities");
         timings.tileEntityTick.startTiming(); // Spigot
         this.scanningTileEntities = true;
-        Iterator iterator = this.loadedTileEntityList.iterator();
+        
+        ListIterator iterator;
+        
+        //if(currentTileEntityIndex >= loadedTileEntityList.size())
+        	//iterator = loadedTileEntityList.listIterator(index)
+        
+        iterator = loadedTileEntityList.listIterator();
 
+        //ThatLag, Calculate how many tileentities to update
+        /*if(TimeWatch.getTickTime()<=1.0)
+        {
+        	//If current average is above 20 TPS, let it update everything
+        	maxTileEntityCount = loadedTileEntityList.size();
+        }
+        else
+        {
+        	//Need to limit TileEntity count
+        	//We assume each update use an equal amount of time
+        	//Limit to 30% of the 50ms tick(15ms)
+        	
+        	double timePerTE = (50*TimeWatch.getTileEntityTime()) / ((double)loadedTileEntityList.size());
+        	maxTileEntityCount = (long)(15/timePerTE);
+        	
+        	//Don't wrap around, limit it
+        	if(maxTileEntityCount > loadedTileEntityList.size())
+        		maxTileEntityCount = loadedTileEntityList.size();
+        	else if(maxTileEntityCount < 0)
+        		maxTileEntityCount = 1; //Do at least one
+        }
+        
+        if(worldInfo.getDimension() == 0)
+        {
+        	//System.out.println("Tick time: " + TimeWatch.getTickTime());
+        	//System.out.println("(" + this.worldInfo.getDimension() + ") Tile Entity Time: " + TimeWatch.getTileEntityTime() + " | Max now: " + maxTileEntityCount + " | Size: " + loadedTileEntityList.size());
+        }*/
+        
         //ThatLag, Time Tile Entities
         if(worldInfo.getDimension() == 0)
         	TimeWatch.timeStart(TimeWatch.TimeType.TileEntity);

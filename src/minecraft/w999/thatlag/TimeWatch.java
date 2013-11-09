@@ -1,105 +1,104 @@
 package w999.thatlag;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 //Timing the cpu usage of a tick and give average
 
 public class TimeWatch {
 
 	public enum TimeType {
-		Tick, //Global time of one tick
-		Entity, //Time of one entity tick
-		TileEntity //Time of one tile entity tick
+		Tick, //Global tick time
+		Entity, //Entity time
+		TileEntity //TileEntity time
 	};
 	
-	private static long tickStartTime;
-	private static long entityStartTime;
-	private static long tileEntityStartTime;
+	static class WatchObject {
+		public long startTime;
+		public boolean paused;
+		public ArrayList<Long> avgWindow;
+		
+		WatchObject() { startTime = 0; paused = false; avgWindow = new ArrayList<Long>(); }
+	}
 	
-	private static ArrayList<Long> tickAvgWindow = new ArrayList<Long>(); //Average window for the global tick
-	private static ArrayList<Long> entityAvgWindow = new ArrayList<Long>();
-	private static ArrayList<Long> tileEntityAvgWindow = new ArrayList<Long>();
+	private static HashMap<TimeType, WatchObject> watchObjects;
+	
+	static {
+		watchObjects = new HashMap<TimeType, WatchObject>();
+		watchObjects.put(TimeType.Tick, new WatchObject());
+		watchObjects.put(TimeType.Entity, new WatchObject());
+		watchObjects.put(TimeType.TileEntity, new WatchObject());
+	}
 	
 	private static int windowSize = 20; //Window size for the moving average
 	
 	
-	//Get average tick time in percentage of a tick(50 ms)
-	public static double getTickTime()
+	//Return the average time used of a tick(1 = 100% of a tick)
+	public static double getAvgTime(TimeType type)
 	{
-		double avg = getMovingAverage(tickAvgWindow);
+		WatchObject obj = watchObjects.get(type);
+		double avg = getMovingAverage(obj.avgWindow);
 		//1 tick = 50ms, 1 ms = 1000000 nanosecond
 		return ((avg/1000000) / 50.0);
 	}
 	
-	//Get average Entity tick time in percentage of a tick
-	public static double getEntityTime()
+	//Return the previous measured time
+	public static long getPreviousTime(TimeType type)
 	{
-		double avg = getMovingAverage(entityAvgWindow);
-		return ((avg/1000000) / 50.0);
-	}
-	
-	//Get average Tile Entity tick time in percentage of a tick
-	public static double getTileEntityTime()
-	{
-		double avg = getMovingAverage(tileEntityAvgWindow);
-		return ((avg/1000000) / 50.0);
+		WatchObject obj = watchObjects.get(type);
+		return obj.avgWindow.get(obj.avgWindow.size() -1);
 	}
 	
 	//Start timing a tick
 	public static void timeStart(TimeType type)
 	{
-		switch(type)
-		{
-		case Tick:
-			//Get the start time, used to calculate how long it ran when timeEnd is called.
-			tickStartTime = System.nanoTime();
-			break;
-		case Entity:
-			entityStartTime = System.nanoTime();
-			break;
-		case TileEntity:
-			tileEntityStartTime = System.nanoTime();
-			break;
-		}
+		WatchObject obj = watchObjects.get(type);
+		ArrayList<Long> list = obj.avgWindow;
+		obj.startTime = System.nanoTime();
+		obj.paused = false;
+		
+		//Remove the first(oldest) element from window if we are above the window size
+		if(list.size() == windowSize)
+			list.remove(0);
+		//Add new point
+		list.add((long) 0);
 	}
 	
 	//Pause the timing
 	public static void timePause(TimeType type)
 	{
-		switch(type)
-		{
-		case Tick:
-			//Store the current time used
-			break;
-		}
+		WatchObject obj = watchObjects.get(type);
+		ArrayList<Long> list = obj.avgWindow;
+		long start = obj.startTime;
+		obj.paused = true;
+		
+		//Get the stored diff, and add the current diff to it
+		int index = list.size()-1;
+		long currentDiff = list.get(index);
+		currentDiff += (System.nanoTime() - start);
+		list.set(index, currentDiff);
+	}
+	
+	//Resume the timing
+	public static void timeResume(TimeType type)
+	{
+		WatchObject obj = watchObjects.get(type);
+		obj.startTime = System.nanoTime();
+		obj.paused = false;
 	}
 	
 	//End timing a tick
 	public static void timeEnd(TimeType type)
 	{
-		double avg = 0;
-		long currentTime = System.nanoTime();
-		switch(type)
-		{
-		case Tick:
-			//Remove the first(oldest) element from window if we are above the window size
-			if(tickAvgWindow.size() >= windowSize)
-				tickAvgWindow.remove(0);
-			//Add new point
-			tickAvgWindow.add(currentTime - tickStartTime);
-			break;
-		case Entity:
-			if(entityAvgWindow.size() >= windowSize)
-				entityAvgWindow.remove(0);
-			entityAvgWindow.add(currentTime - entityStartTime);
-			break;
-		case TileEntity:
-			if(tileEntityAvgWindow.size() >= windowSize)
-				tileEntityAvgWindow.remove(0);
-			tileEntityAvgWindow.add(currentTime - tileEntityStartTime);
-			break;
-		}
+		WatchObject obj = watchObjects.get(type);
+		
+		//If we are not paused we need to call pause to add on the last diff
+		if(!obj.paused)
+			timePause(type);
+
+		obj.paused = false;
 	}
 	
 	//Calculate moving average

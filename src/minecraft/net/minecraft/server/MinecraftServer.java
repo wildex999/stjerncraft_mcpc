@@ -179,6 +179,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     private String worldName;
     private boolean isDemo;
     private boolean enableBonusChest;
+    
+    /**
+     * ThatLag counting
+     */
+    int previousTileEntityCount; //Tile Entities updated previous tick
 
     /**
      * If true, there is no need to save chunks or stop the server, because that is already being done.
@@ -873,6 +878,43 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     		ChunkSampler.preSample("preUpdateTimeLightAndEntities");
     	//MCPC+ End
 
+    	//ThatLag, calculate how many Entities and TileEntities to update per world
+    	int tileEntityCount = 0;
+    	WorldServer[] worlds = DimensionManager.getWorlds();
+    	for(World w : worlds)
+    	{
+    		tileEntityCount += w.loadedTileEntityList.size();
+    		//Gather ACTUAL previous updates, might have been LESS than given(I.e, don't update more than number of tile entities!)
+    	}
+    	
+    	
+    	//Use tileEntityTime to figure out how many tileEntities to tick to maintain 20 TPS
+    	int teToUpdate = 0;
+    	double avgTickTime = TimeWatch.getAvgTime(TimeWatch.TimeType.Tick);
+    	if(avgTickTime < 0.95)
+    	{
+    		teToUpdate = tileEntityCount;
+    	}
+    	else
+    	{
+    		//Overtime is the amount of time that we need to remove from tileEntities
+    		double overTime = avgTickTime - 1.0; 
+    		
+        	//Calculate time used per TileEntity. We time only those updated on the previous tick, so prevTime/previousTileEntityCount = time per tileEntity
+        	//We can't use avg as it would be very wrong if the previousTileEntityCount changed a lot per tick
+        	double tileEntityTime = TimeWatch.getPreviousTime(TimeWatch.TimeType.TileEntity)/previousTileEntityCount;
+        	
+        	teToUpdate = (int) ((TimeWatch.getPreviousTime(TimeWatch.TimeType.TileEntity)-overTime)/tileEntityTime);
+        	//Send in to world: (world.loadedTileEntityList.size()/tileEntityCount) * teToUpdate
+        	//Thus it's normalized, with tileEntityCount being the length
+        	
+    		
+    		//TODO: For Entities, normalize the time used by TileEntities and Entities and use that(tileEntityTime = overTime*normalizedTileEntityPreviousTime)    		
+    	}
+    	previousTileEntityCount = teToUpdate; //TODO: This is wrong, get it from the worlds themself
+    	
+    	//Print TileEntity TPS
+    	System.out.println("TileEntity TPS: " + 20 * (previousTileEntityCount/tileEntityCount));
         
         Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
         for (int x = 0; x < ids.length; x++)
