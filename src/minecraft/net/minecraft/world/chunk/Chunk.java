@@ -641,7 +641,7 @@ public class Chunk
      */
     public int getBlockID(int par1, int par2, int par3)
     {
-        if (par2 >> 4 >= this.storageArrays.length)
+        if (par2 >> 4 >= this.storageArrays.length || par2 < 0)
         {
             return 0;
         }
@@ -661,7 +661,7 @@ public class Chunk
      */
     public int getBlockMetadata(int par1, int par2, int par3)
     {
-        if (par2 >> 4 >= this.storageArrays.length)
+        if (par2 >> 4 >= this.storageArrays.length || par2 < 0)
         {
             return 0;
         }

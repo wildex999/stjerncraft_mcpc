@@ -2487,33 +2487,6 @@ public abstract class World implements IBlockAccess
         this.scanningTileEntities = true;
         Iterator iterator = this.loadedTileEntityList.iterator();
 
-        //ThatLag, Calculate how many tileentities to update
-        if(TimeWatch.getTickTime()<=1.0)
-        {
-        	//If current average is above 20 TPS, let it update everything
-        	maxTileEntityCount = loadedTileEntityList.size();
-        }
-        else
-        {
-        	//Need to limit TileEntity count
-        	//We assume each update use an equal amount of time
-        	//Limit to 30% of the 50ms tick(15ms)
-        	
-        	double timePerTE = (50*TimeWatch.getTileEntityTime()) / ((double)loadedTileEntityList.size());
-        	maxTileEntityCount = (long)(15/timePerTE);
-        	
-        	//Don't wrap around, limit it
-        	if(maxTileEntityCount > loadedTileEntityList.size())
-        		maxTileEntityCount = loadedTileEntityList.size();
-        	else if(maxTileEntityCount < 0)
-        		maxTileEntityCount = 1; //Do at least one
-        }
-        
-        if(worldInfo.getDimension() == 0)
-        {
-        	//System.out.println("Tick time: " + TimeWatch.getTickTime());
-        	//System.out.println("(" + this.worldInfo.getDimension() + ") Tile Entity Time: " + TimeWatch.getTileEntityTime() + " | Max now: " + maxTileEntityCount + " | Size: " + loadedTileEntityList.size());
-        }
         //ThatLag, Time Tile Entities
         if(worldInfo.getDimension() == 0)
         	TimeWatch.timeStart(TimeWatch.TimeType.TileEntity);
