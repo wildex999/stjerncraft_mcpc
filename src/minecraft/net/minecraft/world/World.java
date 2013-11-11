@@ -195,13 +195,14 @@ public abstract class World implements IBlockAccess
      */
     public WorldInfo worldInfo; // CraftBukkit - protected -> public
     
-    /** ThatLag, Current position, and max to tick */
-    private int currentTileEntityIndex = 0;
-    private int currentEntityIndex = 0;
-    private int remainingTileEntityCount = 0; //How many left to update this tick
-    private int remainingEntityCount = 0;
-    private int maxTileEntityCount = 0; //Number of TileEntities to update per tick
-    private int maxEntityCount = 0;
+    /** ThatLag, remaining and max to update */
+    public double remainingTileEntityCount = 0; //How many left to update this tick
+    public double remainingEntityCount = 0;
+    public double actualTileEntityCount = 0; //Set by world to the actual number of tileentities updated(Used in next time calculation)
+    public double actualEntityCount = 0;
+    public int currentTileEntityIndex = 0; //Current entity index, used for setting where to continue on each tick
+    public int currentEntityIndex = 0;
+    
 
     /** Boolean that is set to true when trying to find a spawn point */
     public boolean findingSpawnPoint;
@@ -2491,42 +2492,28 @@ public abstract class World implements IBlockAccess
         
         ListIterator iterator;
         
-        //if(currentTileEntityIndex >= loadedTileEntityList.size())
-        	//iterator = loadedTileEntityList.listIterator(index)
-        
-        iterator = loadedTileEntityList.listIterator();
-
-        //ThatLag, Calculate how many tileentities to update
-        /*if(TimeWatch.getTickTime()<=1.0)
+        if(currentTileEntityIndex < loadedTileEntityList.size() && currentTileEntityIndex >= 0)
         {
-        	//If current average is above 20 TPS, let it update everything
-        	maxTileEntityCount = loadedTileEntityList.size();
+        	iterator = loadedTileEntityList.listIterator(currentTileEntityIndex);
         }
         else
         {
-        	//Need to limit TileEntity count
-        	//We assume each update use an equal amount of time
-        	//Limit to 30% of the 50ms tick(15ms)
-        	
-        	double timePerTE = (50*TimeWatch.getTileEntityTime()) / ((double)loadedTileEntityList.size());
-        	maxTileEntityCount = (long)(15/timePerTE);
-        	
-        	//Don't wrap around, limit it
-        	if(maxTileEntityCount > loadedTileEntityList.size())
-        		maxTileEntityCount = loadedTileEntityList.size();
-        	else if(maxTileEntityCount < 0)
-        		maxTileEntityCount = 1; //Do at least one
+        	iterator = loadedTileEntityList.listIterator();
+        	currentTileEntityIndex = 0;
         }
         
-        if(worldInfo.getDimension() == 0)
-        {
-        	//System.out.println("Tick time: " + TimeWatch.getTickTime());
-        	//System.out.println("(" + this.worldInfo.getDimension() + ") Tile Entity Time: " + TimeWatch.getTileEntityTime() + " | Max now: " + maxTileEntityCount + " | Size: " + loadedTileEntityList.size());
-        }*/
+        if(remainingTileEntityCount > loadedTileEntityList.size())
+        	remainingTileEntityCount = loadedTileEntityList.size();
+        
+        if(remainingTileEntityCount == 0)
+        	iterator = loadedTileEntityList.listIterator();
+        else if(remainingTileEntityCount < 1)
+        	iterator = loadedTileEntityList.listIterator(loadedTileEntityList.size() -1);
+        
+        actualTileEntityCount = remainingTileEntityCount;
         
         //ThatLag, Time Tile Entities
-        if(worldInfo.getDimension() == 0)
-        	TimeWatch.timeStart(TimeWatch.TimeType.TileEntity);
+        TimeWatch.timeResume(TimeWatch.TimeType.TileEntity);
         while (iterator.hasNext())
         {
             TileEntity tileentity = (TileEntity)iterator.next();
@@ -2621,6 +2608,7 @@ public abstract class World implements IBlockAccess
             if (tileentity.isInvalid())
             {
                 iterator.remove();
+                currentTileEntityIndex--; //Move index back when deleting(i.e, not move it forward)
 
                 if (this.chunkExists(tileentity.xCoord >> 4, tileentity.zCoord >> 4))
                 {
@@ -2638,11 +2626,21 @@ public abstract class World implements IBlockAccess
         		ChunkSampler.preSample("postTileEntityTick");
         	//MCPC+ End
             
+        	currentTileEntityIndex++;
+        	
+        	if(--remainingTileEntityCount < 1.0)
+        		break;
+        	
+        	//Wrap if at the end and still have remaining
+        	if(!iterator.hasNext() && remainingTileEntityCount > 0)
+        	{
+        		iterator = loadedTileEntityList.listIterator();
+        		currentTileEntityIndex = 0;
+        	}
         }
         
         //ThatLag, Time Tile Entities
-        if(worldInfo.getDimension() == 0)
-        	TimeWatch.timeEnd(TimeWatch.TimeType.TileEntity);
+        TimeWatch.timePause(TimeWatch.TimeType.TileEntity);
 
         timings.tileEntityTick.stopTiming(); // Spigot
         timings.tileEntityPending.startTiming(); // Spigot

@@ -104,6 +104,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     public File anvilFile; // CraftBukkit - private final -> public
 
     /**
+     * ThatLag 
+     */
+    private ArrayList<Integer> previousTileEntityList = new ArrayList<Integer>();
+    
+    /**
      * Collection of objects to update every tick. Type: List<IUpdatePlayerListBox>
      */
     private final List tickables = new ArrayList();
@@ -180,10 +185,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     private boolean isDemo;
     private boolean enableBonusChest;
     
-    /**
-     * ThatLag counting
-     */
-    int previousTileEntityCount; //Tile Entities updated previous tick
+
 
     /**
      * If true, there is no need to save chunks or stop the server, because that is already being done.
@@ -880,41 +882,64 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
     	//ThatLag, calculate how many Entities and TileEntities to update per world
     	int tileEntityCount = 0;
+        int previousTileEntityCount = 0; //Tile Entities updated previous tick
     	WorldServer[] worlds = DimensionManager.getWorlds();
     	for(World w : worlds)
     	{
     		tileEntityCount += w.loadedTileEntityList.size();
     		//Gather ACTUAL previous updates, might have been LESS than given(I.e, don't update more than number of tile entities!)
+    		previousTileEntityCount += w.actualTileEntityCount;
     	}
+    	
+    	if(tileEntityCount == 0)
+    		tileEntityCount = 1;
     	
     	
     	//Use tileEntityTime to figure out how many tileEntities to tick to maintain 20 TPS
     	int teToUpdate = 0;
     	double avgTickTime = TimeWatch.getAvgTime(TimeWatch.TimeType.Tick);
-    	if(avgTickTime < 0.95)
-    	{
-    		teToUpdate = tileEntityCount;
-    	}
-    	else
-    	{
-    		//Overtime is the amount of time that we need to remove from tileEntities
-    		double overTime = avgTickTime - 1.0; 
+    	//Overtime is the amount of time that we need to remove from tileEntities
+    	double overTime = avgTickTime - 1.0; 
+    	
+    	System.out.println("PRevnow: " + previousTileEntityCount);
+    	
+    	//Calculate previousTileEntityCount average
+		if(previousTileEntityList.size() == 20)
+			previousTileEntityList.remove(0);
+		//Add new point
+		previousTileEntityList.add(previousTileEntityCount);
+		
+		double cumulative = 0;
+		for(long item : previousTileEntityList)
+			cumulative += item;
+		
+		double avgCount = cumulative / (double)previousTileEntityList.size();
+    	
+    	if(avgCount == 0)
+    		avgCount = 1; //Avoid division by zero
     		
-        	//Calculate time used per TileEntity. We time only those updated on the previous tick, so prevTime/previousTileEntityCount = time per tileEntity
-        	//We can't use avg as it would be very wrong if the previousTileEntityCount changed a lot per tick
-        	double tileEntityTime = TimeWatch.getPreviousTime(TimeWatch.TimeType.TileEntity)/previousTileEntityCount;
+        //Calculate time used per TileEntity. We time only those updated on the previous tick, so prevTime/previousTileEntityCount = time per tileEntity
+        //We can't use avg as it would be very wrong if the previousTileEntityCount changed a lot per tick
+        double tileEntityTime = TimeWatch.getAvgTime(TimeWatch.TimeType.TileEntity)/avgCount;
+        
+        if(tileEntityTime == 0.0)
+        	tileEntityTime = 0.3; //15 ms(Avoid division by zero)
         	
-        	teToUpdate = (int) ((TimeWatch.getPreviousTime(TimeWatch.TimeType.TileEntity)-overTime)/tileEntityTime);
-        	//Send in to world: (world.loadedTileEntityList.size()/tileEntityCount) * teToUpdate
-        	//Thus it's normalized, with tileEntityCount being the length
-        	
-    		
-    		//TODO: For Entities, normalize the time used by TileEntities and Entities and use that(tileEntityTime = overTime*normalizedTileEntityPreviousTime)    		
-    	}
-    	previousTileEntityCount = teToUpdate; //TODO: This is wrong, get it from the worlds themself
+        teToUpdate = (int) ((TimeWatch.getAvgTime(TimeWatch.TimeType.TileEntity)-overTime)/tileEntityTime);
+        //Send in to world: (world.loadedTileEntityList.size()/tileEntityCount) * teToUpdate
+        //Thus it's normalized, with tileEntityCount being the length
+        
+        if(teToUpdate < 0)
+        	teToUpdate = 0;
+        		
+    	//TODO: For Entities, normalize the time used by TileEntities and Entities and use that(tileEntityTime = overTime*normalizedTileEntityPreviousTime)    		
     	
     	//Print TileEntity TPS
-    	System.out.println("TileEntity TPS: " + 20 * (previousTileEntityCount/tileEntityCount));
+    	System.out.println("TileEntity TPS: " + (20.0 * ((double)previousTileEntityCount/(double)tileEntityCount)) + " (UpdateCount: " + teToUpdate + " PreviousTileTime: " + TimeWatch.getPreviousTime(TimeWatch.TimeType.TileEntity) + 
+    			 " PreviousTileCount: " + previousTileEntityCount +
+    			 " avgTickTime: " + avgTickTime + " Time Per: " + tileEntityTime + ")");
+    	
+    	TimeWatch.timeStart(TimeWatch.TimeType.TileEntity); //Creating the spot in avgWindow, resume will overwrite the start time
         
         Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
         for (int x = 0; x < ids.length; x++)
@@ -956,6 +981,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 	            throw new ReportedException(crashreport);
 	        }
 	        	
+	        //ThatLag, set how many the world should update
+	        worldserver.remainingTileEntityCount += (teToUpdate * ((double)worldserver.loadedTileEntityList.size()/(double)tileEntityCount));
+	        System.out.println("Sent: " + worldserver.remainingTileEntityCount + " Loaded: " + worldserver.loadedTileEntityList.size() + " Size: " + tileEntityCount);
+	        //System.out.println("toUpdate: " + worldserver.remainingTileEntityCount + " Size: " + worldserver.loadedTileEntityList.size() + " tileEnt: " + tileEntityCount);
+	        
 	        try
 	        {
 	            worldserver.updateEntities();
@@ -980,7 +1010,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             
             worldserver.timings.tracker.startTiming(); // Spigot
             worldserver.getEntityTracker().updateTrackedEntities();
-            worldserver.timings.tracker.stopTiming(); // Spigot
+            worldserver.timings.tracker.stopTiming(); // SpigotDual
             this.theProfiler.endSection();
             this.theProfiler.endSection();
             
@@ -992,6 +1022,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             // Forge start
             ((long[]) this.worldTickTimes.get(id))[this.tickCounter % 100] = System.nanoTime() - j;
         }
+        
+        TimeWatch.timeEnd(TimeWatch.TimeType.TileEntity);
 
         this.theProfiler.endStartSection("dim_unloading");
         DimensionManager.unloadWorlds(this.worldTickTimes);
