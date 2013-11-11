@@ -191,7 +191,7 @@ public abstract class Packet
         // CraftBukkit start
         catch (java.net.SocketTimeoutException exception)
         {
-            par0ILogAgent.logInfo("Read timed out");
+            par0ILogAgent.logInfo("Read timed out with timeout: " + i);
             return null;
         }
         catch (java.net.SocketException exception)
