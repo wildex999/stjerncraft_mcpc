@@ -2508,7 +2508,7 @@ public abstract class World implements IBlockAccess
         if(remainingTileEntityCount == 0)
         	iterator = loadedTileEntityList.listIterator();
         else if(remainingTileEntityCount < 1)
-        	iterator = loadedTileEntityList.listIterator(loadedTileEntityList.size() -1);
+        	iterator = loadedTileEntityList.listIterator(loadedTileEntityList.size());
         
         actualTileEntityCount = remainingTileEntityCount;
         

@@ -79,6 +79,7 @@ import org.bukkit.event.world.WorldSaveEvent;
 
 
 
+
 // CraftBukkit end
 // MCPC+ start
 import java.util.Map;
@@ -86,6 +87,7 @@ import java.util.Map;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.EnumHelper;
 import w999.baseprotect.BaseProtect;
+import w999.thatlag.ThatLag;
 import w999.thatlag.TimeWatch;
 import za.co.mcportcentral.FMLLogJLineBreakProxy;
 // MCPC+ end
@@ -106,7 +108,8 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     /**
      * ThatLag 
      */
-    private ArrayList<Integer> previousTileEntityList = new ArrayList<Integer>();
+    private static ThatLag thatLag = new ThatLag(); //Lag control
+    
     
     /**
      * Collection of objects to update every tick. Type: List<IUpdatePlayerListBox>
@@ -881,63 +884,10 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     	//MCPC+ End
 
     	//ThatLag, calculate how many Entities and TileEntities to update per world
-    	int tileEntityCount = 0;
-        int previousTileEntityCount = 0; //Tile Entities updated previous tick
-    	WorldServer[] worlds = DimensionManager.getWorlds();
-    	for(World w : worlds)
-    	{
-    		tileEntityCount += w.loadedTileEntityList.size();
-    		//Gather ACTUAL previous updates, might have been LESS than given(I.e, don't update more than number of tile entities!)
-    		previousTileEntityCount += w.actualTileEntityCount;
-    	}
-    	
-    	if(tileEntityCount == 0)
-    		tileEntityCount = 1;
+    	thatLag.tick();
     	
     	
-    	//Use tileEntityTime to figure out how many tileEntities to tick to maintain 20 TPS
-    	int teToUpdate = 0;
-    	double avgTickTime = TimeWatch.getAvgTime(TimeWatch.TimeType.Tick);
-    	//Overtime is the amount of time that we need to remove from tileEntities
-    	double overTime = avgTickTime - 1.0; 
-    	
-    	System.out.println("PRevnow: " + previousTileEntityCount);
-    	
-    	//Calculate previousTileEntityCount average
-		if(previousTileEntityList.size() == 20)
-			previousTileEntityList.remove(0);
-		//Add new point
-		previousTileEntityList.add(previousTileEntityCount);
-		
-		double cumulative = 0;
-		for(long item : previousTileEntityList)
-			cumulative += item;
-		
-		double avgCount = cumulative / (double)previousTileEntityList.size();
-    	
-    	if(avgCount == 0)
-    		avgCount = 1; //Avoid division by zero
     		
-        //Calculate time used per TileEntity. We time only those updated on the previous tick, so prevTime/previousTileEntityCount = time per tileEntity
-        //We can't use avg as it would be very wrong if the previousTileEntityCount changed a lot per tick
-        double tileEntityTime = TimeWatch.getAvgTime(TimeWatch.TimeType.TileEntity)/avgCount;
-        
-        if(tileEntityTime == 0.0)
-        	tileEntityTime = 0.3; //15 ms(Avoid division by zero)
-        	
-        teToUpdate = (int) ((TimeWatch.getAvgTime(TimeWatch.TimeType.TileEntity)-overTime)/tileEntityTime);
-        //Send in to world: (world.loadedTileEntityList.size()/tileEntityCount) * teToUpdate
-        //Thus it's normalized, with tileEntityCount being the length
-        
-        if(teToUpdate < 0)
-        	teToUpdate = 0;
-        		
-    	//TODO: For Entities, normalize the time used by TileEntities and Entities and use that(tileEntityTime = overTime*normalizedTileEntityPreviousTime)    		
-    	
-    	//Print TileEntity TPS
-    	System.out.println("TileEntity TPS: " + (20.0 * ((double)previousTileEntityCount/(double)tileEntityCount)) + " (UpdateCount: " + teToUpdate + " PreviousTileTime: " + TimeWatch.getPreviousTime(TimeWatch.TimeType.TileEntity) + 
-    			 " PreviousTileCount: " + previousTileEntityCount +
-    			 " avgTickTime: " + avgTickTime + " Time Per: " + tileEntityTime + ")");
     	
     	TimeWatch.timeStart(TimeWatch.TimeType.TileEntity); //Creating the spot in avgWindow, resume will overwrite the start time
         
@@ -982,9 +932,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 	        }
 	        	
 	        //ThatLag, set how many the world should update
-	        worldserver.remainingTileEntityCount += (teToUpdate * ((double)worldserver.loadedTileEntityList.size()/(double)tileEntityCount));
-	        System.out.println("Sent: " + worldserver.remainingTileEntityCount + " Loaded: " + worldserver.loadedTileEntityList.size() + " Size: " + tileEntityCount);
-	        //System.out.println("toUpdate: " + worldserver.remainingTileEntityCount + " Size: " + worldserver.loadedTileEntityList.size() + " tileEnt: " + tileEntityCount);
+	        thatLag.setWorldUpdateCount(worldserver);
 	        
 	        try
 	        {
@@ -1952,4 +1900,10 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
         return result;
     }
     // MCPC+ end
+    
+    //Get instance of ThatLag, used by plugins.
+    public static ThatLag getThatLagInstance()
+    {
+    	return thatLag;
+    }
 }
