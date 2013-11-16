@@ -116,6 +116,8 @@ import za.co.mcportcentral.entity.CraftFakePlayer;
 
 public abstract class World implements IBlockAccess
 {
+	public static Thread tr = null;
+	
     /**
      * Used in the getEntitiesWithinAABB functions to expand the search area for entities.
      * Modders should change this variable to a higher value if it is less then the radius
@@ -346,6 +348,9 @@ public abstract class World implements IBlockAccess
     // Changed signature
     public World(ISaveHandler idatamanager, String s, WorldSettings worldsettings, WorldProvider worldprovider, Profiler profiler, ILogAgent ilogagent, ChunkGenerator gen, org.bukkit.World.Environment env)
     {
+    	//Test
+    	tr = Thread.currentThread();
+    	
         this.mcpcConfig = new za.co.mcportcentral.MCPCWorldConfig( s ); // MCPC+;
         this.generator = gen;
         this.worldInfo = idatamanager.loadWorldInfo(); // Spigot
@@ -2505,7 +2510,7 @@ public abstract class World implements IBlockAccess
         if(remainingTileEntityCount > loadedTileEntityList.size())
         	remainingTileEntityCount = loadedTileEntityList.size();
         
-        if(remainingTileEntityCount == 0)
+        if(loadedTileEntityList.size() == 0)
         	iterator = loadedTileEntityList.listIterator();
         else if(remainingTileEntityCount < 1)
         	iterator = loadedTileEntityList.listIterator(loadedTileEntityList.size());
@@ -2570,6 +2575,7 @@ public abstract class World implements IBlockAccess
                 catch (Throwable throwable2)
                 {
                 	//Print currently ticking item(AND POSITION) when crashing
+                	boolean ignore = false;
                 	WorldInteract item = currentTickItem;
             		if(item == null)
             		{
@@ -2583,13 +2589,20 @@ public abstract class World implements IBlockAccess
             				className = className.substring(last);
             			
             			System.out.println("ITEM WHEN CRASH: (" + className + " [X: " + item.getX() + " Y: " + item.getY() + " Z: " + item.getZ() +"]) ");
+            			
+            			if(tileentity.getClass().isInstance(BaseProtect.infoPanel) || tileentity.getClass().isInstance(BaseProtect.infoPanelAdvanced))
+            			{
+            				System.out.println("Ignoring Screen crash");
+            				ignore = true;
+            			}
+            				
             		}
                 	
                     tileentity.tickTimer.stopTiming(); // Spigot
                     crashreport = CrashReport.makeCrashReport(throwable2, "Ticking tile entity");
                     crashreportcategory = crashreport.makeCategory("Tile entity being ticked");
                     tileentity.func_85027_a(crashreportcategory);
-                    if (ForgeDummyContainer.removeErroringTileEntities)
+                    if (ForgeDummyContainer.removeErroringTileEntities || ignore)
                     {
                         FMLLog.severe(crashreport.getCompleteReport());
                         tileentity.invalidate();

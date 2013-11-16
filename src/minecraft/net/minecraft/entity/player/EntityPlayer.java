@@ -281,7 +281,9 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         if (this.itemInUse != null)
         {
             ItemStack itemstack = this.inventory.getCurrentItem();
-            Item currentItem = itemstack.getItem();
+            Item currentItem = null;
+            if(itemstack != null)
+            	currentItem = itemstack.getItem();
             //Set item as current
             if(currentItem != null)
             {

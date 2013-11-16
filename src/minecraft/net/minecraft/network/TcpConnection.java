@@ -3,6 +3,7 @@ package net.minecraft.network;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -17,12 +18,15 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.crypto.SecretKey;
+
 import net.minecraft.logging.ILogAgent;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet252SharedKey;
 import net.minecraft.util.CryptManager;
+import net.minecraft.world.World;
 
 import java.io.IOException; // CraftBukkit
 
@@ -446,6 +450,23 @@ public class TcpConnection implements INetworkManager
 
         if (this.isTerminating && this.readPackets.isEmpty())
         {
+        	net.minecraft.entity.player.EntityPlayer pl = this.theNetHandler.getPlayer();
+        	if(this.terminationReason.equals("disconnect.endOfStream") && pl != null)
+        	{
+            	//Print some debug data for when every player suddenly disconnects
+            	if(World.tr == null)
+            		System.out.println("NULL THREAD");
+            	else
+            	{
+            		System.out.println("Thread Stack during endOfStream:" );
+            		StackTraceElement[] elements = World.tr.getStackTrace();
+            		for(StackTraceElement el : elements)
+            		{
+            			System.out.println(el.getClassName() + "(" + el.getFileName() + ":" + el.getLineNumber() + ")");
+            		}
+            		System.out.println("-----");
+            	}
+        	}
             this.theNetHandler.handleErrorMessage(this.terminationReason, this.field_74480_w);
             FMLNetworkHandler.onConnectionClosed(this, this.theNetHandler.getPlayer());
         }

@@ -33,6 +33,8 @@ public class BaseProtect extends JavaPlugin {
 	public static Class ee3PacketHandler = null;
 	public static Class stevescart = null;
 	public static Class thaumgolem = null;
+	public static Class infoPanel = null;
+	public static Class infoPanelAdvanced = null;
 	
 	
 	public enum InteractorType{
@@ -79,6 +81,8 @@ public class BaseProtect extends JavaPlugin {
 			ee3PacketHandler = Class.forName("com.pahimar.ee3.network.PacketHandler");
 			stevescart = Class.forName("vswe.stevescarts.Carts.MinecartModular");
 			thaumgolem = Class.forName("thaumcraft.common.entities.golems.EntityGolemBase");
+			infoPanel = Class.forName("shedar.mods.ic2.nuclearcontrol.tileentities.TileEntityInfoPanel");
+			infoPanelAdvanced = Class.forName("shedar.mods.ic2.nuclearcontrol.tileentities.TileEntityAdvancedInfoPanel");
 		} catch (ClassNotFoundException e)
 		{
 			System.err.println("BASEPROTECT ERROR: Unable to register all special case classes, Claims might NOT be fully respected!");
