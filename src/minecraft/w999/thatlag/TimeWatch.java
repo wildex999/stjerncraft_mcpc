@@ -90,13 +90,17 @@ public class TimeWatch {
 		if(!obj.paused)
 			timePause(type);
 		
+		obj.paused = false;
+		
+		//If it's a negative value, throw it away
+		if(obj.currentDiff < 0)
+			return;
+		
 		//Remove the first(oldest) element from window if we are above the window size
 		if(list.size() == windowSize)
 			list.remove(0);
 		//Add new point
 		list.add(obj.currentDiff);
-
-		obj.paused = false;
 	}
 	
 	//Calculate moving average

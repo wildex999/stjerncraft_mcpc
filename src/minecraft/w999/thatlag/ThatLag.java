@@ -30,6 +30,8 @@ public class ThatLag {
     
     public boolean tileEntityEnabled = true; //Whether TPS control for tile entities enabled
     public boolean entityEnabled = true;
+    public boolean doDebug = false;
+    public String debugStr;
     
     //Calculate the number of Entities and TileEntities to update for this tick
     public void tick() {
@@ -66,14 +68,14 @@ public class ThatLag {
 		
 		double avgCount = cumulative / (double)previousTileEntityList.size();
     	
-    	if(avgCount == 0)
+    	if(avgCount <= 0)
     		avgCount = 1; //Avoid division by zero
     		
         //Calculate time used per TileEntity. We time only those updated on the previous tick, so prevTime/previousTileEntityCount = time per tileEntity
         //We can't use avg as it would be very wrong if the previousTileEntityCount changed a lot per tick
         double tileEntityTime = TimeWatch.getAvgTime(TimeWatch.TimeType.TileEntity)/avgCount;
         
-        if(tileEntityTime == 0.0)
+        if(tileEntityTime <= 0.0)
         	tileEntityTime = 0.3; //15 ms(Avoid division by zero)
         	
         teToUpdate = (int) ((TimeWatch.getAvgTime(TimeWatch.TimeType.TileEntity)-overTime)/tileEntityTime);
@@ -84,10 +86,12 @@ public class ThatLag {
         	teToUpdate = 0;
         
         //Add TPS to list for calculating average
-        if(tileTPS.size() >= 20)
+        if(tileTPS.size() >= 200)
         	tileTPS.remove(0);
         
         tileTPS.add(20.0 * ((double)previousTileEntityCount/(double)tileEntityCount));
+        
+        debugStr = "PrevTileCount: " + previousTileEntityCount + " TileEntityCount: " + tileEntityCount + " avgTickTime: " + avgTickTime + " TileEntityTime: " + tileEntityTime + " ToUpdate: " + teToUpdate;
         		
     	//TODO: For Entities, normalize the time used by TileEntities and Entities and use that(tileEntityTime = overTime*normalizedTileEntityPreviousTime)    	
     }
