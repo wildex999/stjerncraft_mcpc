@@ -35,6 +35,7 @@ public class BaseProtect extends JavaPlugin {
 	public static Class thaumgolem = null;
 	public static Class infoPanel = null;
 	public static Class infoPanelAdvanced = null;
+	public static Class turtle = null;
 	
 	
 	public enum InteractorType{
@@ -83,6 +84,7 @@ public class BaseProtect extends JavaPlugin {
 			thaumgolem = Class.forName("thaumcraft.common.entities.golems.EntityGolemBase");
 			infoPanel = Class.forName("shedar.mods.ic2.nuclearcontrol.tileentities.TileEntityInfoPanel");
 			infoPanelAdvanced = Class.forName("shedar.mods.ic2.nuclearcontrol.tileentities.TileEntityAdvancedInfoPanel");
+			turtle = Class.forName("dan200.turtle.shared.TileEntityTurtle");
 		} catch (ClassNotFoundException e)
 		{
 			System.err.println("BASEPROTECT ERROR: Unable to register all special case classes, Claims might NOT be fully respected!");

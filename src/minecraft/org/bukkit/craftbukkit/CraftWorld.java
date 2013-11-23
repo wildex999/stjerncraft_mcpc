@@ -291,8 +291,16 @@ public class CraftWorld implements World {
 
     public boolean unloadChunk(int x, int z, boolean save, boolean safe) {
         if (Thread.currentThread() != net.minecraft.server.MinecraftServer.getServer().primaryThread) throw new IllegalStateException("Asynchronous chunk unload!"); // Spigot
+        
         if (safe && isChunkInUse(x, z)) {
             return false;
+        }
+        
+        if(safe)
+        {
+        	//Queue it instead
+        	world.theChunkProviderServer.chunksToUnload.add(x, z);
+        	return false;
         }
 
         net.minecraft.world.chunk.Chunk chunk = world.theChunkProviderServer.provideChunk(x, z);

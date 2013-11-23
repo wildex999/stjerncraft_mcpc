@@ -460,6 +460,7 @@ public class ChunkProviderServer implements IChunkProvider
             // CraftBukkit start
             Server server = this.worldObj.getServer();
 
+            int tileEntityUnloaded = 0; //Number of tile entities marked for unload
             for (int i = 0; i < 100 && !this.chunksToUnload.isEmpty(); i++)
             {
                 long chunkcoordinates = this.chunksToUnload.popFirst();
@@ -468,13 +469,19 @@ public class ChunkProviderServer implements IChunkProvider
                 if (chunk == null)
                 {
                     continue;
-                }
+                }   
+                
 
                 ChunkUnloadEvent event = new ChunkUnloadEvent(chunk.bukkitChunk);
                 server.getPluginManager().callEvent(event);
 
                 if (!event.isCancelled())
                 {
+                	if(chunk.chunkTileEntityMap.size() > 1000)
+                		System.out.println("Over 1000 TileEntities in chunk: " + chunk.xPosition + " " + chunk.zPosition + " (" + chunk.chunkTileEntityMap.size() + ")");
+                	
+                    tileEntityUnloaded += chunk.chunkTileEntityMap.size();
+                    
                     if (org.bukkit.craftbukkit.command.DebugChunksCommand.debugChunks) { // MCPC+ start -- chunk debugging
                         this.worldObj.getWorldLogAgent().logInfo("[" + MinecraftServer.currentTick + "] Unloading chunk (" + chunk.xPosition + ", " + chunk.zPosition + ") in world '" + worldObj.getWorld().getName() + "'");
                     } // MCPC+ end
@@ -491,7 +498,14 @@ public class ChunkProviderServer implements IChunkProvider
                             DimensionManager.unloadWorld(this.worldObj.provider.dimensionId); // MCPC+ - unload the dimension
                             return this.currentChunkProvider.unloadQueuedChunks();
                     }
+                    
+                    //Check if we have reached the limit on Tile-Entities to unload.
+                    //Unloading a large amount of chunks at once can cause the server to hang while unloading tile entities.
+                    //This again can cause mass player disconnects, or at worst server crash.
+                    if(tileEntityUnloaded >= 1000)
+                    	break;
                 }
+                
             }
 
             // CraftBukkit end

@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
@@ -103,6 +104,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 // CraftBukkit end
 
 
+
 // MCPC+ start
 import w999.baseprotect.BaseProtect;
 import w999.baseprotect.WorldInteract;
@@ -117,6 +119,8 @@ import za.co.mcportcentral.entity.CraftFakePlayer;
 public abstract class World implements IBlockAccess
 {
 	public static Thread tr = null;
+	public static long remCount = 0;
+	public static long listCount = 0;
 	
     /**
      * Used in the getEntitiesWithinAABB functions to expand the search area for entities.
@@ -139,11 +143,11 @@ public abstract class World implements IBlockAccess
     protected List unloadedEntityList = new ArrayList();
 
     /** A list of all TileEntities in all currently-loaded chunks */
-    public List loadedTileEntityList = new ArrayList(); // CraftBukkit - ArrayList -> HashSet // MCPC+ - keep vanilla for mod compatibility
+    public List loadedTileEntityList = new LinkedList(); // CraftBukkit - ArrayList -> HashSet // MCPC+ - keep vanilla for mod compatibility
     private List addedTileEntityList = new ArrayList();
 
     /** Entities marked for removal. */
-    private List entityRemoval = new ArrayList();
+    public List entityRemoval = new ArrayList();
 
     /** Array list of players in the world. */
     public List playerEntities = new ArrayList();
@@ -2590,11 +2594,17 @@ public abstract class World implements IBlockAccess
             			
             			System.out.println("ITEM WHEN CRASH: (" + className + " [X: " + item.getX() + " Y: " + item.getY() + " Z: " + item.getZ() +"]) ");
             			
-            			if(tileentity.getClass().isInstance(BaseProtect.infoPanel) || tileentity.getClass().isInstance(BaseProtect.infoPanelAdvanced))
+            			if(tileentity.getClass() == BaseProtect.infoPanel || tileentity.getClass() == BaseProtect.infoPanelAdvanced)
             			{
             				System.out.println("Ignoring Screen crash");
             				ignore = true;
             			}
+            			else if(BaseProtect.turtle.isInstance(tileentity))
+            			{
+            				System.out.println("Ignoring Turtle crash");
+            				System.out.println("Turtle had world: " + tileentity.getWorldObj());
+            				ignore = true;
+            			} 
             				
             		}
                 	
@@ -2660,6 +2670,8 @@ public abstract class World implements IBlockAccess
 
         if (!this.entityRemoval.isEmpty())
         {
+        	remCount = entityRemoval.size();
+        	listCount = loadedTileEntityList.size();
             for (Object tile : entityRemoval)
             {
                ((TileEntity)tile).onChunkUnload();

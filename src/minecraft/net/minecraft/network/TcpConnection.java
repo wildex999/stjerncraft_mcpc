@@ -450,23 +450,6 @@ public class TcpConnection implements INetworkManager
 
         if (this.isTerminating && this.readPackets.isEmpty())
         {
-        	net.minecraft.entity.player.EntityPlayer pl = this.theNetHandler.getPlayer();
-        	if(this.terminationReason.equals("disconnect.endOfStream") && pl != null)
-        	{
-            	//Print some debug data for when every player suddenly disconnects
-            	if(World.tr == null)
-            		System.out.println("NULL THREAD");
-            	else
-            	{
-            		System.out.println("Thread Stack during endOfStream:" );
-            		StackTraceElement[] elements = World.tr.getStackTrace();
-            		for(StackTraceElement el : elements)
-            		{
-            			System.out.println(el.getClassName() + "(" + el.getFileName() + ":" + el.getLineNumber() + ")");
-            		}
-            		System.out.println("-----");
-            	}
-        	}
             this.theNetHandler.handleErrorMessage(this.terminationReason, this.field_74480_w);
             FMLNetworkHandler.onConnectionClosed(this, this.theNetHandler.getPlayer());
         }

@@ -169,6 +169,8 @@ public abstract class Container
 
     public Slot getSlot(int par1)
     {
+    	if(par1 < 0 || par1 >= inventorySlots.size())
+    		return null;
         return (Slot)this.inventorySlots.get(par1);
     }
 

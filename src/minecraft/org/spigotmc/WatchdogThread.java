@@ -5,6 +5,9 @@ import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import net.minecraft.world.World;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.Spigot;
 
@@ -42,6 +45,19 @@ public class WatchdogThread extends Thread {
     @Override
     public void run() {
         while (!stopping) {
+        	//Debug ticks taking longer than one second
+        	if(lastTick != 0 && System.currentTimeMillis() > lastTick + 1000L)
+        	{
+        		//Print stack of main thread
+        		System.out.println("---------------Tick taking longer than one second!!! Printing main thread stack---------------");
+        		Logger log = Bukkit.getServer().getLogger();
+        		log.warning("RemCount: " + World.remCount);
+        		log.warning("ListCount: " + World.listCount);
+        		dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( net.minecraft.server.MinecraftServer.getServer().primaryThread.getId(), Integer.MAX_VALUE ), log );
+        		System.out.println("-------------------------");
+        	}
+        	
+        	
             //
             if (lastTick != 0 && System.currentTimeMillis() > lastTick + timeoutTime) {
                 Logger log = Bukkit.getServer().getLogger();

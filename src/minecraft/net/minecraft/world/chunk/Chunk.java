@@ -23,6 +23,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
@@ -1118,6 +1119,14 @@ public class Chunk
     {
         this.isChunkLoaded = false;
         Iterator iterator = this.chunkTileEntityMap.values().iterator();
+        
+        if(this.chunkTileEntityMap.size() > 1000)
+        {
+        	System.out.println("Unloading chunk with > 1000 tile entities: " + this.xPosition + " " + this.zPosition + " (" + this.chunkTileEntityMap.size() + ") INCHUNK.");
+        	System.out.println("Current Rem Count: " + this.worldObj.entityRemoval.size());
+        	System.out.println("Stack: ");
+        	Thread.currentThread().dumpStack();
+        }
 
         while (iterator.hasNext())
         {

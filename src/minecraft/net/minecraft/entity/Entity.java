@@ -383,25 +383,28 @@ public abstract class Entity extends WorldInteract
     {
         String className = this.getClass().getName();
         
-        if(this.getClass() == BaseProtect.stevescart | BaseProtect.thaumgolem.isInstance(this))
+        if(this.getClass() == BaseProtect.stevescart || BaseProtect.thaumgolem.isInstance(this))
         {
         	w999.baseprotect.WorldInteract item = World.currentTickItem;
         	//Only allow a player to kill them directly
         	if(!(item instanceof EntityPlayerMP))
         		return;
         	
+        	
+        	
         	CraftEntity bukkitEntity = this.getBukkitEntity();
         	System.out.println("Last golem damager: " + bukkitEntity.getLastDamageCause());
+        	System.out.println("PlayerName: " + ((EntityPlayerMP)item).username);
         	
         	//Create dummy Living Entity
-        	DummyEntity dummy = new DummyEntity(this.worldObj);
+        	/*DummyEntity dummy = new DummyEntity(this.worldObj);
         	CraftLivingEntity living = (CraftLivingEntity) dummy.getBukkitEntity();
         	living.setCustomName("TestName");
         	
         	
         	//Post Entity Death Event
         	bukkitEntity.setLastDamageCause(new EntityDamageEvent(bukkitEntity, DamageCause.ENTITY_ATTACK, 1));
-        	EntityDeathEvent event = new EntityDeathEvent(living, null);
+        	EntityDeathEvent event = new EntityDeathEvent(living, null);*/
         	//Bukkit.getServer().getPluginManager().callEvent(event);
         }
         
