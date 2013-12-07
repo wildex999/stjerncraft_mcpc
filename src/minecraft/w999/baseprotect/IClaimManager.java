@@ -15,5 +15,7 @@ public interface IClaimManager {
 	
 	//Whether or not to ignore events to Claim Manager
 	public void setSkipEvent(boolean skip);
+	
+	public void setDebug(boolean debug);
 
 }

@@ -619,17 +619,9 @@ public abstract class World implements IBlockAccess
 
     /**
      * Returns the block ID at coords x,y,z
-     */
-    private int prevX = 0;
-    private int prevZ = 0;
-    private Chunk prevChunk = null;
-    
+     */    
     public int getBlockId(int par1, int par2, int par3)
     {
-    	//Quick out(Avoid the other if's and method invocation)
-    	if(par1 == prevX && par3 == prevZ)
-    		return prevChunk.getBlockID(par1 & 15, par2, par3 & 15);
-    	
         if (par1 >= -30000000 && par3 >= -30000000 && par1 < 30000000 && par3 < 30000000)
         {
             if (par2 < 0 || par2 >= 256)
@@ -643,9 +635,6 @@ public abstract class World implements IBlockAccess
                 try
                 {
                     chunk = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
-                    prevX = par1;
-                    prevZ = par3;
-                    prevChunk = chunk;
                     return chunk.getBlockID(par1 & 15, par2, par3 & 15);
                 }
                 catch (Throwable throwable)
@@ -2464,6 +2453,7 @@ public abstract class World implements IBlockAccess
                     }
                     else
                     {
+                    	removeEntity(entity);
                         throw new ReportedException(crashreport);
                     }
                 }

@@ -207,6 +207,11 @@ public class BaseProtect extends JavaPlugin {
 		return true;
 	}
 	
+	public static IClaimManager getClaimManager()
+	{
+		return claimManager;
+	}
+	
 	public static PlayerData getPlayerData(String player)
 	{
 		PlayerData playerData = players.get(player);

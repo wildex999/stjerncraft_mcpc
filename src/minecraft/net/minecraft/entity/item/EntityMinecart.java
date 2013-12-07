@@ -1,6 +1,7 @@
 package net.minecraft.entity.item;
 
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.entity.Entity;
@@ -20,6 +21,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+
 // CraftBukkit start
 import org.bukkit.Location;
 import org.bukkit.entity.Vehicle;
@@ -27,6 +29,8 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.util.Vector;
+
+import w999.baseprotect.BaseProtect;
 // CraftBukkit end
 import net.minecraftforge.common.IMinecartCollisionHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -694,8 +698,54 @@ public abstract class EntityMinecart extends Entity
         this.posX = d8 + d2 * d7;
         this.posZ = d9 + d3 * d7;
         this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
-
-        moveMinecartOnRail(par1, par2, par3, par4);
+       
+        int testBlockId = this.worldObj.getBlockId(par1, par2, par3);
+        try
+        {
+        	moveMinecartOnRail(par1, par2, par3, par4);
+        }
+        catch(ClassCastException ex)
+        {
+        	System.err.println("Steve's Carts Crash ClassCastException cought, debugging:");
+            if(!(Block.blocksList[testBlockId] instanceof BlockRailBase))
+            {
+            	System.err.println("Error while moving MineCart, moving to block NOT of BlockRailBase!");
+            	System.err.println("Block ID: " + testBlockId + " Pos: " + par1 + " " + par2 + " " + par3);
+            	System.err.println("Block: " + Block.blocksList[testBlockId]);
+            	String str = "Null";
+            	if(this.getItemOwner() != null)
+            	{
+            		if(this.getItemOwner().getPlayer() != null)
+            		{
+            			str = this.getItemOwner().getPlayer().username;
+            		}
+            	}
+    			System.err.println("Owner: " + str);
+    			w999.baseprotect.Relevant rel = this.getRelevantCache();
+    			if(rel == null)
+    			{
+    				System.err.println("Relevant: Null");
+    			}
+    			else
+    			{
+    				System.err.println("Relevant: " + rel.relevant);
+    			}
+    			
+    			System.err.println("Debug GP...");
+    			w999.baseprotect.IClaimManager claimManager = BaseProtect.getClaimManager();
+    			if(claimManager != null)
+    			{
+    				claimManager.setDebug(true);
+    				testBlockId = this.worldObj.getBlockId(par1, par2, par3);
+    				System.out.println("Got Debug Block Id: " + testBlockId);
+    				claimManager.setDebug(false);
+    			}
+    			else
+    				System.err.println("Unable to debug GP due to missing claim manager");
+            }
+            System.err.println("Debug done.");
+            return;
+        }
 
         if (aint[0][1] != 0 && MathHelper.floor_double(this.posX) - par1 == aint[0][0] && MathHelper.floor_double(this.posZ) - par3 == aint[0][2])
         {
