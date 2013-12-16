@@ -548,7 +548,15 @@ public class EntityTrackerEntry
             // CraftBukkit end
         }
         
-        Packet pkt = FMLNetworkHandler.getEntitySpawningPacket(this.myEntity);
+        Packet pkt = null;
+        try {
+        	pkt = FMLNetworkHandler.getEntitySpawningPacket(this.myEntity);
+        } catch(Exception e)
+        {
+        	System.err.println("Error during getting packet for entity: " + this.myEntity.getClass().getName() + " at " + this.myEntity.posX + ", " + this.myEntity.posY + ", " + this.myEntity.posZ);
+        	this.myEntity.setDead(); //Remove bugged entity
+        	return null;
+        }
 
         if (pkt != null)
         {

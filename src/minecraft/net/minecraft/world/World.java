@@ -1,6 +1,7 @@
 package net.minecraft.world;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.registry.VillagerRegistry.IVillageTradeHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -71,6 +72,7 @@ import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraft.entity.passive.*;
 
 import com.google.common.collect.ImmutableSetMultimap;
 
@@ -84,6 +86,7 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityXPOrb;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.Spigot; // Spigot
 import org.bukkit.craftbukkit.SpigotTimings; // Spigot
@@ -102,6 +105,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 // CraftBukkit end
+
+
 
 
 
@@ -2382,10 +2387,21 @@ public abstract class World implements IBlockAccess
     	if(ChunkSampler.sampling)
     		ChunkSampler.preSample("UnloadEntities");
     	//MCPC+ End
-
+    	
+    	boolean entitySweep = false;
+    	if(this.loadedEntityList.size() > 5000 )
+    	{
+    		System.out.println("SWEEPING ENTITIES! Entity Count: " + this.loadedEntityList.size());
+    		for(Player p : Bukkit.getOnlinePlayers()) {
+    			p.sendMessage(ChatColor.MAGIC + "[AutoMessage] Warning: Entity count over 5000(" + this.loadedEntityList.size() + "), doing a sweep and delete of hostile mobs!");
+    		}
+    		entitySweep = true;
+    	}
+    	
         for (i = 0; i < this.loadedEntityList.size(); ++i)
         {
             entity = (Entity)this.loadedEntityList.get(i);
+            
             // CraftBukkit start - Don't tick entities in chunks queued for unload
             ChunkProviderServer chunkProviderServer = ((WorldServer) this).theChunkProviderServer;
 
@@ -2397,6 +2413,21 @@ public abstract class World implements IBlockAccess
                 }
             }
 
+            //Sweep if sweep is enabled
+            if(entitySweep)
+            {
+            	//Check if it's a neutral mob
+            	if(entity instanceof EntityAnimal || entity instanceof EntityTameable || entity instanceof EntityVillager || entity instanceof IVillageTradeHandler)
+            	{
+            		//Don't sweep
+            	}
+            	else
+            	{
+            		entity.setDead(); 
+            		
+            	}
+            }
+            
             // CraftBukkit end
             lastChunk = Long.MIN_VALUE; // Spigot
 
