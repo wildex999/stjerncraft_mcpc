@@ -476,10 +476,7 @@ public class ChunkProviderServer implements IChunkProvider
                 server.getPluginManager().callEvent(event);
 
                 if (!event.isCancelled())
-                {
-                	if(chunk.chunkTileEntityMap.size() > 1000)
-                		System.out.println("Over 1000 TileEntities in chunk: " + chunk.xPosition + " " + chunk.zPosition + " (" + chunk.chunkTileEntityMap.size() + ")");
-                	
+                {	
                     tileEntityUnloaded += chunk.chunkTileEntityMap.size();
                     
                     if (org.bukkit.craftbukkit.command.DebugChunksCommand.debugChunks) { // MCPC+ start -- chunk debugging

@@ -1109,7 +1109,17 @@ public class Chunk
         {
             this.worldObj.addLoadedEntities(this.entityLists[i]);
         }
+        try
+        {
         MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(this));
+        }
+        catch(NullPointerException e)
+        {
+        	if(e.getStackTrace()[0].getFileName().equals("PacketHandlers.scala"))
+        		System.err.println("Exception in Forge EventBus during onChunkLoad, ignoring.");
+        	else
+        		throw e;
+        }
     }
 
     /**
@@ -1121,12 +1131,7 @@ public class Chunk
         Iterator iterator = this.chunkTileEntityMap.values().iterator();
         
         if(this.chunkTileEntityMap.size() > 1000)
-        {
         	System.out.println("Unloading chunk with > 1000 tile entities: " + this.xPosition + " " + this.zPosition + " (" + this.chunkTileEntityMap.size() + ") INCHUNK.");
-        	System.out.println("Current Rem Count: " + this.worldObj.entityRemoval.size());
-        	System.out.println("Stack: ");
-        	Thread.currentThread().dumpStack();
-        }
 
         while (iterator.hasNext())
         {
