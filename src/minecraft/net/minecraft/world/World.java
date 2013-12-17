@@ -95,6 +95,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockCanBuildEvent;
@@ -105,6 +106,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 // CraftBukkit end
+
 
 
 
@@ -2417,7 +2419,8 @@ public abstract class World implements IBlockAccess
             if(entitySweep)
             {
             	//Check if it's a neutral mob
-            	if(entity instanceof EntityAnimal || entity instanceof EntityTameable || entity instanceof EntityVillager || entity instanceof IVillageTradeHandler)
+            	if(entity instanceof EntityAnimal || entity instanceof EntityTameable || entity instanceof EntityVillager 
+            			|| entity instanceof IVillageTradeHandler || entity instanceof EntityPlayer || entity instanceof Minecart)
             	{
             		//Don't sweep
             	}
