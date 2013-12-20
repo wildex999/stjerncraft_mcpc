@@ -762,8 +762,20 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     	TimeWatch.timeStart(TimeWatch.TimeType.Tick);
     	
         FMLCommonHandler.instance().rescheduleTicks(Side.SERVER); // Forge
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("ReScheduleTicks");
+    	//MCPC+ End
+        
         long i = System.nanoTime();
         AxisAlignedBB.getAABBPool().cleanPool();
+        
+        //MCPC+ Start
+    	if(ChunkSampler.sampling)
+    		ChunkSampler.preSample("CleanPool");
+    	//MCPC+ End
+        
         callingForgeTick = true; // MCPC+ start - handle loadOnProviderRequests during forge tick event
         FMLCommonHandler.instance().onPreServerTick(); // Forge
         callingForgeTick = false; // MCPC+ end

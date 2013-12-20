@@ -16,7 +16,7 @@ import java.util.EnumSet;
 
 public class SingleIntervalHandler implements IScheduledTickHandler
 {
-    private ITickHandler wrapped;
+    public ITickHandler wrapped; //MCPC -> public for debugging
     public SingleIntervalHandler(ITickHandler handler)
     {
         this.wrapped=handler;

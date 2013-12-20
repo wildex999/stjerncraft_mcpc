@@ -30,6 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet131MapData;
+import net.minecraft.server.ChunkSampler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerListenThread;
 import net.minecraft.server.ThreadMinecraftServer;
@@ -113,6 +114,7 @@ public class FMLCommonHandler
         {
             return;
         }
+        
         for (IScheduledTickHandler ticker : scheduledTicks)
         {
             EnumSet<TickType> ticksToRun = EnumSet.copyOf(Objects.firstNonNull(ticker.ticks(), EnumSet.noneOf(TickType.class)));
@@ -121,6 +123,17 @@ public class FMLCommonHandler
             {
                 ticker.tickStart(ticksToRun, data);
             }
+            //MCPC+ Start
+        	if(ChunkSampler.sampling)
+        	{
+        		String name;
+        		if(ticker instanceof cpw.mods.fml.common.SingleIntervalHandler)
+        			name = ((cpw.mods.fml.common.SingleIntervalHandler)ticker).wrapped.getClass().getName();
+        		else
+        			name = ticker.getClass().getName();
+        		ChunkSampler.preSample("[PreTickItem] " + name);
+        	}
+        	//MCPC+ End
         }
     }
 
@@ -140,6 +153,7 @@ public class FMLCommonHandler
             {
                 ticker.tickEnd(ticksToRun, data);
             }
+            
         }
     }
 
